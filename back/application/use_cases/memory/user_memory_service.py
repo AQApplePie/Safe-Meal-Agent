@@ -1,0 +1,126 @@
+"""User long-term-memory use cases."""
+
+from __future__ import annotations
+
+from typing import List, Optional
+
+from SafeMealAgent.back.application.domain.memory_extractor import MemoryExtractor
+from SafeMealAgent.back.application.ports import UserMemoryUnitOfWorkFactory
+from SafeMealAgent.back.shared.contracts.memory import (
+    UserMemoryCreate,
+    UserMemoryRead,
+    UserMemoryUpdate,
+)
+from SafeMealAgent.back.shared.types import JsonObject, to_json_object
+
+
+class UserMemoryService:
+    """Coordinate memory extraction and persistence through an explicit UoW."""
+
+    def __init__(
+        self,
+        uow_factory: UserMemoryUnitOfWorkFactory,
+        extractor: MemoryExtractor | None = None,
+    ) -> None:
+        self._uow_factory = uow_factory
+        self._extractor = extractor or MemoryExtractor()
+
+    def remember_from_message(
+        self,
+        *,
+        user_id: str,
+        message: str,
+        source_session_id: Optional[str] = None,
+        source_message_id: Optional[str] = None,
+    ) -> List[UserMemoryRead]:
+        retracted_keys = self._extractor.extract_dietary_retractions(message)
+        candidates = self.extract_candidates(
+            user_id=user_id,
+            message=message,
+            source_session_id=source_session_id,
+            source_message_id=source_message_id,
+        )
+        if not candidates and not retracted_keys:
+            return []
+
+        with self._uow_factory() as uow:
+            uow.memories.archive_active_dietary_memories(user_id, retracted_keys)
+            records = [
+                uow.memories.upsert_memory(candidate) for candidate in candidates
+            ]
+            uow.commit()
+            return [UserMemoryRead.model_validate(record) for record in records]
+
+    def extract_candidates(
+        self,
+        *,
+        user_id: str,
+        message: str,
+        source_session_id: Optional[str] = None,
+        source_message_id: Optional[str] = None,
+    ) -> List[UserMemoryCreate]:
+        return self._extractor.extract(
+            user_id=user_id,
+            message=message,
+            source_session_id=source_session_id,
+            source_message_id=source_message_id,
+        )
+
+    def list_memories(
+        self,
+        *,
+        user_id: str,
+        include_archived: bool = False,
+        limit: int = 100,
+    ) -> List[UserMemoryRead]:
+        with self._uow_factory() as uow:
+            records = uow.memories.list_memories(
+                user_id,
+                include_archived=include_archived,
+                limit=limit,
+            )
+            return [UserMemoryRead.model_validate(record) for record in records]
+
+    def load_agent_memories(
+        self,
+        *,
+        user_id: str,
+        limit: int = 50,
+    ) -> List[JsonObject]:
+        with self._uow_factory() as uow:
+            records = uow.memories.list_active_memories(user_id, limit=limit)
+            memory_ids = [int(record.id) for record in records]
+            if memory_ids:
+                uow.memories.mark_used(memory_ids)
+                uow.commit()
+            return [
+                to_json_object(UserMemoryRead.model_validate(record))
+                for record in records
+            ]
+
+    def create_memory(self, data: UserMemoryCreate) -> UserMemoryRead:
+        with self._uow_factory() as uow:
+            record = uow.memories.upsert_memory(data)
+            uow.commit()
+            return UserMemoryRead.model_validate(record)
+
+    def update_memory(
+        self,
+        memory_id: int,
+        user_id: str,
+        data: UserMemoryUpdate,
+    ) -> Optional[UserMemoryRead]:
+        with self._uow_factory() as uow:
+            record = uow.memories.update_memory(memory_id, user_id, data)
+            if record is not None:
+                uow.commit()
+                return UserMemoryRead.model_validate(record)
+            return None
+
+    def archive_memory(self, memory_id: int, user_id: str) -> Optional[UserMemoryRead]:
+        with self._uow_factory() as uow:
+            record = uow.memories.archive_memory(memory_id, user_id)
+            if record is not None:
+                uow.commit()
+                return UserMemoryRead.model_validate(record)
+            return None

@@ -1,0 +1,15 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  receiver: durable-webhook
+  group_by: [alertname, severity]
+  group_wait: 10s
+  group_interval: 5m
+  repeat_interval: 4h
+
+receivers:
+  - name: durable-webhook
+    webhook_configs:
+      - url: http://alert-receiver:8090/alerts
+        send_resolved: true

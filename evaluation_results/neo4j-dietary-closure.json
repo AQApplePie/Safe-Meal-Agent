@@ -1,0 +1,9 @@
+{
+  "expected_dishes": 19655,
+  "total_dishes": 19655,
+  "complete_dishes": 19655,
+  "incomplete_dishes": 0,
+  "closure_passed": true,
+  "source_records": 19669,
+  "duplicate_source_names": 14
+}

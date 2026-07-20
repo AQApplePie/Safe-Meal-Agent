@@ -1,0 +1,43 @@
+groups:
+  - name: safemeal-agent
+    rules:
+      - alert: SafeMealAgentHighErrorRate
+        expr: >-
+          sum(rate(safemeal_agent_runs_total{status="error"}[5m]))
+          / clamp_min(sum(rate(safemeal_agent_runs_total[5m])), 0.001) > 0.05
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: Agent error rate is above 5%
+      - alert: SafeMealAgentHighP95Latency
+        expr: >-
+          histogram_quantile(0.95,
+          sum by (le) (rate(safemeal_agent_run_duration_seconds_bucket[5m]))) > 15
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Agent P95 latency is above 15 seconds
+      - alert: SafeMealDistributedQueueTimeouts
+        expr: >-
+          sum(rate(safemeal_rate_limit_decisions_total{layer="queue:agent",outcome="timeout"}[5m])) > 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Agent requests are timing out in the distributed queue
+      - alert: SafeMealTracePersistenceFailure
+        expr: rate(safemeal_agent_trace_persistence_total{outcome="error"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Durable Agent trace persistence is failing
+      - alert: SafeMealStreamFirstPacketDegradation
+        expr: rate(safemeal_agent_stream_degrades_total[5m]) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Streaming first-packet degradations are elevated

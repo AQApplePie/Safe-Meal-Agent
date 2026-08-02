@@ -4,24 +4,22 @@ import asyncio
 from datetime import datetime, timezone
 
 from langchain_core.messages import AIMessage
-from prometheus_client import generate_latest
-
-from SafeMealAgent.back.application.observability.cost import (
+from safemeal.application.observability.cost import (
     estimate_trace_cost,
     parse_model_pricing,
 )
-from SafeMealAgent.back.application.observability.models import (
+from safemeal.application.observability.models import (
     AgentRunTrace,
     ModelCallTrace,
     TokenUsage,
 )
-from SafeMealAgent.back.application.observability import AgentTraceRecorder, use_trace
-from SafeMealAgent.back.application.agents.models import PlanDecision, ToolCall
-from SafeMealAgent.back.application.agents.nodes.planner import create_planner_node
-from SafeMealAgent.back.application.use_cases.agent.graph_runner_service import (
+from safemeal.application.observability import AgentTraceRecorder, use_trace
+from safemeal.application.agents.models import PlanDecision, ToolCall
+from safemeal.application.agents.nodes.planner import create_planner_node
+from safemeal.application.use_cases.agent.graph_runner_service import (
     AgentGraphRunnerService,
 )
-from SafeMealAgent.back.infrastructure.operations.trace_store import JsonlAgentTraceStore
+from safemeal.infrastructure.operations.trace_store import JsonlAgentTraceStore
 
 
 def _model_call(
@@ -80,9 +78,7 @@ def test_model_cost_marks_unpriced_or_missing_usage_incomplete() -> None:
 def test_trace_store_persists_success_and_exposes_compact_decision_audit(
     tmp_path,
 ) -> None:
-    store = JsonlAgentTraceStore(
-        tmp_path / "traces.jsonl", max_bytes=10_000, backup_count=2
-    )
+    store = JsonlAgentTraceStore(tmp_path / "traces.jsonl")
     store.record(
         {
             "run_id": "run-1",
@@ -115,11 +111,10 @@ def test_trace_store_persists_success_and_exposes_compact_decision_audit(
     assert len(records) == 1
     assert records[0]["decisions"][0]["rationale"] == "需要检索原文"
     assert records[0]["decisions"][0]["pending_tools"] == ["milvus_vector_search"]
-    assert (tmp_path / "traces.jsonl").stat().st_mode & 0o777 == 0o600
     assert "trace" not in records[0]
 
 
-def test_graph_runner_persists_every_successful_trace_and_exports_metrics() -> None:
+def test_graph_runner_persists_every_successful_trace() -> None:
     class Graph:
         async def ainvoke(self, input_state: dict) -> dict:
             return {
@@ -151,12 +146,6 @@ def test_graph_runner_persists_every_successful_trace_and_exports_metrics() -> N
     assert len(store.records) == 1
     assert store.records[0]["status"] == "ok"
     assert response.metadata["trace"]["run_id"] == store.records[0]["run_id"]
-    metrics = generate_latest().decode()
-    assert "safemeal_agent_runs_total" in metrics
-    assert "safemeal_model_calls_total" in metrics
-    assert "safemeal_tool_calls_total" in metrics
-    assert "safemeal_rate_limit_decisions_total" in metrics
-    assert "safemeal_distributed_queue_wait_seconds" in metrics
 
 
 def test_planner_stops_before_more_work_when_priced_run_budget_is_exhausted() -> None:

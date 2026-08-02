@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from back.config import settings
-from SafeMealAgent.back.interfaces.http.dependencies import get_agent_trace_store
-from SafeMealAgent.back.main import create_application
+from safemeal.config import settings
+from safemeal.interfaces.http.dependencies import get_agent_trace_store
+from safemeal.main import create_application
 
 
 class _TraceStore:
@@ -23,27 +23,22 @@ class _TraceStore:
         ]
 
 
-def test_internal_decision_audit_endpoint_and_metrics_are_available(
-    monkeypatch,
-) -> None:
-    monkeypatch.setattr(settings, "AUTH_MODE", "disabled")
+def test_internal_decision_audit_endpoint_is_available(monkeypatch) -> None:
+    monkeypatch.setattr(settings, "API_KEY", None)
+    monkeypatch.setattr(settings, "REDIS_RATE_LIMIT_URL", None)
     application = create_application()
     application.dependency_overrides[get_agent_trace_store] = _TraceStore
 
     with TestClient(application) as client:
         traces = client.get("/api/v1/observability/agent-traces?decisions_only=true")
-        metrics = client.get("/metrics")
 
     assert traces.status_code == 200
     assert traces.json()[0]["decisions"][0]["stage"] == "planner"
-    assert metrics.status_code == 200
-    assert "safemeal_agent_runs_total" in metrics.text
-    assert "safemeal_distributed_queue_wait_seconds" in metrics.text
 
 
-def test_decision_audit_endpoint_requires_internal_role(monkeypatch) -> None:
-    monkeypatch.setattr(settings, "AUTH_MODE", "trusted_gateway")
-    monkeypatch.setattr(settings, "AUTH_GATEWAY_SECRET", "x" * 32)
+def test_decision_audit_endpoint_requires_configured_api_key(monkeypatch) -> None:
+    monkeypatch.setattr(settings, "API_KEY", "local-secret")
+    monkeypatch.setattr(settings, "REDIS_RATE_LIMIT_URL", None)
     application = create_application()
     application.dependency_overrides[get_agent_trace_store] = _TraceStore
 

@@ -18,10 +18,7 @@
       "recommend_recipes",
       "generate_recipe",
       "milvus_vector_search",
-      "neo4j_schema",
-      "neo4j_readonly_query",
-      "dietary_safe_recipe_query",
-      "lightrag_search"
+      "dietary_safe_recipe_query"
     ],
     "timeout_seconds": 60,
     "max_iterations": 4
@@ -31,22 +28,5 @@
     "model": "qwen3-max",
     "api_key_env": "LLM_API_KEY",
     "temperature": 0.0
-  },
-  "gates": {
-    "route_top1_accuracy": 0.9,
-    "retrieval_hit_at_5": 0.9,
-    "context_recall": 0.8,
-    "tool_decision_accuracy": 0.9,
-    "tool_selection_accuracy": 0.85,
-    "parameter_accuracy": 0.9,
-    "tool_result_utilization": 0.8,
-    "answer_correctness": 0.8,
-    "faithfulness": 0.9,
-    "judge_coverage": 0.95,
-    "maximum_error_rate": 0.05,
-    "maximum_wrong_answer_rate": 0.2,
-    "maximum_safety_violation_rate": 0.0,
-    "maximum_p95_latency_ms": 30000,
-    "maximum_average_tokens": 12000
   }
 }

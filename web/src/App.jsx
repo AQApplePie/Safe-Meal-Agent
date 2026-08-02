@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   Bot,
-  Check,
   ExternalLink,
   LoaderCircle,
   RefreshCw,
@@ -10,7 +9,6 @@ import {
   Sparkles,
   Trash2,
   UserRound,
-  X,
 } from "lucide-react";
 
 import {
@@ -33,11 +31,8 @@ export default function App() {
   const [input, setInput] = useState("推荐一道适合新手、30分钟内完成的晚餐。");
   const [sessionId, setSessionId] = useState("");
   const [userId, setUserId] = useState("react_tester");
-  const [gatewaySecret, setGatewaySecret] = useState(
-    () => localStorage.getItem("safemeal-gateway-secret") || "",
-  );
-  const [roles, setRoles] = useState(
-    () => localStorage.getItem("safemeal-roles") || "user",
+  const [apiKey, setApiKey] = useState(
+    () => localStorage.getItem("safemeal-api-key") || "safemeal-local-api-key",
   );
   const [messages, setMessages] = useState([]);
   const [sending, setSending] = useState(false);
@@ -65,23 +60,17 @@ export default function App() {
     localStorage.setItem("safemeal-api-base", value);
   }
 
-  function updateGatewaySecret(value) {
-    setGatewaySecret(value);
-    localStorage.setItem("safemeal-gateway-secret", value);
-  }
-
-  function updateRoles(value) {
-    setRoles(value);
-    localStorage.setItem("safemeal-roles", value);
+  function updateApiKey(value) {
+    setApiKey(value);
+    localStorage.setItem("safemeal-api-key", value);
   }
 
   function authHeaders(contentType = false) {
     const headers = {
       "X-SafeMeal-User-ID": userId || "default_user",
-      "X-SafeMeal-Roles": roles || "user",
     };
-    if (gatewaySecret) {
-      headers["X-SafeMeal-Gateway-Secret"] = gatewaySecret;
+    if (apiKey) {
+      headers["X-API-Key"] = apiKey;
     }
     if (contentType) {
       headers["Content-Type"] = "application/json";
@@ -193,7 +182,6 @@ export default function App() {
       );
       setMessages(
         data.map((item) => {
-          const envelope = item.message_metadata?._chat_response || {};
           return {
             id: String(item.id),
             role:
@@ -204,8 +192,8 @@ export default function App() {
                   : "user",
             content: item.content,
             sessionId: item.session_id,
-            route: envelope.route || item.message_metadata?.route,
-            sources: envelope.sources || [],
+            route: item.message_metadata?.route,
+            sources: item.message_metadata?.sources || [],
           };
         }),
       );
@@ -227,26 +215,6 @@ export default function App() {
       });
       setMessages([]);
       setNotice("会话消息已清空。");
-    } catch (error) {
-      setNotice(error.message);
-    }
-  }
-
-  async function submitFeedback(message, rating) {
-    try {
-      const { data } = await apiRequest(apiBase, "/api/v1/feedback/", {
-        method: "POST",
-        headers: authHeaders(true),
-        body: JSON.stringify({
-          session_id: message.sessionId || sessionId,
-          message_id: String(message.id),
-          user_id: userId,
-          rating,
-          reason: rating === "negative" ? "用户标记回答不满意" : "",
-          corrected_answer: null,
-        }),
-      });
-      setNotice(data.queued_for_review ? `负反馈已进入审核队列：${data.sample_id}` : "正反馈已提交。");
     } catch (error) {
       setNotice(error.message);
     }
@@ -277,8 +245,7 @@ export default function App() {
       <section className="chat-card">
         <div className="chat-toolbar">
           <label>用户ID<input value={userId} onChange={(event) => setUserId(event.target.value)} /></label>
-          <label>网关密钥<input type="password" value={gatewaySecret} onChange={(event) => updateGatewaySecret(event.target.value)} /></label>
-          <label>角色<input value={roles} onChange={(event) => updateRoles(event.target.value)} /></label>
+          <label>API Key<input type="password" value={apiKey} onChange={(event) => updateApiKey(event.target.value)} /></label>
           <label>会话ID<input value={sessionId} onChange={(event) => setSessionId(event.target.value)} placeholder="首次对话后生成" /></label>
           <button onClick={loadHistory} disabled={historyLoading}><RefreshCw size={15} />读取历史</button>
           <button className="danger" onClick={clearHistory}><Trash2 size={15} />清空</button>
@@ -296,9 +263,6 @@ export default function App() {
                 <p>{message.content}{message.streaming && <span className="stream-caret" aria-label="正在生成" />}</p>
                 {message.streamError && message.role !== "error" && <div className="stream-error">{message.streamError}</div>}
                 {message.sources?.length > 0 && <details><summary>查看{message.sources.length}条来源</summary><pre>{pretty(message.sources)}</pre></details>}
-                {message.role === "assistant" && /^\d+$/.test(String(message.id)) && (
-                  <div className="feedback"><button onClick={() => submitFeedback(message, "positive")}><Check size={14} />有帮助</button><button onClick={() => submitFeedback(message, "negative")}><X size={14} />不满意</button></div>
-                )}
               </div>
             </article>
           ))}

@@ -13,12 +13,12 @@ button { cursor: pointer; }
 
 .app-shell { width: min(1100px, calc(100% - 32px)); margin: 0 auto 48px; }
 .topbar { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-.brand, .connection, .chat-toolbar, .feedback, .message header { display: flex; align-items: center; gap: 10px; }
+.brand, .connection, .chat-toolbar, .message header { display: flex; align-items: center; gap: 10px; }
 .brand { color: #315a42; font-size: 18px; }
 .connection { flex-wrap: wrap; justify-content: flex-end; }
 .connection input { width: 230px; }
 .connection a { color: #315a42; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; }
-.connection button, .chat-toolbar button, .feedback button { border: 1px solid #d4d5cc; background: #fff; border-radius: 9px; padding: 8px 10px; display: inline-flex; gap: 6px; align-items: center; }
+.connection button, .chat-toolbar button { border: 1px solid #d4d5cc; background: #fff; border-radius: 9px; padding: 8px 10px; display: inline-flex; gap: 6px; align-items: center; }
 .health { font-size: 12px; padding: 5px 9px; border-radius: 99px; background: #e4e2da; }
 .health.online { color: #176337; background: #daf0e1; }
 .health.offline { color: #8b2c25; background: #f6dedb; }
@@ -51,8 +51,6 @@ input, textarea { border: 1px solid #d4d5cc; border-radius: 9px; background: #ff
 @keyframes blink { 50% { opacity: 0; } }
 details { margin-top: 8px; }
 pre { overflow: auto; padding: 12px; border-radius: 9px; background: #f1f1ec; font-size: 12px; }
-.feedback { margin-top: 10px; }
-.feedback button { padding: 6px 9px; font-size: 12px; }
 .thinking { display: flex; align-items: center; gap: 8px; color: #697066; padding: 8px 0; }
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }

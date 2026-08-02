@@ -2,26 +2,28 @@ from __future__ import annotations
 
 import asyncio
 
-from SafeMealAgent.back.application.agents.graph import build_agent_graph
-from SafeMealAgent.back.application.agents.models import (
+from safemeal.application.agents.graph import build_agent_graph
+from safemeal.application.agents.models import (
     Observation,
     PlanDecision,
     ReflectionDecision,
     ToolCall,
 )
-from SafeMealAgent.back.application.agents.retrieval_fusion import fuse_retrieval_observations
-from SafeMealAgent.back.application.agents.prompts import DEFAULT_PROMPT_BUNDLE, PromptBundle
-from SafeMealAgent.back.application.use_cases.agent.graph_runner_service import AgentGraphRunnerService
-from SafeMealAgent.back.application.use_cases.agent.conversation_memory import (
+from safemeal.application.agents.retrieval_fusion import fuse_retrieval_observations
+from safemeal.application.agents.prompts import DEFAULT_PROMPT_BUNDLE, PromptBundle
+from safemeal.application.use_cases.agent.graph_runner_service import (
+    AgentGraphRunnerService,
+)
+from safemeal.application.use_cases.agent.conversation_memory import (
     ConversationMemoryManager,
     MemoryRelevanceSelector,
 )
-from SafeMealAgent.back.application.use_cases.agent.context_builder import (
+from safemeal.application.use_cases.agent.context_builder import (
     AgentContextBuilder,
     MemoryContextProvider,
 )
-from SafeMealAgent.back.shared.contracts.common import AnswerSource, RouterInfo
-from SafeMealAgent.back.shared.contracts.tools import ToolResult, ToolSpecification
+from safemeal.shared.contracts.common import AnswerSource, RouterInfo
+from safemeal.shared.contracts.tools import ToolResult, ToolSpecification
 
 
 def _call(call_id: str, query: str = "宫保鸡丁") -> ToolCall:
@@ -70,8 +72,8 @@ def test_multi_route_fusion_deduplicates_and_weight_ranks_evidence() -> None:
                 },
             ),
             _observation(
-                "lightrag_search",
-                {"response": "宫保鸡丁属于川菜"},
+                "dietary_safe_recipe_query",
+                {"rows": [{"id": "safe-1", "name": "低敏宫保鸡丁"}]},
             ),
             _observation(
                 "search_recipes",
@@ -104,20 +106,20 @@ def test_multi_route_fusion_preserves_success_when_one_route_fails() -> None:
                 "milvus_vector_search",
                 {"documents": [{"document_id": "d1", "content": "有效证据"}]},
             ),
-            _observation("lightrag_search", {}, ok=False, has_data=False),
+            _observation("dietary_safe_recipe_query", {}, ok=False, has_data=False),
         ]
     )
 
     assert fused is not None and fused.ok
     assert fused.data["count"] == 1
-    assert fused.data["degraded_routes"] == ["lightrag_search"]
+    assert fused.data["degraded_routes"] == ["dietary_safe_recipe_query"]
 
 
 def test_prompt_bundle_is_versioned_and_stage_specific() -> None:
     bundle = DEFAULT_PROMPT_BUNDLE
 
     assert bundle.version == "default-v1"
-    assert "Milvus 与 LightRAG" in bundle.planner
+    assert "跨文档归纳时使用 Milvus" in bundle.planner
     assert "multi_route_retrieval" in bundle.reflection
     assert "degraded_routes" in bundle.answer
     assert len({bundle.planner, bundle.reflection, bundle.answer}) == 3
@@ -189,6 +191,7 @@ def test_context_builder_compacts_history_and_passes_message_identity_to_memory(
 ):
     class MemoryProvider:
         source_message_id: str | None = None
+        episodes: list[dict] = []
 
         def remember_from_message(self, **kwargs: object) -> list[dict]:
             self.source_message_id = str(kwargs.get("source_message_id"))
@@ -209,6 +212,19 @@ def test_context_builder_compacts_history_and_passes_message_identity_to_memory(
                     "confidence": 0.9,
                 },
             ]
+
+        def remember_episode(self, **kwargs: object) -> dict:
+            episode = {
+                "memory_type": "conversation_episode",
+                "summary": kwargs["summary"],
+                "session_id": kwargs["session_id"],
+                "message_count": kwargs["message_count"],
+            }
+            self.episodes = [episode]
+            return episode
+
+        def load_episodic_memories(self, **kwargs: object) -> list[dict]:
+            return self.episodes
 
     provider = MemoryProvider()
     builder = AgentContextBuilder(
@@ -240,6 +256,7 @@ def test_context_builder_compacts_history_and_passes_message_identity_to_memory(
     assert provider.source_message_id == "m1"
     assert context.context_metadata["summarized_history_messages"] > 0
     assert context.episodic_memories
+    assert context.episodic_memories[0]["session_id"] == "s1"
     assert context.user_memories[0]["memory_key"] == "花生"
 
 
@@ -339,8 +356,8 @@ def test_agent_graph_adds_multi_route_fusion_observation() -> None:
                 calls=[
                     _call("milvus-call"),
                     ToolCall(
-                        id="lightrag-call",
-                        tool_name="lightrag_search",
+                        id="recipe-call",
+                        tool_name="search_recipes",
                         arguments={"query": "宫保鸡丁"},
                         purpose="关系证据",
                         success_criteria="返回跨文档关系",
@@ -370,7 +387,7 @@ def test_agent_graph_adds_multi_route_fusion_observation() -> None:
                     description="search",
                     arguments_schema={"type": "object"},
                 )
-                for name in ("milvus_vector_search", "lightrag_search")
+                for name in ("milvus_vector_search", "search_recipes")
             ]
 
         async def invoke_many(self, calls: list[ToolCall]) -> list[ToolResult]:
@@ -382,7 +399,7 @@ def test_agent_graph_adds_multi_route_fusion_observation() -> None:
                     data=(
                         {"documents": [{"document_id": "d1", "content": "原文"}]}
                         if call.tool_name == "milvus_vector_search"
-                        else {"response": "跨文档关系"}
+                        else {"items": [{"id": "r1", "name": "宫保鸡丁"}]}
                     ),
                 )
                 for call in calls
@@ -483,7 +500,9 @@ def test_pure_knowledge_question_overrides_recipe_lookup_with_milvus() -> None:
     assert result["evidence_sufficient"] is True
 
 
-def test_targeted_dietary_query_does_not_add_recommendation_and_skips_reflection() -> None:
+def test_targeted_dietary_query_does_not_add_recommendation_and_skips_reflection() -> (
+    None
+):
     class Engine:
         reflect_calls = 0
 
@@ -566,9 +585,7 @@ def test_targeted_dietary_query_does_not_add_recommendation_and_skips_reflection
         )
     )
 
-    assert [call.tool_name for call in registry.calls] == [
-        "dietary_safe_recipe_query"
-    ]
+    assert [call.tool_name for call in registry.calls] == ["dietary_safe_recipe_query"]
     assert engine.reflect_calls == 0
     assert result["evidence_sufficient"] is True
     assert "番茄炒蛋" in result["messages"][-1].content
@@ -579,7 +596,9 @@ def test_runner_keeps_successful_evidence_when_supplemental_tool_times_out() -> 
     class Graph:
         async def ainvoke(self, input_state: object) -> dict:
             return {
-                "messages": [{"role": "assistant", "content": "番茄炒蛋命中鸡蛋，不能吃。"}],
+                "messages": [
+                    {"role": "assistant", "content": "番茄炒蛋命中鸡蛋，不能吃。"}
+                ],
                 "router": RouterInfo(type="agent-tool-loop", logic="deterministic"),
                 "sources": [
                     AnswerSource(

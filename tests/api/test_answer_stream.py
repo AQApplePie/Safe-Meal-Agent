@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import asyncio
 
-from SafeMealAgent.back.application.observability import emit_answer_chunk
-from SafeMealAgent.back.application.use_cases.chat.errors import ChatAgentUnavailableError
-from SafeMealAgent.back.interfaces.http.answer_stream import stream_answer_events
-from SafeMealAgent.back.interfaces.http.security import Principal
-from SafeMealAgent.back.interfaces.http.v1.endpoints.chat import chat_stream
-from SafeMealAgent.back.shared.contracts.chat import ChatRequest, ChatResponse
+from safemeal.application.observability import emit_answer_chunk
+from safemeal.application.use_cases.chat.errors import ChatAgentUnavailableError
+from safemeal.interfaces.http.answer_stream import stream_answer_events
+from safemeal.interfaces.http.security import Principal
+from safemeal.interfaces.http.v1.endpoints.chat import chat_stream
+from safemeal.application.contracts.chat_turn import ChatRequest, ChatResponse
 
 
 async def _collect(iterator) -> str:
@@ -78,9 +78,7 @@ def test_public_chat_stream_binds_identity_and_returns_completion_metadata() -> 
             )
 
     service = ChatService()
-    principal = Principal(
-        subject="trusted-user", roles=frozenset({"user"}), trusted=True
-    )
+    principal = Principal(subject="trusted-user")
 
     async def scenario() -> str:
         response = await chat_stream(

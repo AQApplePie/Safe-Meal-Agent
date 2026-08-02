@@ -6,7 +6,7 @@ authors = [
     {name = "SafeMeal Agent Maintainers"}
 ]
 readme = "README.md"
-requires-python = ">=3.11,<3.12"
+requires-python = ">=3.11,<3.13"
 dynamic = ["dependencies"]
 
 [build-system]
@@ -18,3 +18,18 @@ where = ["."]
 
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+exclude = ["safemeal/infrastructure/persistence/migrations/"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

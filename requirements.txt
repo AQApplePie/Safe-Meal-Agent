@@ -18,7 +18,6 @@ numpy<2.0.0
 
 # Agent Framework
 langgraph==0.2.60
-lightrag-hku==1.5.3
 
 # Vector Database & Embeddings
 pymilvus==2.4.15
@@ -29,8 +28,8 @@ setuptools<81
 sqlalchemy==2.0.25
 alembic==1.13.1
 pymysql==1.1.0
+cryptography>=42,<46
 redis==5.0.1
-boto3>=1.34.0,<2
 neo4j==5.27.0
 
 # HTTP Client
@@ -39,14 +38,8 @@ httpx==0.26.0
 python-dotenv==1.0.1
 python-multipart==0.0.6
 
-# Web Scraping & Data Extraction
-beautifulsoup4==4.12.3
-lxml==5.1.0
+# Local document extraction
 pypdf>=5.0.0,<7
-python-docx>=1.1.0,<2
-python-pptx>=1.0.0,<2
-openpyxl>=3.1.0,<4
 
-# Logging & Monitoring
+# Logging
 loguru==0.7.2
-prometheus-client==0.19.0

@@ -1,68 +1,39 @@
-.PHONY: env-create install dev run-server run-web clean init-data db-prepare db-verify db-adopt db-downgrade db-current db-history neo4j-dietary-sync monitoring-up monitoring-down eval-prepare eval-run eval-regression docker-build docker-up docker-down help
-
-env-create:
-	conda env create -f environment.yml
-	conda run -n safemeal_env python -m pip install --require-hashes -r requirements.lock
+.PHONY: install run-server lint format-check typecheck test check init-data db-upgrade neo4j-sync eval-prepare eval-run docker-up docker-down docker-smoke help
 
 install:
-	python -m pip install --require-hashes -r requirements.lock
-	cd web && npm ci
-
-dev:
-	$(MAKE) -j 2 run-server run-web
+	python -m pip install -r requirements.txt
 
 run-server:
-	python -m uvicorn back.main:application --host 0.0.0.0 --port 8000
+	python -m uvicorn safemeal.main:application --host 0.0.0.0 --port 8000 --reload
 
-run-web:
-	cd web && npm run dev
+lint:
+	python -m ruff check safemeal tests
 
-clean:
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	rm -rf dist/ build/ *.egg-info web/dist web/node_modules
+format-check:
+	python -m ruff format --check safemeal tests
+
+typecheck:
+	python -m mypy safemeal
+
+test:
+	PYTHONPATH=. python -m pytest -q
+
+check: lint format-check typecheck test
 
 init-data:
-	mkdir -p data/mysql data/milvus data/lightrag data/runtime uploads
+	mkdir -p data/runtime uploads
 
-db-prepare:
-	python -m back.infrastructure.persistence.migration_gate upgrade
+db-upgrade:
+	alembic upgrade head
 
-db-verify:
-	python -m back.infrastructure.persistence.migration_gate verify
-
-db-adopt:
-	python -m back.infrastructure.persistence.migration_gate adopt --backup-file "$(backup_file)" --backup-sha256 "$(backup_sha256)"
-
-db-downgrade:
-	alembic downgrade -1
-
-db-current:
-	alembic current
-
-db-history:
-	alembic history --verbose
-
-neo4j-dietary-sync:
-	python -m back.infrastructure.retrieval.neo4j.dietary_migration
-
-monitoring-up:
-	docker compose --profile monitoring up -d --wait api alert-receiver alertmanager prometheus grafana
-
-monitoring-down:
-	docker compose --profile monitoring stop grafana prometheus alertmanager alert-receiver
+neo4j-sync:
+	python -m safemeal.infrastructure.retrieval.neo4j.dietary_migration
 
 eval-prepare:
-	python -m back.evaluation prepare --target both
+	python -m safemeal.evaluation prepare --target milvus
 
 eval-run:
-	python -m back.evaluation run --enforce-gates --output evaluation_results/latest.json --progress evaluation_results/latest.progress.jsonl
-
-eval-regression:
-	python -m back.evaluation regression --baseline "$(baseline)" --candidate "$(candidate)" --output evaluation_results/regression-latest.json
-
-docker-build:
-	docker compose build
+	python -m safemeal.evaluation run --output evaluation_results/latest.json
 
 docker-up:
 	docker compose up -d --wait
@@ -70,17 +41,17 @@ docker-up:
 docker-down:
 	docker compose down
 
+docker-smoke:
+	docker compose config --quiet
+	docker build -t safemeal:smoke .
+
 help:
-	@echo "SafeMeal Agent runtime commands"
-	@echo "make env-create    - create the Python 3.11 runtime environment"
-	@echo "make install       - install locked backend and frontend dependencies"
-	@echo "make dev           - run backend and frontend"
-	@echo "make db-prepare    - migrate and verify the database"
-	@echo "make db-verify     - verify database revision and required data"
-	@echo "make db-adopt backup_file=/abs/backup.sql backup_sha256=<sha256>"
-	@echo "make neo4j-dietary-sync - repair and verify structured dietary data"
-	@echo "make monitoring-up - start Prometheus, Alertmanager, receiver and Grafana"
-	@echo "make eval-run      - run all frozen cases with Judge and enforce gates"
-	@echo "make docker-build  - build runtime images"
-	@echo "make docker-up     - start the runtime stack"
-	@echo "make docker-down   - stop the runtime stack"
+	@echo "make install       - install backend dependencies"
+	@echo "make run-server    - start the local API"
+	@echo "make check         - run lint, type checking and tests"
+	@echo "make db-upgrade    - apply Alembic migrations"
+	@echo "make neo4j-sync    - import the domain recipe graph"
+	@echo "make eval-prepare  - index the frozen corpus in Milvus"
+	@echo "make eval-run      - run metrics and LLM Judge evaluation"
+	@echo "make docker-up     - start the complete local stack"
+	@echo "make docker-down   - stop the local stack"

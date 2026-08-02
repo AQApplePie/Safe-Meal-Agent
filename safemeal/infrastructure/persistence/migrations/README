@@ -1,0 +1,12 @@
+Database schema migrations for the application persistence database.
+
+Common commands:
+
+- alembic upgrade head
+- alembic revision --autogenerate -m "describe change"
+- alembic current
+- alembic history --verbose
+
+Never stamp an existing unversioned database as head. Back it up, restore an
+isolated clone, compare it with a fresh migrated schema, and implement the
+reviewed adoption migration described in docs/refactor/19-database-cleanup-plan.md.

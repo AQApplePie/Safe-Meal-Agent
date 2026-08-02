@@ -3,11 +3,9 @@ from __future__ import annotations
 import asyncio
 from typing import Sequence
 
-from SafeMealAgent.back.application.use_cases.knowledge.service import KnowledgeService
-from SafeMealAgent.back.infrastructure.retrieval.milvus.client import VectorStore
-from SafeMealAgent.back.infrastructure.retrieval.lightrag.service import LightRAGService
-from lightrag.base import DocProcessingStatus, DocStatus
-from SafeMealAgent.back.shared.types import JsonObject
+from safemeal.application.use_cases.knowledge.service import KnowledgeService
+from safemeal.infrastructure.retrieval.milvus.client import VectorStore
+from safemeal.shared.types import JsonObject
 
 
 class _Embedder:
@@ -64,7 +62,6 @@ def _service(reranker: object) -> KnowledgeService:
         top_k=5,
         similarity_threshold=0.2,
         rerank_max_candidates=20,
-        rerank_score_threshold=0.8,
         embedding_model="test-embedding",
         reranker_model="test-reranker",
         collection_name="test-collection",
@@ -78,9 +75,9 @@ def test_reranker_failure_fallback_preserves_vector_candidates() -> None:
     assert "rerank_score" not in results[0]
 
 
-def test_successful_reranker_still_applies_score_threshold() -> None:
+def test_successful_reranker_preserves_ranked_candidates() -> None:
     results = asyncio.run(_service(_ScoredReranker()).search("宫保鸡丁"))
-    assert [item["chunk_id"] for item in results] == ["c1"]
+    assert [item["chunk_id"] for item in results] == ["c1", "low"]
     assert results[0]["rerank_score"] == 0.91
 
 
@@ -103,63 +100,50 @@ def test_milvus_delete_is_a_noop_for_a_new_empty_collection() -> None:
     assert not collection.delete_called
 
 
-def test_lightrag_insert_reports_pipeline_failure_instead_of_false_success() -> None:
-    class FailedRag:
-        async def aget_docs_by_ids(self, document_id: str):
-            return {}
+def test_search_diversifies_chunks_across_documents() -> None:
+    class MultiDocumentStore(_VectorStore):
+        def search(
+            self,
+            query_embedding: list[float],
+            top_k: int = 10,
+            filter_expr: str | None = None,
+        ) -> list[JsonObject]:
+            return [
+                {
+                    "id": "a-1",
+                    "content": "A1",
+                    "score": 0.99,
+                    "metadata": {"document_id": "a"},
+                },
+                {
+                    "id": "a-2",
+                    "content": "A2",
+                    "score": 0.98,
+                    "metadata": {"document_id": "a"},
+                },
+                {
+                    "id": "a-3",
+                    "content": "A3",
+                    "score": 0.97,
+                    "metadata": {"document_id": "a"},
+                },
+                {
+                    "id": "b-1",
+                    "content": "B1",
+                    "score": 0.96,
+                    "metadata": {"document_id": "b"},
+                },
+                {
+                    "id": "c-1",
+                    "content": "C1",
+                    "score": 0.95,
+                    "metadata": {"document_id": "c"},
+                },
+            ]
 
-        async def ainsert(self, document: str) -> str:
-            return "track-1"
+    service = _service(_RerankerFallback())
+    service.vector_store = MultiDocumentStore()  # type: ignore[assignment]
+    results = asyncio.run(service.search("跨文档归纳", top_k=4))
 
-        async def aget_docs_by_track_id(
-            self, track_id: str
-        ) -> dict[str, DocProcessingStatus]:
-            return {
-                "doc-1": DocProcessingStatus(
-                    content_summary="failed document",
-                    content_length=15,
-                    file_path="unknown_source",
-                    status=DocStatus.FAILED,
-                    created_at="2026-07-15T00:00:00Z",
-                    updated_at="2026-07-15T00:00:00Z",
-                    track_id=track_id,
-                    error_msg="entity extraction failed",
-                    metadata={},
-                )
-            }
-
-    service = LightRAGService(working_dir="unused")
-    service.rag = FailedRag()  # type: ignore[assignment]
-    service.initialized = True
-
-    result = asyncio.run(service.insert_documents(["document"]))
-
-    assert result.success == 0
-    assert result.failed == 1
-    assert "entity extraction failed" in result.errors[0]
-
-
-def test_lightrag_insert_treats_verified_processed_duplicate_as_idempotent() -> None:
-    class DuplicateRag:
-        async def aget_docs_by_ids(self, document_id: str):
-            return {
-                document_id: {
-                    "status": "processed",
-                    "content_summary": "existing document",
-                }
-            }
-
-        async def ainsert(self, document: str) -> str:
-            raise RuntimeError(
-                "File name already exists. Original doc_id: doc-existing, Status: processed"
-            )
-
-    service = LightRAGService(working_dir="unused")
-    service.rag = DuplicateRag()  # type: ignore[assignment]
-    service.initialized = True
-
-    result = asyncio.run(service.insert_documents(["document"]))
-
-    assert result.success == 1
-    assert result.already_present == 1
-    assert result.failed == 0
+    assert [item["id"] for item in results] == ["a-1", "b-1", "c-1", "a-2"]
+    assert len({item["metadata"]["document_id"] for item in results[:3]}) == 3

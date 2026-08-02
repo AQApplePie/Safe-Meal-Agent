@@ -5,15 +5,15 @@ from pathlib import Path
 
 import pytest
 
-from SafeMealAgent.back.config.settings import settings
-from SafeMealAgent.back.infrastructure.retrieval.neo4j.client import Neo4jDatabase
-from SafeMealAgent.back.infrastructure.retrieval.neo4j.dietary_safety import (
+from safemeal.config.settings import settings
+from safemeal.infrastructure.retrieval.neo4j.client import Neo4jDatabase
+from safemeal.infrastructure.retrieval.neo4j.dietary_safety import (
     DietarySafeRecipeQueryService,
 )
-from SafeMealAgent.back.infrastructure.retrieval.neo4j.importers.recipe_importer import (
+from safemeal.infrastructure.retrieval.neo4j.importers.recipe_importer import (
     RecipeGraphImporter,
 )
-from SafeMealAgent.back.infrastructure.retrieval.neo4j.importers.recipe_json_parser import (
+from safemeal.infrastructure.retrieval.neo4j.importers.recipe_json_parser import (
     load_recipe_records,
 )
 

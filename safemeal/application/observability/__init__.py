@@ -3,7 +3,7 @@
 这里仅负责记录 Agent 实际发生了什么，不负责判断结果是否正确。
 """
 
-from .models import (
+from .trace_models import (
     AgentRunTrace,
     ModelCallTrace,
     SpanTrace,

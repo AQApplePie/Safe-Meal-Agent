@@ -1,7 +1,7 @@
-"""Recipe catalog domain and validated generation contracts."""
+"""Recipe catalog domain models and deterministic rules."""
 
-from .generation import GeneratedRecipe, RecipeGenerationRequest
-from .models import (
+from .generated_recipe import GeneratedRecipe
+from .recipe_models import (
     CookingStep,
     DietaryType,
     Ingredient,
@@ -9,12 +9,9 @@ from .models import (
     NutritionInfo,
     Recipe,
     RecipeDifficulty,
-    RecipeQuery,
-    RecipeSearchResult,
-    RecipeSortField,
     normalize_quantity,
 )
-from .policy import RecipePolicy
+from .dietary_filter import DietaryRecipeFilter
 
 __all__ = [
     "CookingStep",
@@ -25,10 +22,6 @@ __all__ = [
     "NutritionInfo",
     "Recipe",
     "RecipeDifficulty",
-    "RecipeGenerationRequest",
-    "RecipePolicy",
-    "RecipeQuery",
-    "RecipeSearchResult",
-    "RecipeSortField",
+    "DietaryRecipeFilter",
     "normalize_quantity",
 ]

@@ -41,7 +41,7 @@ class ToolResult(BaseModel):
                 or self.error is not None
                 or self.error_code is not None
             ):
-                raise ValueError("successful tool results cannot contain error state")
+                raise ValueError("successful tools results cannot contain error state")
         elif self.status == "ok":
             self.status = "error"
         return self

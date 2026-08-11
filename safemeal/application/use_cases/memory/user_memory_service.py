@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from safemeal.modules.user_memory.application import MemoryExtractor
+from safemeal.modules.user_memory.memory_extraction import UserMemoryExtractor
+from safemeal.modules.user_memory.memory_models import MemoryCandidate
 from safemeal.application.ports import UserMemoryUnitOfWorkFactory
 from safemeal.shared.contracts.memory import (
     UserMemoryCreate,
@@ -20,10 +21,10 @@ class UserMemoryService:
     def __init__(
         self,
         uow_factory: UserMemoryUnitOfWorkFactory,
-        extractor: MemoryExtractor | None = None,
+        extractor: UserMemoryExtractor | None = None,
     ) -> None:
         self._uow_factory = uow_factory
-        self._extractor = extractor or MemoryExtractor()
+        self._extractor = extractor or UserMemoryExtractor()
 
     def remember_from_message(
         self,
@@ -33,37 +34,45 @@ class UserMemoryService:
         source_session_id: Optional[str] = None,
         source_message_id: Optional[str] = None,
     ) -> List[UserMemoryRead]:
-        retracted_keys = self._extractor.extract_dietary_retractions(message)
-        candidates = self.extract_candidates(
-            user_id=user_id,
-            message=message,
-            source_session_id=source_session_id,
-            source_message_id=source_message_id,
-        )
-        if not candidates and not retracted_keys:
+        extraction = self._extractor.extract(message)
+        commands = [
+            self._build_create_command(
+                user_id=user_id,
+                candidate=candidate,
+                source_session_id=source_session_id,
+                source_message_id=source_message_id,
+            )
+            for candidate in extraction.candidates
+        ]
+        if not commands and not extraction.retracted_dietary_keys:
             return []
 
         with self._uow_factory() as uow:
-            uow.memories.archive_active_dietary_memories(user_id, retracted_keys)
-            records = [
-                uow.memories.upsert_memory(candidate) for candidate in candidates
-            ]
+            uow.memories.archive_active_dietary_memories(
+                user_id, list(extraction.retracted_dietary_keys)
+            )
+            records = [uow.memories.upsert_memory(command) for command in commands]
             uow.commit()
             return [UserMemoryRead.model_validate(record) for record in records]
 
-    def extract_candidates(
-        self,
+    @staticmethod
+    def _build_create_command(
         *,
         user_id: str,
-        message: str,
+        candidate: MemoryCandidate,
         source_session_id: Optional[str] = None,
         source_message_id: Optional[str] = None,
-    ) -> List[UserMemoryCreate]:
-        return self._extractor.extract(
+    ) -> UserMemoryCreate:
+        return UserMemoryCreate(
             user_id=user_id,
-            message=message,
+            memory_type=candidate.memory_type,
+            memory_key=candidate.key,
+            memory_value=candidate.value,
+            confidence=candidate.confidence,
+            source="explicit_user_statement",
             source_session_id=source_session_id,
             source_message_id=source_message_id,
+            memory_metadata=candidate.metadata,
         )
 
     def list_memories(

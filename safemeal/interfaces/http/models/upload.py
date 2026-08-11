@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel
 
-from safemeal.application.use_cases.upload.service import UploadSaveResult
+from safemeal.application.use_cases.upload.file_upload_service import UploadSaveResult
 
 
 class UploadResponse(BaseModel):

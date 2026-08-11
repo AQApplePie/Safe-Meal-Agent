@@ -19,7 +19,7 @@ class LLMProvider:
     extra_body: JsonObject | None = None
 
 
-class ProviderRouteExhausted(RuntimeError):
+class ProviderRouteExhaustedError(RuntimeError):
     pass
 
 
@@ -42,7 +42,7 @@ class LLMProviderRouter(Generic[T]):
         except Exception as exc:
             if is_retryable is not None and not is_retryable(exc):
                 raise
-            raise ProviderRouteExhausted(
+            raise ProviderRouteExhaustedError(
                 f"model provider failed: {type(exc).__name__}: {exc}"
             ) from exc
 
@@ -50,4 +50,4 @@ class LLMProviderRouter(Generic[T]):
         return None
 
 
-__all__ = ["LLMProvider", "LLMProviderRouter", "ProviderRouteExhausted"]
+__all__ = ["LLMProvider", "LLMProviderRouter", "ProviderRouteExhaustedError"]

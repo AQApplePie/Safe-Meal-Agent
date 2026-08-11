@@ -10,7 +10,7 @@ from typing import Literal, Mapping, Sequence
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from safemeal.application.ports import Embedder
+from safemeal.application.ports import DocumentEmbedder
 from safemeal.shared.types import JsonObject
 
 
@@ -58,7 +58,7 @@ class SemanticChunkStrategy:
     def __init__(
         self,
         *,
-        embedder: Embedder,
+        embedder: DocumentEmbedder,
         recursive: RecursiveChunkStrategy,
         chunk_size: int,
         chunk_overlap: int,

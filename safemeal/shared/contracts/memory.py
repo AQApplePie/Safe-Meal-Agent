@@ -1,9 +1,9 @@
-"""Memory Service 跨服务契约。"""
+"""Stable user-memory data contracts shared across application boundaries."""
 
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Literal, Optional, Protocol, Sequence, TypeAlias
+from typing import Literal, Optional, TypeAlias
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -94,43 +94,3 @@ class UserMemoryRead(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
     last_used_at: Optional[datetime] = None
-
-
-class AgentMemoryProvider(Protocol):
-    """Agent Orchestrator 依赖的最小记忆能力。
-
-    本协议故意不暴露 Memory Service 的仓储、事务或完整 CRUD，只描述
-    Orchestrator 在一次对话中需要的两个能力。
-    """
-
-    def remember_from_message(
-        self,
-        *,
-        user_id: str,
-        message: str,
-        source_session_id: Optional[str] = None,
-        source_message_id: Optional[str] = None,
-    ) -> Sequence[UserMemoryRead | JsonObject]: ...
-
-    def load_agent_memories(
-        self,
-        *,
-        user_id: str,
-        limit: int = 50,
-    ) -> list[JsonObject]: ...
-
-    def remember_episode(
-        self,
-        *,
-        user_id: str,
-        session_id: str,
-        summary: str,
-        message_count: int,
-    ) -> UserMemoryRead | JsonObject: ...
-
-    def load_episodic_memories(
-        self,
-        *,
-        user_id: str,
-        limit: int = 10,
-    ) -> list[JsonObject]: ...

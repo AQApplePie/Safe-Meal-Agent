@@ -12,8 +12,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse, Response
 from loguru import logger
 
-from safemeal.bootstrap import AppContainer
-from safemeal.application.errors import (
+from safemeal.bootstrap import ApplicationContainer
+from safemeal.application.exceptions import (
     AgentExecutionError,
     ApplicationError,
     BusinessConstraintError,
@@ -33,7 +33,7 @@ from safemeal.config.settings import settings
 from safemeal.infrastructure.operations.logging import configure_logging
 from safemeal.infrastructure.operations.health import get_runtime_readiness
 from safemeal.shared.types import JsonObject
-from safemeal.interfaces.http.observability import (
+from safemeal.interfaces.http.request_middleware import (
     RequestObservabilityMiddleware,
     RedisTokenBucketMiddleware,
     RequestSizeLimitMiddleware,
@@ -74,7 +74,7 @@ def create_application() -> FastAPI:
         redoc_url="/redoc",
         lifespan=lifespan,
     )
-    application.state.container = AppContainer()
+    application.state.container = ApplicationContainer()
     application.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins_list,
@@ -144,7 +144,7 @@ def create_application() -> FastAPI:
             "enabled": {
                 "llm": settings.ENABLE_LLM,
                 "embeddings": settings.ENABLE_EMBEDDINGS,
-                "milvus": settings.ENABLE_MILVUS,
+                "retrieval": settings.ENABLE_MILVUS,
                 "neo4j": settings.ENABLE_NEO4J,
             },
             "issues": issues,

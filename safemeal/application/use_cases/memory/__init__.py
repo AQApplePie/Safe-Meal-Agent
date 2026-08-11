@@ -1,3 +1,3 @@
 """Memory application use cases."""
 
-__all__ = ["UserMemoryService"]
+__all__: list[str] = []

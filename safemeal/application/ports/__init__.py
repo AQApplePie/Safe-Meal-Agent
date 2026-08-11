@@ -1,35 +1,45 @@
-"""Application ports implemented by infrastructure adapters."""
+"""Application-facing capability boundaries and persistence contracts."""
 
-from .agent_processor import AgentProcessor
-from .chat_repository import (
+from safemeal.application.ports.persistence.chat_repository import (
     ChatMessageRepository,
     ChatSessionRepository,
     ChatUnitOfWork,
     ChatUnitOfWorkFactory,
 )
-from .knowledge import Embedder, RerankerPort, VectorStorePort
-from .recipe_repository import RecipeRepository
-from .recipe_generator import RecipeGenerator
-from .upload_storage import UploadStorage
-from .user_memory_repository import (
+from safemeal.application.ports.retrieval.document_embedder import DocumentEmbedder
+from safemeal.application.ports.retrieval.document_reranker import DocumentReranker
+from safemeal.application.ports.llm.language_model_gateway import LanguageModelGateway
+from safemeal.application.ports.ingestion.document_parser import (
+    DocumentParseError,
+    DocumentParser,
+    ParsedDocument,
+)
+from safemeal.application.ports.persistence.recipe_repository import RecipeRepository
+from safemeal.application.ports.ingestion.upload_storage import UploadStorage
+from safemeal.application.ports.tools.tool_executor import ToolExecutor
+from safemeal.application.ports.persistence.user_memory_repository import (
     UserMemoryRepository,
     UserMemoryUnitOfWork,
     UserMemoryUnitOfWorkFactory,
 )
+from safemeal.application.ports.retrieval.vector_document_repository import VectorDocumentRepository
 
 __all__ = [
-    "AgentProcessor",
     "ChatMessageRepository",
     "ChatSessionRepository",
     "ChatUnitOfWork",
     "ChatUnitOfWorkFactory",
-    "Embedder",
-    "RerankerPort",
+    "DocumentParseError",
+    "DocumentParser",
+    "DocumentEmbedder",
+    "DocumentReranker",
     "RecipeRepository",
-    "RecipeGenerator",
+    "LanguageModelGateway",
+    "ParsedDocument",
+    "ToolExecutor",
     "UploadStorage",
     "UserMemoryRepository",
     "UserMemoryUnitOfWork",
     "UserMemoryUnitOfWorkFactory",
-    "VectorStorePort",
+    "VectorDocumentRepository",
 ]

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import json
 from typing import Mapping
 
-from .models import AgentRunTrace, TokenUsage
+from .trace_models import AgentRunTrace, TokenUsage
 
 
 @dataclass(frozen=True)

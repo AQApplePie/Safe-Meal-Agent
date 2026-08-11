@@ -1,4 +1,4 @@
-"""HTTP models for user memory endpoints."""
+"""HTTP models for user memory routers."""
 
 from __future__ import annotations
 

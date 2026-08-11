@@ -115,8 +115,6 @@ class Settings(BaseSettings):
     MILVUS_HOST: str = "localhost"
     MILVUS_PORT: int = Field(default=19530, ge=1, le=65535)
     MILVUS_COLLECTION: str = "recipes_current"
-    MILVUS_LEGACY_COLLECTION: str = "recipes"
-    MILVUS_COLLECTION_TARGET: str = "recipes_v2"
     MILVUS_INDEX_TYPE: str = "IVF_FLAT"
     MILVUS_METRIC_TYPE: str = "IP"
     MILVUS_LOAD_TIMEOUT: float = Field(default=30.0, gt=0, le=300)

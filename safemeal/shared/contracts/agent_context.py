@@ -12,7 +12,7 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from safemeal.shared.contracts.common import ConversationHistory
+from safemeal.shared.contracts.agent_conversation import ConversationHistory
 from safemeal.shared.types import JsonObject
 
 

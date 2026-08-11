@@ -13,7 +13,10 @@ python -m safemeal.evaluation prepare
 python -m safemeal.evaluation run --limit 3 --no-judge
 
 # 完整评测（默认启用 LLM Judge）
+export DEEPSEEK_API_KEY="your-deepseek-api-key"
 python -m safemeal.evaluation run --output evaluation_results/latest.json
 ```
 
-完整评测会调用付费模型、Embedding 与 Rerank API。评测报告只描述本次结果，不再承担线上质量门禁、分片恢复或基线回归职责。
+完整评测使用独立的 `deepseek-v4-pro` Judge，并会调用候选模型、Embedding
+与 Rerank API。`--no-judge` 只关闭 Judge，Agent 候选模型仍会产生 API 调用。
+评测报告只描述本次结果，不再承担线上质量门禁、分片恢复或基线回归职责。

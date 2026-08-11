@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 from safemeal.shared.types import JsonObject
 
 
-class RecipeModel(BaseModel):
+class RecipeDocumentRequest(BaseModel):
     id: Optional[str] = Field(default=None, min_length=1, max_length=255)
     name: str = Field(min_length=1, max_length=500)
     category: Optional[str] = Field(default=None, max_length=128)
@@ -22,11 +22,11 @@ class RecipeModel(BaseModel):
     nutrition: Optional[JsonObject] = None
 
 
-class SearchRequest(BaseModel):
+class KnowledgeSearchRequest(BaseModel):
     query: str = Field(min_length=1, max_length=5_000)
     top_k: int = Field(default=5, ge=1, le=20)
 
 
-class SearchResponse(BaseModel):
+class KnowledgeSearchResponse(BaseModel):
     results: List[JsonObject]
     count: int

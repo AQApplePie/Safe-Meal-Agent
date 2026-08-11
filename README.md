@@ -32,7 +32,7 @@ python -m uvicorn safemeal.main:application --reload
 首次准备检索与图谱数据：
 
 ```bash
-python -m safemeal.evaluation prepare --target milvus
+python -m safemeal.evaluation prepare
 python -m safemeal.infrastructure.retrieval.neo4j.dietary_migration
 ```
 
@@ -45,15 +45,24 @@ PYTHONPATH=. python -m pytest -q
 python -m safemeal.evaluation run --output evaluation_results/latest.json
 ```
 
+完整评测的独立 Judge 使用 `deepseek-v4-pro`，需设置 `DEEPSEEK_API_KEY`；
+`--no-judge` 仅用于关闭 Judge 调用。
+
 外部服务测试默认跳过，按测试文件提示设置 `RUN_*_INTEGRATION=1` 后启用。评测默认使用 LLM Judge；仅调试时可加 `--no-judge`。付费 API 测试会消耗模型、Embedding 和 Rerank 配额。
 
 ## 目录
 
 ```text
-safemeal/application/       Agent、记忆、聊天、评测用例
-safemeal/domain/            食谱与饮食安全规则
-safemeal/infrastructure/    MySQL、Milvus、Neo4j、Redis、LLM 适配器
-safemeal/interfaces/http/   FastAPI 路由与中间件
+safemeal/modules/dietary_safety/  忌口提取、食材词表与食谱安全判定
+safemeal/modules/recipe_catalog/  菜谱领域模型、生成结果不变量与饮食过滤
+safemeal/modules/user_memory/     不含用户/会话身份的长期记忆候选抽取
+safemeal/application/contracts/   菜谱查询、生成请求及其他用例边界契约
+safemeal/application/agent/       单 Agent 图与按节点纵向组织的执行编排
+safemeal/application/ports/       数据库、模型、工具和记忆能力接口
+safemeal/application/use_cases/   聊天、菜谱、记忆和文档检索用例
+safemeal/bootstrap/               组合根，集中装配应用端口与基础设施实现
+safemeal/infrastructure/          MySQL、Milvus、Neo4j、Redis、LLM 适配器
+safemeal/interfaces/http/         FastAPI 端点、鉴权与请求中间件
 data/evaluation/            冻结评测集和评测配置
 tests/                      单元、接口、架构和显式集成测试
 ```

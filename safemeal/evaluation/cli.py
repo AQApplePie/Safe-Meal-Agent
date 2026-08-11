@@ -5,11 +5,18 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
-from pathlib import Path
 from typing import Sequence
 
-from safemeal.evaluation.dataset import audit_as_json, audit_dataset, load_dataset
-from safemeal.evaluation.models import EvaluationCase
+from safemeal.evaluation.evaluation_artifacts import (
+    audit_as_json,
+    audit_dataset,
+    load_corpus,
+    load_dataset,
+    load_profile,
+    prepare_corpus,
+    write_report,
+)
+from safemeal.evaluation.evaluation_contracts import EvaluationCase
 
 
 DEFAULT_DATASET = "data/evaluation/agent_eval_v3.jsonl"
@@ -59,17 +66,17 @@ def _select(
 
 
 async def _run(args: argparse.Namespace) -> int:
-    from safemeal.evaluation.profile import load_profile
-    from safemeal.evaluation.runner import EvaluationRunner, write_report
+    from safemeal.evaluation.evaluation_runner import EvaluationRunner
 
-    cases = _select(load_dataset(args.dataset), args)
+    cases, dataset_path = load_dataset(args.dataset)
+    cases = _select(cases, args)
     profile, profile_path = load_profile(args.profile)
     report = await EvaluationRunner(
         profile,
         enable_judge=not args.no_judge,
     ).run(
         cases,
-        dataset_path=Path(args.dataset).resolve(),
+        dataset_path=dataset_path,
         profile_path=profile_path,
     )
     output = write_report(report, args.output)
@@ -91,13 +98,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     if args.command == "audit":
         audit = audit_dataset(
-            load_dataset(args.dataset), enforce_scale=not args.allow_small
+            load_dataset(args.dataset)[0], enforce_scale=not args.allow_small
         )
         print(audit_as_json(audit))
         return 0 if audit.passed else 2
     if args.command == "prepare":
-        from safemeal.evaluation.corpus import load_corpus, prepare_corpus
-
         result = asyncio.run(prepare_corpus(load_corpus(args.corpus)))
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 0

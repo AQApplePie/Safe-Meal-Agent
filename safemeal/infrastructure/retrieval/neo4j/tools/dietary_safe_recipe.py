@@ -1,15 +1,15 @@
-"""Neo4j dietary safety Agent tool."""
+"""Neo4j dietary safety Agent tools."""
 
 import asyncio
 from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from safemeal.infrastructure.retrieval.neo4j.dietary_safety import (
-    DietarySafeRecipeQueryPayload,
-    DietarySafeRecipeQueryService,
+from safemeal.infrastructure.retrieval.neo4j.safe_recipe_search import (
+    DietarySafeRecipeQueryResult,
+    SafeRecipeGraphSearch,
 )
-from safemeal.infrastructure.tools.registry.runtime import ToolHandler
+from safemeal.infrastructure.tools.tool_executor import ToolHandler
 
 
 class DietarySafeRecipeQueryArgs(BaseModel):
@@ -48,16 +48,16 @@ class DietarySafeRecipeQueryTool(ToolHandler[DietarySafeRecipeQueryArgs]):
 
     def __init__(
         self,
-        query_service: DietarySafeRecipeQueryService | None = None,
+        graph_search: SafeRecipeGraphSearch | None = None,
     ) -> None:
-        self._query_service = query_service or DietarySafeRecipeQueryService()
+        self._graph_search = graph_search or SafeRecipeGraphSearch()
 
     async def run(
         self,
         arguments: DietarySafeRecipeQueryArgs,
-    ) -> DietarySafeRecipeQueryPayload:
+    ) -> DietarySafeRecipeQueryResult:
         return await asyncio.to_thread(
-            self._query_service.execute,
+            self._graph_search.search,
             excluded_ingredients=arguments.excluded_ingredients,
             target_dish=arguments.target_dish,
             recommend_limit=arguments.recommend_limit,

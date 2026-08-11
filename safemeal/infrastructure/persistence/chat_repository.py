@@ -17,7 +17,7 @@ from safemeal.application.contracts.chat import (
     ChatSessionCreate,
     ChatSessionUpdate,
 )
-from safemeal.application.ports.chat_repository import ChatUnitOfWork
+from safemeal.application.ports.persistence.chat_repository import ChatUnitOfWork
 from safemeal.infrastructure.persistence.database import session_scope
 from safemeal.infrastructure.persistence.db.models import (
     ChatMessage,

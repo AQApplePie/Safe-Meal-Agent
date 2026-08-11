@@ -7,9 +7,12 @@ from typing import List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from safemeal.shared.contracts.agent_context import AgentContext
-from safemeal.shared.contracts.common import AnswerSource, ConversationMessage
+from safemeal.shared.contracts.agent_conversation import (
+    AnswerSource,
+    ConversationMessage,
+)
 from safemeal.shared.types import JsonObject
-from safemeal.modules.recipe_catalog.generation import GeneratedRecipe
+from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
 
 
 class AgentProcessRequest(BaseModel):

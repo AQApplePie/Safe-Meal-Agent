@@ -67,7 +67,7 @@ async def _probe_milvus() -> JsonObject:
 
 async def _probe_neo4j() -> JsonObject:
     def check() -> None:
-        from safemeal.infrastructure.retrieval.neo4j.client import create_driver
+        from safemeal.infrastructure.retrieval.neo4j.recipe_graph import create_driver
 
         driver = create_driver()
         try:
@@ -122,7 +122,7 @@ async def get_integration_status(*, probe: bool = False) -> JsonObject:
     )
     statuses: dict[str, JsonObject] = {
         "llm": _result(configured=llm_configured, enabled=settings.ENABLE_LLM),
-        "milvus": _result(configured=True, enabled=settings.ENABLE_MILVUS),
+        "retrieval": _result(configured=True, enabled=settings.ENABLE_MILVUS),
         "neo4j": _result(
             configured=_configured(settings.NEO4J_URI),
             enabled=settings.ENABLE_NEO4J,
@@ -136,7 +136,7 @@ async def get_integration_status(*, probe: bool = False) -> JsonObject:
     if probe:
         probes = {
             "llm": (settings.ENABLE_LLM and llm_configured, _probe_llm),
-            "milvus": (settings.ENABLE_MILVUS, _probe_milvus),
+            "retrieval": (settings.ENABLE_MILVUS, _probe_milvus),
             "neo4j": (
                 settings.ENABLE_NEO4J and _configured(settings.NEO4J_URI),
                 _probe_neo4j,
@@ -160,7 +160,7 @@ async def get_runtime_readiness() -> JsonObject:
     }
     probes: list[tuple[str, Callable[[], Awaitable[JsonObject]]]] = []
     if settings.ENABLE_MILVUS:
-        probes.append(("milvus", _probe_milvus))
+        probes.append(("retrieval", _probe_milvus))
     if settings.ENABLE_NEO4J:
         probes.append(("neo4j", _probe_neo4j))
     if probes:

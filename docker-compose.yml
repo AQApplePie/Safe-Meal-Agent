@@ -27,7 +27,7 @@ services:
       ENABLE_LLM: "${ENABLE_LLM:-true}"
       ENABLE_EMBEDDINGS: "${ENABLE_EMBEDDINGS:-true}"
       ENABLE_MILVUS: "${ENABLE_MILVUS:-true}"
-      MILVUS_HOST: milvus
+      MILVUS_HOST: retrieval
       MILVUS_PORT: 19530
       MILVUS_COLLECTION: "${MILVUS_COLLECTION:-recipes_current}"
       ENABLE_NEO4J: "${ENABLE_NEO4J:-true}"
@@ -153,14 +153,14 @@ services:
 
   milvus:
     image: milvusdb/milvus:v2.4.23
-    command: ["milvus", "run", "standalone"]
+    command: ["retrieval", "run", "standalone"]
     environment:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
       MINIO_ACCESS_KEY_ID: "${MINIO_ROOT_USER:-safemealminio}"
       MINIO_SECRET_ACCESS_KEY: "${MINIO_ROOT_PASSWORD:-safemeal-local-minio}"
     volumes:
-      - milvus_data:/var/lib/milvus
+      - milvus_data:/var/lib/retrieval
     ports:
       - "${MILVUS_HOST_PORT:-19530}:19530"
       - "${MILVUS_HEALTH_HOST_PORT:-19091}:9091"

@@ -6,168 +6,117 @@
 
 from fastapi import Depends, Request
 
-from safemeal.application.use_cases.agent.graph_runner_service import (
-    AgentGraphRunnerService,
+from safemeal.application.agent.execution_service import (
+    AgentExecutionService,
 )
-from safemeal.application.ports import AgentProcessor
-from safemeal.application.use_cases.agent.internal_process_service import (
-    InternalAgentProcessService,
+from safemeal.application.agent.request_service import (
+    AgentRequestService,
 )
-from safemeal.application.use_cases.agent.context_builder import AgentContextBuilder
-from safemeal.application.use_cases.agent.conversation_memory import (
-    ConversationMemoryManager,
-    MemoryRelevanceSelector,
+from safemeal.application.agent.context.builder import AgentContextBuilder
+from safemeal.application.use_cases.chat.turn_persistence import (
+    ChatTurnPersistence,
 )
-from safemeal.application.use_cases.agent.context_registry import (
-    create_default_agent_context_providers,
+from safemeal.application.use_cases.chat.chat_session_service import (
+    ChatSessionService,
 )
-from safemeal.application.use_cases.chat.persistence_service import (
-    ChatPersistenceService,
+from safemeal.application.use_cases.chat.chat_turn_service import ChatTurnService
+from safemeal.application.use_cases.knowledge.document_knowledge_service import (
+    DocumentKnowledgeService,
 )
-from safemeal.application.use_cases.chat.session_management_service import (
-    SessionManagementService,
-)
-from safemeal.application.use_cases.chat.turn_service import ChatTurnService
-from safemeal.application.use_cases.knowledge.service import KnowledgeService
-from safemeal.application.use_cases.knowledge.recipe_service import (
-    RecipeKnowledgeService,
+from safemeal.application.use_cases.knowledge.recipe_indexing import (
+    RecipeDocumentIndexer,
 )
 from safemeal.application.use_cases.memory.user_memory_service import UserMemoryService
-from safemeal.application.use_cases.upload.service import UploadService
-from safemeal.bootstrap import AppContainer
-from safemeal.infrastructure.ingestion.documents import DocumentParserRegistry
-from safemeal.infrastructure.persistence.chat_repository import (
-    sqlalchemy_chat_unit_of_work,
+from safemeal.application.use_cases.upload.file_upload_service import FileUploadService
+from safemeal.application.use_cases.upload.uploaded_document_ingestion_service import (
+    UploadedDocumentIngestionService,
 )
-from safemeal.infrastructure.persistence.user_memory_repository import (
-    sqlalchemy_user_memory_unit_of_work,
-)
-from safemeal.config.settings import settings
-from safemeal.shared.contracts.memory import AgentMemoryProvider
+from safemeal.bootstrap import ApplicationContainer
 from safemeal.application.observability.store import AgentTraceStore
 
 
-def get_container(request: Request) -> AppContainer:
+def get_container(request: Request) -> ApplicationContainer:
     """Return the process container attached during application creation."""
 
     return request.app.state.container
 
 
 def get_agent_trace_store(
-    container: AppContainer = Depends(get_container),
+    container: ApplicationContainer = Depends(get_container),
 ) -> AgentTraceStore:
     return container.trace_store
 
 
-def get_agent_graph_runner_service(
-    container: AppContainer = Depends(get_container),
-) -> AgentGraphRunnerService:
-    return container.get_agent_graph_runner_service()
+def get_agent_execution_service(
+    container: ApplicationContainer = Depends(get_container),
+) -> AgentExecutionService:
+    return container.get_agent_execution_service()
 
 
-def get_agent_processor(
-    container: AppContainer = Depends(get_container),
-) -> AgentProcessor:
-    return container.get_agent_processor()
+def get_chat_turn_persistence(
+    container: ApplicationContainer = Depends(get_container),
+) -> ChatTurnPersistence:
+    return container.get_chat_turn_persistence()
 
 
-def get_chat_persistence() -> ChatPersistenceService:
-    return ChatPersistenceService(
-        uow_factory=sqlalchemy_chat_unit_of_work,
-        history_messages=settings.AGENT_HISTORY_SCAN_MESSAGES,
-    )
+def get_chat_session_service(
+    container: ApplicationContainer = Depends(get_container),
+) -> ChatSessionService:
+    return container.get_chat_session_service()
 
 
-def get_session_management() -> SessionManagementService:
-    return SessionManagementService(uow_factory=sqlalchemy_chat_unit_of_work)
-
-
-def get_agent_memory_provider() -> AgentMemoryProvider:
-    """返回 Agent 主链路使用的本地记忆能力。
-
-    Memory 是每轮对话的高频上下文能力，默认随主应用本地部署，不走 HTTP。
-    """
-
-    return UserMemoryService(uow_factory=sqlalchemy_user_memory_unit_of_work)
-
-
-def get_user_memory_service() -> UserMemoryService:
+def get_user_memory_service(
+    container: ApplicationContainer = Depends(get_container),
+) -> UserMemoryService:
     """返回本地用户长期记忆用例，供主 API 的 memories 路由使用。"""
 
-    return UserMemoryService(uow_factory=sqlalchemy_user_memory_unit_of_work)
+    return container.get_user_memory_service()
 
 
 def get_agent_context_builder(
-    memory_service: AgentMemoryProvider = Depends(get_agent_memory_provider),
+    container: ApplicationContainer = Depends(get_container),
 ) -> AgentContextBuilder:
-    return AgentContextBuilder(
-        providers=create_default_agent_context_providers(
-            memory_provider=memory_service,
-            memory_limit=settings.AGENT_MEMORY_RETRIEVAL_LIMIT,
-        ),
-        conversation_manager=ConversationMemoryManager(
-            token_budget=settings.AGENT_CONTEXT_TOKEN_BUDGET,
-            response_token_reserve=settings.AGENT_RESPONSE_TOKEN_RESERVE,
-        ),
-    )
+    return container.get_agent_context_builder()
 
 
 def get_chat_turn_service(
-    persistence: ChatPersistenceService = Depends(get_chat_persistence),
-    agent_service: AgentProcessor = Depends(get_agent_processor),
-    context_builder: AgentContextBuilder = Depends(get_agent_context_builder),
+    container: ApplicationContainer = Depends(get_container),
 ) -> ChatTurnService:
     """装配一轮 Chat 用例。
 
     HTTP Router 不再直接串联 Agent、Memory、Persistence，而是只依赖该用例服务。
     """
 
-    return ChatTurnService(
-        persistence=persistence,
-        agent_processor=agent_service,
-        context_builder=context_builder,
-    )
+    return container.get_chat_turn_service()
 
 
-def get_agent_process_service(
-    container: AppContainer = Depends(get_container),
-    agent_service: AgentProcessor = Depends(get_agent_processor),
-    memory_service: AgentMemoryProvider = Depends(get_agent_memory_provider),
-) -> InternalAgentProcessService:
+def get_agent_request_service(
+    container: ApplicationContainer = Depends(get_container),
+) -> AgentRequestService:
     """装配服务间 Agent 调用用例。"""
 
-    return InternalAgentProcessService(
-        agent_processor=agent_service,
-        memory_provider=memory_service,
-        conversation_manager=ConversationMemoryManager(
-            token_budget=settings.AGENT_CONTEXT_TOKEN_BUDGET,
-            response_token_reserve=settings.AGENT_RESPONSE_TOKEN_RESERVE,
-        ),
-        memory_selector=MemoryRelevanceSelector(
-            limit=settings.AGENT_MEMORY_RETRIEVAL_LIMIT
-        ),
-    )
+    return container.get_agent_request_service()
 
 
-async def get_knowledge_service(
-    container: AppContainer = Depends(get_container),
-) -> KnowledgeService:
-    return await container.get_knowledge_service()
+async def get_document_knowledge_service(
+    container: ApplicationContainer = Depends(get_container),
+) -> DocumentKnowledgeService:
+    return await container.get_document_knowledge_service()
 
 
-async def get_recipe_knowledge_service(
-    knowledge_service: KnowledgeService = Depends(get_knowledge_service),
-) -> RecipeKnowledgeService:
-    return RecipeKnowledgeService(knowledge_service)
+async def get_recipe_document_indexer(
+    container: ApplicationContainer = Depends(get_container),
+) -> RecipeDocumentIndexer:
+    return await container.get_recipe_document_indexer()
 
 
-def get_upload_service(
-    container: AppContainer = Depends(get_container),
-) -> UploadService:
-    return container.upload_service
+def get_file_upload_service(
+    container: ApplicationContainer = Depends(get_container),
+) -> FileUploadService:
+    return container.file_upload_service
 
 
-def get_document_parser_registry(
-    container: AppContainer = Depends(get_container),
-) -> DocumentParserRegistry:
-    return container.document_parsers
+async def get_uploaded_document_ingestion_service(
+    container: ApplicationContainer = Depends(get_container),
+) -> UploadedDocumentIngestionService:
+    return await container.get_uploaded_document_ingestion_service()

@@ -1,4 +1,4 @@
-"""Neo4j Agent tool adapters."""
+"""Neo4j Agent tools adapters."""
 
 from .dietary_safe_recipe import DietarySafeRecipeQueryTool
 

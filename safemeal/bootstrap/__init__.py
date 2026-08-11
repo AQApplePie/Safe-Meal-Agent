@@ -1,5 +1,5 @@
 """Application composition root."""
 
-from .container import AppContainer
+from .application_container import ApplicationContainer
 
-__all__ = ["AppContainer"]
+__all__ = ["ApplicationContainer"]

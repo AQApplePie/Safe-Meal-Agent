@@ -5,8 +5,8 @@ from typing import Iterable, List, Optional
 
 from loguru import logger
 
-from safemeal.modules.dietary_safety.domain import normalise_ingredient_name
-from safemeal.infrastructure.retrieval.neo4j.client import Neo4jDatabase
+from safemeal.modules.dietary_safety.recipe_safety import normalize_ingredient_name
+from safemeal.infrastructure.retrieval.neo4j.recipe_graph import RecipeGraphDatabase
 from .recipe_json_parser import (
     IngredientProfile,
     RecipeRecord,
@@ -39,7 +39,7 @@ FOREACH (item IN dish.aux_ingredients |
 class RecipeGraphImporter:
     """Load recipes and ingredient metadata from JSON files into Neo4j."""
 
-    def __init__(self, database: Neo4jDatabase, batch_size: int = 200) -> None:
+    def __init__(self, database: RecipeGraphDatabase, batch_size: int = 200) -> None:
         self._database = database
         self._batch_size = max(50, batch_size)
 
@@ -134,12 +134,12 @@ class RecipeGraphImporter:
         return [
             {
                 "name": item.name,
-                "normalized_name": normalise_ingredient_name(item.name),
+                "normalized_name": normalize_ingredient_name(item.name),
                 "amount": item.amount,
                 "role": item.role,
             }
             for item in items
-            if normalise_ingredient_name(item.name)
+            if normalize_ingredient_name(item.name)
         ]
 
     def dietary_safety_report(self, *, expected_dishes: int) -> JsonObject:
@@ -238,7 +238,7 @@ class RecipeGraphImporter:
                 "dish_types": record.dish_types,
                 "ingredient_count": len(
                     {
-                        (item.role, normalise_ingredient_name(item.name))
+                        (item.role, normalize_ingredient_name(item.name))
                         for item in record.main_ingredients + record.aux_ingredients
                     }
                 ),
@@ -298,7 +298,7 @@ class RecipeGraphImporter:
                 "main_ingredients": [
                     {
                         "name": item.name,
-                        "normalized_name": normalise_ingredient_name(item.name),
+                        "normalized_name": normalize_ingredient_name(item.name),
                         "amount": item.amount,
                         "role": item.role,
                     }
@@ -307,7 +307,7 @@ class RecipeGraphImporter:
                 "aux_ingredients": [
                     {
                         "name": item.name,
-                        "normalized_name": normalise_ingredient_name(item.name),
+                        "normalized_name": normalize_ingredient_name(item.name),
                         "amount": item.amount,
                         "role": item.role,
                     }
@@ -342,7 +342,7 @@ class RecipeGraphImporter:
         serialised = [
             {
                 "name": profile.name,
-                "normalized_name": normalise_ingredient_name(profile.name),
+                "normalized_name": normalize_ingredient_name(profile.name),
                 "nutrition": profile.nutrition,
                 "benefits": profile.benefits,
             }

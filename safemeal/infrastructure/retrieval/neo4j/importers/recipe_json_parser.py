@@ -48,7 +48,7 @@ class IngredientProfile:
 def load_recipe_records(recipe_json: Path) -> Tuple[List[RecipeRecord], Set[str]]:
     """从 JSON 映射中加载结构化的菜谱记录。"""
     payload = _load_json(recipe_json)
-    return _normalise_recipes(payload)
+    return _normalize_recipes(payload)
 
 
 def load_ingredient_profiles(
@@ -86,7 +86,7 @@ def _load_json(path: Path) -> JsonObject:
     return to_json_object(payload)
 
 
-def _normalise_recipes(
+def _normalize_recipes(
     recipes_raw: JsonObject,
 ) -> Tuple[List[RecipeRecord], Set[str]]:
     records: List[RecipeRecord] = []
@@ -103,17 +103,17 @@ def _normalise_recipes(
         dish_types = _split_multi(payload.get("类型"))
         instructions = _clean_text(payload.get("做法"))
 
-        main_ingredients = _normalise_ingredients(
+        main_ingredients = _normalize_ingredients(
             payload.get("主食材"),
             role="main",
             seen=ingredients_seen,
         )
-        aux_ingredients = _normalise_ingredients(
+        aux_ingredients = _normalize_ingredients(
             payload.get("辅料"),
             role="aux",
             seen=ingredients_seen,
         )
-        steps = _normalise_steps(instructions)
+        steps = _normalize_steps(instructions)
         ingredient_data_complete = isinstance(
             payload.get("主食材"), list
         ) and isinstance(payload.get("辅料"), list)
@@ -157,7 +157,7 @@ def _split_multi(value: object) -> List[str]:
     return [part.strip() for part in parts if part.strip()]
 
 
-def _normalise_ingredients(
+def _normalize_ingredients(
     value: object,
     *,
     role: str,
@@ -186,13 +186,13 @@ def _normalise_ingredients(
     return result
 
 
-def _normalise_steps(instructions: Optional[str]) -> List[StepRecord]:
+def _normalize_steps(instructions: Optional[str]) -> List[StepRecord]:
     if not instructions:
         return []
 
-    normalised = instructions.replace("：", ":")
+    normalized = instructions.replace("：", ":")
     pattern = re.compile(r"(?P<order>\d+):\s*(?P<text>.*?)(?=(?:\d+:)|$)", re.S)
-    matches = list(pattern.finditer(normalised))
+    matches = list(pattern.finditer(normalized))
 
     steps: List[StepRecord] = []
     if matches:
@@ -202,7 +202,7 @@ def _normalise_steps(instructions: Optional[str]) -> List[StepRecord]:
             if text:
                 steps.append(StepRecord(order=order, instruction=text))
     else:
-        fragments = re.split(r"[。.!？！\n]+", normalised)
+        fragments = re.split(r"[。.!？！\n]+", normalized)
         filtered = [fragment.strip() for fragment in fragments if fragment.strip()]
         for index, fragment in enumerate(filtered, start=1):
             steps.append(StepRecord(order=index, instruction=fragment))

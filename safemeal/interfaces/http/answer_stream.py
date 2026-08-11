@@ -1,4 +1,4 @@
-"""Shared SSE transport for internal Agent and public Chat endpoints."""
+"""Shared SSE transport for internal Agent and public Chat routers."""
 
 from __future__ import annotations
 

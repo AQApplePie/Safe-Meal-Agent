@@ -10,11 +10,25 @@ from .chat import (
     ChatSessionCreate,
     ChatSessionUpdate,
 )
+from .agent import AgentProcessRequest, AgentProcessResponse
+from .agent_decisions import Observation, PlanDecision, ReflectionDecision, ToolCall
+from .recipe_catalog import RecipeQuery, RecipeSearchResult, RecipeSortField
+from .recipe_generation import RecipeGenerationRequest
 
 __all__ = [
+    "AgentProcessRequest",
+    "AgentProcessResponse",
     "ChatMessageCreate",
     "ChatMessageType",
     "ChatMessageUpdate",
     "ChatSessionCreate",
     "ChatSessionUpdate",
+    "Observation",
+    "PlanDecision",
+    "ReflectionDecision",
+    "RecipeGenerationRequest",
+    "RecipeQuery",
+    "RecipeSearchResult",
+    "RecipeSortField",
+    "ToolCall",
 ]

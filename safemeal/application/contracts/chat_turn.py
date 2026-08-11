@@ -7,9 +7,9 @@ from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from safemeal.shared.contracts.common import AnswerSource
+from safemeal.shared.contracts.agent_conversation import AnswerSource
 from safemeal.shared.types import JsonObject
-from safemeal.modules.recipe_catalog.generation import GeneratedRecipe
+from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
 
 
 class ChatRequest(BaseModel):

@@ -11,7 +11,11 @@ from .chat_session import (
     ChatSessionResponse,
     ChatSessionUpdateRequest,
 )
-from .knowledge import RecipeModel, SearchRequest, SearchResponse
+from .knowledge import (
+    KnowledgeSearchRequest,
+    KnowledgeSearchResponse,
+    RecipeDocumentRequest,
+)
 from .memory import (
     UserMemoryCreateRequest,
     UserMemoryRememberRequest,
@@ -25,9 +29,9 @@ __all__ = [
     "ChatSessionCreateRequest",
     "ChatSessionResponse",
     "ChatSessionUpdateRequest",
-    "RecipeModel",
-    "SearchRequest",
-    "SearchResponse",
+    "KnowledgeSearchRequest",
+    "KnowledgeSearchResponse",
+    "RecipeDocumentRequest",
     "UserMemoryCreateRequest",
     "UserMemoryRememberRequest",
     "UserMemoryResponse",

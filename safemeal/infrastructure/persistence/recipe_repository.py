@@ -25,19 +25,21 @@ from pydantic import ValidationError
 from sqlalchemy.engine import Connection, Engine, RowMapping
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
 
-from safemeal.modules.recipe_catalog.models import (
+from safemeal.application.contracts.recipe_catalog import (
+    RecipeQuery,
+    RecipeSearchResult,
+    RecipeSortField,
+)
+from safemeal.modules.recipe_catalog.recipe_models import (
     CookingStep,
     Ingredient,
     IngredientQuantity,
     NutritionInfo,
     Recipe,
     RecipeDifficulty,
-    RecipeQuery,
-    RecipeSearchResult,
-    RecipeSortField,
     normalize_quantity,
 )
-from safemeal.application.errors import (
+from safemeal.application.exceptions import (
     DatabaseOperationError,
     DatabaseUnavailableError,
     StoredDataIntegrityError,

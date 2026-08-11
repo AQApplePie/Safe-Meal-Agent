@@ -1,5 +1,6 @@
 """User-memory domain rules."""
 
-from .application import MemoryExtractor
+from .memory_extraction import UserMemoryExtractor
+from .memory_models import MemoryCandidate, MemoryExtractionResult
 
-__all__ = ["MemoryExtractor"]
+__all__ = ["MemoryCandidate", "MemoryExtractionResult", "UserMemoryExtractor"]

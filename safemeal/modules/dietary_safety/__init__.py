@@ -1,15 +1,12 @@
 """Dietary-safety module public API."""
 
-from .domain import (
+from .recipe_safety import (
     Allergen,
     DietaryRestriction,
     Evidence,
     EvidenceBundle,
-    EvidenceConflictPolicy,
-    EvidenceSufficiencyPolicy,
-    FailClosedPolicy,
     Ingredient,
-    RecipeEligibilityPolicy,
+    RecipeSafetyEvaluator,
     RecipeSafetyInput,
     SafetyDecision,
     SafetyRisk,
@@ -22,11 +19,8 @@ __all__ = [
     "DietaryRestriction",
     "Evidence",
     "EvidenceBundle",
-    "EvidenceConflictPolicy",
-    "EvidenceSufficiencyPolicy",
-    "FailClosedPolicy",
     "Ingredient",
-    "RecipeEligibilityPolicy",
+    "RecipeSafetyEvaluator",
     "RecipeSafetyInput",
     "SafetyDecision",
     "SafetyRisk",

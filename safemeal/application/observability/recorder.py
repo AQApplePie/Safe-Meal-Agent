@@ -5,12 +5,12 @@ from __future__ import annotations
 from contextlib import contextmanager
 from contextvars import ContextVar
 from time import perf_counter
-from typing import Iterator, Literal, Optional
+from typing import Iterator, Literal, Mapping, Optional
 from datetime import datetime
 
 from loguru import logger
 
-from .models import (
+from .trace_models import (
     AgentRunTrace,
     ModelCallTrace,
     SpanTrace,
@@ -20,14 +20,21 @@ from .models import (
 )
 from .payload import safe_trace_payload
 from safemeal.shared.types import JsonObject, to_json_object
-from safemeal.config.settings import settings
-from .cost import estimate_trace_cost, parse_model_pricing
+from .cost import CostUsage, ModelPrice, estimate_trace_cost
 
 
 class AgentTraceRecorder:
     """对一个 AgentRunTrace 进行追加和收尾。"""
 
-    def __init__(self, question: str, session_id: str, **metadata: object) -> None:
+    def __init__(
+        self,
+        question: str,
+        session_id: str,
+        *,
+        model_pricing: Mapping[str, ModelPrice] | None = None,
+        cost_currency: str = "CNY",
+        **metadata: object,
+    ) -> None:
         """创建请求级 Recorder。
 
         Args:
@@ -41,7 +48,18 @@ class AgentTraceRecorder:
             session_id=session_id,
             metadata=safe_trace_payload(metadata),
         )
+        self._model_pricing = dict(model_pricing or {})
+        self._cost_currency = cost_currency
         self._started_perf = perf_counter()
+
+    def cost_usage(self) -> CostUsage:
+        """Estimate the current run cost with composition-root configuration."""
+
+        return estimate_trace_cost(
+            self.trace,
+            self._model_pricing,
+            currency=self._cost_currency,
+        )
 
     def finish(
         self,
@@ -361,7 +379,12 @@ def record_model_call(
     )
 
 
-def trace_json(trace: AgentRunTrace) -> JsonObject:
+def trace_json(
+    trace: AgentRunTrace,
+    *,
+    model_pricing: Mapping[str, ModelPrice] | None = None,
+    cost_currency: str = "CNY",
+) -> JsonObject:
     """把 Trace 转换为报告可保存的 JSON 字典。
 
     Args:
@@ -375,8 +398,8 @@ def trace_json(trace: AgentRunTrace) -> JsonObject:
     )
     cost = estimate_trace_cost(
         trace,
-        parse_model_pricing(settings.MODEL_PRICING_JSON),
-        currency=settings.MODEL_COST_CURRENCY,
+        model_pricing or {},
+        currency=cost_currency,
     )
     payload["cost_usage"] = {
         "currency": cost.currency,

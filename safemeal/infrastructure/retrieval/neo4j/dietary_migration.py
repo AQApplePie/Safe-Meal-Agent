@@ -8,14 +8,14 @@ from pathlib import Path
 from typing import Sequence
 
 from safemeal.config.settings import settings
-from safemeal.infrastructure.retrieval.neo4j.client import Neo4jDatabase
+from safemeal.infrastructure.retrieval.neo4j.recipe_graph import RecipeGraphDatabase
 from safemeal.infrastructure.retrieval.neo4j.importers.recipe_importer import (
     RecipeGraphImporter,
 )
 
 
 def run(*, source: Path, output: Path) -> dict:
-    database = Neo4jDatabase(
+    database = RecipeGraphDatabase(
         settings.NEO4J_URI,
         settings.NEO4J_USER,
         settings.NEO4J_PASSWORD,

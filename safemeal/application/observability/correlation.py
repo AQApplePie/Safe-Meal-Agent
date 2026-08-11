@@ -1,4 +1,4 @@
-"""Request correlation propagated across HTTP, Agent, model and tool tasks."""
+"""Request correlation propagated across HTTP, Agent, model and tools tasks."""
 
 from contextlib import contextmanager
 from contextvars import ContextVar

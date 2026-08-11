@@ -15,7 +15,9 @@ from safemeal.shared.contracts.memory import (
     UserMemoryCreate,
     UserMemoryUpdate,
 )
-from safemeal.application.ports.user_memory_repository import UserMemoryUnitOfWork
+from safemeal.application.ports.persistence.user_memory_repository import (
+    UserMemoryUnitOfWork,
+)
 from safemeal.infrastructure.persistence.database import session_scope
 from safemeal.infrastructure.persistence.db.models import UserMemory
 

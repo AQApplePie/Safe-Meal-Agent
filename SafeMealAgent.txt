@@ -1,0 +1,279 @@
+SafeMealAgent/
+├── data/
+│   ├── evaluation/
+│   │   ├── profiles/
+│   │   │   └── current_default.json
+│   │   ├── agent_eval_v3.jsonl
+│   │   └── retrieval_corpus.jsonl
+│   ├── mysql/
+│   │   ├── init_mysql.sql
+│   │   └── insert_sample_data.sql
+│   ├── neo4j/
+│   │   └── excipients.json
+│   └── recipe.json
+├── docs/
+│   └── architecture-cn.md
+├── safemeal/
+│   ├── application/
+│   │   ├── agent/
+│   │   │   ├── context/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── builder.py
+│   │   │   │   └── conversation_context.py
+│   │   │   ├── nodes/
+│   │   │   │   ├── executor/
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   └── node.py
+│   │   │   │   ├── initializer/
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   ├── node.py
+│   │   │   │   │   └── observations.py
+│   │   │   │   ├── observer/
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   ├── dietary_safety.py
+│   │   │   │   │   ├── fusion.py
+│   │   │   │   │   └── node.py
+│   │   │   │   ├── planner/
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   ├── constraints.py
+│   │   │   │   │   ├── node.py
+│   │   │   │   │   └── recipe_generation_routing.py
+│   │   │   │   ├── reflector/
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   ├── assessment.py
+│   │   │   │   │   └── node.py
+│   │   │   │   ├── responder/
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   ├── attribution.py
+│   │   │   │   │   ├── composition.py
+│   │   │   │   │   └── node.py
+│   │   │   │   └── __init__.py
+│   │   │   ├── utils/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── loop_control.py
+│   │   │   │   ├── prompts.py
+│   │   │   │   ├── retrieval_routing.py
+│   │   │   │   └── state.py
+│   │   │   ├── __init__.py
+│   │   │   ├── execution_service.py
+│   │   │   ├── graph.py
+│   │   │   └── request_service.py
+│   │   ├── contracts/
+│   │   │   ├── __init__.py
+│   │   │   ├── agent.py
+│   │   │   ├── agent_decisions.py
+│   │   │   ├── chat.py
+│   │   │   ├── chat_turn.py
+│   │   │   ├── recipe_catalog.py
+│   │   │   └── recipe_generation.py
+│   │   ├── observability/
+│   │   │   ├── __init__.py
+│   │   │   ├── correlation.py
+│   │   │   ├── cost.py
+│   │   │   ├── payload.py
+│   │   │   ├── recorder.py
+│   │   │   ├── store.py
+│   │   │   ├── streaming.py
+│   │   │   └── trace_models.py
+│   │   ├── ports/
+│   │   │   ├── ingestion/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── document_parser.py
+│   │   │   │   └── upload_storage.py
+│   │   │   ├── llm/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── language_model_gateway.py
+│   │   │   ├── persistence/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── chat_repository.py
+│   │   │   │   ├── recipe_repository.py
+│   │   │   │   └── user_memory_repository.py
+│   │   │   ├── retrieval/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── document_embedder.py
+│   │   │   │   ├── document_reranker.py
+│   │   │   │   └── vector_document_repository.py
+│   │   │   ├── tools/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── tool_executor.py
+│   │   │   └── __init__.py
+│   │   ├── use_cases/
+│   │   │   ├── chat/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── chat_exceptions.py
+│   │   │   │   ├── chat_session_service.py
+│   │   │   │   ├── chat_turn_service.py
+│   │   │   │   └── turn_persistence.py
+│   │   │   ├── knowledge/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── chunking.py
+│   │   │   │   ├── document_knowledge_service.py
+│   │   │   │   ├── recipe_document_formatter.py
+│   │   │   │   └── recipe_indexing.py
+│   │   │   ├── memory/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── user_memory_service.py
+│   │   │   ├── recipes/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── recipe_catalog.py
+│   │   │   │   └── recipe_generation.py
+│   │   │   ├── upload/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── file_upload_service.py
+│   │   │   │   └── uploaded_document_ingestion_service.py
+│   │   │   └── __init__.py
+│   │   ├── __init__.py
+│   │   └── exceptions.py
+│   ├── bootstrap/
+│   │   ├── __init__.py
+│   │   └── application_container.py
+│   ├── config/
+│   │   ├── __init__.py
+│   │   └── settings.py
+│   ├── evaluation/
+│   │   ├── __init__.py
+│   │   ├── __main__.py
+│   │   ├── cli.py
+│   │   ├── evaluation_artifacts.py
+│   │   ├── evaluation_contracts.py
+│   │   ├── evaluation_runner.py
+│   │   ├── llm_judge.py
+│   │   ├── README.md
+│   │   └── scoring.py
+│   ├── infrastructure/
+│   │   ├── ingestion/
+│   │   │   ├── __init__.py
+│   │   │   ├── document_parser.py
+│   │   │   └── local_upload_storage.py
+│   │   ├── llm/
+│   │   │   ├── __init__.py
+│   │   │   ├── openai_language_model_gateway.py
+│   │   │   └── provider_router.py
+│   │   ├── operations/
+│   │   │   ├── __init__.py
+│   │   │   ├── health.py
+│   │   │   ├── logging.py
+│   │   │   ├── rate_limit.py
+│   │   │   └── trace_store.py
+│   │   ├── persistence/
+│   │   │   ├── db/
+│   │   │   │   ├── models/
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   ├── chat_message.py
+│   │   │   │   │   ├── chat_session.py
+│   │   │   │   │   └── user_memory.py
+│   │   │   │   └── __init__.py
+│   │   │   ├── migrations/
+│   │   │   │   ├── versions/
+│   │   │   │   │   ├── 20260705_0001_initial_application_schema.py
+│   │   │   │   │   ├── 20260710_0002_harden_chat_turns.py
+│   │   │   │   │   ├── 20260713_0003_remove_chat_snapshots.py
+│   │   │   │   │   ├── 20260716_0004_legacy_revision_marker.py
+│   │   │   │   │   └── 20260802_0005_remove_legacy_feedback_table.py
+│   │   │   │   ├── env.py
+│   │   │   │   ├── README
+│   │   │   │   └── script.py.mako
+│   │   │   ├── __init__.py
+│   │   │   ├── chat_repository.py
+│   │   │   ├── database.py
+│   │   │   ├── recipe_repository.py
+│   │   │   └── user_memory_repository.py
+│   │   ├── retrieval/
+│   │   │   ├── milvus/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── document_embedder.py
+│   │   │   │   ├── document_knowledge_factory.py
+│   │   │   │   ├── document_reranker.py
+│   │   │   │   ├── vector_document_repository.py
+│   │   │   │   └── vector_search_tool.py
+│   │   │   ├── neo4j/
+│   │   │   │   ├── importers/
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   ├── recipe_importer.py
+│   │   │   │   │   └── recipe_json_parser.py
+│   │   │   │   ├── tools/
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   └── dietary_safe_recipe.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── dietary_migration.py
+│   │   │   │   ├── recipe_graph.py
+│   │   │   │   └── safe_recipe_search.py
+│   │   │   └── __init__.py
+│   │   ├── tools/
+│   │   │   ├── __init__.py
+│   │   │   ├── recipe_tools.py
+│   │   │   ├── tool_executor.py
+│   │   │   └── tool_executor_factory.py
+│   │   └── __init__.py
+│   ├── interfaces/
+│   │   ├── http/
+│   │   │   ├── models/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── chat_message.py
+│   │   │   │   ├── chat_session.py
+│   │   │   │   ├── knowledge.py
+│   │   │   │   ├── memory.py
+│   │   │   │   └── upload.py
+│   │   │   ├── routers/
+│   │   │   │   ├── agent.py
+│   │   │   │   ├── agent_traces.py
+│   │   │   │   ├── chat.py
+│   │   │   │   ├── integrations.py
+│   │   │   │   ├── knowledge.py
+│   │   │   │   ├── memories.py
+│   │   │   │   ├── sessions.py
+│   │   │   │   └── upload.py
+│   │   │   ├── __init__.py
+│   │   │   ├── answer_stream.py
+│   │   │   ├── authentication.py
+│   │   │   ├── dependencies.py
+│   │   │   └── request_middleware.py
+│   │   └── __init__.py
+│   ├── modules/
+│   │   ├── dietary_safety/
+│   │   │   ├── __init__.py
+│   │   │   ├── dietary_constraints.py
+│   │   │   ├── ingredient_terms.py
+│   │   │   └── recipe_safety.py
+│   │   ├── recipe_catalog/
+│   │   │   ├── __init__.py
+│   │   │   ├── dietary_filter.py
+│   │   │   ├── generated_recipe.py
+│   │   │   └── recipe_models.py
+│   │   ├── user_memory/
+│   │   │   ├── __init__.py
+│   │   │   ├── memory_extraction.py
+│   │   │   └── memory_models.py
+│   │   └── __init__.py
+│   ├── shared/
+│   │   ├── contracts/
+│   │   │   ├── __init__.py
+│   │   │   ├── agent_context.py
+│   │   │   ├── agent_conversation.py
+│   │   │   ├── memory.py
+│   │   │   └── tools.py
+│   │   ├── __init__.py
+│   │   └── types.py
+│   ├── __init__.py
+│   ├── main.py
+│   └── print_project_tree.py
+├── uploads/
+├── web/
+│   ├── src/
+│   │   ├── api.js
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── styles.css
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   └── vite.config.js
+├── alembic.ini
+├── docker-compose.yml
+├── Dockerfile
+├── environment.yml
+├── Makefile
+├── print_project_tree.py
+├── pyproject.toml
+├── README.md
+└── requirements.txt

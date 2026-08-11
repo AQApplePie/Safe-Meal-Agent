@@ -33,7 +33,7 @@ from safemeal.config.settings import settings
 from safemeal.infrastructure.operations.logging import configure_logging
 from safemeal.infrastructure.operations.health import get_runtime_readiness
 from safemeal.shared.types import JsonObject
-from safemeal.interfaces.http.request_middleware import (
+from safemeal.interfaces.http import (
     RequestObservabilityMiddleware,
     RedisTokenBucketMiddleware,
     RequestSizeLimitMiddleware,
@@ -47,7 +47,7 @@ def _include_routers(application: FastAPI) -> None:
     就是完整后端入口：知识库、Agent 与 Memory 都在同一应用内暴露。
     """
 
-    from safemeal.interfaces.http.v1 import api_router
+    from safemeal.interfaces import api_router
 
     application.include_router(api_router, prefix=settings.API_V1_PREFIX)
 

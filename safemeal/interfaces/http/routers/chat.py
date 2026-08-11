@@ -24,13 +24,13 @@ from safemeal.application.use_cases.chat.chat_session_service import (
     ChatSessionService,
 )
 from safemeal.application.use_cases.chat.chat_turn_service import ChatTurnService
-from safemeal.interfaces.http.dependencies import (
+from safemeal.interfaces import (
     get_chat_session_service,
     get_chat_turn_service,
 )
-from safemeal.interfaces.http.models.chat_message import ChatMessageResponse
-from safemeal.interfaces.http.answer_stream import stream_answer_events
-from safemeal.interfaces.http.authentication import (
+from safemeal.interfaces import ChatMessageResponse
+from safemeal.interfaces import stream_answer_events
+from safemeal.interfaces import (
     Principal,
     authorize_user_id,
     get_current_principal,

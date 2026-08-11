@@ -8,7 +8,7 @@ from typing import Literal
 from fastapi import APIRouter, Depends, Query
 
 from safemeal.application.observability.store import AgentTraceStore
-from safemeal.interfaces.http.dependencies import get_agent_trace_store
+from safemeal.interfaces import get_agent_trace_store
 from safemeal.shared.types import JsonObject
 
 

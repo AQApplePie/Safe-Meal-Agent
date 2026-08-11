@@ -14,7 +14,7 @@ from safemeal.application.use_cases.upload.file_upload_service import (
     UploadSizeLimitError,
     InvalidUploadError,
 )
-from safemeal.interfaces.http.dependencies import (
+from safemeal.interfaces import (
     get_file_upload_service,
     get_uploaded_document_ingestion_service,
 )
@@ -23,7 +23,7 @@ from safemeal.application.ports import DocumentParseError
 from safemeal.application.use_cases.upload.uploaded_document_ingestion_service import (
     UploadedDocumentIngestionService,
 )
-from safemeal.interfaces.http.models.upload import UploadResponse
+from safemeal.interfaces import UploadResponse
 from safemeal.shared.types import JsonObject
 
 router = APIRouter()

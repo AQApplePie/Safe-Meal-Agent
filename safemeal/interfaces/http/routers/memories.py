@@ -12,14 +12,14 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from starlette.concurrency import run_in_threadpool
 
 from safemeal.application.use_cases.memory.user_memory_service import UserMemoryService
-from safemeal.interfaces.http.dependencies import get_user_memory_service
-from safemeal.interfaces.http.models.memory import (
+from safemeal.interfaces import get_user_memory_service
+from safemeal.interfaces import (
     UserMemoryCreateRequest,
     UserMemoryRememberRequest,
     UserMemoryResponse,
     UserMemoryUpdateRequest,
 )
-from safemeal.interfaces.http.authentication import (
+from safemeal.interfaces import (
     Principal,
     authorize_user_id,
     get_current_principal,

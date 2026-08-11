@@ -12,11 +12,11 @@ from safemeal.application.use_cases.knowledge.document_knowledge_service import 
 from safemeal.application.use_cases.knowledge.recipe_indexing import (
     RecipeDocumentIndexer,
 )
-from safemeal.interfaces.http.dependencies import (
+from safemeal.interfaces import (
     get_document_knowledge_service,
     get_recipe_document_indexer,
 )
-from safemeal.interfaces.http.models.knowledge import (
+from safemeal.interfaces import (
     KnowledgeSearchRequest,
     KnowledgeSearchResponse,
     RecipeDocumentRequest,

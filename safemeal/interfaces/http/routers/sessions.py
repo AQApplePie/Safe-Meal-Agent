@@ -11,13 +11,13 @@ from safemeal.application.contracts.chat import ChatSessionCreate, ChatSessionUp
 from safemeal.application.use_cases.chat.chat_session_service import (
     ChatSessionService,
 )
-from safemeal.interfaces.http.dependencies import get_chat_session_service
-from safemeal.interfaces.http.models.chat_session import (
+from safemeal.interfaces import get_chat_session_service
+from safemeal.interfaces import (
     ChatSessionCreateRequest,
     ChatSessionResponse,
     ChatSessionUpdateRequest,
 )
-from safemeal.interfaces.http.authentication import (
+from safemeal.interfaces import (
     Principal,
     authorize_user_id,
     get_current_principal,

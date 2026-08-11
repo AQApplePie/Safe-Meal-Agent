@@ -10,7 +10,7 @@ from fastapi.responses import StreamingResponse
 from safemeal.application.agent.request_service import (
     AgentRequestService,
 )
-from safemeal.interfaces.http.dependencies import (
+from safemeal.interfaces import (
     get_agent_request_service,
 )
 from safemeal.application.contracts.agent import (
@@ -18,7 +18,7 @@ from safemeal.application.contracts.agent import (
     AgentProcessResponse,
 )
 from safemeal.config.settings import settings
-from safemeal.interfaces.http.answer_stream import stream_answer_events
+from safemeal.interfaces import stream_answer_events
 from safemeal.shared.types import JsonObject
 
 router = APIRouter()

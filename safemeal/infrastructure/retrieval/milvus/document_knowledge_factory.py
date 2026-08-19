@@ -22,6 +22,7 @@ def create_document_knowledge_service() -> DocumentKnowledgeService:
     from .document_embedder import OpenAICompatibleDocumentEmbedder
     from .document_reranker import HttpDocumentReranker
     from .vector_document_repository import MilvusVectorDocumentRepository
+    from safemeal.infrastructure.retrieval.sqlite_bm25 import SqliteBm25Repository
 
     embedder = OpenAICompatibleDocumentEmbedder(
         model=settings.EMBEDDING_MODEL,
@@ -41,6 +42,11 @@ def create_document_knowledge_service() -> DocumentKnowledgeService:
     return DocumentKnowledgeService(
         embedder=embedder,
         vector_repository=vector_repository,
+        lexical_repository=(
+            SqliteBm25Repository(settings.KB_BM25_PATH)
+            if settings.KB_HYBRID_ENABLED
+            else None
+        ),
         reranker=HttpDocumentReranker(),
         chunk_size=settings.KB_CHUNK_SIZE,
         chunk_overlap=settings.KB_CHUNK_OVERLAP,
@@ -56,6 +62,8 @@ def create_document_knowledge_service() -> DocumentKnowledgeService:
         semantic_breakpoint_threshold=settings.KB_SEMANTIC_BREAKPOINT_THRESHOLD,
         semantic_max_segments=settings.KB_SEMANTIC_MAX_SEGMENTS,
         document_chunk_strategies_json=settings.KB_DOCUMENT_CHUNK_STRATEGIES_JSON,
+        hybrid_enabled=settings.KB_HYBRID_ENABLED,
+        rrf_rank_constant=settings.KB_RRF_RANK_CONSTANT,
     )
 
 

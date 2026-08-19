@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: safemeal-ingestion-worker
+  namespace: safemeal
+spec:
+  replicas: 2
+  selector:
+    matchLabels: {app: safemeal-ingestion-worker}
+  template:
+    metadata:
+      labels: {app: safemeal-ingestion-worker}
+    spec:
+      serviceAccountName: safemeal
+      containers:
+        - name: worker
+          image: safemeal-api:0.2.0
+          command: [python, -m, safemeal.infrastructure.ingestion.worker]
+          envFrom:
+            - configMapRef: {name: safemeal-config}
+            - secretRef: {name: safemeal-secrets}
+          resources:
+            requests: {cpu: 500m, memory: 1Gi}
+            limits: {cpu: "2", memory: 4Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: runtime, mountPath: /app/data/runtime}
+            - {name: uploads, mountPath: /app/uploads}
+      volumes:
+        - name: runtime
+          persistentVolumeClaim: {claimName: safemeal-runtime}
+        - name: uploads
+          persistentVolumeClaim: {claimName: safemeal-uploads}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: safemeal-ingestion-worker
+  namespace: safemeal
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: {app: safemeal-ingestion-worker}

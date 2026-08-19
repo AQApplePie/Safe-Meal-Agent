@@ -38,6 +38,8 @@ from safemeal.interfaces.http import (
     RedisTokenBucketMiddleware,
     RequestSizeLimitMiddleware,
 )
+from safemeal.interfaces.mcp_server import create_authenticated_mcp_app
+from safemeal.infrastructure.operations.telemetry import configure_telemetry
 
 
 def _include_routers(application: FastAPI) -> None:
@@ -95,6 +97,12 @@ def create_application() -> FastAPI:
     application.add_middleware(RequestObservabilityMiddleware)
 
     _include_routers(application)
+    if settings.MCP_SERVER_ENABLED:
+        application.mount(
+            settings.MCP_SERVER_PATH,
+            create_authenticated_mcp_app(application.state.container),
+        )
+    configure_telemetry(application, settings)
 
     @application.get("/")
     async def root_redirect():

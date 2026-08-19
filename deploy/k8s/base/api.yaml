@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: safemeal-api
+  namespace: safemeal
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels: {app: safemeal-api}
+  template:
+    metadata:
+      labels: {app: safemeal-api}
+    spec:
+      serviceAccountName: safemeal
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile: {type: RuntimeDefault}
+      terminationGracePeriodSeconds: 45
+      containers:
+        - name: api
+          image: safemeal-api:0.2.0
+          imagePullPolicy: IfNotPresent
+          ports: [{name: http, containerPort: 8000}]
+          envFrom:
+            - configMapRef: {name: safemeal-config}
+            - secretRef: {name: safemeal-secrets}
+          readinessProbe:
+            httpGet: {path: /readyz, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /livez, port: http}
+            periodSeconds: 20
+          startupProbe:
+            httpGet: {path: /livez, port: http}
+            failureThreshold: 30
+            periodSeconds: 5
+          resources:
+            requests: {cpu: 250m, memory: 512Mi}
+            limits: {cpu: "2", memory: 2Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: runtime, mountPath: /app/data/runtime}
+      volumes:
+        - name: runtime
+          persistentVolumeClaim: {claimName: safemeal-runtime}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: safemeal-api
+  namespace: safemeal
+spec:
+  selector: {app: safemeal-api}
+  ports: [{name: http, port: 80, targetPort: http}]
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: safemeal-api
+  namespace: safemeal
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels: {app: safemeal-api}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: safemeal-api
+  namespace: safemeal
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: safemeal-api
+  minReplicas: 3
+  maxReplicas: 12
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: {type: Utilization, averageUtilization: 65}

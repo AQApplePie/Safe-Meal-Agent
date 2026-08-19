@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import json
+from contextlib import ExitStack
 from threading import RLock
 from typing import Optional
 
@@ -48,11 +50,17 @@ from safemeal.infrastructure.llm.openai_language_model_gateway import (
     OpenAILanguageModelGateway,
 )
 from safemeal.infrastructure.operations.trace_store import JsonlAgentTraceStore
+from safemeal.infrastructure.operations.llmops import LlmOpsExporter
 from safemeal.infrastructure.tools.tool_executor_factory import build_tool_executor
 from safemeal.infrastructure.tools.tool_executor import LocalToolExecutor
+from safemeal.infrastructure.tools.mcp_client import McpClientGateway, McpServerConfig
 from safemeal.infrastructure.ingestion.document_parser import DocumentParserRegistry
 from safemeal.infrastructure.ingestion.local_upload_storage import LocalUploadStorage
+from safemeal.application.use_cases.upload.ingestion_queue import RedisIngestionQueue
 from safemeal.infrastructure.persistence.database import dispose_engine
+from safemeal.infrastructure.persistence.langgraph_checkpoint import (
+    SqliteCheckpointSaver,
+)
 from safemeal.infrastructure.persistence.recipe_repository import (
     SqlAlchemyRecipeRepository,
 )
@@ -81,6 +89,42 @@ class ApplicationContainer:
             max_size_bytes=settings.FILE_UPLOAD_MAX_MB * 1024 * 1024,
         )
         self._trace_store = JsonlAgentTraceStore(settings.AGENT_TRACE_PATH)
+        self._resource_stack = ExitStack()
+        if settings.AGENT_CHECKPOINT_DATABASE_URL:
+            from langgraph.checkpoint.postgres import PostgresSaver
+
+            self._checkpointer = self._resource_stack.enter_context(
+                PostgresSaver.from_conn_string(settings.AGENT_CHECKPOINT_DATABASE_URL)
+            )
+            self._checkpointer.setup()
+        else:
+            self._checkpointer = SqliteCheckpointSaver(settings.AGENT_CHECKPOINT_PATH)
+        self._ingestion_queue = (
+            RedisIngestionQueue(
+                settings.INGESTION_QUEUE_URL,
+                queue_name=settings.INGESTION_QUEUE_NAME,
+                ttl_seconds=settings.INGESTION_JOB_TTL_SECONDS,
+            )
+            if settings.INGESTION_QUEUE_URL
+            else None
+        )
+        raw_mcp_servers = json.loads(settings.MCP_EXTERNAL_SERVERS_JSON)
+        self._mcp_client_gateway = (
+            McpClientGateway(
+                [
+                    McpServerConfig(
+                        name=str(item["name"]),
+                        url=str(item["url"]),
+                        headers={
+                            str(k): str(v) for k, v in item.get("headers", {}).items()
+                        },
+                    )
+                    for item in raw_mcp_servers
+                ]
+            )
+            if raw_mcp_servers
+            else None
+        )
 
     async def get_document_knowledge_service(self) -> DocumentKnowledgeService:
         """Return the shared Milvus service, creating it off the event loop."""
@@ -130,6 +174,8 @@ class ApplicationContainer:
                         enabled_tools.add("milvus_vector_search")
                     if settings.ENABLE_NEO4J:
                         enabled_tools.add("dietary_safe_recipe_query")
+                    if self._mcp_client_gateway is not None:
+                        enabled_tools.add("external_mcp_call")
                     self._tool_executor = build_tool_executor(
                         document_knowledge_provider=self.get_document_knowledge_service,
                         recipe_catalog=self.get_recipe_catalog(),
@@ -138,6 +184,7 @@ class ApplicationContainer:
                         ),
                         enabled_tools=enabled_tools,
                         timeout_seconds=settings.AGENT_TOOL_TIMEOUT,
+                        mcp_client_gateway=self._mcp_client_gateway,
                     )
         return self._tool_executor
 
@@ -255,6 +302,12 @@ class ApplicationContainer:
                 max_tool_calls=settings.AGENT_MAX_TOOL_CALLS,
                 max_model_tokens=settings.AGENT_MAX_MODEL_TOKENS,
                 max_model_cost=settings.AGENT_MAX_COST,
+                checkpointer=self._checkpointer,
+                approval_tool_names=(
+                    frozenset({"generate_recipe"})
+                    if settings.AGENT_REQUIRE_HUMAN_APPROVAL
+                    else frozenset()
+                ),
             )
             if model_gateway is not None and tool_executor is not None
             else None
@@ -269,6 +322,11 @@ class ApplicationContainer:
             ),
             model_pricing=parse_model_pricing(settings.MODEL_PRICING_JSON),
             cost_currency=settings.MODEL_COST_CURRENCY,
+            llmops_exporter=(
+                LlmOpsExporter(settings.LLMOPS_ENDPOINT, settings.LLMOPS_API_KEY)
+                if settings.LLMOPS_ENDPOINT
+                else None
+            ),
         )
 
     @property
@@ -278,6 +336,10 @@ class ApplicationContainer:
     @property
     def trace_store(self) -> JsonlAgentTraceStore:
         return self._trace_store
+
+    @property
+    def ingestion_queue(self) -> RedisIngestionQueue | None:
+        return self._ingestion_queue
 
     async def shutdown(self) -> None:
         """Release only resources that were actually initialized."""
@@ -289,5 +351,8 @@ class ApplicationContainer:
             closers.append(self._language_model_gateway.close())
         if closers:
             await asyncio.gather(*closers, return_exceptions=True)
+        if self._ingestion_queue is not None:
+            await self._ingestion_queue.close()
 
         await asyncio.to_thread(dispose_engine)
+        self._resource_stack.close()

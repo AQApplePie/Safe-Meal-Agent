@@ -147,4 +147,6 @@ def delete_chat_session(
     if session_service.delete_session(session_id, user_id=user_id) is None:
         raise _session_not_found()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 __all__ = ["router"]

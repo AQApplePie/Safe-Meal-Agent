@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: safemeal-config
+  namespace: safemeal
+data:
+  APP_ENV: production
+  ENABLE_OIDC: "true"
+  ENABLE_OTEL: "true"
+  OTEL_SERVICE_NAME: safemeal-agent
+  ENABLE_AGENT_TRACE_PERSISTENCE: "true"
+  AGENT_TRACE_PATH: /app/data/runtime/agent_traces.jsonl
+  AGENT_CHECKPOINT_PATH: /app/data/runtime/agent_checkpoints.sqlite3
+  KB_HYBRID_ENABLED: "true"
+  KB_BM25_PATH: /app/data/runtime/knowledge_bm25.sqlite3
+  INGESTION_QUEUE_URL: redis://redis.safemeal.svc.cluster.local:6379/1
+  MCP_SERVER_ENABLED: "true"
+  MCP_SERVER_PATH: /mcp

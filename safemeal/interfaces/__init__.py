@@ -1,6 +1,23 @@
 from fastapi import APIRouter, Depends
 
 from safemeal.interfaces.http.authentication import get_current_principal
+from safemeal.interfaces.http.authentication import (  # noqa: F401
+    Principal,
+    authorize_user_id,
+)
+from safemeal.interfaces.http.answer_stream import stream_answer_events  # noqa: F401
+from safemeal.interfaces.http.dependencies import (  # noqa: F401
+    get_agent_request_service,
+    get_agent_trace_store,
+    get_chat_session_service,
+    get_chat_turn_service,
+    get_document_knowledge_service,
+    get_file_upload_service,
+    get_recipe_document_indexer,
+    get_uploaded_document_ingestion_service,
+    get_user_memory_service,
+)
+from safemeal.interfaces.http.models import *  # noqa: F403
 
 from safemeal.interfaces.http.routers.agent import router as agent_router
 from safemeal.interfaces.http.routers.agent_traces import router as agent_traces_router

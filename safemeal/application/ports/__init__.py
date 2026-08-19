@@ -22,7 +22,12 @@ from safemeal.application.ports.persistence.user_memory_repository import (
     UserMemoryUnitOfWork,
     UserMemoryUnitOfWorkFactory,
 )
-from safemeal.application.ports.retrieval.vector_document_repository import VectorDocumentRepository
+from safemeal.application.ports.retrieval.vector_document_repository import (
+    VectorDocumentRepository,
+)
+from safemeal.application.ports.retrieval.lexical_document_repository import (
+    LexicalDocumentRepository,
+)
 
 __all__ = [
     "ChatMessageRepository",
@@ -42,4 +47,5 @@ __all__ = [
     "UserMemoryUnitOfWork",
     "UserMemoryUnitOfWorkFactory",
     "VectorDocumentRepository",
+    "LexicalDocumentRepository",
 ]

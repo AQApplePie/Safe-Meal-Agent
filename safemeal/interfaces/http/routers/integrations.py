@@ -15,4 +15,6 @@ async def read_integration_status(
     ),
 ):
     return await get_integration_status(probe=probe)
+
+
 __all__ = ["router"]

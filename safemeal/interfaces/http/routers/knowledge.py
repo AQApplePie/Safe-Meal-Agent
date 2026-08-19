@@ -22,6 +22,7 @@ from safemeal.interfaces import (
     RecipeDocumentRequest,
 )
 from safemeal.shared.types import JsonObject
+from safemeal.interfaces.http.authentication import Principal, get_current_principal
 
 router = APIRouter(prefix="/knowledge", tags=["knowledge"])
 
@@ -81,10 +82,11 @@ async def search_knowledge(
     document_knowledge: DocumentKnowledgeService = Depends(
         get_document_knowledge_service
     ),
+    principal: Principal = Depends(get_current_principal),
 ) -> KnowledgeSearchResponse:
     try:
         results = await document_knowledge.search(
-            query=request.query, top_k=request.top_k
+            query=request.query, top_k=request.top_k, tenant_id=principal.tenant_id
         )
         return KnowledgeSearchResponse(results=results, count=len(results))
     except Exception as exc:
@@ -150,4 +152,6 @@ async def clear_knowledge_base(
     except Exception as exc:
         logger.exception("Knowledge clear failed")
         raise _internal_error("Knowledge clear failed") from exc
+
+
 __all__ = ["router"]

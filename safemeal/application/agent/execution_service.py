@@ -9,7 +9,8 @@ import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 from time import perf_counter
-from typing import Literal, Mapping, Protocol
+from typing import Any, Literal, Mapping, Protocol
+from langgraph.types import Command
 
 from loguru import logger
 
@@ -31,6 +32,8 @@ from safemeal.shared.contracts.agent_context import AgentContext
 from safemeal.shared.types import JsonObject, to_json_object
 from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
 from safemeal.application.exceptions import ModelOutputValidationError
+from safemeal.infrastructure.operations.telemetry import export_agent_trace
+from safemeal.infrastructure.operations.llmops import LlmOpsExporter
 
 
 class AgentGraph(Protocol):
@@ -39,7 +42,19 @@ class AgentGraph(Protocol):
     这里不依赖 LangGraph 的具体实现类，只要求装配后的对象支持异步调用。
     """
 
-    async def ainvoke(self, input_state: AgentInputState) -> AgentState: ...
+    async def ainvoke(
+        self,
+        input_state: AgentInputState | Command,
+        config: Mapping[str, Any] | None = None,
+    ) -> AgentState: ...
+
+
+class HumanApprovalPending(Exception):
+    """The durable graph paused before one or more guarded tool calls."""
+
+    def __init__(self, calls: list[object]) -> None:
+        super().__init__("human approval is required")
+        self.calls = calls
 
 
 @dataclass(frozen=True, slots=True)
@@ -102,6 +117,7 @@ class AgentExecutionService:
         model_pricing: Mapping[str, ModelPrice] | None = None,
         cost_currency: str = "CNY",
         unsafe_request_detector: UnsafeRequestDetector | None = None,
+        llmops_exporter: LlmOpsExporter | None = None,
     ) -> None:
         """初始化 Agent 执行服务。
 
@@ -119,6 +135,7 @@ class AgentExecutionService:
         self._unsafe_request_detector = (
             unsafe_request_detector or UnsafeRequestDetector()
         )
+        self._llmops_exporter = llmops_exporter
 
     async def process(
         self,
@@ -194,12 +211,17 @@ class AgentExecutionService:
 
                 async def invoke_with_capacity() -> AgentState:
                     async with self._concurrency:
-                        return await graph.ainvoke(input_state)
+                        return await graph.ainvoke(
+                            input_state,
+                            config={"configurable": {"thread_id": session_id}},
+                        )
 
                 result = await asyncio.wait_for(
                     invoke_with_capacity(),
                     timeout=self._timeout_seconds,
                 )
+                if not result.get("messages") and result.get("pending_calls"):
+                    raise HumanApprovalPending(list(result["pending_calls"]))
                 router_info = self._normalize_router(result.get("router"))
                 answer = self._response_text(result)
                 if not answer.strip():
@@ -319,6 +341,20 @@ class AgentExecutionService:
                     len(sources),
                     (perf_counter() - request_started) * 1000,
                 )
+            except HumanApprovalPending as exc:
+                recorder.finish(status="ok")
+                response = AgentProcessResponse(
+                    status="degraded",
+                    message="操作已暂停，等待人工确认后继续执行。",
+                    route="human_approval",
+                    route_logic="langgraph_interrupt",
+                    metadata={
+                        "session_id": session_id,
+                        "approval_required": True,
+                        "pending_calls": [to_json_object(call) for call in exc.calls],
+                    },
+                    error_code="human_approval_required",
+                )
             except Exception as exc:
                 logger.exception("Agent query failed: {}", exc)
                 recorder.finish(
@@ -364,12 +400,67 @@ class AgentExecutionService:
                 logger.exception(
                     "agent.trace.persistence_failed run_id={}", recorder.trace.run_id
                 )
+        export_agent_trace(trace_payload)
+        if self._llmops_exporter is not None:
+            try:
+                await self._llmops_exporter.export(trace_payload)
+            except Exception:
+                logger.exception(
+                    "agent.llmops.export_failed run_id={}", recorder.trace.run_id
+                )
 
         # 完整Trace含工具参数和结果，不能默认暴露给公开Chat API；只有受信任
         # 的内部调用可以显式开启。
         if include_trace:
             response.metadata["trace"] = trace_payload
         return response
+
+    async def resume(self, session_id: str, *, approved: bool) -> AgentProcessResponse:
+        """Resume a durable graph after a human approval interrupt."""
+
+        if self._graph is None:
+            return AgentProcessResponse(
+                status="error",
+                message="Agent LLM is disabled",
+                error_code="feature_unavailable",
+            )
+        try:
+            result = await asyncio.wait_for(
+                self._graph.ainvoke(
+                    Command(resume={"approved": approved}),
+                    config={"configurable": {"thread_id": session_id}},
+                ),
+                timeout=self._timeout_seconds,
+            )
+            raw_interrupts = result.get("__interrupt__")
+            interrupts = (
+                raw_interrupts if isinstance(raw_interrupts, (list, tuple)) else ()
+            )
+            if interrupts:
+                return AgentProcessResponse(
+                    status="degraded",
+                    message="仍有操作等待人工确认。",
+                    route="human_approval",
+                    metadata={
+                        "session_id": session_id,
+                        "interrupts": [item.value for item in interrupts],
+                    },
+                )
+            return AgentProcessResponse(
+                status="ok",
+                message=self._response_text(result),
+                route="human_approval_resumed",
+                metadata={"session_id": session_id, "approved": approved},
+                sources=self._normalize_sources(result.get("sources", [])),
+            )
+        except Exception:
+            logger.exception("agent.resume.failed session_id={}", session_id)
+            return AgentProcessResponse(
+                status="error",
+                message="恢复 Agent 执行失败，请确认会话仍处于待审批状态。",
+                route="error",
+                error_code="agent_resume_failed",
+            )
 
     @staticmethod
     def _response_text(result: AgentState) -> str:

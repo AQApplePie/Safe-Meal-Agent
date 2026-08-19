@@ -147,6 +147,9 @@ class Settings(BaseSettings):
 
     ENABLE_AGENT_TRACE_PERSISTENCE: bool = True
     AGENT_TRACE_PATH: str = "data/runtime/agent_traces.jsonl"
+    AGENT_CHECKPOINT_PATH: str = "data/runtime/agent_checkpoints.sqlite3"
+    AGENT_CHECKPOINT_DATABASE_URL: Optional[str] = None
+    AGENT_REQUIRE_HUMAN_APPROVAL: bool = True
 
     # Knowledge retrieval
     KB_TOP_K: int = Field(default=5, ge=1, le=100)
@@ -161,6 +164,39 @@ class Settings(BaseSettings):
     )
     KB_MAX_CHUNKS_PER_DOCUMENT: int = Field(default=2, ge=1, le=20)
     KB_DOCUMENT_RECALL_MULTIPLIER: int = Field(default=4, ge=1, le=20)
+    KB_HYBRID_ENABLED: bool = True
+    KB_BM25_PATH: str = "data/runtime/knowledge_bm25.sqlite3"
+    KB_RRF_RANK_CONSTANT: int = Field(default=60, ge=1, le=1_000)
+    OCR_ENABLED: bool = True
+    OCR_LANGUAGES: str = "chi_sim+eng"
+    OCR_MIN_EXTRACTED_CHARS: int = Field(default=32, ge=0, le=10_000)
+
+    # Background ingestion
+    INGESTION_QUEUE_URL: Optional[str] = None
+    INGESTION_QUEUE_NAME: str = "safemeal:ingestion"
+    INGESTION_JOB_TTL_SECONDS: int = Field(default=86_400, ge=60)
+
+    # MCP server and external MCP clients
+    MCP_SERVER_ENABLED: bool = True
+    MCP_SERVER_PATH: str = "/mcp"
+    MCP_EXTERNAL_SERVERS_JSON: str = "[]"
+
+    # OpenTelemetry and LLMOps exporters. JSONL traces remain independent.
+    ENABLE_OTEL: bool = False
+    OTEL_SERVICE_NAME: str = "safemeal-agent"
+    OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
+    OTEL_EXPORTER_OTLP_INSECURE: bool = True
+    LLMOPS_ENDPOINT: Optional[str] = None
+    LLMOPS_API_KEY: Optional[str] = None
+
+    # OIDC and tenant isolation
+    ENABLE_OIDC: bool = False
+    OIDC_ISSUER: Optional[str] = None
+    OIDC_AUDIENCE: Optional[str] = None
+    OIDC_JWKS_URL: Optional[str] = None
+    OIDC_ALGORITHMS: str = "RS256"
+    OIDC_TENANT_CLAIM: str = "tenant_id"
+    DEFAULT_TENANT_ID: str = "default"
 
     @model_validator(mode="after")
     def inherit_dashscope_credentials(self) -> "Settings":
@@ -233,8 +269,14 @@ class Settings(BaseSettings):
                 production_issues.append(
                     "production CORS_ORIGINS must not contain wildcard or loopback origins"
                 )
-            if not self.API_KEY:
-                production_issues.append("production API_KEY is required")
+            if not self.API_KEY and not self.ENABLE_OIDC:
+                production_issues.append("production API_KEY or OIDC is required")
+            if self.ENABLE_OIDC and not (self.OIDC_ISSUER and self.OIDC_AUDIENCE):
+                production_issues.append("production OIDC requires issuer and audience")
+            if not self.AGENT_CHECKPOINT_DATABASE_URL:
+                production_issues.append(
+                    "production requires a shared AGENT_CHECKPOINT_DATABASE_URL"
+                )
             if production_issues:
                 raise ValueError(
                     "invalid production configuration: " + "; ".join(production_issues)

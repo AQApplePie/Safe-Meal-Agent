@@ -46,6 +46,11 @@ class FileUploadService:
         ".txt",
         ".md",
         ".pdf",
+        ".png",
+        ".jpg",
+        ".jpeg",
+        ".tif",
+        ".tiff",
     }
 
     def __init__(self, storage: UploadStorage, max_size_bytes: int) -> None:

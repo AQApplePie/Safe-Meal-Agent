@@ -49,6 +49,7 @@ class UploadedDocumentIngestionService:
         original_filename: str | None,
         content: bytes,
         chunk_strategy: ChunkStrategyName = "auto",
+        tenant_id: str = "default",
     ) -> DocumentIngestionResult:
         """Persist, parse and idempotently index an uploaded document."""
 
@@ -62,12 +63,13 @@ class UploadedDocumentIngestionService:
         ingestion = await self._document_knowledge.ingest_text(
             parsed.text,
             metadata={
-                "document_id": saved.file_id or checksum,
+                "document_id": f"{tenant_id}:{saved.file_id or checksum}",
                 "title": saved.original_name,
                 "source": saved.file_path,
                 "source_type": "upload",
                 "parser": parsed.parser,
                 "checksum": checksum,
+                "tenant_id": tenant_id,
             },
             chunk_strategy=chunk_strategy,
         )

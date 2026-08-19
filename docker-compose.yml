@@ -35,6 +35,11 @@ services:
       NEO4J_USER: "${NEO4J_USER:-neo4j}"
       NEO4J_PASSWORD: "${NEO4J_PASSWORD:-safemeal-local-neo4j}"
       AGENT_TRACE_PATH: /app/data/runtime/agent_traces.jsonl
+      AGENT_CHECKPOINT_PATH: /app/data/runtime/agent_checkpoints.sqlite3
+      KB_BM25_PATH: /app/data/runtime/knowledge_bm25.sqlite3
+      INGESTION_QUEUE_URL: redis://redis:6379/1
+      ENABLE_OTEL: "${ENABLE_OTEL:-false}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4317}"
     volumes:
       - ./uploads:/app/uploads
       - ./data/runtime:/app/data/runtime
@@ -53,6 +58,47 @@ services:
       timeout: 5s
       retries: 10
       start_period: 20s
+    restart: unless-stopped
+
+  ingestion-worker:
+    <<: *backend
+    init: true
+    command: ["python", "-m", "safemeal.infrastructure.ingestion.worker"]
+    environment:
+      APP_ENV: development
+      DATABASE_URL: "${DATABASE_URL_DOCKER:-mysql+pymysql://recipe_user:safemeal-local@mysql:3306/recipe_db}"
+      ENABLE_LLM: "false"
+      ENABLE_EMBEDDINGS: "${ENABLE_EMBEDDINGS:-true}"
+      EMBEDDING_API_KEY: "${EMBEDDING_API_KEY:-}"
+      EMBEDDING_BASE_URL: "${EMBEDDING_BASE_URL:-https://dashscope.aliyuncs.com/compatible-mode/v1}"
+      EMBEDDING_MODEL: "${EMBEDDING_MODEL:-text-embedding-v4}"
+      ENABLE_MILVUS: "${ENABLE_MILVUS:-true}"
+      MILVUS_HOST: retrieval
+      MILVUS_PORT: 19530
+      MILVUS_COLLECTION: "${MILVUS_COLLECTION:-recipes_current}"
+      ENABLE_NEO4J: "false"
+      INGESTION_QUEUE_URL: redis://redis:6379/1
+      KB_BM25_PATH: /app/data/runtime/knowledge_bm25.sqlite3
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - ./uploads:/app/uploads
+      - ./data/runtime:/app/data/runtime
+    depends_on:
+      redis:
+        condition: service_healthy
+      milvus:
+        condition: service_healthy
+    restart: unless-stopped
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.132.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./deploy/otel/collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "${OTEL_GRPC_HOST_PORT:-14317}:4317"
+      - "${OTEL_HTTP_HOST_PORT:-14318}:4318"
+    profiles: ["observability"]
     restart: unless-stopped
 
   db-migrate:

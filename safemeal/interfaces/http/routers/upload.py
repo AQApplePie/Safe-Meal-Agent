@@ -25,6 +25,10 @@ from safemeal.application.use_cases.upload.uploaded_document_ingestion_service i
 )
 from safemeal.interfaces import UploadResponse
 from safemeal.shared.types import JsonObject
+from safemeal.bootstrap.application_container import ApplicationContainer
+from safemeal.interfaces.http.dependencies import get_container
+from safemeal.interfaces.http.authentication import Principal, get_current_principal
+from safemeal.application.use_cases.upload.ingestion_queue import IngestionJob
 
 router = APIRouter()
 
@@ -90,6 +94,7 @@ async def upload_and_ingest_file(
     ingestion: UploadedDocumentIngestionService = Depends(
         get_uploaded_document_ingestion_service
     ),
+    principal: Principal = Depends(get_current_principal),
 ) -> JsonObject:
     """Save and ingest a document through the application use case."""
 
@@ -99,12 +104,50 @@ async def upload_and_ingest_file(
             original_filename=file.filename,
             content=content,
             chunk_strategy=chunk_strategy,
+            tenant_id=principal.tenant_id,
         )
         return result.model_dump(mode="json")
     except DocumentParseError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except Exception as exc:
         raise _translate_upload_error(exc) from exc
+
+
+@router.post("/file/ingest-async", status_code=status.HTTP_202_ACCEPTED)
+async def enqueue_uploaded_document(
+    file: UploadFile = File(...),
+    chunk_strategy: ChunkStrategyName = Form(default="auto"),
+    file_upload_service: FileUploadService = Depends(get_file_upload_service),
+    container: ApplicationContainer = Depends(get_container),
+    principal: Principal = Depends(get_current_principal),
+) -> JsonObject:
+    """Queue parsing, OCR and indexing outside the request lifecycle."""
+
+    if container.ingestion_queue is None:
+        raise HTTPException(status_code=503, detail="后台摄取队列未配置")
+    content = await _read_upload(file, file_upload_service)
+    job = IngestionJob.create(
+        tenant_id=principal.tenant_id,
+        filename=file.filename or "upload",
+        content=content,
+        chunk_strategy=chunk_strategy,
+    )
+    await container.ingestion_queue.enqueue(job)
+    return {"job_id": job.job_id, "status": job.status}
+
+
+@router.get("/ingestion-jobs/{job_id}")
+async def get_ingestion_job(
+    job_id: str,
+    container: ApplicationContainer = Depends(get_container),
+    principal: Principal = Depends(get_current_principal),
+) -> JsonObject:
+    if container.ingestion_queue is None:
+        raise HTTPException(status_code=503, detail="后台摄取队列未配置")
+    job = await container.ingestion_queue.get(job_id)
+    if job is None or job.tenant_id != principal.tenant_id:
+        raise HTTPException(status_code=404, detail="摄取任务不存在")
+    return job.model_dump(mode="json", exclude={"content_hex"})
 
 
 @router.get("/files/{filename}")
@@ -128,4 +171,6 @@ async def delete_uploaded_file(
         return {"success": True, "message": "文件删除成功"}
     except Exception as exc:
         raise _translate_upload_error(exc) from exc
+
+
 __all__ = ["router"]

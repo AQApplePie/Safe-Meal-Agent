@@ -1,10 +1,13 @@
-.PHONY: install run-server lint format-check typecheck test check init-data db-upgrade neo4j-sync eval-prepare eval-run docker-up docker-down docker-smoke help
+.PHONY: install run-server run-worker lint format-check typecheck test test-integration check init-data db-upgrade neo4j-sync eval-prepare eval-run docker-up docker-down docker-smoke help
 
 install:
 	python -m pip install -r requirements.txt
 
 run-server:
 	python -m uvicorn safemeal.main:application --host 0.0.0.0 --port 8000 --reload
+
+run-worker:
+	python -m safemeal.infrastructure.ingestion.worker
 
 lint:
 	python -m ruff check safemeal tests
@@ -17,6 +20,9 @@ typecheck:
 
 test:
 	PYTHONPATH=. python -m pytest -q
+
+test-integration:
+	RUN_TESTCONTAINERS=1 PYTHONPATH=. python -m pytest -m testcontainers -q
 
 check: lint format-check typecheck test
 

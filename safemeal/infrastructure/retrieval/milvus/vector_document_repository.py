@@ -94,6 +94,7 @@ class MilvusVectorDocumentRepository:
     _REQUIRED_FIELDS = {
         "id",
         "document_id",
+        "tenant_id",
         "embedding",
         "content",
         "recipe_id",
@@ -213,6 +214,7 @@ class MilvusVectorDocumentRepository:
                 dtype=DataType.VARCHAR,
                 max_length=256,
             ),
+            FieldSchema(name="tenant_id", dtype=DataType.VARCHAR, max_length=256),
             FieldSchema(
                 name="embedding",
                 dtype=DataType.FLOAT_VECTOR,
@@ -375,6 +377,10 @@ class MilvusVectorDocumentRepository:
         entities = [
             ids,
             document_ids,
+            [
+                self._as_varchar(meta.get("tenant_id") or "public")
+                for meta in resolved_metadatas
+            ],
             embeddings,
             documents,
             [self._as_varchar(meta.get("recipe_id")) for meta in resolved_metadatas],
@@ -456,6 +462,7 @@ class MilvusVectorDocumentRepository:
                 output_fields=[
                     "id",
                     "document_id",
+                    "tenant_id",
                     "content",
                     "recipe_id",
                     "name",
@@ -474,6 +481,7 @@ class MilvusVectorDocumentRepository:
                             "score": float(hit.score),
                             "metadata": {
                                 "document_id": document_id,
+                                "tenant_id": hit.entity.get("tenant_id"),
                                 "recipe_id": hit.entity.get("recipe_id"),
                                 "name": hit.entity.get("name"),
                                 "category": hit.entity.get("category"),

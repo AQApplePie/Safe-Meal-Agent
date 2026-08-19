@@ -25,6 +25,7 @@ from safemeal.infrastructure.tools.recipe_tools import (
     RecommendRecipesTool,
     SearchRecipesTool,
 )
+from safemeal.infrastructure.tools.mcp_client import ExternalMcpTool, McpClientGateway
 
 DocumentKnowledgeProvider = Callable[[], Awaitable[DocumentKnowledgeService]]
 
@@ -36,6 +37,7 @@ def build_tool_executor(
     recipe_generation_service: RecipeGenerationService,
     enabled_tools: Iterable[str] | None = None,
     timeout_seconds: float | None = None,
+    mcp_client_gateway: McpClientGateway | None = None,
 ) -> LocalToolExecutor:
     """创建具体工具并暴露给本地 Tool runtime。"""
 
@@ -49,6 +51,8 @@ def build_tool_executor(
             document_knowledge_provider=document_knowledge_provider
         ),
     }
+    if mcp_client_gateway is not None:
+        factories["external_mcp_call"] = lambda: ExternalMcpTool(mcp_client_gateway)
     allowed = set(factories) if enabled_tools is None else set(enabled_tools)
     unknown = allowed - factories.keys()
     if unknown:

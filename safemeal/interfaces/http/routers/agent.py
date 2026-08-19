@@ -5,6 +5,9 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel, ConfigDict, Field
+from safemeal.bootstrap.application_container import ApplicationContainer
+from safemeal.interfaces.http.dependencies import get_container
 from fastapi.responses import StreamingResponse
 
 from safemeal.application.agent.request_service import (
@@ -22,6 +25,24 @@ from safemeal.interfaces import stream_answer_events
 from safemeal.shared.types import JsonObject
 
 router = APIRouter()
+
+
+class AgentResumeRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    session_id: str = Field(min_length=1, max_length=255)
+    approved: bool
+
+
+@router.post("/resume", response_model=AgentProcessResponse)
+async def resume_agent_request(
+    request: AgentResumeRequest,
+    container: ApplicationContainer = Depends(get_container),
+) -> AgentProcessResponse:
+    """Approve or reject an interrupted high-impact tool call."""
+
+    return await container.get_agent_execution_service().resume(
+        request.session_id, approved=request.approved
+    )
 
 
 @router.post("/process", response_model=AgentProcessResponse)

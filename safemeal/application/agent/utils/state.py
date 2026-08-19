@@ -77,6 +77,8 @@ class AgentState(TypedDict, total=False):
     max_model_cost: float
     budget_exhausted: bool
     loop_stop_reason: str
+    human_approved: bool
+    approval_required: bool
 
 
 class AgentStateUpdate(AgentState, total=False):

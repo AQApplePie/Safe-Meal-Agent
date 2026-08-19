@@ -13,7 +13,9 @@ ConversationHistory: TypeAlias = list[ConversationMessage]
 class AnswerSource(BaseModel):
     """最终答案引用的来源信息。"""
 
-    source: str = Field(description="来源名称，例如 mysql:recipes、retrieval 或文档路径。")
+    source: str = Field(
+        description="来源名称，例如 mysql:recipes、retrieval 或文档路径。"
+    )
     tool: str = Field(default="", description="产生该来源的工具名。")
     call_id: str = Field(default="", description="对应工具调用 ID。")
     query: Optional[str] = Field(default=None, description="可选 SQL/Cypher/检索查询。")

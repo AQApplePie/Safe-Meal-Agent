@@ -37,6 +37,7 @@ class RecipeDocumentIndexer:
             "name": recipe_data.get("name", ""),
             "category": recipe_data.get("category", ""),
             "difficulty": recipe_data.get("difficulty", ""),
+            "tenant_id": "public",
         }
         try:
             success = await self._document_knowledge.ingest_document(

@@ -33,3 +33,11 @@ exclude = ["safemeal/infrastructure/persistence/migrations/"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "integration: requires local infrastructure or Docker",
+    "testcontainers: starts disposable Docker containers",
+    "rag: retrieval quality and fusion tests",
+    "graph: LangGraph orchestration and checkpoint tests",
+    "regression: frozen Agent benchmark regression gate",
+]

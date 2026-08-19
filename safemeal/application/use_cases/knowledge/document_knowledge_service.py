@@ -13,8 +13,10 @@ from loguru import logger
 from safemeal.application.ports import (
     DocumentEmbedder,
     DocumentReranker,
+    LexicalDocumentRepository,
     VectorDocumentRepository,
 )
+from safemeal.infrastructure.retrieval.hybrid import reciprocal_rank_fusion
 from safemeal.shared.types import JsonObject, to_json_object
 from .chunking import (
     ChunkStrategyName,
@@ -32,7 +34,8 @@ class DocumentKnowledgeService:
         *,
         embedder: DocumentEmbedder,
         vector_repository: VectorDocumentRepository,
-        reranker:  DocumentReranker,
+        lexical_repository: LexicalDocumentRepository | None = None,
+        reranker: DocumentReranker,
         chunk_size: int,
         chunk_overlap: int,
         top_k: int,
@@ -47,6 +50,8 @@ class DocumentKnowledgeService:
         semantic_breakpoint_threshold: float = 0.55,
         semantic_max_segments: int = 256,
         document_chunk_strategies_json: str = "{}",
+        hybrid_enabled: bool = True,
+        rrf_rank_constant: int = 60,
     ) -> None:
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
@@ -95,7 +100,10 @@ class DocumentKnowledgeService:
 
         self.embedder = embedder
         self.vector_repository = vector_repository
+        self.lexical_repository = lexical_repository
         self.reranker = reranker
+        self.hybrid_enabled = hybrid_enabled and lexical_repository is not None
+        self.rrf_rank_constant = rrf_rank_constant
 
         logger.info(
             "DocumentKnowledgeService initialised (chunk_size=%s, chunk_overlap=%s)",
@@ -172,6 +180,7 @@ class DocumentKnowledgeService:
         similarity_threshold: Optional[float] = None,
         filter_expr: Optional[str] = None,
         filter_by_similarity: bool = True,
+        tenant_id: str = "public",
     ) -> list[JsonObject]:
         if not query or not query.strip():
             return []
@@ -233,12 +242,24 @@ class DocumentKnowledgeService:
             recall_k,
             filter_expr,
         )
+        tenant_filter = f'tenant_id in ["public", {json.dumps(tenant_id)}]'
+        resolved_filter = (
+            f"({filter_expr}) and ({tenant_filter})" if filter_expr else tenant_filter
+        )
         results = await asyncio.to_thread(
             self.vector_repository.search,
             embedding,
             recall_k,  # 使用更大的召回数量
-            filter_expr,
+            resolved_filter,
         )
+        lexical_results: list[JsonObject] = []
+        if self.hybrid_enabled and self.lexical_repository is not None:
+            lexical_results = await asyncio.to_thread(
+                self.lexical_repository.search,
+                query,
+                recall_k,
+                {"tenant_id": tenant_id},
+            )
         logger.info(
             "knowledge.milvus_search.completed collection={} result_count={} "
             "elapsed_ms={:.3f}",
@@ -247,7 +268,15 @@ class DocumentKnowledgeService:
             (perf_counter() - vector_started) * 1000,
         )
 
-        candidates = results
+        candidates = (
+            reciprocal_rank_fusion(
+                results,
+                lexical_results,
+                rank_constant=self.rrf_rank_constant,
+            )
+            if self.hybrid_enabled
+            else results
+        )
         if filter_by_similarity and similarity_threshold is not None:
             candidates = [
                 r for r in candidates if r.get("score", 0.0) >= similarity_threshold
@@ -331,9 +360,14 @@ class DocumentKnowledgeService:
         return selected
 
     async def delete_document(self, document_id: str) -> bool:
-        return await asyncio.to_thread(
+        deleted = await asyncio.to_thread(
             self.vector_repository.delete_documents, [document_id]
         )
+        if self.lexical_repository is not None:
+            await asyncio.to_thread(
+                self.lexical_repository.delete_documents, [document_id]
+            )
+        return deleted
 
     async def get_collection_stats(self) -> JsonObject:
         def _stats() -> JsonObject:
@@ -360,6 +394,8 @@ class DocumentKnowledgeService:
 
     async def close(self) -> None:
         await asyncio.to_thread(self.vector_repository.close)
+        if self.lexical_repository is not None:
+            await asyncio.to_thread(self.lexical_repository.close)
 
     def _split_into_documents(
         self,
@@ -415,5 +451,12 @@ class DocumentKnowledgeService:
             documents=contents,
             metadatas=metadatas,
         )
+        if success and self.lexical_repository is not None:
+            success = self.lexical_repository.replace_document(
+                document_id=document_id,
+                ids=ids,
+                documents=contents,
+                metadatas=metadatas,
+            )
 
         return {"add_count": len(ids) if success else 0, "ids": ids, "stored": success}

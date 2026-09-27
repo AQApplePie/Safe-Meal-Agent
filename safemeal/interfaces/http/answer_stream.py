@@ -9,6 +9,8 @@ from typing import Any, Protocol, TypeVar
 
 from safemeal.application.observability import use_answer_stream
 from safemeal.shared.types import JsonObject
+from safemeal.application.contracts.workflow.stream import WorkflowProgress
+from safemeal.application.observability.streaming import use_progress_stream
 
 
 class AnswerMessage(Protocol):
@@ -37,8 +39,8 @@ async def stream_answer_events(
     headers may already have been sent.
     """
 
-    queue: asyncio.Queue[str] = asyncio.Queue()
-    with use_answer_stream(queue):
+    queue: asyncio.Queue[str | WorkflowProgress] = asyncio.Queue()
+    with use_answer_stream(queue), use_progress_stream(queue):
         task: asyncio.Task[ResponseT] = asyncio.create_task(operation_factory())
 
     yield _event("accepted", {})
@@ -61,8 +63,13 @@ async def stream_answer_events(
     while not task.done():
         if pending_chunk in done:
             chunk = pending_chunk.result()
-            streamed = True
-            yield _event("answer", {"delta": chunk})
+            if isinstance(chunk, WorkflowProgress):
+                yield _event(
+                    "progress", {"stage": chunk.stage, "message": chunk.message}
+                )
+            else:
+                streamed = True
+                yield _event("answer", {"delta": chunk})
             pending_chunk = asyncio.create_task(queue.get())
         done, _ = await asyncio.wait(
             {task, pending_chunk}, return_when=asyncio.FIRST_COMPLETED
@@ -70,16 +77,22 @@ async def stream_answer_events(
 
     if pending_chunk.done() and not pending_chunk.cancelled():
         chunk = pending_chunk.result()
-        streamed = True
-        yield _event("answer", {"delta": chunk})
+        if isinstance(chunk, WorkflowProgress):
+            yield _event("progress", {"stage": chunk.stage, "message": chunk.message})
+        else:
+            streamed = True
+            yield _event("answer", {"delta": chunk})
     else:
         pending_chunk.cancel()
         await asyncio.gather(pending_chunk, return_exceptions=True)
 
     while not queue.empty():
         chunk = queue.get_nowait()
-        streamed = True
-        yield _event("answer", {"delta": chunk})
+        if isinstance(chunk, WorkflowProgress):
+            yield _event("progress", {"stage": chunk.stage, "message": chunk.message})
+        else:
+            streamed = True
+            yield _event("answer", {"delta": chunk})
 
     try:
         result = task.result()

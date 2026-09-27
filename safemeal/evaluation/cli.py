@@ -16,7 +16,7 @@ from safemeal.evaluation.evaluation_artifacts import (
     prepare_corpus,
     write_report,
 )
-from safemeal.evaluation.evaluation_contracts import EvaluationCase
+from safemeal.application.contracts.evaluation.models import EvaluationCase
 
 
 DEFAULT_DATASET = "data/evaluation/agent_eval_v3.jsonl"

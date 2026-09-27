@@ -7,7 +7,7 @@ from datetime import datetime
 from types import TracebackType
 from typing import List, Optional, Protocol, TypeAlias
 
-from safemeal.shared.contracts.memory import (
+from safemeal.application.contracts.memory.models import (
     UserMemoryCreate,
     UserMemoryUpdate,
 )
@@ -48,7 +48,7 @@ class UserMemoryRepository(Protocol):
         user_id: str,
         *,
         memory_type: Optional[str] = None,
-        limit: int = 50,
+        limit: int | None = 50,
     ) -> List[UserMemoryRecord]: ...
 
     def list_memories(

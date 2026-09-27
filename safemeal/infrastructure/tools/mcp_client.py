@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pydantic import BaseModel, ConfigDict, Field
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
 from safemeal.shared.types import JsonObject, to_json_object
-from safemeal.infrastructure.tools.tool_executor import ToolHandler
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,37 +51,3 @@ class McpClientGateway:
                 await session.initialize()
                 result = await session.call_tool(tool_name, arguments=arguments)
                 return to_json_object(result.model_dump(mode="json"))
-
-
-class ExternalMcpCallArgs(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    server_name: str = Field(min_length=1, max_length=128)
-    tool_name: str = Field(min_length=1, max_length=128)
-    arguments: JsonObject = Field(default_factory=dict)
-
-
-class ExternalMcpTool(ToolHandler[ExternalMcpCallArgs]):
-    name = "external_mcp_call"
-    description = (
-        "通过已配置并授权的外部 MCP Server 调用工具。必须明确提供 server_name、"
-        "tool_name 和符合远端 Schema 的 arguments。"
-    )
-    args_schema = ExternalMcpCallArgs
-
-    def __init__(self, gateway: McpClientGateway) -> None:
-        self._gateway = gateway
-
-    async def run(self, arguments: ExternalMcpCallArgs) -> JsonObject:
-        return await self._gateway.call_tool(
-            arguments.server_name,
-            arguments.tool_name,
-            arguments.arguments,
-        )
-
-
-__all__ = [
-    "ExternalMcpCallArgs",
-    "ExternalMcpTool",
-    "McpClientGateway",
-    "McpServerConfig",
-]

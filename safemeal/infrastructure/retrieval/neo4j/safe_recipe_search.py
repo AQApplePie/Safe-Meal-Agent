@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import Literal, Optional
 
 from neo4j import READ_ACCESS, Record, Session
-from pydantic import BaseModel, Field
 
 from safemeal.modules.dietary_safety.dietary_constraints import RecipeSafetyRecord
 from safemeal.modules.dietary_safety.recipe_safety import (
@@ -17,23 +16,8 @@ from safemeal.modules.dietary_safety.ingredient_terms import (
     INGREDIENT_ALIASES,
     PREPARATION_PREFIXES,
 )
-from safemeal.config.settings import settings
-from safemeal.infrastructure.retrieval.neo4j.recipe_graph import create_driver
 from safemeal.shared.types import to_json_object
-
-
-class DietarySafeRecipeQueryResult(BaseModel):
-    """忌口/过敏专用查询工具返回值。"""
-
-    database: str = "neo4j"
-    query_type: str = "dietary_safe_recipe_query"
-    target_dish: Optional[str] = None
-    excluded_ingredients: list[str] = Field(default_factory=list)
-    expanded_excluded_ingredients: list[str] = Field(default_factory=list)
-    safe_recipes: list[RecipeSafetyRecord] = Field(default_factory=list)
-    excluded_recipes: list[RecipeSafetyRecord] = Field(default_factory=list)
-    unknown_recipes: list[RecipeSafetyRecord] = Field(default_factory=list)
-    missing_information: list[str] = Field(default_factory=list)
+from safemeal.application.contracts.tools.payloads import DietarySafeRecipeQueryResult
 
 
 def expand_excluded_ingredients(ingredients: list[str]) -> list[str]:
@@ -81,6 +65,10 @@ def _forbidden_normalized_names(excluded_terms: list[str]) -> list[str]:
 class SafeRecipeGraphSearch:
     """Classify bounded recipe rows using complete structured ingredients."""
 
+    def __init__(self, driver_factory, database: str | None = None):
+        self._driver_factory = driver_factory
+        self._database = database
+
     def search(
         self,
         *,
@@ -94,10 +82,10 @@ class SafeRecipeGraphSearch:
             raise ValueError("至少需要一个非空的忌口/过敏食材")
         target_dish = str(target_dish).strip() if target_dish else None
         forbidden_names = _forbidden_normalized_names(excluded_terms)
-        driver = create_driver()
+        driver = self._driver_factory()
         try:
             with driver.session(
-                database=settings.NEO4J_DATABASE,
+                database=self._database,
                 default_access_mode=READ_ACCESS,
             ) as session:
                 target = (

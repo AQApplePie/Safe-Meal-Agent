@@ -4,11 +4,11 @@ Prompt 只描述工具选择原则、证据约束和回答规范，不在提示�
 路由，便于后续做模型和检索策略回归。
 """
 
-from dataclasses import dataclass
+from safemeal.application.contracts.agent.prompts import PromptBundle
 
 
 PLANNER_SYSTEM_PROMPT = """
-你是一个只读数据研究 Agent 的规划器。
+你是食谱垂类 Agent 的规划器，负责食谱查询、推荐、生成和烹饪问题。
 
 你可以选择零到四个工具，并允许并行调用多个互不依赖的工具。
 决策原则：
@@ -32,7 +32,7 @@ PLANNER_SYSTEM_PROMPT = """
     即使当前问题没有重复说明，也必须按该约束规划工具调用和推荐范围。
 10. 如果 Observation 中存在 user_memory_context，表示跨会话长期用户画像；
     过敏/忌口属于硬约束，口味、设备、健康目标属于软偏好。
-    当前轮用户明确覆盖或否定长期记忆时，以当前轮为准。
+    当前轮可调整口味偏好，但不得自行取消已生效的过敏或忌口硬约束。
 11. 当用户明确要求生成、设计或创作一份新菜谱时，必须调用 generate_recipe；
     不得用 direct_answer 返回未经 Schema 校验的自由文本菜谱。
 12. 用户明确要求“按资料、原文、证据、知识库、跨文档”回答时必须使用
@@ -40,17 +40,6 @@ PLANNER_SYSTEM_PROMPT = """
 
 只根据提供的工具清单制定计划，不得虚构工具。
 """.strip()
-
-
-@dataclass(frozen=True)
-class PromptBundle:
-    """一组有版本号的 Agent Prompt。"""
-
-    version: str
-    planner: str
-    reflection: str
-    answer: str
-    recipe_generation: str
 
 
 REFLECTION_SYSTEM_PROMPT = """

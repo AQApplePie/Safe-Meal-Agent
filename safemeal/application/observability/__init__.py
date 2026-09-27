@@ -3,7 +3,7 @@
 这里仅负责记录 Agent 实际发生了什么，不负责判断结果是否正确。
 """
 
-from .trace_models import (
+from safemeal.application.contracts.observability.trace import (
     AgentRunTrace,
     ModelCallTrace,
     SpanTrace,

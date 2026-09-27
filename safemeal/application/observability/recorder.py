@@ -10,7 +10,7 @@ from datetime import datetime
 
 from loguru import logger
 
-from .trace_models import (
+from safemeal.application.contracts.observability.trace import (
     AgentRunTrace,
     ModelCallTrace,
     SpanTrace,

@@ -25,8 +25,8 @@ from langgraph.checkpoint.serde.types import TASKS
 class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
     """Process-safe local saver using Python's built-in SQLite driver."""
 
-    def __init__(self, path: str | Path) -> None:
-        super().__init__()
+    def __init__(self, path: str | Path, *, serde=None) -> None:
+        super().__init__(serde=serde)
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._lock = RLock()

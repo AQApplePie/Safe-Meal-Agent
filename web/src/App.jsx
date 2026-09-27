@@ -118,6 +118,8 @@ export default function App() {
               ? { ...message, content: message.content + delta }
               : message
           ));
+        } else if (eventName === "progress") {
+          setNotice(data?.message || "正在处理你的请求");
         } else if (eventName === "degraded") {
           setNotice("首包等待时间较长，服务仍在继续生成答案。");
         } else if (eventName === "error") {
@@ -130,6 +132,8 @@ export default function App() {
       if (!completion || completion.status !== "ok") {
         throw new Error("流式回答未返回完成事件");
       }
+      setNotice(completion.metadata?.safety_review === "blocked"
+        ? "当前食材证据不足，未发布具体食谱推荐。" : "");
       setSessionId(completion.session_id);
       setMessages((current) => current.map((message) =>
         message.id === assistantMessageId

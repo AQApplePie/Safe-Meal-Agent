@@ -9,29 +9,29 @@ from fastapi import Depends, Request
 from safemeal.application.agent.execution_service import (
     AgentExecutionService,
 )
-from safemeal.application.agent.request_service import (
-    AgentRequestService,
-)
-from safemeal.application.agent.context.builder import AgentContextBuilder
-from safemeal.application.use_cases.chat.turn_persistence import (
+from safemeal.application.workflow.runner import ChatWorkflow
+from safemeal.application.workflow.context.builder import AgentContextBuilder
+from safemeal.application.service.chat.turn_persistence import (
     ChatTurnPersistence,
 )
-from safemeal.application.use_cases.chat.chat_session_service import (
+from safemeal.application.service.chat.chat_session_service import (
     ChatSessionService,
 )
-from safemeal.application.use_cases.chat.chat_turn_service import ChatTurnService
-from safemeal.application.use_cases.knowledge.document_knowledge_service import (
+from safemeal.application.service.chat.chat_turn_service import ChatTurnService
+from safemeal.application.service.knowledge.document_knowledge_service import (
     DocumentKnowledgeService,
 )
-from safemeal.application.use_cases.knowledge.recipe_indexing import (
+from safemeal.application.service.knowledge.recipe_indexing import (
     RecipeDocumentIndexer,
 )
-from safemeal.application.use_cases.memory.user_memory_service import UserMemoryService
-from safemeal.application.use_cases.upload.file_upload_service import FileUploadService
-from safemeal.application.use_cases.upload.uploaded_document_ingestion_service import (
+from safemeal.application.service.memory.user_memory_service import UserMemoryService
+from safemeal.application.service.upload.file_upload_service import FileUploadService
+from safemeal.application.service.upload.uploaded_document_ingestion_service import (
     UploadedDocumentIngestionService,
 )
-from safemeal.bootstrap import ApplicationContainer
+from safemeal.application.service.composition.application_container import (
+    ApplicationContainer,
+)
 from safemeal.application.observability.store import AgentTraceStore
 
 
@@ -90,12 +90,12 @@ def get_chat_turn_service(
     return container.get_chat_turn_service()
 
 
-def get_agent_request_service(
+def get_chat_workflow(
     container: ApplicationContainer = Depends(get_container),
-) -> AgentRequestService:
-    """装配服务间 Agent 调用用例。"""
+) -> ChatWorkflow:
+    """提供统一 Workflow 运行入口。"""
 
-    return container.get_agent_request_service()
+    return container.get_chat_workflow()
 
 
 async def get_document_knowledge_service(

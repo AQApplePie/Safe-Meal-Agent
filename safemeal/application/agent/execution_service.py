@@ -4,18 +4,19 @@
 让 HTTP 层不直接感知 Agent 图的内部状态结构。
 """
 
+from safemeal.application.contracts.agent.decisions import DeterministicRouteDecision
+
 import asyncio
 import re
 from collections.abc import Sequence
-from dataclasses import dataclass
 from time import perf_counter
 from typing import Any, Literal, Mapping, Protocol
 from langgraph.types import Command
 
 from loguru import logger
 
-from safemeal.shared.contracts.agent_conversation import AnswerSource, RouterInfo
-from safemeal.application.agent.utils.state import (
+from safemeal.application.contracts.conversation.models import AnswerSource, RouterInfo
+from safemeal.application.contracts.agent.state import (
     AgentInputState,
     AgentState,
 )
@@ -27,13 +28,13 @@ from safemeal.application.observability import (
 )
 from safemeal.application.observability.store import AgentTraceStore
 from safemeal.application.observability.cost import ModelPrice
-from safemeal.application.contracts.agent import AgentProcessResponse
-from safemeal.shared.contracts.agent_context import AgentContext
+from safemeal.application.contracts.agent.api import AgentProcessResponse, AgentResumeResult
+from safemeal.application.contracts.agent.context import AgentContext
 from safemeal.shared.types import JsonObject, to_json_object
 from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
 from safemeal.application.exceptions import ModelOutputValidationError
-from safemeal.infrastructure.operations.telemetry import export_agent_trace
-from safemeal.infrastructure.operations.llmops import LlmOpsExporter
+from safemeal.application.ports.telemetry import TraceExporter
+from collections.abc import Callable
 
 
 class AgentGraph(Protocol):
@@ -55,15 +56,6 @@ class HumanApprovalPending(Exception):
     def __init__(self, calls: list[object]) -> None:
         super().__init__("human approval is required")
         self.calls = calls
-
-
-@dataclass(frozen=True, slots=True)
-class DeterministicRouteDecision:
-    """A request decision that is safe to make without a language model."""
-
-    route: str
-    message: str
-    reason: str
 
 
 class UnsafeRequestDetector:
@@ -117,7 +109,8 @@ class AgentExecutionService:
         model_pricing: Mapping[str, ModelPrice] | None = None,
         cost_currency: str = "CNY",
         unsafe_request_detector: UnsafeRequestDetector | None = None,
-        llmops_exporter: LlmOpsExporter | None = None,
+        llmops_exporter: TraceExporter | None = None,
+        trace_exporter: Callable[[JsonObject], None] | None = None,
     ) -> None:
         """初始化 Agent 执行服务。
 
@@ -136,6 +129,7 @@ class AgentExecutionService:
             unsafe_request_detector or UnsafeRequestDetector()
         )
         self._llmops_exporter = llmops_exporter
+        self._trace_exporter = trace_exporter
 
     async def process(
         self,
@@ -220,7 +214,7 @@ class AgentExecutionService:
                     invoke_with_capacity(),
                     timeout=self._timeout_seconds,
                 )
-                if not result.get("messages") and result.get("pending_calls"):
+                if result.get("__interrupt__") or result.get("pending_calls"):
                     raise HumanApprovalPending(list(result["pending_calls"]))
                 router_info = self._normalize_router(result.get("router"))
                 answer = self._response_text(result)
@@ -330,6 +324,7 @@ class AgentExecutionService:
                     metadata=metadata,
                     error_code=outcome_error_code,
                     recipe=generated_recipe,
+                    evidence=[item.model_dump(mode="json") for item in observations],
                 )
                 logger.info(
                     "agent.run.completed run_id={} session_id={} status={} "
@@ -400,7 +395,8 @@ class AgentExecutionService:
                 logger.exception(
                     "agent.trace.persistence_failed run_id={}", recorder.trace.run_id
                 )
-        export_agent_trace(trace_payload)
+        if self._trace_exporter is not None:
+            self._trace_exporter(trace_payload)
         if self._llmops_exporter is not None:
             try:
                 await self._llmops_exporter.export(trace_payload)
@@ -415,51 +411,65 @@ class AgentExecutionService:
             response.metadata["trace"] = trace_payload
         return response
 
-    async def resume(self, session_id: str, *, approved: bool) -> AgentProcessResponse:
-        """Resume a durable graph after a human approval interrupt."""
-
+    async def resume(self, session_id: str, *, approved: bool) -> AgentResumeResult:
+        """Return a resumed draft plus its trusted checkpoint context for review."""
         if self._graph is None:
-            return AgentProcessResponse(
-                status="error",
-                message="Agent LLM is disabled",
-                error_code="feature_unavailable",
+            return AgentResumeResult(
+                response=AgentProcessResponse(
+                    status="error",
+                    message="Agent LLM is disabled",
+                    error_code="feature_unavailable",
+                )
             )
         try:
-            result = await asyncio.wait_for(
-                self._graph.ainvoke(
-                    Command(resume={"approved": approved}),
-                    config={"configurable": {"thread_id": session_id}},
-                ),
-                timeout=self._timeout_seconds,
-            )
-            raw_interrupts = result.get("__interrupt__")
-            interrupts = (
-                raw_interrupts if isinstance(raw_interrupts, (list, tuple)) else ()
-            )
-            if interrupts:
-                return AgentProcessResponse(
+            async with self._concurrency:
+                result = await asyncio.wait_for(
+                    self._graph.ainvoke(
+                        Command(resume={"approved": approved}),
+                        config={"configurable": {"thread_id": session_id}},
+                    ),
+                    timeout=self._timeout_seconds,
+                )
+            context = AgentContext.model_validate(result.get("agent_context") or {})
+            context.dietary_constraints = result.get("dietary_constraints")
+            question = result.get("question", "")
+            if result.get("__interrupt__") or result.get("pending_calls"):
+                response = AgentProcessResponse(
                     status="degraded",
                     message="仍有操作等待人工确认。",
                     route="human_approval",
-                    metadata={
-                        "session_id": session_id,
-                        "interrupts": [item.value for item in interrupts],
-                    },
+                    metadata={"approval_required": True, "session_id": session_id},
                 )
-            return AgentProcessResponse(
-                status="ok",
-                message=self._response_text(result),
-                route="human_approval_resumed",
-                metadata={"session_id": session_id, "approved": approved},
-                sources=self._normalize_sources(result.get("sources", [])),
+            else:
+                observations = result.get("observations", [])
+                generated = next(
+                    (
+                        GeneratedRecipe.model_validate(item.data)
+                        for item in reversed(observations)
+                        if item.tool_name == "generate_recipe" and item.ok
+                    ),
+                    None,
+                )
+                response = AgentProcessResponse(
+                    message=self._response_text(result),
+                    route="human_approval_resumed",
+                    recipe=generated,
+                    metadata={"session_id": session_id, "approved": approved},
+                    evidence=[item.model_dump(mode="json") for item in observations],
+                    sources=self._normalize_sources(result.get("sources", [])),
+                )
+            return AgentResumeResult(
+                response=response, message=question, context=context
             )
         except Exception:
             logger.exception("agent.resume.failed session_id={}", session_id)
-            return AgentProcessResponse(
-                status="error",
-                message="恢复 Agent 执行失败，请确认会话仍处于待审批状态。",
-                route="error",
-                error_code="agent_resume_failed",
+            return AgentResumeResult(
+                response=AgentProcessResponse(
+                    status="error",
+                    message="恢复 Agent 执行失败，请确认会话仍处于待审批状态。",
+                    route="error",
+                    error_code="agent_execution_failed",
+                )
             )
 
     @staticmethod

@@ -11,7 +11,7 @@ from typing import List, Optional, cast
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Query, Session
 
-from safemeal.application.contracts.chat import (
+from safemeal.application.contracts.chat.messages import (
     ChatMessageCreate,
     ChatMessageUpdate,
     ChatSessionCreate,

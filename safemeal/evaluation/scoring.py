@@ -6,7 +6,7 @@ import json
 import math
 from typing import Iterable, Sequence
 
-from safemeal.evaluation.evaluation_contracts import (
+from safemeal.application.contracts.evaluation.models import (
     CaseEvaluationResult,
     DietarySafetyScore,
     EvaluationCase,
@@ -19,7 +19,7 @@ from safemeal.evaluation.evaluation_contracts import (
     TaskScore,
     ToolSelectionScore,
 )
-from safemeal.application.contracts.agent import AgentProcessResponse
+from safemeal.application.contracts.agent.api import AgentProcessResponse
 from safemeal.shared.types import JsonObject, JsonValue, to_json_object
 
 

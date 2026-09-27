@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 import re
-from typing import Iterable, List, Literal, Optional, Protocol
+from typing import Sequence, Iterable, List, Literal, Optional, Protocol
 
 from pydantic import BaseModel, Field
 
@@ -18,7 +18,7 @@ from safemeal.modules.dietary_safety.ingredient_terms import (
     NEGATED_DIETARY_PATTERNS,
     RECIPE_NAME_KEYS,
 )
-from safemeal.shared.contracts.agent_conversation import ConversationMessage
+from safemeal.application.contracts.conversation.models import ConversationMessage
 from safemeal.shared.types import JsonObject
 
 from .recipe_safety import (
@@ -452,6 +452,8 @@ def _candidate_rows(data: object) -> List[object]:
         return data["rows"]
     if isinstance(data.get("documents"), list):
         return data["documents"]
+    if _find_recipe_name(data) and "ingredients" in data:
+        return [data]
     if data.get("response"):
         return [{"response": data.get("response")}]
     return []
@@ -460,7 +462,7 @@ def _candidate_rows(data: object) -> List[object]:
 def build_dietary_safety_result(
     *,
     constraint: DietaryConstraint,
-    observations: List[DietaryEvidenceObservation],
+    observations: Sequence[DietaryEvidenceObservation],
 ) -> DietarySafetyResult:
     """基于已有候选证据进行忌口安全过滤。
 
@@ -473,54 +475,96 @@ def build_dietary_safety_result(
     if not constraint.active:
         return result
 
-    seen_names = set()
     inspected_records = 0
     ingredient_evidence_records = 0
     safety_evaluator = RecipeSafetyEvaluator()
-
+    grouped: dict[str, list[tuple[DietaryEvidenceObservation, object]]] = {}
+    trusted_tools = {
+        "search_recipes",
+        "get_recipe",
+        "recommend_recipes",
+        "generate_recipe",
+        "dietary_safe_recipe_query",
+    }
     for observation in observations:
-        if not observation.ok:
+        if not observation.ok or observation.tool_name not in trusted_tools:
             continue
         for row in _candidate_rows(observation.data):
             inspected_records += 1
             name = _find_recipe_name(row)
-            ingredients = _ingredient_values(row)
-            has_ingredient_evidence = _has_ingredient_evidence(row)
-            if has_ingredient_evidence:
-                ingredient_evidence_records += 1
+            if name:
+                grouped.setdefault(name, []).append((observation, row))
 
-            if not name:
-                continue
-            if name in seen_names:
-                continue
-            seen_names.add(name)
-
-            evidence_call_ids = [observation.call_id]
-            decision = safety_evaluator.evaluate(
-                RecipeSafetyInput(
-                    recipe_name=name,
-                    ingredients=tuple(Ingredient(item) for item in ingredients),
-                    forbidden_terms=tuple(constraint.excluded_ingredients),
-                    evidence=EvidenceBundle(
-                        items=(Evidence(observation.tool_name, observation.call_id),),
-                        ingredients_complete=has_ingredient_evidence,
-                    ),
+    for name, records in grouped.items():
+        ingredients: list[str] = []
+        evidence = []
+        complete = True
+        conflict = False
+        generated_violations: list[str] = []
+        for observation, row in records:
+            values = _ingredient_values(row)
+            ingredients.extend(values)
+            has_evidence = bool(values) and _has_ingredient_evidence(row)
+            if isinstance(row, dict):
+                has_evidence = (
+                    has_evidence and row.get("ingredients_complete", True) is not False
                 )
+                has_evidence = has_evidence and row.get("safety_status") != "unknown"
+                conflict = conflict or bool(row.get("conflicting_sources"))
+                if row.get("safety_status") == "excluded":
+                    generated_violations.extend(
+                        row.get("matched_forbidden_ingredients")
+                        or constraint.excluded_ingredients
+                    )
+            complete = complete and has_evidence
+            ingredient_evidence_records += int(has_evidence)
+            evidence.append(Evidence(observation.tool_name, observation.call_id))
+            if observation.tool_name == "generate_recipe":
+                from safemeal.modules.recipe_catalog.generated_recipe import (
+                    GeneratedRecipe,
+                )
+                from .generated_safety import generated_recipe_violations
+
+                try:
+                    generated = GeneratedRecipe.model_validate(row)
+                    generated_violations.extend(
+                        generated_recipe_violations(
+                            generated, constraint.excluded_ingredients
+                        )
+                    )
+                except (ValueError, TypeError):
+                    complete = False
+        ingredients = _unique(ingredients)
+        # All same-name evidence is considered: a later conflicting source cannot be
+        # hidden by the first source or by the model's candidate ordering.
+        decision = safety_evaluator.evaluate(
+            RecipeSafetyInput(
+                recipe_name=name,
+                ingredients=tuple(
+                    Ingredient(item) for item in [*ingredients, *generated_violations]
+                ),
+                forbidden_terms=tuple(constraint.excluded_ingredients),
+                evidence=EvidenceBundle(
+                    items=tuple(evidence),
+                    ingredients_complete=complete,
+                    conflicting_sources=("candidate_sources",) if conflict else (),
+                ),
             )
-            record = RecipeSafetyRecord(
-                name=name,
-                ingredients=ingredients,
-                matched_forbidden_ingredients=list(decision.matched_ingredients),
-                safety_status=decision.status.value,
-                evidence_call_ids=evidence_call_ids,
-                reason=decision.reason,
-            )
-            if decision.status is SafetyStatus.UNSAFE:
-                result.excluded_recipes.append(record)
-            elif decision.status is SafetyStatus.SAFE:
-                result.safe_recipes.append(record)
-            else:
-                result.unknown_recipes.append(record)
+        )
+        record = RecipeSafetyRecord(
+            name=name,
+            ingredients=ingredients,
+            matched_forbidden_ingredients=list(decision.matched_ingredients),
+            safety_status=decision.status.value,
+            evidence_call_ids=_unique(item.reference for item in evidence),
+            reason=decision.reason,
+        )
+        if decision.status is SafetyStatus.UNSAFE:
+            result.excluded_recipes.append(record)
+        elif decision.status is SafetyStatus.SAFE:
+            result.safe_recipes.append(record)
+        else:
+            result.unknown_recipes.append(record)
 
     if inspected_records == 0:
         result.missing_information.append(

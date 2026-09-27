@@ -6,7 +6,7 @@ Reflector 在请求 LLM 反思前调用本模块，判断工具证据是否已�
 
 from __future__ import annotations
 
-from safemeal.application.contracts.agent_decisions import Observation
+from safemeal.application.contracts.agent.decisions import Observation
 
 
 _CONTEXT_OBSERVATION_TOOLS = {

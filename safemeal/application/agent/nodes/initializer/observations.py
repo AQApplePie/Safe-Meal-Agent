@@ -6,7 +6,7 @@ import json
 import re
 from typing import Optional
 
-from safemeal.application.contracts.agent_decisions import Observation
+from safemeal.application.contracts.agent.decisions import Observation
 from safemeal.modules.dietary_safety.dietary_constraints import DietaryConstraint
 from safemeal.shared.types import JsonObject, to_json_object
 

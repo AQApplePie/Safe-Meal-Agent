@@ -11,7 +11,7 @@ from safemeal.application.agent.utils.loop_control import (
     current_model_cost_usage,
     current_model_token_usage,
 )
-from safemeal.application.agent.utils.state import AgentState, AgentStateUpdate
+from safemeal.application.contracts.agent.state import AgentState, AgentStateUpdate
 from safemeal.application.ports.tools.tool_executor import ToolExecutor
 
 

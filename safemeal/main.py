@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse, Response
 from loguru import logger
 
-from safemeal.bootstrap import ApplicationContainer
+from safemeal.application.service.composition.application_container import ApplicationContainer
 from safemeal.application.exceptions import (
     AgentExecutionError,
     ApplicationError,
@@ -30,8 +30,8 @@ from safemeal.application.exceptions import (
     ResourceOwnershipError,
 )
 from safemeal.config.settings import settings
-from safemeal.infrastructure.operations.logging import configure_logging
-from safemeal.infrastructure.operations.health import get_runtime_readiness
+from safemeal.application.service.composition.operations import configure_logging
+from safemeal.application.service.composition.operations import get_runtime_readiness
 from safemeal.shared.types import JsonObject
 from safemeal.interfaces.http import (
     RequestObservabilityMiddleware,
@@ -39,7 +39,7 @@ from safemeal.interfaces.http import (
     RequestSizeLimitMiddleware,
 )
 from safemeal.interfaces.mcp_server import create_authenticated_mcp_app
-from safemeal.infrastructure.operations.telemetry import configure_telemetry
+from safemeal.application.service.composition.operations import configure_telemetry
 
 
 def _include_routers(application: FastAPI) -> None:

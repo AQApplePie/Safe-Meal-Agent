@@ -15,15 +15,15 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import StreamingResponse
 from starlette.concurrency import run_in_threadpool
-from safemeal.application.use_cases.chat.chat_exceptions import (
+from safemeal.application.service.chat.chat_exceptions import (
     ChatAgentUnavailableError,
     ChatSessionNotFoundError,
     ChatTurnConflictError,
 )
-from safemeal.application.use_cases.chat.chat_session_service import (
+from safemeal.application.service.chat.chat_session_service import (
     ChatSessionService,
 )
-from safemeal.application.use_cases.chat.chat_turn_service import ChatTurnService
+from safemeal.application.service.chat.chat_turn_service import ChatTurnService
 from safemeal.interfaces import (
     get_chat_session_service,
     get_chat_turn_service,
@@ -37,7 +37,7 @@ from safemeal.interfaces import (
 )
 from safemeal.config.settings import settings
 from safemeal.shared.types import JsonObject
-from safemeal.application.contracts.chat_turn import ChatRequest, ChatResponse
+from safemeal.application.contracts.chat.turn import ChatRequest, ChatResponse
 
 router = APIRouter()
 
@@ -98,7 +98,9 @@ async def stream_chat_turn(
             "message_id": result.message_id,
             "route": result.route,
             "sources": [item.model_dump(mode="json") for item in result.sources],
-            "degraded": degraded,
+            "degraded": degraded or result.metadata.get("agent_status") == "degraded",
+            "metadata": result.metadata,
+            "recipe": result.recipe.model_dump(mode="json") if result.recipe else None,
         }
 
     async def events() -> AsyncIterator[str]:

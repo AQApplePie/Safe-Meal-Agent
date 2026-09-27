@@ -7,7 +7,7 @@ from datetime import datetime
 from types import TracebackType
 from typing import List, Optional, Protocol, TypeAlias
 
-from safemeal.application.contracts.chat import (
+from safemeal.application.contracts.chat.messages import (
     ChatMessageCreate,
     ChatMessageUpdate,
     ChatSessionCreate,

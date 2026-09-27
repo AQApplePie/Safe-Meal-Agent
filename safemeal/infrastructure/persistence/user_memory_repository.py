@@ -11,7 +11,7 @@ from typing import List, Optional, cast
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-from safemeal.shared.contracts.memory import (
+from safemeal.application.contracts.memory.models import (
     UserMemoryCreate,
     UserMemoryUpdate,
 )
@@ -65,7 +65,7 @@ class SqlAlchemyUserMemoryRepository:
         user_id: str,
         *,
         memory_type: Optional[str] = None,
-        limit: int = 50,
+        limit: int | None = 50,
     ) -> List[UserMemory]:
         query = self._session.query(UserMemory).filter(
             UserMemory.user_id == user_id,

@@ -7,8 +7,8 @@ from uuid import uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 
-from safemeal.application.contracts.chat import ChatSessionCreate, ChatSessionUpdate
-from safemeal.application.use_cases.chat.chat_session_service import (
+from safemeal.application.contracts.chat.messages import ChatSessionCreate, ChatSessionUpdate
+from safemeal.application.service.chat.chat_session_service import (
     ChatSessionService,
 )
 from safemeal.interfaces import get_chat_session_service

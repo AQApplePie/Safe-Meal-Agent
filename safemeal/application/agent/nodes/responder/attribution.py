@@ -6,8 +6,8 @@ Responder 在组织最终答案时调用本模块，将工具 Observation 转换
 
 from __future__ import annotations
 
-from safemeal.application.contracts.agent_decisions import Observation
-from safemeal.shared.contracts.agent_conversation import AnswerSource
+from safemeal.application.contracts.agent.decisions import Observation
+from safemeal.application.contracts.conversation.models import AnswerSource
 
 
 def collect_answer_sources(observations: list[Observation]) -> list[AnswerSource]:

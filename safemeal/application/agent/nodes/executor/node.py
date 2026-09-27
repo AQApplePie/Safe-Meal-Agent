@@ -5,15 +5,20 @@
 """
 
 from safemeal.application.observability import trace_span
+from safemeal.application.agent.tool_policy import review_tool_calls
 
-from safemeal.application.agent.utils.state import AgentState, AgentStateUpdate
+from safemeal.application.contracts.agent.state import AgentState, AgentStateUpdate
 from safemeal.application.ports.tools.tool_executor import ToolExecutor
 from safemeal.application.agent.utils.loop_control import tool_call_signature
 
 
 def create_executor_node(tool_executor: ToolExecutor):
     async def execute_tools(state: AgentState) -> AgentStateUpdate:
-        calls = state.get("pending_calls", [])
+        calls, rejected = review_tool_calls(
+            state.get("pending_calls", []),
+            state.get("dietary_constraints"),
+            approved=state.get("human_approved", False),
+        )
         with trace_span(
             "agent_node",
             "execute_tools",
@@ -22,7 +27,7 @@ def create_executor_node(tool_executor: ToolExecutor):
                 "calls": [call.model_dump() for call in calls],
             },
         ) as span:
-            results = await tool_executor.invoke_many(calls)
+            results = [*rejected, *await tool_executor.invoke_many(calls)]
             output: AgentStateUpdate = {
                 "tool_results": results,
                 "iteration": state.get("iteration", 0) + 1,

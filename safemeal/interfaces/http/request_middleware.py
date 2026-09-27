@@ -11,7 +11,7 @@ from loguru import logger
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from starlette.responses import JSONResponse
-from safemeal.infrastructure.operations.rate_limit import RedisTokenBucket
+from safemeal.application.service.composition.operations import create_rate_limiter
 from safemeal.application.observability import use_request_id
 
 
@@ -48,7 +48,7 @@ class RedisTokenBucketMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, *, redis_url: str, requests_per_minute: int) -> None:
         super().__init__(app)
         self._limit = requests_per_minute
-        self._bucket = RedisTokenBucket(redis_url, prefix="safemeal:http")
+        self._bucket = create_rate_limiter(redis_url)
 
     async def dispatch(self, request: Request, call_next) -> Response:
         if request.url.path in self._EXEMPT_PATHS:

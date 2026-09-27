@@ -7,7 +7,7 @@ import json
 from typing import Iterable, Sequence
 
 from safemeal.application.observability import current_trace
-from safemeal.application.contracts.agent_decisions import ToolCall
+from safemeal.application.contracts.agent.decisions import ToolCall
 
 
 def tool_call_signature(call: ToolCall) -> str:

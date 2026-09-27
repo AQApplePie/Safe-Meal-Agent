@@ -7,9 +7,9 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, s
 from fastapi.responses import FileResponse
 from loguru import logger
 
-from safemeal.application.use_cases.upload.file_upload_service import (
+from safemeal.application.contracts.upload.models import UploadSaveResult
+from safemeal.application.service.upload.file_upload_service import (
     UploadNotFoundError,
-    UploadSaveResult,
     FileUploadService,
     UploadSizeLimitError,
     InvalidUploadError,
@@ -18,17 +18,17 @@ from safemeal.interfaces import (
     get_file_upload_service,
     get_uploaded_document_ingestion_service,
 )
-from safemeal.application.use_cases.knowledge.chunking import ChunkStrategyName
+from safemeal.application.service.knowledge.chunking import ChunkStrategyName
 from safemeal.application.ports import DocumentParseError
-from safemeal.application.use_cases.upload.uploaded_document_ingestion_service import (
+from safemeal.application.service.upload.uploaded_document_ingestion_service import (
     UploadedDocumentIngestionService,
 )
 from safemeal.interfaces import UploadResponse
 from safemeal.shared.types import JsonObject
-from safemeal.bootstrap.application_container import ApplicationContainer
+from safemeal.application.service.composition.application_container import ApplicationContainer
 from safemeal.interfaces.http.dependencies import get_container
 from safemeal.interfaces.http.authentication import Principal, get_current_principal
-from safemeal.application.use_cases.upload.ingestion_queue import IngestionJob
+from safemeal.application.contracts.upload.ingestion import IngestionJob
 
 router = APIRouter()
 

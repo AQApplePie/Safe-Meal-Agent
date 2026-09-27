@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import List, cast
 
-from safemeal.application.contracts.agent_decisions import Observation
+from safemeal.application.contracts.agent.decisions import Observation
 from safemeal.modules.dietary_safety.dietary_constraints import (
     DietaryConstraint,
     DietaryEvidenceObservation,

@@ -9,8 +9,8 @@ import json
 from safemeal.application.observability import trace_span
 from safemeal.shared.types import JsonValue, to_json_value
 
-from safemeal.application.contracts.agent_decisions import Observation
-from safemeal.application.agent.utils.state import AgentState, AgentStateUpdate
+from safemeal.application.contracts.agent.decisions import Observation
+from safemeal.application.contracts.agent.state import AgentState, AgentStateUpdate
 from .dietary_safety import build_dietary_safety_observation
 from .fusion import fuse_retrieval_observations
 
@@ -82,7 +82,18 @@ async def observe(state: AgentState) -> AgentStateUpdate:
         observations = []
         for result in state.get("tool_results", []):
             call = calls.get(result.call_id)
-            compact_data = _compact_data(result.data)
+            compact_data = (
+                result.data
+                if result.tool_name
+                in {
+                    "search_recipes",
+                    "get_recipe",
+                    "recommend_recipes",
+                    "generate_recipe",
+                    "dietary_safe_recipe_query",
+                }
+                else _compact_data(result.data)
+            )
             observations.append(
                 Observation(
                     call_id=result.call_id,

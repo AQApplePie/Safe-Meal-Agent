@@ -11,8 +11,10 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from safemeal.application.contracts.recipe_catalog import RecipeQuery
-from safemeal.bootstrap import ApplicationContainer
+from safemeal.application.contracts.recipes.catalog import RecipeQuery
+from safemeal.application.contracts.workflow.models import WorkflowRequest
+from safemeal.application.contracts.agent.context import AgentContext
+from safemeal.application.service.composition.application_container import ApplicationContainer
 from safemeal.interfaces.http.authentication import authenticate_credentials
 
 
@@ -51,14 +53,19 @@ def create_mcp_server(container: ApplicationContainer) -> FastMCP:
     ) -> dict[str, Any]:
         """Query food-safety evidence and dietary-safe recipes."""
 
-        constraint = (
-            "；必须排除：" + "、".join(excluded_ingredients)
-            if excluded_ingredients
-            else ""
-        )
-        result = await container.get_agent_execution_service().process(
-            question + constraint,
-            session_id=f"mcp-{uuid4().hex}",
+        result = await container.get_chat_workflow().run(
+            WorkflowRequest(
+                message=question,
+                user_id="mcp_anonymous",
+                session_id=f"mcp-{uuid4().hex}",
+                use_user_memory=False,
+                context=AgentContext(
+                    dietary_constraints={
+                        "active": bool(excluded_ingredients),
+                        "excluded_ingredients": excluded_ingredients or [],
+                    }
+                ),
+            )
         )
         return result.model_dump(mode="json")
 

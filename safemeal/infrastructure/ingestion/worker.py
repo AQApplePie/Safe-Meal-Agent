@@ -5,8 +5,8 @@ from __future__ import annotations
 import asyncio
 from loguru import logger
 
-from safemeal.application.use_cases.upload.ingestion_queue import RedisIngestionQueue
-from safemeal.bootstrap import ApplicationContainer
+from safemeal.infrastructure.ingestion.redis_queue import RedisIngestionQueue
+from safemeal.application.service.composition.application_container import ApplicationContainer
 from safemeal.config.settings import settings
 
 

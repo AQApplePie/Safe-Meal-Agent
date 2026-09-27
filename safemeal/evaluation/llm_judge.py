@@ -10,7 +10,7 @@ from typing import Protocol
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
-from safemeal.evaluation.evaluation_contracts import (
+from safemeal.application.contracts.evaluation.models import (
     CaseEvaluationResult,
     ClaimAssessment,
     EvaluationCase,

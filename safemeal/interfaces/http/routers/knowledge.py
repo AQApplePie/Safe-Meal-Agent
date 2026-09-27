@@ -6,10 +6,10 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from loguru import logger
 
 from safemeal.application.exceptions import ApplicationError
-from safemeal.application.use_cases.knowledge.document_knowledge_service import (
+from safemeal.application.service.knowledge.document_knowledge_service import (
     DocumentKnowledgeService,
 )
-from safemeal.application.use_cases.knowledge.recipe_indexing import (
+from safemeal.application.service.knowledge.recipe_indexing import (
     RecipeDocumentIndexer,
 )
 from safemeal.interfaces import (

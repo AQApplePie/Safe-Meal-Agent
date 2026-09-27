@@ -8,9 +8,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-from safemeal.config.settings import settings
-
-_DEFAULT_LOG_ECHO = bool(settings.DEBUG)
+_database_url: str | None = None
+_debug = False
+_connect_timeout = 10
 _engine: Engine | None = None
 
 
@@ -26,21 +26,33 @@ class Base(DeclarativeBase):
     pass
 
 
+def configure_database(
+    url: str, *, debug: bool = False, connect_timeout: int = 10
+) -> None:
+    """Accept deployment settings from the application composition service."""
+    global _database_url, _debug, _connect_timeout
+    if _engine is not None and url != _database_url:
+        raise RuntimeError("Cannot reconfigure an active database engine")
+    _database_url, _debug, _connect_timeout = url, debug, connect_timeout
+
+
 def get_engine() -> Engine:
     """Return the application database engine, creating it on first use."""
     global _engine
 
     if _engine is None:
+        if not _database_url:
+            raise RuntimeError("Database must be configured by application/service/composition")
         options: dict[str, object] = {
-            "echo": _DEFAULT_LOG_ECHO,
+            "echo": _debug,
             "future": True,
             "pool_pre_ping": True,
         }
-        if settings.DATABASE_URL.lower().startswith("mysql"):
+        if _database_url.lower().startswith("mysql"):
             options.update(
-                connect_args={"connect_timeout": settings.DB_CONNECT_TIMEOUT},
+                connect_args={"connect_timeout": _connect_timeout},
             )
-        _engine = create_engine(settings.DATABASE_URL, **options)
+        _engine = create_engine(_database_url, **options)
         SessionLocal.configure(bind=_engine)
 
     return _engine

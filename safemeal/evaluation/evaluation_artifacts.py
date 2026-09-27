@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from uuid import uuid4
 
-from safemeal.evaluation.evaluation_contracts import (
+from safemeal.application.contracts.evaluation.models import (
     EvaluationCase,
     EvaluationProfile,
     EvaluationReport,
@@ -215,7 +215,7 @@ def load_corpus(path: str | Path) -> list[dict[str, str]]:
 async def prepare_corpus(documents: list[dict[str, str]]) -> dict[str, int]:
     """Explicitly replace the frozen retrieval benchmark documents."""
 
-    from safemeal.bootstrap.application_container import ApplicationContainer
+    from safemeal.application.service.composition.application_container import ApplicationContainer
 
     container = ApplicationContainer()
     try:

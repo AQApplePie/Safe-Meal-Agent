@@ -6,9 +6,9 @@
 
 from typing import Protocol
 
-from safemeal.shared.contracts.tools import ToolResult, ToolSpecification
+from safemeal.application.contracts.tools.base import ToolResult, ToolSpecification
 
-from safemeal.application.contracts.agent_decisions import ToolCall
+from safemeal.application.contracts.agent.decisions import ToolCall
 
 
 class ToolExecutor(Protocol):

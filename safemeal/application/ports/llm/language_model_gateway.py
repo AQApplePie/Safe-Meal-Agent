@@ -6,15 +6,15 @@
 
 from typing import Protocol
 
-from safemeal.shared.contracts.agent_conversation import ConversationMessage
-from safemeal.shared.contracts.tools import ToolSpecification
+from safemeal.application.contracts.conversation.models import ConversationMessage
+from safemeal.application.contracts.tools.base import ToolSpecification
 
-from safemeal.application.contracts.agent_decisions import (
+from safemeal.application.contracts.agent.decisions import (
     Observation,
     PlanDecision,
     ReflectionDecision,
 )
-from safemeal.application.contracts.recipe_generation import RecipeGenerationRequest
+from safemeal.application.contracts.recipes.generation import RecipeGenerationRequest
 from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
 
 

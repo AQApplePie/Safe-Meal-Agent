@@ -9,7 +9,7 @@ from .assessment import (
 )
 
 from safemeal.application.ports.llm.language_model_gateway import LanguageModelGateway
-from safemeal.application.agent.utils.state import AgentState, AgentStateUpdate
+from safemeal.application.contracts.agent.state import AgentState, AgentStateUpdate
 from safemeal.application.ports.tools.tool_executor import ToolExecutor
 from safemeal.application.agent.utils.loop_control import (
     filter_new_tool_calls,

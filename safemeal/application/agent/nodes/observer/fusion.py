@@ -12,7 +12,7 @@ from typing import Iterable
 
 from safemeal.shared.types import JsonObject, to_json_object
 
-from safemeal.application.contracts.agent_decisions import Observation
+from safemeal.application.contracts.agent.decisions import Observation
 
 
 RETRIEVAL_TOOLS = frozenset(

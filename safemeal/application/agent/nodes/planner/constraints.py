@@ -5,28 +5,18 @@
 """
 
 from __future__ import annotations
+from safemeal.application.contracts.agent.decisions import ModelBudgetUsage
 
-from dataclasses import dataclass
 from uuid import uuid4
 
 from safemeal.application.agent.utils.loop_control import filter_new_tool_calls
-from safemeal.application.contracts.agent_decisions import PlanDecision, ToolCall
+from safemeal.application.contracts.agent.decisions import PlanDecision, ToolCall
 from safemeal.application.agent.utils.retrieval_routing import (
     is_pure_knowledge_request,
     knowledge_retrieval_tools,
 )
-from safemeal.application.agent.utils.state import AgentState, AgentStateUpdate
-from safemeal.application.agent.nodes.planner.recipe_generation_routing import (
-    is_recipe_generation_request,
-)
-from safemeal.shared.contracts.tools import ToolSpecification
-
-
-@dataclass(frozen=True, slots=True)
-class ModelBudgetUsage:
-    tokens: int
-    cost: float
-    cost_complete: bool
+from safemeal.application.contracts.agent.state import AgentState, AgentStateUpdate
+from safemeal.application.contracts.tools.base import ToolSpecification
 
 
 def _retrieval_call(tool_name: str, question: str) -> ToolCall:
@@ -73,8 +63,11 @@ def _apply_generation_guard(
     dietary_active: bool,
     dietary_exclusions: list[str],
     available_tools: set[str],
+    intent: str | None,
 ) -> tuple[list[ToolCall], bool]:
-    requested = is_recipe_generation_request(question)
+    requested = intent == "generate" or any(
+        call.tool_name == "generate_recipe" for call in calls
+    )
     if not requested:
         return calls, False
     if "generate_recipe" in available_tools and not any(
@@ -176,6 +169,7 @@ def build_planning_update(
         dietary_active=dietary_active,
         dietary_exclusions=dietary_exclusions,
         available_tools=available_tools,
+        intent=state.get("agent_context", {}).get("intent"),
     )
     calls, safety_gate_blocked = _apply_safety_guard(
         calls,

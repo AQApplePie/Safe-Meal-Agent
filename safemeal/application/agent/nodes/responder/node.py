@@ -6,7 +6,7 @@ Responder 只依据 Observation 中的证据组织答案，不直接访问数据
 from langchain_core.messages import AIMessage
 
 from safemeal.application.observability import emit_answer_chunk, trace_span
-from .composition import (
+from safemeal.modules.dietary_safety.answer import (
     dietary_constraint_is_active,
     render_dietary_safety_answer,
 )
@@ -14,8 +14,8 @@ from .attribution import collect_answer_sources
 
 from safemeal.application.ports.llm.language_model_gateway import LanguageModelGateway
 from safemeal.application.agent.utils.retrieval_routing import is_pure_knowledge_request
-from safemeal.shared.contracts.agent_conversation import RouterInfo
-from safemeal.application.agent.utils.state import AgentState, AgentStateUpdate
+from safemeal.application.contracts.conversation.models import RouterInfo
+from safemeal.application.contracts.agent.state import AgentState, AgentStateUpdate
 
 
 def create_responder_node(model_gateway: LanguageModelGateway):

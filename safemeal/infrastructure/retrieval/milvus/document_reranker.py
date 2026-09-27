@@ -6,24 +6,32 @@ from typing import List
 
 from loguru import logger
 
-from safemeal.config.settings import settings
 from safemeal.shared.types import JsonObject
 
 
 class HttpDocumentReranker:
     """HTTP adapter supporting custom/DashScope, Jina, and Voyage rerank APIs."""
 
-    def __init__(self) -> None:
-        self.enabled = settings.RERANK_ENABLED
-        self.provider = (
-            settings.RERANK_PROVIDER.lower() if settings.RERANK_PROVIDER else None
-        )
-        self.base_url = settings.RERANK_BASE_URL
-        self.endpoint = settings.RERANK_ENDPOINT
-        self.model = settings.RERANK_MODEL
-        self.api_key = settings.RERANK_API_KEY
-        self.top_n = settings.RERANK_TOP_N
-        self.timeout = settings.RERANK_TIMEOUT
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        provider: str | None,
+        base_url: str | None,
+        endpoint: str | None,
+        model: str | None,
+        api_key: str | None,
+        top_n: int,
+        timeout: float,
+    ) -> None:
+        self.enabled = enabled
+        self.provider = provider.lower() if provider else None
+        self.base_url = base_url
+        self.endpoint = endpoint
+        self.model = model
+        self.api_key = api_key
+        self.top_n = top_n
+        self.timeout = timeout
 
         if not self.enabled:
             logger.info("DocumentReranker disabled via config")

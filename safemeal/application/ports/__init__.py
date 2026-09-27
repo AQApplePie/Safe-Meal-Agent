@@ -9,10 +9,10 @@ from safemeal.application.ports.persistence.chat_repository import (
 from safemeal.application.ports.retrieval.document_embedder import DocumentEmbedder
 from safemeal.application.ports.retrieval.document_reranker import DocumentReranker
 from safemeal.application.ports.llm.language_model_gateway import LanguageModelGateway
+from safemeal.application.contracts.upload.models import ParsedDocument
 from safemeal.application.ports.ingestion.document_parser import (
     DocumentParseError,
     DocumentParser,
-    ParsedDocument,
 )
 from safemeal.application.ports.persistence.recipe_repository import RecipeRepository
 from safemeal.application.ports.ingestion.upload_storage import UploadStorage

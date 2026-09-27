@@ -1,19 +1,13 @@
 """Application contract for parsing uploaded knowledge documents."""
 
 from __future__ import annotations
+from safemeal.application.contracts.upload.models import ParsedDocument
 
-from dataclasses import dataclass
 from typing import Protocol
 
 
 class DocumentParseError(ValueError):
     """The uploaded document cannot be converted into ingestible text."""
-
-
-@dataclass(frozen=True, slots=True)
-class ParsedDocument:
-    text: str
-    parser: str
 
 
 class DocumentParser(Protocol):

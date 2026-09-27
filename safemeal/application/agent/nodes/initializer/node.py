@@ -6,19 +6,20 @@
 
 from collections.abc import Sequence
 
-from safemeal.application.agent.utils.state import (
+from safemeal.application.contracts.agent.state import (
     AgentState,
     AgentStateUpdate,
     MessageInput,
 )
-from safemeal.application.contracts.agent_decisions import Observation
+from safemeal.application.contracts.agent.decisions import Observation
 from safemeal.application.observability import trace_span
 from safemeal.modules.dietary_safety.dietary_constraints import (
+    DietaryConstraint,
     dietary_constraint_from_user_memories,
     extract_contextual_dietary_constraint,
     merge_dietary_constraints,
 )
-from safemeal.shared.contracts.agent_context import AgentContext
+from safemeal.application.contracts.agent.context import AgentContext
 from safemeal.shared.types import to_json_object
 
 from .observations import (
@@ -65,8 +66,6 @@ def _resolve_dietary_constraint(
         conversation_history,
     )
     memory_dietary_constraint = dietary_constraint_from_user_memories(user_memories)
-    if contextual_dietary_constraint.strictness == "not_applicable_negated_constraint":
-        return contextual_dietary_constraint
     return merge_dietary_constraints(
         [memory_dietary_constraint, contextual_dietary_constraint],
         strictness=(
@@ -151,6 +150,35 @@ def create_initializer_node(
                 agent_context.conversation_history or None,
                 history_messages=history_messages,
             )
+            if agent_context.dietary_constraints is not None:
+                dietary_constraint = merge_dietary_constraints(
+                    [
+                        dietary_constraint,
+                        DietaryConstraint.model_validate(
+                            agent_context.dietary_constraints
+                        ),
+                    ],
+                    strictness="hard_exclusion",
+                )
+                initial_observations = _build_initial_observations(
+                    user_memories, dietary_constraint
+                )
+            task_payload = {
+                "intent": agent_context.intent,
+                "profile": agent_context.user_profile,
+            }
+            initial_observations.append(
+                Observation(
+                    call_id="task_context",
+                    tool_name="task_context",
+                    purpose="本轮任务与偏好",
+                    success_criteria="在硬约束内满足本轮要求",
+                    ok=True,
+                    has_data=True,
+                    summary=str(task_payload),
+                    data=to_json_object(task_payload),
+                )
+            )
             initial_observations = [
                 *initial_observations,
                 *_context_observations(agent_context),
@@ -176,6 +204,13 @@ def create_initializer_node(
                 "max_model_cost": max_model_cost,
                 "budget_exhausted": False,
                 "loop_stop_reason": "",
+                "direct_answer": "",
+                "planning_rationale": "",
+                "reflection_rationale": "",
+                "sources": [],
+                "human_approved": False,
+                "approval_required": False,
+                "safety_gate_blocked": False,
             }
             span.set_output(output)
             return output

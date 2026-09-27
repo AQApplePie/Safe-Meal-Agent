@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Query
 
-from safemeal.infrastructure.operations.health import get_integration_status
+from safemeal.application.service.composition.operations import get_integration_status
 
 router = APIRouter(prefix="/integrations", tags=["integrations"])
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from safemeal.application.contracts.recipe_catalog import (
+from safemeal.application.contracts.recipes.catalog import (
     RecipeQuery,
     RecipeSearchResult,
 )

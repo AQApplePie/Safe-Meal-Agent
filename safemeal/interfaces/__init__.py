@@ -7,7 +7,6 @@ from safemeal.interfaces.http.authentication import (  # noqa: F401
 )
 from safemeal.interfaces.http.answer_stream import stream_answer_events  # noqa: F401
 from safemeal.interfaces.http.dependencies import (  # noqa: F401
-    get_agent_request_service,
     get_agent_trace_store,
     get_chat_session_service,
     get_chat_turn_service,

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from safemeal.modules.user_memory.memory_extraction import UserMemoryExtractor
-from safemeal.modules.user_memory.memory_models import MemoryCandidate
+from safemeal.application.service.memory.memory_extraction import UserMemoryExtractor
+from safemeal.application.contracts.memory.extraction import MemoryCandidate
 from safemeal.application.ports import UserMemoryUnitOfWorkFactory
 from safemeal.application.contracts.memory.models import (
     UserMemoryCreate,
@@ -116,6 +116,39 @@ class UserMemoryService:
                 )
             ]
             records = list({record.id: record for record in [*hard, *soft]}.values())
+            memory_ids = [int(record.id) for record in records]
+            if memory_ids:
+                uow.memories.mark_used(memory_ids)
+                uow.commit()
+            return [
+                to_json_object(UserMemoryRead.model_validate(record))
+                for record in records
+            ]
+
+    def load_agent_memories_by_types(
+        self,
+        *,
+        user_id: str,
+        memory_types: set[str],
+        limit: int = 50,
+    ) -> List[JsonObject]:
+        """Load only requested memory classes; hard constraints stay explicit."""
+
+        if not memory_types:
+            return []
+        with self._uow_factory() as uow:
+            records = []
+            remaining = limit
+            for memory_type in sorted(memory_types):
+                if remaining <= 0:
+                    break
+                selected = uow.memories.list_active_memories(
+                    user_id,
+                    memory_type=memory_type,
+                    limit=remaining,
+                )
+                records.extend(selected)
+                remaining -= len(selected)
             memory_ids = [int(record.id) for record in records]
             if memory_ids:
                 uow.memories.mark_used(memory_ids)

@@ -46,6 +46,15 @@ def deterministic_evidence_is_sufficient(
 ) -> bool:
     """判断 Reflector 是否已获得充分的确定性证据。"""
 
+    if any(
+        item.tool_name == "search_recipes"
+        and item.ok
+        and isinstance(item.data, dict)
+        and item.data.get("exact_name") is True
+        and item.data.get("status") in {"FOUND", "NOT_FOUND", "ERROR"}
+        for item in observations
+    ):
+        return True
     if _target_dish_is_classified(observations):
         return True
     external_observations = [

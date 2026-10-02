@@ -14,6 +14,10 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from safemeal.application.contracts.conversation.models import ConversationHistory
 from safemeal.shared.types import JsonObject
+from safemeal.application.contracts.dietary_safety.requirements import (
+    DietaryRequirements,
+)
+from safemeal.application.contracts.workflow.request_frame import RequestFrame
 
 
 class AgentContext(BaseModel):
@@ -27,7 +31,9 @@ class AgentContext(BaseModel):
     user_memories: list[JsonObject] = Field(default_factory=list)
     user_profile: Optional[JsonObject] = None
     dietary_constraints: Optional[JsonObject] = None
+    requirements: DietaryRequirements | None = None
     intent: Optional[str] = None
+    request_frame: RequestFrame | None = None
     episodic_memories: list[JsonObject] = Field(default_factory=list, max_length=100)
     observations: list[JsonObject] = Field(default_factory=list, max_length=50)
     context_metadata: JsonObject = Field(default_factory=dict)

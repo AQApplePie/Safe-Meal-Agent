@@ -1,25 +1,28 @@
-SafeMealAgent/
+Safe-Meal-Agent/
 ├── data/
-│   ├── evaluation/
-│   │   ├── profiles/
-│   │   │   └── current_default.json
-│   │   ├── agent_eval_v3.jsonl
-│   │   └── retrieval_corpus.jsonl
 │   ├── mysql/
 │   │   ├── init_mysql.sql
 │   │   └── insert_sample_data.sql
 │   ├── neo4j/
 │   │   └── excipients.json
 │   └── recipe.json
+├── deploy/
+│   └── k8s/
+│       └── base/
+│           ├── api.yaml
+│           ├── configmap.yaml
+│           ├── kustomization.yaml
+│           ├── namespace.yaml
+│           ├── platform.yaml
+│           └── worker.yaml
 ├── docs/
-│   └── architecture-cn.md
+│   ├── architecture.md
+│   ├── http-api.md
+│   ├── production.md
+│   └── workflow-example-review.md
 ├── safemeal/
 │   ├── application/
 │   │   ├── agent/
-│   │   │   ├── context/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── builder.py
-│   │   │   │   └── conversation_context.py
 │   │   │   ├── nodes/
 │   │   │   │   ├── executor/
 │   │   │   │   │   ├── __init__.py
@@ -36,8 +39,8 @@ SafeMealAgent/
 │   │   │   │   ├── planner/
 │   │   │   │   │   ├── __init__.py
 │   │   │   │   │   ├── constraints.py
-│   │   │   │   │   ├── node.py
-│   │   │   │   │   └── recipe_generation_routing.py
+│   │   │   │   │   ├── intent.py
+│   │   │   │   │   └── node.py
 │   │   │   │   ├── reflector/
 │   │   │   │   │   ├── __init__.py
 │   │   │   │   │   ├── assessment.py
@@ -45,43 +48,75 @@ SafeMealAgent/
 │   │   │   │   ├── responder/
 │   │   │   │   │   ├── __init__.py
 │   │   │   │   │   ├── attribution.py
-│   │   │   │   │   ├── composition.py
 │   │   │   │   │   └── node.py
-│   │   │   │   └── __init__.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── approval.py
 │   │   │   ├── utils/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── loop_control.py
 │   │   │   │   ├── prompts.py
-│   │   │   │   ├── retrieval_routing.py
-│   │   │   │   └── state.py
+│   │   │   │   └── retrieval_routing.py
 │   │   │   ├── __init__.py
 │   │   │   ├── execution_service.py
 │   │   │   ├── graph.py
-│   │   │   └── request_service.py
+│   │   │   ├── routing.py
+│   │   │   ├── tool_policy.py
+│   │   │   ├── tool_registry.py
+│   │   │   └── tool_runtime.py
 │   │   ├── contracts/
-│   │   │   ├── __init__.py
-│   │   │   ├── agent.py
-│   │   │   ├── agent_decisions.py
-│   │   │   ├── chat.py
-│   │   │   ├── chat_turn.py
-│   │   │   ├── recipe_catalog.py
-│   │   │   └── recipe_generation.py
-│   │   ├── observability/
-│   │   │   ├── __init__.py
-│   │   │   ├── correlation.py
-│   │   │   ├── cost.py
-│   │   │   ├── payload.py
-│   │   │   ├── recorder.py
-│   │   │   ├── store.py
-│   │   │   ├── streaming.py
-│   │   │   └── trace_models.py
+│   │   │   ├── agent/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── api.py
+│   │   │   │   ├── budget.py
+│   │   │   │   ├── context.py
+│   │   │   │   ├── decisions.py
+│   │   │   │   ├── intent.py
+│   │   │   │   ├── prompts.py
+│   │   │   │   └── state.py
+│   │   │   ├── chat/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── messages.py
+│   │   │   │   └── turn.py
+│   │   │   ├── conversation/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── models.py
+│   │   │   ├── dietary_safety/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── constraints.py
+│   │   │   │   ├── models.py
+│   │   │   │   └── requirements.py
+│   │   │   ├── memory/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── extraction.py
+│   │   │   │   └── models.py
+│   │   │   ├── recipes/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── catalog.py
+│   │   │   │   ├── generated.py
+│   │   │   │   ├── generation.py
+│   │   │   │   └── models.py
+│   │   │   ├── tools/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── base.py
+│   │   │   │   └── payloads.py
+│   │   │   ├── upload/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── ingestion.py
+│   │   │   │   └── models.py
+│   │   │   ├── workflow/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── models.py
+│   │   │   │   └── stream.py
+│   │   │   └── __init__.py
 │   │   ├── ports/
 │   │   │   ├── ingestion/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── document_parser.py
+│   │   │   │   ├── ingestion_queue.py
 │   │   │   │   └── upload_storage.py
 │   │   │   ├── llm/
 │   │   │   │   ├── __init__.py
+│   │   │   │   ├── intent_classifier.py
 │   │   │   │   └── language_model_gateway.py
 │   │   │   ├── persistence/
 │   │   │   │   ├── __init__.py
@@ -92,59 +127,93 @@ SafeMealAgent/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── document_embedder.py
 │   │   │   │   ├── document_reranker.py
+│   │   │   │   ├── lexical_document_repository.py
 │   │   │   │   └── vector_document_repository.py
 │   │   │   ├── tools/
 │   │   │   │   ├── __init__.py
+│   │   │   │   ├── backends.py
+│   │   │   │   ├── handler.py
 │   │   │   │   └── tool_executor.py
-│   │   │   └── __init__.py
-│   │   ├── use_cases/
+│   │   │   ├── __init__.py
+│   │   │   └── agent.py
+│   │   ├── service/
 │   │   │   ├── chat/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── chat_exceptions.py
 │   │   │   │   ├── chat_session_service.py
 │   │   │   │   ├── chat_turn_service.py
+│   │   │   │   ├── conversation_history_service.py
 │   │   │   │   └── turn_persistence.py
+│   │   │   ├── composition/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── application_container.py
+│   │   │   │   ├── dietary_search_factory.py
+│   │   │   │   ├── document_knowledge_factory.py
+│   │   │   │   ├── model_factory.py
+│   │   │   │   └── operations.py
+│   │   │   ├── dietary_safety/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── answer.py
+│   │   │   │   ├── constraints.py
+│   │   │   │   ├── dietary_safety_service.py
+│   │   │   │   ├── generated_safety.py
+│   │   │   │   ├── ingredient_terms.py
+│   │   │   │   ├── preference_rules.py
+│   │   │   │   └── recipe_safety.py
 │   │   │   ├── knowledge/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── chunking.py
 │   │   │   │   ├── document_knowledge_service.py
-│   │   │   │   ├── recipe_document_formatter.py
-│   │   │   │   └── recipe_indexing.py
+│   │   │   │   └── hybrid.py
 │   │   │   ├── memory/
 │   │   │   │   ├── __init__.py
+│   │   │   │   ├── memory_extraction.py
 │   │   │   │   └── user_memory_service.py
 │   │   │   ├── recipes/
 │   │   │   │   ├── __init__.py
-│   │   │   │   ├── recipe_catalog.py
-│   │   │   │   └── recipe_generation.py
+│   │   │   │   ├── dietary_filter.py
+│   │   │   │   └── recipe_service.py
 │   │   │   ├── upload/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── file_upload_service.py
 │   │   │   │   └── uploaded_document_ingestion_service.py
 │   │   │   └── __init__.py
+│   │   ├── tool/
+│   │   │   ├── __init__.py
+│   │   │   ├── dietary_search.py
+│   │   │   ├── recipe_tools.py
+│   │   │   └── vector_search.py
+│   │   ├── workflow/
+│   │   │   ├── context/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── builder.py
+│   │   │   │   └── conversation_context.py
+│   │   │   ├── nodes/
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── constraints.py
+│   │   │   │   ├── invoke_agent.py
+│   │   │   │   ├── prepare_context.py
+│   │   │   │   ├── resume_agent.py
+│   │   │   │   ├── safety.py
+│   │   │   │   └── save_memory.py
+│   │   │   ├── __init__.py
+│   │   │   ├── graph.py
+│   │   │   ├── review_reply.py
+│   │   │   └── runner.py
 │   │   ├── __init__.py
-│   │   └── exceptions.py
-│   ├── bootstrap/
-│   │   ├── __init__.py
-│   │   └── application_container.py
+│   │   ├── exceptions.py
+│   │   ├── runtime_budget.py
+│   │   └── streaming.py
 │   ├── config/
 │   │   ├── __init__.py
 │   │   └── settings.py
-│   ├── evaluation/
-│   │   ├── __init__.py
-│   │   ├── __main__.py
-│   │   ├── cli.py
-│   │   ├── evaluation_artifacts.py
-│   │   ├── evaluation_contracts.py
-│   │   ├── evaluation_runner.py
-│   │   ├── llm_judge.py
-│   │   ├── README.md
-│   │   └── scoring.py
 │   ├── infrastructure/
 │   │   ├── ingestion/
 │   │   │   ├── __init__.py
 │   │   │   ├── document_parser.py
-│   │   │   └── local_upload_storage.py
+│   │   │   ├── local_upload_storage.py
+│   │   │   ├── redis_queue.py
+│   │   │   └── worker.py
 │   │   ├── llm/
 │   │   │   ├── __init__.py
 │   │   │   ├── openai_language_model_gateway.py
@@ -153,8 +222,7 @@ SafeMealAgent/
 │   │   │   ├── __init__.py
 │   │   │   ├── health.py
 │   │   │   ├── logging.py
-│   │   │   ├── rate_limit.py
-│   │   │   └── trace_store.py
+│   │   │   └── rate_limit.py
 │   │   ├── persistence/
 │   │   │   ├── db/
 │   │   │   │   ├── models/
@@ -170,40 +238,36 @@ SafeMealAgent/
 │   │   │   │   │   ├── 20260713_0003_remove_chat_snapshots.py
 │   │   │   │   │   ├── 20260716_0004_legacy_revision_marker.py
 │   │   │   │   │   └── 20260802_0005_remove_legacy_feedback_table.py
-│   │   │   │   ├── env.py
 │   │   │   │   ├── README
+│   │   │   │   ├── env.py
 │   │   │   │   └── script.py.mako
 │   │   │   ├── __init__.py
 │   │   │   ├── chat_repository.py
+│   │   │   ├── checkpoint_serializer.py
 │   │   │   ├── database.py
+│   │   │   ├── langgraph_checkpoint.py
 │   │   │   ├── recipe_repository.py
+│   │   │   ├── threaded_checkpoint.py
 │   │   │   └── user_memory_repository.py
 │   │   ├── retrieval/
 │   │   │   ├── milvus/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── document_embedder.py
-│   │   │   │   ├── document_knowledge_factory.py
 │   │   │   │   ├── document_reranker.py
-│   │   │   │   ├── vector_document_repository.py
-│   │   │   │   └── vector_search_tool.py
+│   │   │   │   └── vector_document_repository.py
 │   │   │   ├── neo4j/
 │   │   │   │   ├── importers/
 │   │   │   │   │   ├── __init__.py
 │   │   │   │   │   ├── recipe_importer.py
 │   │   │   │   │   └── recipe_json_parser.py
-│   │   │   │   ├── tools/
-│   │   │   │   │   ├── __init__.py
-│   │   │   │   │   └── dietary_safe_recipe.py
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── dietary_migration.py
 │   │   │   │   ├── recipe_graph.py
 │   │   │   │   └── safe_recipe_search.py
-│   │   │   └── __init__.py
+│   │   │   ├── __init__.py
+│   │   │   └── sqlite_bm25.py
 │   │   ├── tools/
 │   │   │   ├── __init__.py
-│   │   │   ├── recipe_tools.py
-│   │   │   ├── tool_executor.py
-│   │   │   └── tool_executor_factory.py
 │   │   └── __init__.py
 │   ├── interfaces/
 │   │   ├── http/
@@ -211,69 +275,78 @@ SafeMealAgent/
 │   │   │   │   ├── __init__.py
 │   │   │   │   ├── chat_message.py
 │   │   │   │   ├── chat_session.py
-│   │   │   │   ├── knowledge.py
-│   │   │   │   ├── memory.py
-│   │   │   │   └── upload.py
+│   │   │   │   └── memory.py
 │   │   │   ├── routers/
-│   │   │   │   ├── agent.py
-│   │   │   │   ├── agent_traces.py
 │   │   │   │   ├── chat.py
-│   │   │   │   ├── integrations.py
-│   │   │   │   ├── knowledge.py
-│   │   │   │   ├── memories.py
-│   │   │   │   ├── sessions.py
-│   │   │   │   └── upload.py
+│   │   │   │   └── knowledge.py
 │   │   │   ├── __init__.py
 │   │   │   ├── answer_stream.py
 │   │   │   ├── authentication.py
 │   │   │   ├── dependencies.py
 │   │   │   └── request_middleware.py
-│   │   └── __init__.py
-│   ├── modules/
-│   │   ├── dietary_safety/
-│   │   │   ├── __init__.py
-│   │   │   ├── dietary_constraints.py
-│   │   │   ├── ingredient_terms.py
-│   │   │   └── recipe_safety.py
-│   │   ├── recipe_catalog/
-│   │   │   ├── __init__.py
-│   │   │   ├── dietary_filter.py
-│   │   │   ├── generated_recipe.py
-│   │   │   └── recipe_models.py
-│   │   ├── user_memory/
-│   │   │   ├── __init__.py
-│   │   │   ├── memory_extraction.py
-│   │   │   └── memory_models.py
-│   │   └── __init__.py
+│   │   ├── __init__.py
 │   ├── shared/
-│   │   ├── contracts/
-│   │   │   ├── __init__.py
-│   │   │   ├── agent_context.py
-│   │   │   ├── agent_conversation.py
-│   │   │   ├── memory.py
-│   │   │   └── tools.py
 │   │   ├── __init__.py
 │   │   └── types.py
 │   ├── __init__.py
 │   ├── main.py
 │   └── print_project_tree.py
-├── uploads/
+├── tests/
+│   └── refactor/
+│       ├── test_agent_graph.py
+│       ├── test_architecture.py
+│       ├── test_checkpoint.py
+│       ├── test_context_and_agent_intent.py
+│       ├── test_dietary_requirements.py
+│       ├── test_file_knowledge.py
+│       ├── test_http_surface.py
+│       ├── test_runtime_budget.py
+│       ├── test_safety.py
+│       ├── test_stream.py
+│       └── test_workflow.py
+├── tmp/
+│   └── pdfs/
+│       ├── rendered/
+│       │   ├── page-1.png
+│       │   ├── page-105.png
+│       │   ├── page-136.png
+│       │   ├── page-137.png
+│       │   ├── page-2.png
+│       │   ├── page-3.png
+│       │   ├── page-35.png
+│       │   ├── page-4.png
+│       │   └── page-70.png
+│       ├── rendered-v2.xPno6Y/
+│       │   ├── page-1.png
+│       │   ├── page-105.png
+│       │   ├── page-136.png
+│       │   ├── page-137.png
+│       │   ├── page-2.png
+│       │   ├── page-3.png
+│       │   ├── page-35.png
+│       │   ├── page-4.png
+│       │   └── page-70.png
+│       └── build_interview_material_pdf.py
 ├── web/
 │   ├── src/
-│   │   ├── api.js
 │   │   ├── App.jsx
+│   │   ├── api.js
 │   │   ├── main.jsx
 │   │   └── styles.css
+│   ├── .env.example
 │   ├── index.html
 │   ├── package-lock.json
 │   ├── package.json
 │   └── vite.config.js
+├── .dockerignore
+├── .env.example
+├── .gitignore
+├── Dockerfile
+├── Makefile
+├── SafeMealAgent.txt
 ├── alembic.ini
 ├── docker-compose.yml
-├── Dockerfile
 ├── environment.yml
-├── Makefile
 ├── print_project_tree.py
 ├── pyproject.toml
-├── README.md
 └── requirements.txt

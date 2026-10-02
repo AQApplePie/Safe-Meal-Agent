@@ -22,7 +22,6 @@ from safemeal.application.service.chat.chat_exceptions import (
     ChatSessionNotFoundError,
     ChatTurnConflictError,
 )
-from safemeal.application.contracts.conversation.models import ConversationHistory
 from safemeal.shared.types import JsonObject, JsonValue, to_json_value
 
 
@@ -35,13 +34,8 @@ class ChatTurnPersistence:
     def __init__(
         self,
         uow_factory: ChatUnitOfWorkFactory,
-        *,
-        history_messages: int = 12,
     ) -> None:
-        if history_messages < 0:
-            raise ValueError("history_messages must be non-negative")
         self._uow_factory = uow_factory
-        self._history_messages = history_messages
 
     def start_turn(
         self,
@@ -51,7 +45,7 @@ class ChatTurnPersistence:
         *,
         request_id: Optional[str] = None,
     ) -> ChatTurnStart:
-        """Create a session when needed, load history, then append the question."""
+        """Create a session when needed and append the question."""
 
         with self._uow_factory() as uow:
             if session_id is None:
@@ -66,7 +60,6 @@ class ChatTurnPersistence:
             elif uow.sessions.get_active(session_id, user_id=user_id) is None:
                 raise ChatSessionNotFoundError()
 
-            history = self._history_before(uow, session_id, user_id=user_id)
             first_order = uow.messages.next_order(session_id, user_id=user_id)
             if first_order is None:
                 raise ChatSessionNotFoundError()
@@ -86,7 +79,6 @@ class ChatTurnPersistence:
             session_id=session_id,
             user_message_id=created.id,
             response_order_index=first_order + 1,
-            history=history,
         )
 
     def save_agent_response(
@@ -179,31 +171,6 @@ class ChatTurnPersistence:
                 user_message.id, ChatMessageUpdate(turn_status="failed")
             )
             uow.commit()
-
-    def _history_before(
-        self,
-        uow: ChatUnitOfWork,
-        session_id: str,
-        *,
-        user_id: str,
-    ) -> ConversationHistory:
-        records = uow.messages.recent_for_session(
-            session_id, user_id=user_id, limit=self._history_messages
-        )
-        history: ConversationHistory = []
-        for record in records:
-            if record.message_type in {"user_query", "agent_response"}:
-                history.append(
-                    {
-                        "role": (
-                            "assistant"
-                            if record.message_type == "agent_response"
-                            else "user"
-                        ),
-                        "content": record.content,
-                    }
-                )
-        return history
 
     @staticmethod
     def _require_owned_session(

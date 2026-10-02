@@ -30,7 +30,7 @@ from safemeal.application.contracts.recipes.catalog import (
     RecipeSearchResult,
     RecipeSortField,
 )
-from safemeal.modules.recipe_catalog.recipe_models import (
+from safemeal.application.contracts.recipes.models import (
     CookingStep,
     Ingredient,
     IngredientQuantity,

@@ -1,5 +1,13 @@
-export const DEFAULT_API_BASE =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+export const DEFAULT_API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+export class ApiError extends Error {
+  constructor(status, message, data = null) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.data = data;
+  }
+}
 
 export function normalizeBaseUrl(value) {
   return value.trim().replace(/\/+$/, "");
@@ -15,6 +23,12 @@ async function parseResponse(response) {
   return contentType.includes("application/json") ? response.json() : response.text();
 }
 
+function errorDetail(data) {
+  if (!data || typeof data !== "object") return String(data || "请求失败");
+  if (Array.isArray(data.detail)) return data.detail.map((item) => item.msg).join("；");
+  return data.detail || data.message || data.error || JSON.stringify(data);
+}
+
 function parseSseFrame(frame) {
   let event = "message";
   const data = [];
@@ -27,85 +41,49 @@ function parseSseFrame(frame) {
     if (field === "event") event = value;
     if (field === "data") data.push(value);
   }
-  if (data.length === 0) return null;
-  const rawData = data.join("\n");
-  let payload = rawData;
-  try {
-    payload = JSON.parse(rawData);
-  } catch {
-    // Non-JSON data is still a valid SSE payload.
-  }
-  return { event, data: payload };
+  if (!data.length) return null;
+  const raw = data.join("\n");
+  try { return { event, data: JSON.parse(raw) }; } catch { return { event, data: raw }; }
 }
 
 export async function apiRequest(baseUrl, path, options = {}) {
-  const startedAt = performance.now();
   const response = await fetch(buildUrl(baseUrl, path), options);
   const data = response.status === 204 ? null : await parseResponse(response);
-  const elapsed = Math.round(performance.now() - startedAt);
-
-  if (!response.ok) {
-    const detail =
-      typeof data === "object" && data
-        ? data.detail || data.message || JSON.stringify(data)
-        : data;
-    throw new Error(`${response.status} ${response.statusText}: ${detail || "请求失败"}`);
-  }
-  return { data, status: response.status, elapsed };
+  if (!response.ok) throw new ApiError(response.status, errorDetail(data), data);
+  return { data, status: response.status };
 }
 
 export async function streamSse(baseUrl, path, options = {}, onEvent = () => {}) {
-  const startedAt = performance.now();
   const response = await fetch(buildUrl(baseUrl, path), {
     ...options,
-    headers: {
-      Accept: "text/event-stream",
-      ...(options.headers || {}),
-    },
+    headers: { Accept: "text/event-stream", ...(options.headers || {}) },
   });
-
   if (!response.ok) {
     const data = response.status === 204 ? null : await parseResponse(response);
-    const detail =
-      typeof data === "object" && data
-        ? data.detail || data.message || JSON.stringify(data)
-        : data;
-    throw new Error(`${response.status} ${response.statusText}: ${detail || "请求失败"}`);
+    throw new ApiError(response.status, errorDetail(data), data);
   }
-  if (!response.body) throw new Error("浏览器未提供可读取的流式响应");
-
+  if (!response.body) throw new Error("浏览器未提供流式响应");
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
-
-  async function dispatchFrames(flush = false) {
-    buffer = buffer.replace(/\r\n/g, "\n");
-    const frames = buffer.split("\n\n");
-    buffer = flush ? "" : frames.pop() || "";
-    for (const frame of frames) {
-      const parsed = parseSseFrame(frame);
-      if (parsed) await onEvent(parsed);
-    }
-    if (flush && buffer.trim()) {
-      const parsed = parseSseFrame(buffer);
-      if (parsed) await onEvent(parsed);
-      buffer = "";
-    }
-  }
-
   try {
     while (true) {
       const { value, done } = await reader.read();
-      buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
-      await dispatchFrames(done);
-      if (done) break;
+      buffer += decoder.decode(value || new Uint8Array(), { stream: !done }).replace(/\r\n/g, "\n");
+      const frames = buffer.split("\n\n");
+      buffer = frames.pop() || "";
+      for (const frame of frames) {
+        const parsed = parseSseFrame(frame);
+        if (parsed) await onEvent(parsed);
+      }
+      if (done) {
+        const parsed = parseSseFrame(buffer);
+        if (parsed) await onEvent(parsed);
+        break;
+      }
     }
   } finally {
     reader.releaseLock();
   }
-
-  return {
-    status: response.status,
-    elapsed: Math.round(performance.now() - startedAt),
-  };
+  return { status: response.status };
 }

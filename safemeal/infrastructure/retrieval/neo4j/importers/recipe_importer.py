@@ -5,7 +5,9 @@ from typing import Iterable, List, Optional
 
 from loguru import logger
 
-from safemeal.modules.dietary_safety.recipe_safety import normalize_ingredient_name
+from safemeal.application.service.dietary_safety.recipe_safety import (
+    normalize_ingredient_name,
+)
 from safemeal.infrastructure.retrieval.neo4j.recipe_graph import RecipeGraphDatabase
 from .recipe_json_parser import (
     IngredientProfile,

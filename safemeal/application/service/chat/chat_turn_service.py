@@ -45,12 +45,16 @@ class ChatTurnService:
             可以直接返回给 HTTP 客户端的稳定 Chat 响应契约。
         """
 
+        user_id = request.user_id
+        if not user_id:
+            raise ValueError("ChatRequest.user_id must be bound by the caller")
+
         # start_turn 是同步数据库事务；放入线程，避免阻塞 FastAPI 的异步事件循环。
-        # 它会在一个事务中完成：创建/复用 session、读取历史、保存用户问题。
+        # 它会在一个事务中完成：创建/复用 session、保存用户问题。
         turn = await asyncio.to_thread(
             self._persistence.start_turn,
             request.session_id,
-            request.user_id,
+            user_id,
             request.message,
             request_id=request.request_id,
         )
@@ -58,10 +62,9 @@ class ChatTurnService:
         try:
             result = await self._workflow.run(
                 WorkflowRequest(
-                    user_id=request.user_id,
+                    user_id=user_id,
                     message=request.message,
                     session_id=turn.session_id,
-                    history=turn.history,
                     source_message_id=str(turn.user_message_id),
                 )
             )
@@ -70,7 +73,7 @@ class ChatTurnService:
                 await asyncio.to_thread(
                     self._persistence.save_agent_error,
                     session_id=turn.session_id,
-                    user_id=request.user_id,
+                    user_id=user_id,
                     user_message_id=turn.user_message_id,
                     response_order_index=turn.response_order_index,
                     error_code=result.error_code,
@@ -81,7 +84,7 @@ class ChatTurnService:
             message_id = await asyncio.to_thread(
                 self._persistence.save_agent_response,
                 session_id=turn.session_id,
-                user_id=request.user_id,
+                user_id=user_id,
                 user_message_id=turn.user_message_id,
                 response_order_index=turn.response_order_index,
                 response=result.message,
@@ -105,7 +108,7 @@ class ChatTurnService:
                 await asyncio.to_thread(
                     self._persistence.mark_turn_failed,
                     session_id=turn.session_id,
-                    user_id=request.user_id,
+                    user_id=user_id,
                     user_message_id=turn.user_message_id,
                 )
             except Exception:

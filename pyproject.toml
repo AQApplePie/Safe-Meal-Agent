@@ -35,9 +35,9 @@ exclude = ["safemeal/infrastructure/persistence/migrations/"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 markers = [
+    "e2e: requires an explicitly configured live API and external model provider",
     "integration: requires local infrastructure or Docker",
     "testcontainers: starts disposable Docker containers",
     "rag: retrieval quality and fusion tests",
     "graph: LangGraph orchestration and checkpoint tests",
-    "regression: frozen Agent benchmark regression gate",
 ]

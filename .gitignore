@@ -33,8 +33,6 @@ uploads/*
 data/runtime/
 data/milvus/
 data/neo4j/graph.json
-evaluation_results/*.json
-evaluation_results/*.jsonl
 
 # Large local model artifacts
 *.onnx

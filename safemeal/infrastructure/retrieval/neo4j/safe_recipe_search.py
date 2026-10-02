@@ -6,12 +6,12 @@ from typing import Literal, Optional
 
 from neo4j import READ_ACCESS, Record, Session
 
-from safemeal.modules.dietary_safety.dietary_constraints import RecipeSafetyRecord
-from safemeal.modules.dietary_safety.recipe_safety import (
+from safemeal.application.contracts.dietary_safety.constraints import RecipeSafetyRecord
+from safemeal.application.service.dietary_safety.recipe_safety import (
     match_forbidden_ingredients,
     normalize_ingredient_name,
 )
-from safemeal.modules.dietary_safety.ingredient_terms import (
+from safemeal.application.service.dietary_safety.ingredient_terms import (
     DERIVED_SUFFIXES,
     INGREDIENT_ALIASES,
     PREPARATION_PREFIXES,

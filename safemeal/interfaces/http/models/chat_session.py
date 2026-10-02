@@ -8,16 +8,6 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
-class ChatSessionCreateRequest(BaseModel):
-    """Client-controlled fields accepted when creating a session."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    id: Optional[str] = Field(default=None, min_length=1, max_length=255)
-    title: str = Field(..., min_length=1, max_length=500)
-    user_id: str = Field(..., min_length=1, max_length=255)
-
-
 class ChatSessionUpdateRequest(BaseModel):
     """Mutable session fields; ownership cannot be transferred over HTTP."""
 
@@ -60,7 +50,6 @@ class ChatSessionResponse(BaseModel):
 
 
 __all__ = [
-    "ChatSessionCreateRequest",
     "ChatSessionResponse",
     "ChatSessionUpdateRequest",
 ]

@@ -4,7 +4,10 @@
 通过 ``UploadStorage`` 协议注入。
 """
 
-from safemeal.application.contracts.upload.models import UploadSaveResult
+from safemeal.application.contracts.upload.models import (
+    UploadSaveResult,
+    UploadedDocumentRecord,
+)
 
 from pathlib import Path
 import uuid
@@ -74,7 +77,7 @@ class FileUploadService:
             file_path=str(file_path),
             file_type=extension,
             file_id=file_id,
-            file_url=f"/api/v1/upload/files/{filename}",
+            file_url=f"/api/v1/knowledge/files/{file_id}/content",
         )
 
     def resolve(self, filename: str) -> Path:
@@ -86,13 +89,24 @@ class FileUploadService:
         except FileNotFoundError as exc:
             raise UploadNotFoundError("文件不存在") from exc
 
-    def delete(self, file_id: str) -> None:
-        try:
-            uuid.UUID(file_id)
-        except ValueError as exc:
-            raise UploadNotFoundError("文件不存在") from exc
+    def list_documents(self, tenant_id: str) -> list[UploadedDocumentRecord]:
+        return self.storage.list_records(tenant_id)
 
-        file_path = self.storage.find_by_prefix(f"{file_id}_")
-        if file_path is None:
+    def get_document(self, file_id: str, tenant_id: str) -> UploadedDocumentRecord:
+        record = self.storage.get_record(file_id)
+        if record is None or record.tenant_id != tenant_id:
             raise UploadNotFoundError("文件不存在")
-        self.storage.delete(file_path)
+        return record
+
+    def save_document(self, record: UploadedDocumentRecord) -> None:
+        self.storage.save_record(record)
+
+    def delete_document_file(self, record: UploadedDocumentRecord) -> None:
+        # Index cleanup has already succeeded; allow retries after partial deletion.
+        try:
+            path = self.resolve(record.file.filename)
+        except UploadNotFoundError:
+            pass
+        else:
+            self.storage.delete(path)
+        self.storage.delete_record(str(record.file.file_id))

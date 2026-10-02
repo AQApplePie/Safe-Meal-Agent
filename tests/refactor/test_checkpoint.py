@@ -58,3 +58,64 @@ async def test_sync_checkpoint_adapter_supports_async_graph_execution():
     config = {"configurable": {"thread_id": "sync-adapter"}}
     assert (await compiled.ainvoke({"count": 1}, config=config))["count"] == 2
     assert (await saver.aget_tuple(config)).checkpoint["channel_values"]["count"] == 2
+
+
+@pytest.mark.parametrize("encoding", ["msgpack", "json"])
+@pytest.mark.parametrize(
+    "kind", ["constraint", "generated_ingredient", "memory", "safety"]
+)
+def test_legacy_domain_values_survive_modules_removal(kind, encoding):
+    from safemeal.application.contracts.dietary_safety.constraints import (
+        DietaryConstraint,
+    )
+    from safemeal.application.contracts.dietary_safety.models import (
+        SafetyDecision,
+        SafetyStatus,
+    )
+    from safemeal.application.contracts.recipes.generated import GeneratedIngredient
+    from safemeal.application.contracts.memory.extraction import MemoryCandidate
+
+    values = {
+        "constraint": (
+            DietaryConstraint(active=True, excluded_ingredients=["花生"]),
+            "safemeal.modules.dietary_safety.dietary_constraints",
+        ),
+        "generated_ingredient": (
+            GeneratedIngredient(name="土豆", quantity="100", unit="g"),
+            "safemeal.modules.recipe_catalog.generated_recipe",
+        ),
+        "memory": (
+            MemoryCandidate("taste_preference", "清淡", "偏好清淡", 0.8),
+            "safemeal.modules.user_memory.memory_models",
+        ),
+        "safety": (
+            SafetyDecision(SafetyStatus.SAFE),
+            "safemeal.modules.dietary_safety.recipe_safety",
+        ),
+    }
+    value, legacy_module = values[kind]
+    cls = type(value)
+    original = cls.__module__
+    try:
+        cls.__module__ = legacy_module
+        serializer = JsonPlusSerializer()
+        payload = {"value": value, "text": legacy_module}
+        encoded = (
+            serializer.dumps_typed(payload)
+            if encoding == "msgpack"
+            else ("json", serializer.dumps(payload))
+        )
+    finally:
+        cls.__module__ = original
+    restored = ContractCheckpointSerializer().loads_typed(encoded)
+    assert isinstance(restored["value"], cls)
+    # JsonPlus normalizes tuples in plain dataclasses to lists. Compare with a
+    # round trip using the current path, so relocation preserves upstream behavior.
+    current_payload = {"value": value, "text": legacy_module}
+    current_encoded = (
+        serializer.dumps_typed(current_payload)
+        if encoding == "msgpack"
+        else ("json", serializer.dumps(current_payload))
+    )
+    assert restored["value"] == serializer.loads_typed(current_encoded)["value"]
+    assert restored["text"] == legacy_module

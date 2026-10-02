@@ -7,34 +7,18 @@ name makes their purpose (API-facing contracts) explicit.
 
 from .chat_message import ChatMessageResponse
 from .chat_session import (
-    ChatSessionCreateRequest,
     ChatSessionResponse,
     ChatSessionUpdateRequest,
 )
-from .knowledge import (
-    KnowledgeSearchRequest,
-    KnowledgeSearchResponse,
-    RecipeDocumentRequest,
-)
 from .memory import (
-    UserMemoryCreateRequest,
-    UserMemoryRememberRequest,
     UserMemoryResponse,
     UserMemoryUpdateRequest,
 )
-from .upload import UploadResponse
 
 __all__ = [
     "ChatMessageResponse",
-    "ChatSessionCreateRequest",
     "ChatSessionResponse",
     "ChatSessionUpdateRequest",
-    "KnowledgeSearchRequest",
-    "KnowledgeSearchResponse",
-    "RecipeDocumentRequest",
-    "UserMemoryCreateRequest",
-    "UserMemoryRememberRequest",
     "UserMemoryResponse",
     "UserMemoryUpdateRequest",
-    "UploadResponse",
 ]

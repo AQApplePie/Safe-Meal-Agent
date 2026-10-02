@@ -1,6 +1,6 @@
 """Agent 图执行用例服务。
 
-本服务封装一次 Agent 调用的输入准备、异常转换和 Trace 回传，
+本服务封装一次 Agent 调用的输入准备、预算控制和异常转换，
 让 HTTP 层不直接感知 Agent 图的内部状态结构。
 """
 
@@ -9,7 +9,6 @@ from safemeal.application.contracts.agent.decisions import DeterministicRouteDec
 import asyncio
 import re
 from collections.abc import Sequence
-from time import perf_counter
 from typing import Any, Literal, Mapping, Protocol
 from langgraph.types import Command
 
@@ -20,21 +19,17 @@ from safemeal.application.contracts.agent.state import (
     AgentInputState,
     AgentState,
 )
-from safemeal.application.observability import (
-    AgentTraceRecorder,
-    current_request_id,
-    trace_json,
-    use_trace,
+from safemeal.application.runtime_budget import use_model_budget
+from safemeal.application.contracts.agent.intent import IntentDecision
+from safemeal.application.contracts.agent.budget import ModelPrice
+from safemeal.application.contracts.agent.api import (
+    AgentProcessResponse,
+    AgentResumeResult,
 )
-from safemeal.application.observability.store import AgentTraceStore
-from safemeal.application.observability.cost import ModelPrice
-from safemeal.application.contracts.agent.api import AgentProcessResponse, AgentResumeResult
 from safemeal.application.contracts.agent.context import AgentContext
 from safemeal.shared.types import JsonObject, to_json_object
-from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
+from safemeal.application.contracts.recipes.generated import GeneratedRecipe
 from safemeal.application.exceptions import ModelOutputValidationError
-from safemeal.application.ports.telemetry import TraceExporter
-from collections.abc import Callable
 
 
 class AgentGraph(Protocol):
@@ -103,14 +98,9 @@ class AgentExecutionService:
         agent_graph: AgentGraph | None,
         *,
         timeout_seconds: float = 300.0,
-        model_name: str = "unknown",
         max_concurrency: int = 8,
-        trace_store: AgentTraceStore | None = None,
         model_pricing: Mapping[str, ModelPrice] | None = None,
-        cost_currency: str = "CNY",
         unsafe_request_detector: UnsafeRequestDetector | None = None,
-        llmops_exporter: TraceExporter | None = None,
-        trace_exporter: Callable[[JsonObject], None] | None = None,
     ) -> None:
         """初始化 Agent 执行服务。
 
@@ -120,16 +110,11 @@ class AgentExecutionService:
 
         self._graph = agent_graph
         self._timeout_seconds = timeout_seconds
-        self._model_name = model_name
         self._concurrency = asyncio.Semaphore(max(1, max_concurrency))
-        self._trace_store = trace_store
         self._model_pricing = dict(model_pricing or {})
-        self._cost_currency = cost_currency
         self._unsafe_request_detector = (
             unsafe_request_detector or UnsafeRequestDetector()
         )
-        self._llmops_exporter = llmops_exporter
-        self._trace_exporter = trace_exporter
 
     async def process(
         self,
@@ -137,7 +122,6 @@ class AgentExecutionService:
         session_id: str,
         *,
         context: AgentContext | None = None,
-        include_trace: bool = False,
     ) -> AgentProcessResponse:
         """执行一次 Agent 请求。
 
@@ -145,7 +129,6 @@ class AgentExecutionService:
             message: 当前用户问题。
             session_id: 会话 ID。
             context: 已聚合的 Agent 输入上下文。
-            include_trace: 是否在响应 metadata 中附加完整 Trace。
         """
 
         deterministic_route = self._unsafe_request_detector.detect(message)
@@ -155,6 +138,7 @@ class AgentExecutionService:
                 message=deterministic_route.message,
                 route=deterministic_route.route,
                 route_logic="unsafe_request_guard",
+                intent=IntentDecision(kind="out_of_scope", reason="unsafe_request_guard"),
                 metadata={
                     "deterministic": True,
                     "guard_reason": deterministic_route.reason,
@@ -180,27 +164,7 @@ class AgentExecutionService:
             "agent_context": to_json_object(context),
         }
 
-        # 每个请求创建独立 recorder。ContextVar 会让 Planner、并行 Tool 调用和
-        # Responder 自动找到它，同时不会把 Trace 参数污染进业务方法签名。
-        recorder = AgentTraceRecorder(
-            question=message,
-            session_id=session_id,
-            model=self._model_name,
-            request_id=current_request_id(),
-            model_pricing=self._model_pricing,
-            cost_currency=self._cost_currency,
-        )
-        request_started = perf_counter()
-        logger.info(
-            "agent.run.start run_id={} session_id={} timeout_seconds={} "
-            "history_messages={} question_chars={}",
-            recorder.trace.run_id,
-            session_id,
-            self._timeout_seconds,
-            len(context.conversation_history),
-            len(message),
-        )
-        with use_trace(recorder):
+        with use_model_budget(self._model_pricing):
             try:
 
                 async def invoke_with_capacity() -> AgentState:
@@ -243,6 +207,7 @@ class AgentExecutionService:
                         "dietary_context",
                         "dietary_safety_filter",
                         "user_memory_context",
+                        "task_context",
                     }
                 ]
                 core_recipe_tools = {
@@ -283,19 +248,12 @@ class AgentExecutionService:
                 else:
                     outcome_status = "ok"
                     outcome_error_code = None
-                recorder.finish(
-                    status="error" if outcome_status == "error" else "ok",
-                    iterations=result.get("iteration", 0),
-                    final_answer=answer,
-                    sources=[to_json_object(source) for source in sources],
-                )
                 metadata: JsonObject = {
                     "session_id": session_id,
                     "iteration": result.get("iteration", 0),
                     "tool_call_count": result.get("tool_call_count", 0),
                     "budget_exhausted": result.get("budget_exhausted", False),
                     "loop_stop_reason": result.get("loop_stop_reason", ""),
-                    "token_usage": to_json_object(recorder.trace.token_usage),
                     "evidence_sufficient": result.get("evidence_sufficient", False),
                     "missing_information": result.get("missing_information", []),
                     "user_memory_count": len(context.user_memories),
@@ -313,9 +271,22 @@ class AgentExecutionService:
                     ],
                     "agent_status": outcome_status,
                 }
+                understanding_keys = {
+                    "request_understanding_backend",
+                    "request_understanding_confidence",
+                    "understanding_status",
+                    "request_tasks",
+                    "context_needs",
+                    "fallback_used",
+                    "loaded_context_types",
+                }
+                for key in understanding_keys:
+                    if key in context.context_metadata:
+                        metadata[key] = context.context_metadata[key]
                 if generated_recipe is not None:
                     metadata["generated_recipe"] = to_json_object(generated_recipe)
                 response = AgentProcessResponse(
+                    intent=result.get("intent"),
                     status=outcome_status,
                     message=answer,
                     route=router_info.type,
@@ -326,18 +297,7 @@ class AgentExecutionService:
                     recipe=generated_recipe,
                     evidence=[item.model_dump(mode="json") for item in observations],
                 )
-                logger.info(
-                    "agent.run.completed run_id={} session_id={} status={} "
-                    "iterations={} sources={} elapsed_ms={:.3f}",
-                    recorder.trace.run_id,
-                    session_id,
-                    outcome_status,
-                    recorder.trace.iterations,
-                    len(sources),
-                    (perf_counter() - request_started) * 1000,
-                )
             except HumanApprovalPending as exc:
-                recorder.finish(status="ok")
                 response = AgentProcessResponse(
                     status="degraded",
                     message="操作已暂停，等待人工确认后继续执行。",
@@ -352,10 +312,6 @@ class AgentExecutionService:
                 )
             except Exception as exc:
                 logger.exception("Agent query failed: {}", exc)
-                recorder.finish(
-                    status="error",
-                    error=str(exc),
-                )
                 error_code = (
                     "agent_timeout"
                     if isinstance(exc, (asyncio.TimeoutError, TimeoutError))
@@ -370,45 +326,7 @@ class AgentExecutionService:
                     metadata={"session_id": session_id},
                     error_code=error_code,
                 )
-                logger.error(
-                    "agent.run.completed run_id={} session_id={} status=error "
-                    "elapsed_ms={:.3f} error={}",
-                    recorder.trace.run_id,
-                    session_id,
-                    (perf_counter() - request_started) * 1000,
-                    exc,
-                )
 
-        trace_payload = trace_json(
-            recorder.trace,
-            model_pricing=self._model_pricing,
-            cost_currency=self._cost_currency,
-        )
-        response.metadata["cost_usage"] = trace_payload.get("cost_usage", {})
-        response.metadata["cost_usage_complete"] = trace_payload.get(
-            "cost_usage_complete", False
-        )
-        if self._trace_store is not None:
-            try:
-                await asyncio.to_thread(self._trace_store.record, trace_payload)
-            except Exception:
-                logger.exception(
-                    "agent.trace.persistence_failed run_id={}", recorder.trace.run_id
-                )
-        if self._trace_exporter is not None:
-            self._trace_exporter(trace_payload)
-        if self._llmops_exporter is not None:
-            try:
-                await self._llmops_exporter.export(trace_payload)
-            except Exception:
-                logger.exception(
-                    "agent.llmops.export_failed run_id={}", recorder.trace.run_id
-                )
-
-        # 完整Trace含工具参数和结果，不能默认暴露给公开Chat API；只有受信任
-        # 的内部调用可以显式开启。
-        if include_trace:
-            response.metadata["trace"] = trace_payload
         return response
 
     async def resume(self, session_id: str, *, approved: bool) -> AgentResumeResult:
@@ -422,14 +340,15 @@ class AgentExecutionService:
                 )
             )
         try:
-            async with self._concurrency:
-                result = await asyncio.wait_for(
-                    self._graph.ainvoke(
-                        Command(resume={"approved": approved}),
-                        config={"configurable": {"thread_id": session_id}},
-                    ),
-                    timeout=self._timeout_seconds,
-                )
+            with use_model_budget(self._model_pricing):
+                async with self._concurrency:
+                    result = await asyncio.wait_for(
+                        self._graph.ainvoke(
+                            Command(resume={"approved": approved}),
+                            config={"configurable": {"thread_id": session_id}},
+                        ),
+                        timeout=self._timeout_seconds,
+                    )
             context = AgentContext.model_validate(result.get("agent_context") or {})
             context.dietary_constraints = result.get("dietary_constraints")
             question = result.get("question", "")
@@ -451,6 +370,7 @@ class AgentExecutionService:
                     None,
                 )
                 response = AgentProcessResponse(
+                    intent=result.get("intent"),
                     message=self._response_text(result),
                     route="human_approval_resumed",
                     recipe=generated,

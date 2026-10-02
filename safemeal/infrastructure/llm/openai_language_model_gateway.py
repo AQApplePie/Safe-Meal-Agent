@@ -1,11 +1,8 @@
 import json
-from datetime import datetime, timezone
-from time import perf_counter
 from typing import TypeAlias, TypeVar
 
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage, BaseMessageChunk
-from loguru import logger
 from pydantic import BaseModel, SecretStr
 import httpx
 from openai import (
@@ -15,7 +12,7 @@ from openai import (
     RateLimitError,
 )
 
-from safemeal.application.contracts.workflow.models import IntentDecision
+from safemeal.application.contracts.agent.intent import IntentDecision
 from safemeal.application.contracts.agent.context import AgentContext
 from safemeal.application.contracts.agent.decisions import (
     Observation,
@@ -28,15 +25,15 @@ from safemeal.application.exceptions import (
     PartialStreamInterruptedError,
 )
 from safemeal.application.contracts.recipes.generation import RecipeGenerationRequest
-from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
+from safemeal.application.contracts.recipes.generated import GeneratedRecipe
 from safemeal.application.agent.utils.prompts import (
     DEFAULT_PROMPT_BUNDLE,
     PromptBundle,
 )
-from safemeal.application.observability import (
+from safemeal.application.runtime_budget import charge_model_usage
+from safemeal.application.streaming import (
     answer_stream_active,
     emit_answer_chunk,
-    record_model_call,
 )
 from safemeal.infrastructure.llm.provider_router import (
     LLMProvider,
@@ -129,14 +126,38 @@ def _compact_prompt_value(value: object, *, depth: int = 0) -> object:
 
 
 def _tool_spec_payload(tool_specs: list[ToolSpecification]) -> list[object]:
+    """Expose the complete Tool contract to planning and reflection.
+
+    The model receives explicit positive and negative boundaries instead of one
+    free-form sentence. The argument schema remains the exact schema enforced by
+    the runtime, so planning and execution cannot silently drift apart.
+    """
+
     return [
         {
             "name": item.name,
-            "description": item.description[:500],
+            "purpose": item.purpose,
+            "use_when": list(item.use_when),
+            "do_not_use_when": list(item.do_not_use_when),
+            "input_constraints": list(item.input_constraints),
+            "side_effects": list(item.side_effects),
+            "requires_approval": item.requires_approval,
+            "idempotent": item.idempotent,
+            "description": item.description[:1600],
             "arguments_schema": _compact_schema(item.arguments_schema),
         }
         for item in tool_specs
     ]
+
+
+def _requirement_message(observations: list[Observation]) -> ChatPromptMessage:
+    """Keep resolved constraints outside the truncated evidence preview."""
+    payloads = [item.data for item in observations if item.tool_name == "task_context"]
+    return (
+        "human",
+        "已解析的用户条件。allergies/restrictions 和 required=true 为硬要求，其余为偏好；不得自行删除或弱化。缺少证据时不要声称满足。\n"
+        + json.dumps(payloads, ensure_ascii=False),
+    )
 
 
 def _observation_payload(observations: list[Observation]) -> list[object]:
@@ -162,7 +183,20 @@ def _observation_payload(observations: list[Observation]) -> list[object]:
             for item in selected
             if item is fused or item.tool_name not in retrieval_names
         ]
-    return [_compact_prompt_value(item.model_dump()) for item in selected[-10:]]
+    context_items = [
+        item
+        for item in selected
+        if item.tool_name in {"task_context", "dietary_context", "user_memory_context"}
+    ]
+    evidence_items = [
+        item
+        for item in selected
+        if item.tool_name
+        not in {"task_context", "dietary_context", "user_memory_context"}
+    ]
+    return [item.model_dump() for item in context_items] + [
+        _compact_prompt_value(item.model_dump()) for item in evidence_items[-10:]
+    ]
 
 
 class OpenAILanguageModelGateway:
@@ -252,28 +286,15 @@ class OpenAILanguageModelGateway:
 
         LangChain 默认的 ``with_structured_output`` 只返回解析后的 Pydantic 模型，
         原始响应中的 usage 会随之丢失。``include_raw=True`` 同时返回 ``raw`` 与
-        ``parsed``，让运行时Trace能够记录输入/输出Token。
+        ``parsed``，用于本轮执行预算扣减。
         """
-
-        logger.info(
-            "agent.model.start stage={} model={} temperature={} message_count={} "
-            "schema={}",
-            stage,
-            self.model_name,
-            temperature,
-            len(messages),
-            schema.__name__,
-        )
 
         async def invoke(provider: LLMProvider) -> StructuredOutput:
             current_messages = list(messages)
             repair_retries = self.structured_repair_retries
             for attempt in range(repair_retries + 1):
-                started_at = datetime.now(timezone.utc)
-                started_perf = perf_counter()
                 raw_response = None
                 parsed_response = None
-                call_stage = stage if attempt == 0 else f"{stage}_repair"
                 structured_model = self._model(
                     temperature, provider
                 ).with_structured_output(schema, include_raw=True)
@@ -284,29 +305,10 @@ class OpenAILanguageModelGateway:
                     parsing_error = envelope.get("parsing_error")
                     if parsing_error is not None or parsed_response is None:
                         raise ModelOutputValidationError() from parsing_error
-                    record_model_call(
-                        stage=call_stage,
-                        model=provider.model,
-                        temperature=temperature,
-                        messages=current_messages,
-                        response=raw_response,
-                        parsed_response=parsed_response,
-                        started_at=started_at,
-                        started_perf=started_perf,
-                    )
+                    charge_model_usage(provider.model, raw_response)
                     return parsed_response
-                except ModelOutputValidationError as exc:
-                    record_model_call(
-                        stage=call_stage,
-                        model=provider.model,
-                        temperature=temperature,
-                        messages=current_messages,
-                        response=raw_response,
-                        parsed_response=parsed_response,
-                        started_at=started_at,
-                        started_perf=started_perf,
-                        error=str(exc),
-                    )
+                except ModelOutputValidationError:
+                    charge_model_usage(provider.model, raw_response)
                     if attempt >= repair_retries:
                         raise
                     raw_content = str(getattr(raw_response, "content", ""))[:4000]
@@ -320,18 +322,8 @@ class OpenAILanguageModelGateway:
                             f"目标 Schema：{_json_payload(_compact_schema(schema.model_json_schema()), 6000)}",
                         ),
                     ]
-                except Exception as exc:
-                    record_model_call(
-                        stage=call_stage,
-                        model=provider.model,
-                        temperature=temperature,
-                        messages=current_messages,
-                        response=raw_response,
-                        parsed_response=parsed_response,
-                        started_at=started_at,
-                        started_perf=started_perf,
-                        error=str(exc),
-                    )
+                except Exception:
+                    charge_model_usage(provider.model, raw_response)
                     raise
             raise ModelOutputValidationError()
 
@@ -352,7 +344,7 @@ class OpenAILanguageModelGateway:
         self, message: str, context: AgentContext
     ) -> IntentDecision:
         return await self._invoke_structured(
-            stage="workflow_intent",
+            stage="agent_intent",
             schema=IntentDecision,
             messages=[
                 (
@@ -388,6 +380,7 @@ class OpenAILanguageModelGateway:
         char_budget = self.context_token_budget * 4
         messages = [
             ("system", self.prompts.planner),
+            _requirement_message(observations),
             (
                 "human",
                 "用户问题：\n"
@@ -415,6 +408,7 @@ class OpenAILanguageModelGateway:
         char_budget = self.context_token_budget * 4
         messages = [
             ("system", self.prompts.reflection),
+            _requirement_message(observations),
             (
                 "human",
                 f"用户问题：\n{question}\n\n对话历史：\n"
@@ -461,6 +455,7 @@ class OpenAILanguageModelGateway:
         char_budget = self.context_token_budget * 4
         messages = [
             ("system", self.prompts.answer),
+            _requirement_message(observations),
             (
                 "human",
                 f"用户问题：\n{question}\n\n对话历史：\n"
@@ -472,17 +467,8 @@ class OpenAILanguageModelGateway:
                 f"{_json_payload(_observation_payload(observations), max(6000, char_budget * 7 // 10))}",
             ),
         ]
-        logger.info(
-            "agent.model.start stage=responder model={} temperature={} "
-            "message_count={}",
-            self.model_name,
-            self.answer_temperature,
-            len(messages),
-        )
 
         async def invoke(provider: LLMProvider) -> str:
-            started_at = datetime.now(timezone.utc)
-            started_perf = perf_counter()
             response: BaseMessage | None = None
             emitted_answer_text = False
             try:
@@ -510,29 +496,10 @@ class OpenAILanguageModelGateway:
                 else:
                     response = await model.ainvoke(messages)
                     answer = str(response.content)
-                record_model_call(
-                    stage="responder",
-                    model=provider.model,
-                    temperature=self.answer_temperature,
-                    messages=messages,
-                    response=response,
-                    parsed_response=answer,
-                    started_at=started_at,
-                    started_perf=started_perf,
-                )
+                charge_model_usage(provider.model, response)
                 return answer
             except Exception as exc:
-                record_model_call(
-                    stage="responder",
-                    model=provider.model,
-                    temperature=self.answer_temperature,
-                    messages=messages,
-                    response=response,
-                    parsed_response=None,
-                    started_at=started_at,
-                    started_perf=started_perf,
-                    error=str(exc),
-                )
+                charge_model_usage(provider.model, response)
                 if emitted_answer_text:
                     raise PartialStreamInterruptedError() from exc
                 raise

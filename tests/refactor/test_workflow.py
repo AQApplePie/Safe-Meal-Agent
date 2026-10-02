@@ -2,10 +2,11 @@ import asyncio
 import pytest
 
 from safemeal.application.contracts.agent.api import AgentProcessResponse
+from safemeal.application.agent.nodes.planner.intent import resolve_agent_intent
 from safemeal.application.contracts.agent.decisions import Observation
 from safemeal.application.contracts.workflow.models import WorkflowRequest
 from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.observability.streaming import (
+from safemeal.application.streaming import (
     emit_answer_chunk,
     use_answer_stream,
 )
@@ -15,7 +16,7 @@ from safemeal.application.workflow.context.builder import AgentContextBuilder
 from safemeal.application.workflow.context.conversation_context import (
     MemoryRelevanceSelector,
 )
-from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
+from safemeal.application.contracts.recipes.generated import GeneratedRecipe
 
 
 class Memory:
@@ -41,10 +42,12 @@ class Agent:
         self.result = result
         self.contexts = []
 
-    async def process(self, message, session_id, *, context=None, include_trace=False):
+    async def process(self, message, session_id, *, context=None):
         self.contexts.append(context)
         await emit_answer_chunk("UNREVIEWED_DRAFT")
-        return self.result
+        result = self.result.model_copy(deep=True)
+        result.intent = await resolve_agent_intent(message, context)
+        return result
 
 
 def evidence(data, tool="recommend_recipes"):
@@ -60,13 +63,12 @@ def evidence(data, tool="recommend_recipes"):
     ).model_dump(mode="json")
 
 
-def workflow(agent, memory, classifier=None):
+def workflow(agent, memory):
     return ChatWorkflow(
         build_chat_workflow(
             agent=agent,
             context_builder=AgentContextBuilder(memory_service=memory),
             memory_service=memory,
-            intent_classifier=classifier,
         )
     )
 
@@ -193,14 +195,14 @@ async def test_temporary_and_third_party_facts_are_not_persisted(message):
 
 
 @pytest.mark.asyncio
-async def test_explicit_memory_load_precedes_save_without_agent_call():
+async def test_explicit_memory_load_precedes_agent_and_save():
     memory = Memory()
     agent = Agent(AgentProcessResponse(message="unused"))
     await workflow(agent, memory).run(
         WorkflowRequest(message="我喜欢清淡", user_id="u", session_id="s")
     )
     assert memory.events == ["load", "save"]
-    assert not agent.contexts
+    assert len(agent.contexts) == 1
 
 
 @pytest.mark.asyncio
@@ -210,9 +212,9 @@ async def test_retraction_requires_explicit_profile_change():
     result = await workflow(agent, memory).run(
         WorkflowRequest(message="我对花生不过敏", user_id="u", session_id="s")
     )
-    assert result.route == "clarify"
+    assert result.intent.kind == "clarify"
     assert not memory.saved
-    assert not agent.contexts
+    assert len(agent.contexts) == 1
 
 
 def test_hard_memories_never_truncated_by_relevance_limit():
@@ -235,50 +237,3 @@ async def test_supplied_context_is_preserved_without_memory_loading():
     )
     assert agent.contexts[0].user_profile["taste"] == "清淡"
     assert agent.contexts[0].dietary_constraints["active"]
-
-
-@pytest.mark.asyncio
-async def test_ambiguous_dish_query_uses_independent_intent_classifier():
-    from safemeal.application.contracts.workflow.models import IntentDecision
-
-    class Classifier:
-        async def classify_intent(self, message, context):
-            assert message == "查一下宫保鸡丁"
-            return IntentDecision(kind="recipe_detail")
-
-    agent = Agent(AgentProcessResponse(message="食谱详情"))
-    result = await workflow(agent, Memory(), Classifier()).run(
-        WorkflowRequest(message="查一下宫保鸡丁", user_id="u", session_id="s")
-    )
-    assert agent.contexts[0].intent == "recipe_detail"
-    assert result.message == "食谱详情"
-
-
-@pytest.mark.asyncio
-async def test_intent_classifier_failure_returns_clarification_without_agent():
-    class Classifier:
-        async def classify_intent(self, message, context):
-            raise RuntimeError("provider unavailable")
-
-    agent = Agent(AgentProcessResponse(message="unused"))
-    result = await workflow(agent, Memory(), Classifier()).run(
-        WorkflowRequest(message="查一下宫保鸡丁", user_id="u", session_id="s")
-    )
-    assert result.route == "clarify"
-    assert not agent.contexts
-
-
-@pytest.mark.asyncio
-async def test_classifier_cannot_publish_a_recipe_as_clarification():
-    from safemeal.application.contracts.workflow.models import IntentDecision
-
-    class Classifier:
-        async def classify_intent(self, message, context):
-            return IntentDecision(kind="clarify", clarification="UNREVIEWED_RECIPE")
-
-    agent = Agent(AgentProcessResponse(message="unused"))
-    result = await workflow(agent, Memory([allergy()]), Classifier()).run(
-        WorkflowRequest(message="查一下宫保鸡丁", user_id="u", session_id="s")
-    )
-    assert "UNREVIEWED_RECIPE" not in result.message
-    assert not agent.contexts

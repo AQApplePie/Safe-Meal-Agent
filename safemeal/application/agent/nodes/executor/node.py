@@ -4,8 +4,8 @@
 职责分离。
 """
 
-from safemeal.application.observability import trace_span
-from safemeal.application.agent.tool_policy import review_tool_calls
+from safemeal.application.agent.tools.policy import review_tool_calls
+from safemeal.application.contracts.agent.context import AgentContext
 
 from safemeal.application.contracts.agent.state import AgentState, AgentStateUpdate
 from safemeal.application.ports.tools.tool_executor import ToolExecutor
@@ -17,27 +17,20 @@ def create_executor_node(tool_executor: ToolExecutor):
         calls, rejected = review_tool_calls(
             state.get("pending_calls", []),
             state.get("dietary_constraints"),
-            approved=state.get("human_approved", False),
+            requirements=AgentContext.model_validate(
+                state.get("agent_context") or {}
+            ).requirements,
         )
-        with trace_span(
-            "agent_node",
-            "execute_tools",
-            {
-                "iteration": state.get("iteration", 0) + 1,
-                "calls": [call.model_dump() for call in calls],
-            },
-        ) as span:
-            results = [*rejected, *await tool_executor.invoke_many(calls)]
-            output: AgentStateUpdate = {
-                "tool_results": results,
-                "iteration": state.get("iteration", 0) + 1,
-                "tool_call_count": state.get("tool_call_count", 0) + len(calls),
-                "executed_call_signatures": [
-                    *state.get("executed_call_signatures", []),
-                    *(tool_call_signature(call) for call in calls),
-                ],
-            }
-            span.set_output(output)
-            return output
+        results = [*rejected, *await tool_executor.invoke_many(calls)]
+        output: AgentStateUpdate = {
+            "tool_results": results,
+            "iteration": state.get("iteration", 0) + 1,
+            "tool_call_count": state.get("tool_call_count", 0) + len(calls),
+            "executed_call_signatures": [
+                *state.get("executed_call_signatures", []),
+                *(tool_call_signature(call) for call in calls),
+            ],
+        }
+        return output
 
     return execute_tools

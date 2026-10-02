@@ -364,9 +364,10 @@ class DocumentKnowledgeService:
             self.vector_repository.delete_documents, [document_id]
         )
         if self.lexical_repository is not None:
-            await asyncio.to_thread(
+            lexical_deleted = await asyncio.to_thread(
                 self.lexical_repository.delete_documents, [document_id]
             )
+            deleted = deleted and lexical_deleted
         return deleted
 
     async def get_collection_stats(self) -> JsonObject:

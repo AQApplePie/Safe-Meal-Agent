@@ -3,12 +3,16 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from safemeal.shared.types import JsonObject
+from safemeal.application.contracts.dietary_safety.requirements import (
+    DietaryRequirements,
+)
 
-from typing import Literal, TypedDict
+from typing import TypedDict
 from pydantic import BaseModel, Field
 from safemeal.application.contracts.agent.api import AgentProcessResponse
 from safemeal.application.contracts.agent.context import AgentContext
 from safemeal.application.contracts.conversation.models import ConversationHistory
+from safemeal.application.contracts.workflow.request_frame import RequestFrame
 
 
 class WorkflowRequest(BaseModel):
@@ -19,31 +23,16 @@ class WorkflowRequest(BaseModel):
     source_message_id: str | None = None
     context: AgentContext | None = None
     use_user_memory: bool = True
-    include_trace: bool = False
     resume_approved: bool | None = None
-
-
-class IntentDecision(BaseModel):
-    kind: Literal[
-        "recommend",
-        "recipe_detail",
-        "generate",
-        "replace",
-        "knowledge",
-        "memory",
-        "clarify",
-        "out_of_scope",
-    ]
-    reason: str = ""
-    clarification: str = ""
 
 
 class WorkflowState(TypedDict, total=False):
     request: WorkflowRequest
     context: AgentContext
-    intent: IntentDecision
     result: AgentProcessResponse
-    safety_blocked: bool
+    requirements: DietaryRequirements
+    request_frame: RequestFrame
+    recent_history: ConversationHistory
 
 
 @dataclass(frozen=True)

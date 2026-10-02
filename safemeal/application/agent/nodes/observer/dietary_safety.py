@@ -6,9 +6,11 @@ import json
 from typing import List, cast
 
 from safemeal.application.contracts.agent.decisions import Observation
-from safemeal.modules.dietary_safety.dietary_constraints import (
+from safemeal.application.contracts.dietary_safety.constraints import (
     DietaryConstraint,
     DietaryEvidenceObservation,
+)
+from safemeal.application.service.dietary_safety.constraints import (
     build_dietary_safety_result,
 )
 from safemeal.shared.types import JsonObject

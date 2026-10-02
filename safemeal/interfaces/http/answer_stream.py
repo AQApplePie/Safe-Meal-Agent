@@ -7,10 +7,10 @@ from collections.abc import AsyncIterator, Callable, Coroutine
 import json
 from typing import Any, Protocol, TypeVar
 
-from safemeal.application.observability import use_answer_stream
+from safemeal.application.streaming import use_answer_stream
 from safemeal.shared.types import JsonObject
 from safemeal.application.contracts.workflow.stream import WorkflowProgress
-from safemeal.application.observability.streaming import use_progress_stream
+from safemeal.application.streaming import use_progress_stream
 
 
 class AnswerMessage(Protocol):

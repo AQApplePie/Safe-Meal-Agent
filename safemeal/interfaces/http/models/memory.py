@@ -8,30 +8,9 @@ from pydantic import BaseModel, Field
 
 from safemeal.application.contracts.memory.models import (
     MemoryStatus,
-    MemoryType,
     UserMemoryRead,
 )
 from safemeal.shared.types import JsonObject
-
-
-class UserMemoryCreateRequest(BaseModel):
-    """手动创建长期记忆的 HTTP 请求体。"""
-
-    user_id: str = Field(..., min_length=1, max_length=255)
-    memory_type: MemoryType
-    memory_key: str = Field(..., min_length=1, max_length=255)
-    memory_value: str = Field(..., min_length=1, max_length=1_000)
-    confidence: float = Field(default=1.0, ge=0.0, le=1.0)
-    memory_metadata: Optional[JsonObject] = None
-
-
-class UserMemoryRememberRequest(BaseModel):
-    """从用户消息中抽取长期记忆的请求体。"""
-
-    user_id: str = Field(..., min_length=1, max_length=255)
-    message: str = Field(..., min_length=1, max_length=5000)
-    source_session_id: Optional[str] = Field(default=None, max_length=255)
-    source_message_id: Optional[str] = Field(default=None, max_length=255)
 
 
 class UserMemoryUpdateRequest(BaseModel):

@@ -1,7 +1,10 @@
-from safemeal.application.observability.streaming import emit_workflow_progress
-from safemeal.application.contracts.workflow.models import WorkflowState, WorkflowRequest
+from safemeal.application.streaming import emit_workflow_progress
+from safemeal.application.contracts.workflow.models import (
+    WorkflowState,
+    WorkflowRequest,
+)
 from safemeal.application.ports.agent import ResumableAgent
-from safemeal.application.observability.streaming import suppress_answer_stream
+from safemeal.application.streaming import suppress_answer_stream
 
 
 class ResumeAgentNode:

@@ -1,6 +1,6 @@
 # 食谱业务完整示例与代码审阅
 
-审阅日期：2026-09-27。范围：聊天入口、Workflow、Agent、工具边界、上下文与回复发布；不是全仓库每个功能的穷尽审计。本次不修改生产代码。示例菜谱和工具返回为说明性假设，不代表真实数据库内容或真实 LLM 调用结果。
+审阅日期：2026-09-27。本文保留当时的审阅记录；偏好/过敏统一审核的当前行为以 architecture.md 末节为准。本次修改已修复 task_context 误算证据、未消费的 safety_blocked 字段，以及知识问答被食谱模板覆盖的问题。范围：聊天入口、Workflow、Agent、工具边界、上下文与回复发布；不是全仓库每个功能的穷尽审计。本次不修改生产代码。示例菜谱和工具返回为说明性假设，不代表真实数据库内容或真实 LLM 调用结果。
 
 ## 1. 理论需求与职责边界
 
@@ -25,14 +25,13 @@
 
 ```mermaid
 flowchart TD
-    A[HTTP 聊天请求] --> B[ChatTurnService 保存用户消息、读取历史]
+    A[HTTP 聊天请求] --> B[ChatTurnService 保存用户消息]
     B --> C[ChatWorkflow.run]
-    C --> D[load_memory]
+    C --> D[prepare_context]
     D --> E[resolve_constraints]
-    E --> F[identify_intent]
-    F --> G[invoke_agent / AgentInvoker]
+    E --> G[invoke_agent / AgentInvoker]
     G --> H[initialize]
-    H --> I[planner / Plan]
+    H --> I[planner / 意图识别与 Plan]
     I --> J[human_approval 检查是否需审批]
     J --> K[execute_tools / Execute]
     K --> L[observe / Observe]
@@ -48,33 +47,31 @@ flowchart TD
 
 ### 步骤 1：建立本轮会话
 
-`application/service/chat/chat_turn_service.py` 调用 `ChatTurnPersistence.start_turn`，在事务中创建/复用会话、读取历史、保存用户问题，再构造 WorkflowRequest。同步数据库工作在线程中执行。
+`application/service/chat/chat_turn_service.py` 调用 `ChatTurnPersistence.start_turn`，在事务中创建/复用会话、保存用户问题，再构造 WorkflowRequest。同步数据库工作在线程中执行。
 
-内部 `/agent/process` 与 `/agent/process-stream` 则由 `interfaces/http/request_mapping.py` 转为 WorkflowRequest，直接运行 Workflow，不写聊天消息。两种入口共享业务审核链路，但内部请求默认不加载用户记忆；调用方需设置 use_user_memory 或提供 context。
+当前 HTTP 入口收敛为 chat 与文件 knowledge；原内部 process/process-stream 入口及 request_mapping 已删除。Agent 仍可通过应用接口独立使用。
 
-### 步骤 2：加载用户记忆
+### 步骤 2：准备上下文
 
-`workflow/nodes/load_memory.py` → `workflow/context/builder.py`：处理历史窗口，加载用户长期记忆和历史摘要。硬约束不按软偏好的排名截掉。本例得到花生排除限制与清淡偏好；不存在记忆时不能假装已经知道用户过敏史。
+`workflow/nodes/prepare_context.py` → `workflow/context/builder.py`：通过 `service/chat/conversation_history_service.py` 读取当前消息之前的历史，再处理历史窗口，加载用户长期记忆和历史摘要。硬约束不按软偏好的排名截掉。本例得到花生排除限制与清淡偏好；不存在记忆时不能假装已经知道用户过敏史。
 
 ### 步骤 3：解析本轮约束
 
-`workflow/nodes/constraints.py` 合并长期硬约束、本轮文本及历史、调用方已有约束，得到 dietary_constraints；本轮可识别的软偏好放入 user_profile.turn_preferences。
+`workflow/nodes/constraints.py` 合并长期限制、本轮文本、历史及调用方已有要求，得到分别包含过敏、禁忌和偏好的 `DietaryRequirements`；Workflow 保留独立审查快照。30分钟内等明确条件作为 required 偏好参与最终复核；普通偏好不匹配不会被当作过敏。
 
-注意：当前代码没有独立的、覆盖全部用餐条件的结构化解析器。“30 分钟”“含鸡蛋”仍保留在原始问题中，由 Planner 映射为工具参数。硬过敏由代码强制执行，但所有软需求并没有同等强度的最终确定性校验。
+### 步骤 4：进入 Agent
 
-### 步骤 4：识别意图
-
-`workflow/nodes/intent.py` 的本地规则识别“推荐”为 recommend，写入 AgentContext.intent。明确意图不额外调用分类模型；模糊 knowledge/out_of_scope 请求才在启用分类器时调用模型，失败则澄清。
+Workflow 不再识别意图或直接回答，所有新请求进入 Agent。意图判断在下述 Agent 的 planner 阶段完成。
 
 ### 步骤 5：跨越 Workflow → Agent 边界
 
-`InvokeAgentNode` 经 AgentInvoker.process 传递原始 message、session_id 和完整 AgentContext。AgentExecutionService 管理执行超时、并发与 trace，再运行独立 Agent 图。Workflow 阶段屏蔽候选答案流，避免先展示再审核。
+`InvokeAgentNode` 经 AgentInvoker.process 传递原始 message、session_id 和完整 AgentContext。AgentExecutionService 管理执行超时、并发与预算，再运行独立 Agent 图。Workflow 阶段屏蔽候选答案流，避免先展示再审核。
 
 ### 步骤 6：Agent 初始化与 Plan
 
 `agent/nodes/initializer/node.py` 将问题、历史、用户记忆、饮食限制、意图与偏好准备为 Agent 状态及上下文 Observation。Agent 再解析/合并约束，是支持独立调用时的防御；可共享解析函数，但不宜简单删除防护。
 
-Planner 获得工具规格、问题、历史与 Observation，可能产生如下调用：
+Planner 首次运行时通过 `agent/nodes/planner/intent.py` 识别意图并写入状态，随后获得工具规格、问题、历史与 Observation。memory/clarify/out_of_scope 返回固定答复，其余意图进入工具规划，可能产生如下调用：
 
 ```json
 {
@@ -92,9 +89,9 @@ Planner 获得工具规格、问题、历史与 Observation，可能产生如下
 
 ### 步骤 7：Execute 与工具边界
 
-`agent/tool_registry.py` 提供注册工具；`agent/tool_policy.py` 在执行前把花生排除约束并入参数，不能由模型随意省略。普通本地查询通过 approval 节点而不暂停；外部 MCP 工具需要审批。
+`agent/tool_registry.py` 提供注册工具；`agent/tool_policy.py` 在执行前把花生排除约束并入参数，不能由模型随意省略。普通本地查询通过 approval 节点而不暂停；生成食谱可按配置要求审批。
 
-调用路径：`execute_tools` → LocalToolExecutor → `application/tool/recipe_tools.py` 的 RecommendRecipesTool → RecipeCatalog → repository 端口 → 已由 composition 注入的数据库实现。工具层负责适配，Catalog 负责业务筛选；这不是同一个职责的重复实现。
+调用路径：`execute_tools` → LocalToolExecutor → `application/tool/recipe_tools.py` 的 RecommendRecipesTool → RecipeService → repository 端口 → 已由 composition 注入的数据库实现。工具层负责适配，RecipeService 负责业务筛选；这不是同一个职责的重复实现。
 
 假设正常工具返回完整食材的“番茄炒蛋”，则继续审核。若数据源仍返回含花生的候选或缺少关键食材证据，不能只信任上游已筛选的声明。
 
@@ -122,12 +119,11 @@ SaveMemoryNode 可保存会话压缩摘要；只对符合规则的明确个人�
 
 | 用户情况 | 实际分支与限制 |
 | --- | --- |
-| “记住我对花生过敏” | memory → direct_reply → final_safety → save_memory；明确保存成功后才确认已保存 |
-| “换一道”且没有历史 | clarify → direct_reply，不调用 Agent |
+| “记住我对花生过敏” | Agent planner(memory) → respond → final_safety → save_memory；明确保存成功后才确认已保存 |
+| “换一道”且没有历史 | Agent planner(clarify) → respond，不执行食谱工具 |
 | “生成一道新菜” | generate → Agent 生成工具 → 结构化校验 → Workflow 复核 |
 | 工具返回不安全或不完整候选 | 剔除或标为未知；无可靠候选时降级，不发布确定的安全推荐 |
 | 全部食谱工具失败 | 理论上应返回明确失败；目前存在下文第 1 项状态计算缺陷 |
-| 需要外部 MCP 审批 | Agent checkpoint 暂停；批准/拒绝后走 resume Workflow，并再次经过约束及最终审核 |
 | 有过敏档案但只问烹饪知识 | 当前最终门禁可能改写成食谱安全答复，需补充意图区分 |
 
 ## 4. 审阅发现（按影响排序）
@@ -184,7 +180,7 @@ memory/clarify/out_of_scope 会跳过推荐复核，但 knowledge 不会。有�
 | --- | --- |
 | ChatTurnService 与 ChatWorkflow | 一个负责消息事务，一个负责业务流程，错误处理边界不同 |
 | ChatWorkflow runner 与 graph | 一个是运行/发布边界，一个是图装配；不是两个重复业务服务 |
-| AgentExecutionService | 超时、并发、状态转换、trace、checkpoint 恢复 |
+| AgentExecutionService | 超时、并发、状态转换、预算、checkpoint 恢复 |
 | ports | 替身测试、基础设施替换和 Workflow/Agent 隔离；不是 service 实现副本 |
 | 工具适配、工具注册、执行审核 | 分别解决工具调用协议、可用工具集合、每次执行的限制检查 |
 | Observe 安全过滤与 Workflow 最终复核 | 前者帮助 Agent 决策，后者控制对用户发布 |

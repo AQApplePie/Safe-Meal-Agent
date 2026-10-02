@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from typing import Literal
 from pydantic import BaseModel, Field
 from safemeal.shared.types import JsonObject
 
@@ -31,3 +32,12 @@ class DocumentIngestionResult(BaseModel):
 class ParsedDocument:
     text: str
     parser: str
+
+
+class UploadedDocumentRecord(BaseModel):
+    """Durable ownership and index identity for one uploaded file."""
+
+    file: UploadSaveResult
+    tenant_id: str
+    document_id: str
+    status: Literal["processing", "indexed", "failed", "deleting"] = "processing"

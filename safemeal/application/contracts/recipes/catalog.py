@@ -8,11 +8,12 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from safemeal.modules.recipe_catalog.recipe_models import (
+from safemeal.application.contracts.recipes.models import (
     DietaryType,
     Recipe,
     RecipeDifficulty,
 )
+from safemeal.application.contracts.recipes.lookup import RecipeCandidate
 
 
 class RecipeSortField(str, Enum):
@@ -40,6 +41,7 @@ class RecipeQuery(BaseModel):
     sort_order: Literal["asc", "desc"] = "asc"
     offset: int = Field(default=0, ge=0, le=100000)
     limit: int = Field(default=10, ge=1, le=50)
+    exact_name: bool = False
 
     @field_validator("include_ingredients", "exclude_ingredients", mode="before")
     @classmethod
@@ -57,10 +59,16 @@ class RecipeSearchResult(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    items: tuple[Recipe, ...]
+    items: tuple[Recipe | RecipeCandidate, ...]
     total: int = Field(ge=0)
     offset: int = Field(ge=0)
     limit: int = Field(ge=1)
+    status: Literal["FOUND", "NOT_FOUND", "ERROR"] = "FOUND"
+    query: str | None = None
+    exact_name: bool = False
+    match_type: Literal["exact", "normalized", "lexical", "none"] = "none"
+    searched_sources: tuple[str, ...] = ()
+    errors: tuple[str, ...] = ()
 
 
 __all__ = ["RecipeQuery", "RecipeSearchResult", "RecipeSortField"]

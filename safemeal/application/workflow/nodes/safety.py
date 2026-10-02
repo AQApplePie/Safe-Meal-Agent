@@ -1,87 +1,117 @@
-"""Independent, fail-closed final publication gate."""
+"""Review structured recipes against the unchanged pre-Agent requirements."""
 
-from safemeal.application.observability.streaming import emit_workflow_progress
+from safemeal.application.streaming import emit_workflow_progress
 from safemeal.application.contracts.workflow.models import WorkflowState
 from safemeal.application.contracts.agent.decisions import Observation
-from safemeal.modules.dietary_safety.dietary_constraints import (
-    DietaryConstraint,
-    build_dietary_safety_result,
+from safemeal.application.service.dietary_safety.dietary_safety_service import (
+    DietarySafetyService,
 )
-from safemeal.modules.dietary_safety.answer import render_dietary_safety_answer
-from safemeal.modules.dietary_safety.generated_safety import generated_recipe_violations
+from safemeal.application.workflow.review_reply import render_review_reply
+
+_RECIPE_TOOLS = {
+    "search_recipes",
+    "get_recipe",
+    "recommend_recipes",
+    "generate_recipe",
+    "dietary_safe_recipe_query",
+}
 
 
 async def check_final_safety(state: WorkflowState) -> WorkflowState:
-    await emit_workflow_progress("final_safety", "正在复核食材与饮食限制")
+    await emit_workflow_progress("final_safety", "正在分别复核过敏限制与偏好满足情况")
     result = state["result"].model_copy(deep=True)
-    constraint = DietaryConstraint.model_validate(
-        state["context"].dietary_constraints or {"active": False}
-    )
+    result.metadata.pop("generated_recipe", None)
     if (
         result.metadata.get("approval_required")
         or result.metadata.get("approved") is False
     ):
         result.recipe = None
         result.sources = []
-        result.metadata.pop("generated_recipe", None)
         result.message = (
             "操作已暂停，等待人工确认后继续执行。"
             if result.metadata.get("approval_required")
             else "操作已由人工拒绝，未执行相关工具。"
         )
         result.metadata["safety_review"] = "no_recommendation"
-        return {"result": result, "safety_blocked": False}
-    if result.status == "error" or not constraint.active:
-        result.metadata["safety_review"] = (
-            "not_applicable" if not constraint.active else "agent_failed"
-        )
-        return {"result": result, "safety_blocked": False}
-    if state["intent"].kind in {"memory", "clarify", "out_of_scope"}:
+        return {"result": result}
+    if result.status == "error":
+        result.recipe = None
+        result.sources = []
+        result.metadata["safety_review"] = "agent_failed"
+        return {"result": result}
+    observations = []
+    for payload in result.evidence:
+        try:
+            item = Observation.model_validate(payload)
+        except ValueError:
+            continue
+        if item.tool_name in _RECIPE_TOOLS:
+            observations.append(item)
+    if (
+        result.intent is not None
+        and result.intent.kind in {"memory", "clarify", "out_of_scope", "knowledge"}
+        and not observations
+        and result.recipe is None
+    ):
         result.metadata["safety_review"] = "no_recommendation"
-        return {"result": result, "safety_blocked": False}
-    observations = [Observation.model_validate(item) for item in result.evidence]
-    # Re-evaluate source evidence; never trust an Agent's claimed safety verdict.
-    observations = [
-        o
-        for o in observations
-        if o.tool_name
-        not in {
-            "dietary_safety_filter",
-            "dietary_context",
-            "user_memory_context",
-            "multi_route_retrieval",
-        }
-    ]
-    safety = build_dietary_safety_result(
-        constraint=constraint, observations=observations
-    )
+        return {"result": result}
+    # A card is a second publication surface. Compare it as additional evidence,
+    # but never let a card alone manufacture a successful tool result.
     if result.recipe is not None:
-        violations = generated_recipe_violations(
-            result.recipe, constraint.excluded_ingredients
+        backed = any(
+            o.ok
+            and o.tool_name == "generate_recipe"
+            and isinstance(o.data, dict)
+            and o.data.get("name") == result.recipe.name
+            for o in observations
         )
-        allowed = {item.name for item in safety.safe_recipes}
-        if violations or result.recipe.name not in allowed:
-            safety.safe_recipes = [
-                item for item in safety.safe_recipes if item.name != result.recipe.name
-            ]
+        if backed:
+            observations.append(
+                Observation(
+                    call_id="returned_recipe_card",
+                    tool_name="generate_recipe",
+                    purpose="复核食谱卡片",
+                    success_criteria="卡片与证据均满足要求",
+                    ok=True,
+                    has_data=True,
+                    summary="returned recipe",
+                    data=result.recipe.model_dump(mode="json"),
+                )
+            )
+        else:
             result.recipe = None
-    result.metadata.pop("generated_recipe", None)
-    reviewed = Observation(
-        call_id="workflow_safety",
-        tool_name="dietary_safety_filter",
-        purpose="最终过敏复核",
-        success_criteria="仅发布通过复核的食谱",
-        ok=True,
-        has_data=True,
-        summary="Final workflow safety review",
-        data=safety.model_dump(mode="json"),
-    )
-    result.message = render_dietary_safety_answer([reviewed])
-    blocked = not safety.safe_recipes
-    result.metadata["safety_review"] = "blocked" if blocked else "passed"
-    result.metadata["safe_recipe_names"] = [item.name for item in safety.safe_recipes]
-    if blocked:
+    requirements = state["requirements"]
+    review = DietarySafetyService().review_recipes(requirements, observations)
+    if result.intent is not None and result.intent.kind == "recipe_detail":
+        result.metadata["recipe_reviews"] = [
+            item.model_dump(mode="json", exclude={"evidence"})
+            for item in review.recipes
+        ]
+        excluded = [item for item in review.recipes if item.decision == "excluded"]
+        unknown = [item for item in review.recipes if item.decision == "unknown"]
+        if excluded:
+            result.message += "\n\n安全提示：该食谱命中你的饮食限制，不应食用。"
+            result.metadata["safety_review"] = "blocked"
+        elif unknown:
+            if "无法据此确认全部过敏风险" not in result.message:
+                result.message += (
+                    "\n\n安全提示：现有食材证据不足，无法确认是否满足你的饮食限制。"
+                )
+            result.metadata["safety_review"] = "unknown"
+        else:
+            result.metadata["safety_review"] = "passed"
+        return {"result": result}
+    passed = [item.name for item in review.recipes if item.decision == "passed"]
+    if result.recipe is not None and result.recipe.name not in passed:
+        result.recipe = None
+    result.message = render_review_reply(review)
+    result.sources = []  # Draft attributions may include excluded recipe recommendations.
+    result.metadata["safety_review"] = "passed" if passed else "blocked"
+    result.metadata["safe_recipe_names"] = passed
+    result.metadata["recipe_reviews"] = [
+        item.model_dump(mode="json", exclude={"evidence"}) for item in review.recipes
+    ]
+    if not passed:
         result.status = "degraded"
         result.error_code = "insufficient_safety_evidence"
-        result.sources = []
-    return {"result": result, "safety_blocked": blocked}
+    return {"result": result}

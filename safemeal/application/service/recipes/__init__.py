@@ -1,4 +1,3 @@
-from .recipe_catalog import RecipeCatalog
-from .recipe_generation import RecipeGenerationService
+from .recipe_service import RecipeService
 
-__all__ = ["RecipeGenerationService", "RecipeCatalog"]
+__all__ = ["RecipeService"]

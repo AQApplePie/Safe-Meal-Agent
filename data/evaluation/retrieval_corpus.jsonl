@@ -1,8 +1,0 @@
-{"document_id":"eval-doc-gongbao","title":"宫保鸡丁标准资料","content":"宫保鸡丁是川味热菜，核心食材包括鸡肉、花生、干辣椒和花椒。项目结构化样例的总用时为35分钟，难度为中等。"}
-{"document_id":"eval-doc-bass","title":"清蒸鲈鱼烹饪资料","content":"清蒸鲈鱼以鲈鱼、姜、葱为主要食材。鱼身处理后短时腌制，再用蒸制方法保持鲜嫩；项目样例总用时30分钟。"}
-{"document_id":"eval-doc-tomato-egg","title":"番茄炒蛋烹饪资料","content":"番茄炒蛋使用番茄和鸡蛋，项目样例总用时15分钟。鸡蛋过敏者不能把它作为安全推荐。"}
-{"document_id":"eval-doc-mapo","title":"麻婆豆腐风味资料","content":"麻婆豆腐的典型特点是麻、辣、鲜、香，主要包含豆腐，项目样例还使用猪肉末和豆瓣酱。"}
-{"document_id":"eval-doc-safety","title":"饮食安全规则","content":"过敏原约束必须作为硬约束。证据明确命中过敏食材的菜应排除；食材证据缺失时只能标为未知，不能宣称安全。"}
-{"document_id":"eval-doc-substitution","title":"菜谱替代原则","content":"替换食材时要同时考虑过敏安全、风味作用和烹饪功能。花生过敏场景不能用其他坚果替代花生，宜改用烤黄豆或直接省略。"}
-{"document_id":"eval-doc-steaming","title":"蒸制技法","content":"蒸制依靠水蒸气传热，适合鱼类和部分蔬菜。控制时间可减少鱼肉失水，出锅后再调味有助于保持香气。"}
-{"document_id":"eval-doc-quickmeal","title":"快手菜选择","content":"快手菜应优先选择总用时较短、步骤少且食材常见的菜。项目样例中番茄炒蛋15分钟，酸辣土豆丝20分钟。"}

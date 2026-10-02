@@ -34,13 +34,3 @@ def configure_logging(
         diagnose=debug,
         serialize=serialize,
     )
-
-
-def get_logger(*, service: str, level: Optional[str] = None):
-    """
-    Return a logger bound to a specific service name.
-    """
-    bound_logger = logger.bind(service=service)
-    if level:
-        bound_logger = bound_logger.opt()
-    return bound_logger

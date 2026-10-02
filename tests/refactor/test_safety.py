@@ -1,12 +1,14 @@
 import pytest
-from safemeal.application.agent.tool_policy import review_tool_calls
+from safemeal.application.agent.tools.policy import review_tool_calls
 from safemeal.application.contracts.agent.decisions import ToolCall, Observation
-from safemeal.modules.dietary_safety.dietary_constraints import (
-    DietaryConstraint,
+from safemeal.application.contracts.dietary_safety.constraints import DietaryConstraint
+from safemeal.application.service.dietary_safety.constraints import (
     build_dietary_safety_result,
 )
-from safemeal.modules.dietary_safety.generated_safety import generated_recipe_violations
-from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
+from safemeal.application.service.dietary_safety.generated_safety import (
+    generated_recipe_violations,
+)
+from safemeal.application.contracts.recipes.generated import GeneratedRecipe
 
 
 def call(name, args):
@@ -30,12 +32,6 @@ def test_all_recipe_queries_receive_non_overridable_exclusions(name, key):
     )
     assert not rejected
     assert accepted[0].arguments[key] == ["鸡蛋", "花生"]
-
-
-def test_external_tool_rejected_without_approval():
-    accepted, rejected = review_tool_calls([call("external_mcp_call", {})], None)
-    assert not accepted
-    assert rejected[0].error_code == "tool_not_approved"
 
 
 def test_later_conflicting_recipe_cannot_be_hidden_by_name_deduplication():

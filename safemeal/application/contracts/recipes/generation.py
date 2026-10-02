@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from safemeal.modules.recipe_catalog.recipe_models import DietaryType
+from safemeal.application.contracts.recipes.models import DietaryType
 
 
 class RecipeGenerationRequest(BaseModel):

@@ -31,15 +31,55 @@ class ToolHandler(Generic[ToolArgs], ABC):
     """
 
     name: str
-    description: str
+    purpose: str
+    use_when: tuple[str, ...]
+    do_not_use_when: tuple[str, ...]
+    input_constraints: tuple[str, ...]
+    side_effects: tuple[str, ...] = ()
+    requires_approval: bool = False
+    idempotent: bool = True
     args_schema: type[ToolArgs]
 
+    def _planner_description(self) -> str:
+        """Build one readable description from the same structured metadata.
+
+        Keeping this text derived from fields prevents the prompt description and
+        the runtime/tool documentation from drifting into two contradictory copies.
+        """
+
+        sections = [
+            f"用途：{self.purpose}",
+            "适用场景：" + "；".join(self.use_when),
+            "不要使用：" + "；".join(self.do_not_use_when),
+            "输入约束：" + "；".join(self.input_constraints),
+        ]
+        if self.side_effects:
+            sections.append("副作用：" + "；".join(self.side_effects))
+        return "\n".join(sections)
+
     def specification(self) -> ToolSpecification:
-        """返回给 Planner 或调用方读取的工具说明。"""
+        """Return the Planner contract generated from executable metadata."""
+
+        required = {
+            "purpose": self.purpose,
+            "use_when": self.use_when,
+            "do_not_use_when": self.do_not_use_when,
+            "input_constraints": self.input_constraints,
+        }
+        missing = [name for name, value in required.items() if not value]
+        if missing:
+            raise ValueError(f"工具 {self.name} 缺少描述字段：{missing}")
 
         return ToolSpecification(
             name=self.name,
-            description=self.description,
+            purpose=self.purpose,
+            use_when=self.use_when,
+            do_not_use_when=self.do_not_use_when,
+            input_constraints=self.input_constraints,
+            side_effects=self.side_effects,
+            requires_approval=self.requires_approval,
+            idempotent=self.idempotent,
+            description=self._planner_description(),
             arguments_schema=to_json_object(self.args_schema.model_json_schema()),
         )
 

@@ -1,7 +1,11 @@
 """Application orchestration for uploaded knowledge documents."""
 
 from __future__ import annotations
-from safemeal.application.contracts.upload.models import DocumentIngestionResult
+from safemeal.application.contracts.upload.models import (
+    DocumentIngestionResult,
+    UploadedDocumentRecord,
+)
+from safemeal.application.exceptions import ExternalServiceError, ConflictError
 
 import asyncio
 from hashlib import sha256
@@ -40,32 +44,54 @@ class UploadedDocumentIngestionService:
         """Persist, parse and idempotently index an uploaded document."""
 
         saved = await self._file_upload_service.save(original_filename, content)
-        parsed = await asyncio.to_thread(
-            self._document_parser.parse,
-            saved.original_name,
-            content,
+        record = UploadedDocumentRecord(
+            file=saved, tenant_id=tenant_id, document_id=f"{tenant_id}:{saved.file_id}"
         )
-        checksum = sha256(content).hexdigest()
-        ingestion = await self._document_knowledge.ingest_text(
-            parsed.text,
-            metadata={
-                "document_id": f"{tenant_id}:{saved.file_id or checksum}",
-                "title": saved.original_name,
-                "source": saved.file_path,
-                "source_type": "upload",
-                "parser": parsed.parser,
-                "checksum": checksum,
-                "tenant_id": tenant_id,
-            },
-            chunk_strategy=chunk_strategy,
+        await asyncio.to_thread(self._file_upload_service.save_document, record)
+        try:
+            parsed = await asyncio.to_thread(
+                self._document_parser.parse, saved.original_name, content
+            )
+            checksum = sha256(content).hexdigest()
+            ingestion = await self._document_knowledge.ingest_text(
+                parsed.text,
+                metadata={
+                    "document_id": record.document_id,
+                    "title": saved.original_name,
+                    "source": saved.file_path,
+                    "source_type": "upload",
+                    "parser": parsed.parser,
+                    "checksum": checksum,
+                    "tenant_id": tenant_id,
+                },
+                chunk_strategy=chunk_strategy,
+            )
+            success = bool(ingestion.get("add_count"))
+            record.status = "indexed" if success else "failed"
+            await asyncio.to_thread(self._file_upload_service.save_document, record)
+            return DocumentIngestionResult(
+                success=success,
+                file=saved,
+                ingestion=ingestion,
+                parser=parsed.parser,
+                checksum=checksum,
+            )
+        except Exception:
+            record.status = "failed"
+            await asyncio.to_thread(self._file_upload_service.save_document, record)
+            raise
+
+    async def delete(self, *, file_id: str, tenant_id: str) -> None:
+        record = await asyncio.to_thread(
+            self._file_upload_service.get_document, file_id, tenant_id
         )
-        return DocumentIngestionResult(
-            success=bool(ingestion.get("add_count")),
-            file=saved,
-            ingestion=ingestion,
-            parser=parsed.parser,
-            checksum=checksum,
-        )
+        if record.status == "processing":
+            raise ConflictError("文件正在入库，请完成后再删除")
+        record.status = "deleting"
+        await asyncio.to_thread(self._file_upload_service.save_document, record)
+        if not await self._document_knowledge.delete_document(record.document_id):
+            raise ExternalServiceError("索引删除未完成，文件保留，可重试删除")
+        await asyncio.to_thread(self._file_upload_service.delete_document_file, record)
 
 
 __all__ = ["DocumentIngestionResult", "UploadedDocumentIngestionService"]

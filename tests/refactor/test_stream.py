@@ -1,7 +1,7 @@
 import pytest
 from safemeal.application.contracts.agent.api import AgentProcessResponse
 from safemeal.application.contracts.chat.turn import ChatRequest, ChatTurnStart
-from safemeal.application.observability.streaming import (
+from safemeal.application.streaming import (
     emit_answer_chunk,
     suppress_answer_stream,
     emit_workflow_progress,
@@ -26,7 +26,7 @@ class Persistence:
         self.failed = False
 
     def start_turn(self, *args, **kwargs):
-        return ChatTurnStart("s", 1, 2, [])
+        return ChatTurnStart("s", 1, 2)
 
     def save_agent_response(self, **kwargs):
         if self.fail:

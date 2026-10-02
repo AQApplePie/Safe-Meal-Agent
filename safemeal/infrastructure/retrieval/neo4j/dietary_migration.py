@@ -44,7 +44,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("evaluation_results/neo4j-dietary-closure.json"),
+        default=Path("data/runtime/neo4j-dietary-closure.json"),
     )
     args = parser.parse_args(argv)
     report = run(source=args.source, output=args.output)

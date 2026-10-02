@@ -1,11 +1,11 @@
 from safemeal.interfaces.http.request_middleware import (
     RequestSizeLimitMiddleware,
     RedisTokenBucketMiddleware,
-    RequestObservabilityMiddleware,
+    RequestIdentityMiddleware,
 )
 
 __all__ = [
     "RequestSizeLimitMiddleware",
     "RedisTokenBucketMiddleware",
-    "RequestObservabilityMiddleware",
+    "RequestIdentityMiddleware",
 ]

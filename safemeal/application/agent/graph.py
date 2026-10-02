@@ -10,13 +10,13 @@ from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.graph import END, START, StateGraph
 from .nodes.approval import create_approval_node
 
-from safemeal.application.ports.llm.language_model_gateway import LanguageModelGateway
+from safemeal.application.agent.model import AgentModelGateway
+from safemeal.application.agent.aggregation import create_responder_node
 from .nodes import (
     create_executor_node,
     create_initializer_node,
     create_planner_node,
     create_reflector_node,
-    create_responder_node,
     observe,
 )
 from safemeal.application.contracts.agent.state import AgentInputState, AgentState
@@ -28,7 +28,7 @@ from .routing import _after_plan, _after_approval, _after_reflection
 
 def build_agent_graph(
     *,
-    model_gateway: LanguageModelGateway,
+    model_gateway: AgentModelGateway,
     tool_executor: ToolExecutor,
     checkpointer: BaseCheckpointSaver[Any] | Literal[False] | None = None,
     max_iterations: int = 4,
@@ -38,6 +38,7 @@ def build_agent_graph(
     max_model_cost: float = 0.0,
     approval_tool_names: frozenset[str] = frozenset(),
 ):
+
     builder = StateGraph(AgentState, input=AgentInputState)
     builder.add_node(
         "initialize",
@@ -52,7 +53,7 @@ def build_agent_graph(
     builder.add_node("planner", create_planner_node(model_gateway, tool_executor))
     builder.add_node(
         "human_approval",
-        create_approval_node(approval_tool_names | frozenset({"external_mcp_call"})),
+        create_approval_node(approval_tool_names),
     )
     builder.add_node("execute_tools", create_executor_node(tool_executor))
     builder.add_node("observe", observe)

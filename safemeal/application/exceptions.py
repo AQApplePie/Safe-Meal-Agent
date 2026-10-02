@@ -14,11 +14,6 @@ class ApplicationError(Exception):
         super().__init__(message or self.public_message)
 
 
-class KnowledgeOperationError(ApplicationError):
-    public_message = "Knowledge operation failed"
-    code = "knowledge_operation_failed"
-
-
 class ExternalProviderError(ApplicationError):
     public_message = "External provider failed"
     code = "external_provider_failed"
@@ -117,3 +112,28 @@ class RateLimitExceededError(ApplicationError):
     public_message = "Rate limit exceeded"
     code = "rate_limit_exceeded"
     retryable = True
+
+
+class AuthenticationError(ApplicationError):
+    public_message = "Invalid email or password"
+    code = "invalid_credentials"
+
+
+class InvalidAccessTokenError(AuthenticationError):
+    public_message = "Invalid or expired access token"
+    code = "invalid_access_token"
+
+
+class InvalidRefreshTokenError(AuthenticationError):
+    public_message = "Invalid or expired refresh token"
+    code = "invalid_refresh_token"
+
+
+class AccountDisabledError(AuthenticationError):
+    public_message = "Account is not active"
+    code = "account_disabled"
+
+
+class EmailAlreadyRegisteredError(ConflictError):
+    public_message = "Email is already registered"
+    code = "email_already_registered"

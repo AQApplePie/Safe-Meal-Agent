@@ -1,7 +1,7 @@
 """服务于 Responder 节点的证据来源归因。
 
 Responder 在组织最终答案时调用本模块，将工具 Observation 转换为稳定的
-``AnswerSource``，供 API 响应和 Trace 使用；本模块不访问外部系统，也不判断证据质量。
+``AnswerSource``，供 API 响应使用；本模块不访问外部系统，也不判断证据质量。
 """
 
 from __future__ import annotations
@@ -44,13 +44,29 @@ def collect_answer_sources(observations: list[Observation]) -> list[AnswerSource
             "get_recipe",
             "recommend_recipes",
         }:
-            sources.append(
-                AnswerSource(
-                    source="mysql:recipes",
-                    tool=observation.tool_name,
-                    call_id=observation.call_id,
+            candidates = data.get("items", []) if isinstance(data, dict) else []
+            attributed = False
+            for candidate in candidates:
+                if not isinstance(candidate, dict):
+                    continue
+                source = candidate.get("source_url") or candidate.get("source_title")
+                if source:
+                    attributed = True
+                    sources.append(
+                        AnswerSource(
+                            source=str(source),
+                            tool=observation.tool_name,
+                            call_id=observation.call_id,
+                        )
+                    )
+            if not attributed:
+                sources.append(
+                    AnswerSource(
+                        source="mysql:recipes",
+                        tool=observation.tool_name,
+                        call_id=observation.call_id,
+                    )
                 )
-            )
         elif observation.tool_name == "generate_recipe":
             sources.append(
                 AnswerSource(

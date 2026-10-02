@@ -6,7 +6,10 @@ from hashlib import sha256
 import json
 from typing import Iterable, Sequence
 
-from safemeal.application.observability import current_trace
+from safemeal.application.runtime_budget import (
+    current_model_token_usage,
+    current_model_cost_usage,
+)
 from safemeal.application.contracts.agent.decisions import ToolCall
 
 
@@ -40,19 +43,6 @@ def filter_new_tool_calls(
         seen.add(signature)
         accepted.append(call)
     return accepted, duplicates
-
-
-def current_model_token_usage() -> int:
-    recorder = current_trace()
-    return recorder.trace.token_usage.total_tokens if recorder is not None else 0
-
-
-def current_model_cost_usage() -> tuple[float, bool]:
-    recorder = current_trace()
-    if recorder is None:
-        return 0.0, False
-    usage = recorder.cost_usage()
-    return usage.total_cost, usage.complete
 
 
 __all__ = [

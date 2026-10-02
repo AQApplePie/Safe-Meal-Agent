@@ -6,7 +6,6 @@
 
 import json
 
-from safemeal.application.observability import trace_span
 from safemeal.shared.types import JsonValue, to_json_value
 
 from safemeal.application.contracts.agent.decisions import Observation
@@ -73,75 +72,68 @@ def _compact_data(data: JsonValue, depth: int = 0, parent_key: str = "") -> Json
 
 
 async def observe(state: AgentState) -> AgentStateUpdate:
-    with trace_span(
-        "agent_node",
-        "observe",
-        {"tool_result_count": len(state.get("tool_results", []))},
-    ) as span:
-        calls = {call.id: call for call in state.get("pending_calls", [])}
-        observations = []
-        for result in state.get("tool_results", []):
-            call = calls.get(result.call_id)
-            compact_data = (
-                result.data
-                if result.tool_name
-                in {
-                    "search_recipes",
-                    "get_recipe",
-                    "recommend_recipes",
-                    "generate_recipe",
-                    "dietary_safe_recipe_query",
-                }
-                else _compact_data(result.data)
+    calls = {call.id: call for call in state.get("pending_calls", [])}
+    observations = []
+    for result in state.get("tool_results", []):
+        call = calls.get(result.call_id)
+        compact_data = (
+            result.data
+            if result.tool_name
+            in {
+                "search_recipes",
+                "get_recipe",
+                "recommend_recipes",
+                "generate_recipe",
+                "dietary_safe_recipe_query",
+            }
+            else _compact_data(result.data)
+        )
+        observations.append(
+            Observation(
+                call_id=result.call_id,
+                tool_name=result.tool_name,
+                purpose=call.purpose if call else "",
+                success_criteria=call.success_criteria if call else "",
+                ok=result.ok,
+                status=result.status,
+                has_data=(
+                    result.ok
+                    and _has_data(compact_data)
+                    and not (
+                        isinstance(compact_data, dict)
+                        and compact_data.get("status") in {"NOT_FOUND", "ERROR"}
+                    )
+                ),
+                summary=_summary(compact_data, result.error),
+                data=compact_data,
+                error=result.error,
+                error_code=result.error_code,
+                retryable=result.retryable,
             )
-            observations.append(
-                Observation(
-                    call_id=result.call_id,
-                    tool_name=result.tool_name,
-                    purpose=call.purpose if call else "",
-                    success_criteria=call.success_criteria if call else "",
-                    ok=result.ok,
-                    status=result.status,
-                    has_data=result.ok and _has_data(compact_data),
-                    summary=_summary(compact_data, result.error),
-                    data=compact_data,
-                    error=result.error,
-                    error_code=result.error_code,
-                    retryable=result.retryable,
-                )
-            )
-        all_observations = list(state.get("observations", [])) + observations
+        )
+    all_observations = list(state.get("observations", [])) + observations
+    all_observations = [
+        item for item in all_observations if item.tool_name != "multi_route_retrieval"
+    ]
+    fused_retrieval = fuse_retrieval_observations(all_observations)
+    if fused_retrieval is not None:
+        all_observations.append(fused_retrieval)
+    dietary_observation = build_dietary_safety_observation(
+        constraint_payload=state.get("dietary_constraints"),
+        observations=all_observations,
+    )
+    if dietary_observation is not None:
+        # 每次 observe 都重新计算一次过滤视图，因此先移除旧的过滤 Observation，
+        # 避免 Reflection/Responder 同时看到过期和最新的 safe/excluded/unknown。
         all_observations = [
             item
             for item in all_observations
-            if item.tool_name != "multi_route_retrieval"
+            if item.tool_name != "dietary_safety_filter"
         ]
-        fused_retrieval = fuse_retrieval_observations(all_observations)
-        if fused_retrieval is not None:
-            all_observations.append(fused_retrieval)
-        dietary_observation = build_dietary_safety_observation(
-            constraint_payload=state.get("dietary_constraints"),
-            observations=all_observations,
-        )
-        if dietary_observation is not None:
-            # 每次 observe 都重新计算一次过滤视图，因此先移除旧的过滤 Observation，
-            # 避免 Reflection/Responder 同时看到过期和最新的 safe/excluded/unknown。
-            all_observations = [
-                item
-                for item in all_observations
-                if item.tool_name != "dietary_safety_filter"
-            ]
-            all_observations.append(dietary_observation)
-        output: AgentStateUpdate = {
-            "observations": all_observations,
-            "pending_calls": [],
-            "tool_results": [],
-        }
-        span.set_output(
-            {
-                "new_observations": [item.model_dump() for item in observations],
-                "dietary_safety_applied": dietary_observation is not None,
-                "total_observation_count": len(output["observations"]),
-            }
-        )
-        return output
+        all_observations.append(dietary_observation)
+    output: AgentStateUpdate = {
+        "observations": all_observations,
+        "pending_calls": [],
+        "tool_results": [],
+    }
+    return output

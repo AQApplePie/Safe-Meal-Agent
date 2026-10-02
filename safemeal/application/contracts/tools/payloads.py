@@ -3,7 +3,7 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from safemeal.shared.types import JsonObject
-from safemeal.modules.dietary_safety.dietary_constraints import RecipeSafetyRecord
+from safemeal.application.contracts.dietary_safety.constraints import RecipeSafetyRecord
 
 
 class DietarySafeRecipeQueryArgs(BaseModel):
@@ -57,13 +57,6 @@ class DietarySafeRecipeQueryResult(BaseModel):
     excluded_recipes: list[RecipeSafetyRecord] = Field(default_factory=list)
     unknown_recipes: list[RecipeSafetyRecord] = Field(default_factory=list)
     missing_information: list[str] = Field(default_factory=list)
-
-
-class ExternalMcpCallArgs(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    server_name: str = Field(min_length=1, max_length=128)
-    tool_name: str = Field(min_length=1, max_length=128)
-    arguments: JsonObject = Field(default_factory=dict)
 
 
 class GetRecipeArgs(BaseModel):

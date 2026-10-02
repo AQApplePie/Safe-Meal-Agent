@@ -24,20 +24,39 @@ from safemeal.application.service.chat.chat_session_service import (
     ChatSessionService,
 )
 from safemeal.application.service.chat.chat_turn_service import ChatTurnService
-from safemeal.interfaces import (
+from safemeal.interfaces.http.dependencies import (
     get_chat_session_service,
     get_chat_turn_service,
 )
-from safemeal.interfaces import ChatMessageResponse
-from safemeal.interfaces import stream_answer_events
-from safemeal.interfaces import (
+from safemeal.interfaces.http.models import ChatMessageResponse
+from safemeal.interfaces.http.answer_stream import stream_answer_events
+from safemeal.interfaces.http.authentication import (
     Principal,
-    authorize_user_id,
     get_current_principal,
 )
 from safemeal.config.settings import settings
 from safemeal.shared.types import JsonObject
 from safemeal.application.contracts.chat.turn import ChatRequest, ChatResponse
+
+from fastapi import Response
+from safemeal.application.contracts.chat.messages import ChatSessionUpdate
+from safemeal.interfaces.http.models import (
+    ChatSessionResponse,
+    ChatSessionUpdateRequest,
+    UserMemoryResponse,
+    UserMemoryUpdateRequest,
+)
+from safemeal.application.service.memory.user_memory_service import UserMemoryService
+from safemeal.interfaces.http.dependencies import (
+    get_user_memory_service,
+    get_chat_workflow,
+)
+from safemeal.application.contracts.memory.models import UserMemoryUpdate
+from safemeal.application.contracts.agent.api import (
+    AgentResumeRequest,
+    AgentProcessResponse,
+)
+from safemeal.application.workflow.runner import ChatWorkflow
 
 router = APIRouter()
 
@@ -56,9 +75,8 @@ async def create_chat_turn(
     - Supports the database and retrieval tools listed by `/routes`
     """
     try:
-        user_id = authorize_user_id(principal, request.user_id)
         return await turn_service.handle(
-            request.model_copy(update={"user_id": user_id})
+            request.model_copy(update={"user_id": principal.storage_subject})
         )
     except ChatSessionNotFoundError as exc:
         raise HTTPException(
@@ -88,8 +106,9 @@ async def stream_chat_turn(
 ) -> StreamingResponse:
     """Public SSE chat with first-answer timeout detection and durable turns."""
 
-    user_id = authorize_user_id(principal, request.user_id)
-    bound_request = request.model_copy(update={"user_id": user_id})
+    bound_request = request.model_copy(
+        update={"user_id": principal.storage_subject}
+    )
 
     def completed(result: ChatResponse, degraded: bool) -> JsonObject:
         return {
@@ -123,7 +142,6 @@ async def stream_chat_turn(
 async def get_chat_history(
     session_id: str,
     session_service: ChatSessionService = Depends(get_chat_session_service),
-    user_id: str = Query(..., min_length=1, max_length=255),
     principal: Principal = Depends(get_current_principal),
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
@@ -131,7 +149,7 @@ async def get_chat_history(
     """
     Get chat history for a session
     """
-    user_id = authorize_user_id(principal, user_id)
+    user_id = principal.storage_subject
     session = await run_in_threadpool(
         session_service.get_session,
         session_id,
@@ -154,18 +172,17 @@ async def get_chat_history(
     return [ChatMessageResponse.model_validate(item) for item in messages]
 
 
-@router.delete("/sessions/{session_id}")
+@router.delete("/sessions/{session_id}/messages")
 async def clear_chat_session(
     session_id: str,
     session_service: ChatSessionService = Depends(get_chat_session_service),
-    user_id: str = Query(..., min_length=1, max_length=255),
     principal: Principal = Depends(get_current_principal),
 ) -> dict[str, str]:
     """
     Clear all messages in a session
     """
 
-    user_id = authorize_user_id(principal, user_id)
+    user_id = principal.storage_subject
     session = await run_in_threadpool(
         session_service.get_session,
         session_id,
@@ -183,6 +200,166 @@ async def clear_chat_session(
     )
 
     return {"message": "Session cleared successfully", "session_id": session_id}
+
+
+def _session_not_found() -> HTTPException:
+    # Missing and foreign-owned sessions intentionally have identical responses.
+    return HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Session not found",
+    )
+
+
+@router.get("/sessions", response_model=List[ChatSessionResponse])
+def list_chat_sessions(
+    *,
+    session_service: ChatSessionService = Depends(get_chat_session_service),
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=100),
+    active_only: bool = True,
+    principal: Principal = Depends(get_current_principal),
+) -> List[ChatSessionResponse]:
+    """List only sessions owned by ``user_id``."""
+
+    user_id = principal.storage_subject
+    return [
+        ChatSessionResponse.model_validate(item)
+        for item in session_service.list_sessions(
+            user_id=user_id,
+            skip=skip,
+            limit=limit,
+            active_only=active_only,
+        )
+    ]
+
+
+@router.get("/sessions/{session_id}", response_model=ChatSessionResponse)
+def get_chat_session(
+    *,
+    session_service: ChatSessionService = Depends(get_chat_session_service),
+    session_id: str,
+    principal: Principal = Depends(get_current_principal),
+) -> ChatSessionResponse:
+    user_id = principal.storage_subject
+    session = session_service.get_session(session_id, user_id=user_id)
+    if session is None:
+        raise _session_not_found()
+    return ChatSessionResponse.model_validate(session)
+
+
+@router.patch("/sessions/{session_id}", response_model=ChatSessionResponse)
+def update_chat_session(
+    *,
+    session_service: ChatSessionService = Depends(get_chat_session_service),
+    session_id: str,
+    session_update: ChatSessionUpdateRequest,
+    principal: Principal = Depends(get_current_principal),
+) -> ChatSessionResponse:
+    user_id = principal.storage_subject
+    session = session_service.update_session(
+        session_id,
+        user_id=user_id,
+        data=ChatSessionUpdate(**session_update.model_dump(exclude_unset=True)),
+    )
+    if session is None:
+        raise _session_not_found()
+    return ChatSessionResponse.model_validate(session)
+
+
+@router.delete(
+    "/sessions/{session_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
+)
+def delete_chat_session(
+    *,
+    session_service: ChatSessionService = Depends(get_chat_session_service),
+    session_id: str,
+    principal: Principal = Depends(get_current_principal),
+) -> Response:
+    user_id = principal.storage_subject
+    if session_service.delete_session(session_id, user_id=user_id) is None:
+        raise _session_not_found()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/memories", response_model=List[UserMemoryResponse])
+async def list_user_memories(
+    include_archived: bool = Query(False, description="是否包含已归档记忆。"),
+    limit: int = Query(100, ge=1, le=500),
+    memory_service: UserMemoryService = Depends(get_user_memory_service),
+    principal: Principal = Depends(get_current_principal),
+) -> List[UserMemoryResponse]:
+    """列出某个用户的长期记忆。"""
+
+    user_id = principal.storage_subject
+    records = await run_in_threadpool(
+        memory_service.list_memories,
+        user_id=user_id,
+        include_archived=include_archived,
+        limit=limit,
+    )
+    return [UserMemoryResponse.model_validate(item) for item in records]
+
+
+@router.patch("/memories/{memory_id}", response_model=UserMemoryResponse)
+async def update_user_memory(
+    memory_id: int,
+    request: UserMemoryUpdateRequest,
+    memory_service: UserMemoryService = Depends(get_user_memory_service),
+    principal: Principal = Depends(get_current_principal),
+) -> UserMemoryResponse:
+    """更新一条长期记忆。"""
+
+    user_id = principal.storage_subject
+    updated = await run_in_threadpool(
+        memory_service.update_memory,
+        memory_id,
+        user_id,
+        UserMemoryUpdate(**request.model_dump(exclude_unset=True)),
+    )
+    if updated is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Memory not found",
+        )
+    return UserMemoryResponse.model_validate(updated)
+
+
+@router.delete("/memories/{memory_id}", response_model=UserMemoryResponse)
+async def archive_user_memory(
+    memory_id: int,
+    memory_service: UserMemoryService = Depends(get_user_memory_service),
+    principal: Principal = Depends(get_current_principal),
+) -> UserMemoryResponse:
+    """软删除一条长期记忆。"""
+
+    user_id = principal.storage_subject
+    archived = await run_in_threadpool(
+        memory_service.archive_memory, memory_id, user_id
+    )
+    if archived is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Memory not found",
+        )
+    return UserMemoryResponse.model_validate(archived)
+
+
+@router.post("/resume", response_model=AgentProcessResponse)
+async def resume_chat(
+    request: AgentResumeRequest,
+    principal: Principal = Depends(get_current_principal),
+    session_service: ChatSessionService = Depends(get_chat_session_service),
+    workflow: ChatWorkflow = Depends(get_chat_workflow),
+) -> AgentProcessResponse:
+    user_id = principal.storage_subject
+    session = await run_in_threadpool(
+        session_service.get_session, request.session_id, user_id=user_id
+    )
+    if session is None:
+        raise _session_not_found()
+    return await workflow.resume(request.session_id, approved=request.approved)
 
 
 __all__ = ["router"]

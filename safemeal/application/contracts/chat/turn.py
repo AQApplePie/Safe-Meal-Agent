@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 from dataclasses import dataclass
-from safemeal.application.contracts.conversation.models import ConversationHistory
 
 
 from datetime import datetime, timezone
@@ -12,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from safemeal.application.contracts.conversation.models import AnswerSource
 from safemeal.shared.types import JsonObject
-from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
+from safemeal.application.contracts.recipes.generated import GeneratedRecipe
 
 
 class ChatRequest(BaseModel):
@@ -28,9 +27,9 @@ class ChatRequest(BaseModel):
         max_length=255,
         description="客户端生成的幂等请求 ID；同一会话内必须唯一。",
     )
-    # ``default_user`` 会让所有未显式传 user_id 的客户端共享会话和长期记忆。
-    # 即使是单机模式，也要求调用方持有一个稳定、唯一的匿名或登录用户 ID。
-    user_id: str = Field(..., min_length=1, max_length=255)
+    # Compatibility-only input. HTTP always replaces it with the authenticated
+    # principal, so callers cannot select another user's storage identity.
+    user_id: Optional[str] = Field(default=None, min_length=1, max_length=255)
 
 
 class ChatResponse(BaseModel):
@@ -52,4 +51,3 @@ class ChatTurnStart:
     session_id: str
     user_message_id: int
     response_order_index: int
-    history: ConversationHistory

@@ -20,6 +20,7 @@ numpy<2.0.0
 langgraph==0.2.60
 langgraph-checkpoint-postgres>=2.0.0,<3
 psycopg[binary,pool]>=3.2.0,<4
+msgpack>=1.0,<2
 
 # Vector Database & Embeddings
 pymilvus==2.4.15
@@ -46,18 +47,10 @@ pillow>=10.0.0,<12
 pymupdf>=1.24.0,<2
 pytesseract>=0.3.13,<0.4
 
-# MCP server/client
-mcp>=1.16.0,<2
-
 # Authentication
 PyJWT[crypto]>=2.8.0,<3
+argon2-cffi>=23.1.0,<26
 
-# OpenTelemetry (JSONL traces remain enabled independently)
-opentelemetry-api>=1.28.0,<2
-opentelemetry-sdk>=1.28.0,<2
-opentelemetry-exporter-otlp-proto-grpc>=1.28.0,<2
-opentelemetry-instrumentation-fastapi>=0.49b0,<1
-opentelemetry-instrumentation-httpx>=0.49b0,<1
 
 # Test runtime
 pytest>=7.4,<9

@@ -21,14 +21,6 @@ class ChatTurnConflictError(ChatError):
     public_message = "Chat turn conflict"
 
 
-class ChatTurnInProgressError(ChatTurnConflictError):
-    public_message = "Chat turn is already being processed"
-
-
-class ChatRequestConflictError(ChatTurnConflictError):
-    public_message = "request_id was already used with different request data"
-
-
 class ChatAgentUnavailableError(ChatError):
     """The Agent failed after the user message was durably accepted."""
 
@@ -42,8 +34,6 @@ class ChatAgentUnavailableError(ChatError):
 __all__ = [
     "ChatAgentUnavailableError",
     "ChatError",
-    "ChatRequestConflictError",
     "ChatSessionNotFoundError",
     "ChatTurnConflictError",
-    "ChatTurnInProgressError",
 ]

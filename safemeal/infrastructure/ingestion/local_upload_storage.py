@@ -1,6 +1,10 @@
 """Local-filesystem adapter for uploaded files."""
 
 from pathlib import Path
+import os
+import tempfile
+from uuid import UUID
+from safemeal.application.contracts.upload.models import UploadedDocumentRecord
 
 import aiofiles  # type: ignore[import-untyped]
 
@@ -40,3 +44,46 @@ class LocalUploadStorage:
         if self.root not in target.parents or not target.is_file():
             raise FileNotFoundError(path)
         target.unlink()
+
+    def _record_path(self, file_id: str) -> Path:
+        return self._safe_path(f".documents/{UUID(file_id)}.json")
+
+    def save_record(self, record: UploadedDocumentRecord) -> None:
+        target = self._record_path(str(record.file.file_id))
+        target.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(
+            mode="w", dir=target.parent, delete=False, encoding="utf-8"
+        ) as handle:
+            temporary = Path(handle.name)
+            try:
+                handle.write(record.model_dump_json())
+                handle.flush()
+                os.fsync(handle.fileno())
+            except BaseException:
+                temporary.unlink(missing_ok=True)
+                raise
+        try:
+            temporary.replace(target)
+        finally:
+            temporary.unlink(missing_ok=True)
+
+    def get_record(self, file_id: str) -> UploadedDocumentRecord | None:
+        try:
+            path = self._record_path(file_id)
+        except ValueError:
+            return None
+        if not path.is_file():
+            return None
+        return UploadedDocumentRecord.model_validate_json(
+            path.read_text(encoding="utf-8")
+        )
+
+    def list_records(self, tenant_id: str) -> list[UploadedDocumentRecord]:
+        records = [
+            UploadedDocumentRecord.model_validate_json(path.read_text(encoding="utf-8"))
+            for path in (self.root / ".documents").glob("*.json")
+        ]
+        return [record for record in records if record.tenant_id == tenant_id]
+
+    def delete_record(self, file_id: str) -> None:
+        self._record_path(file_id).unlink(missing_ok=True)

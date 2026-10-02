@@ -2,7 +2,7 @@
 
 from safemeal.application.contracts.workflow.models import WorkflowRequest
 from safemeal.application.contracts.agent.api import AgentProcessResponse
-from safemeal.application.observability.streaming import suppress_answer_stream
+from safemeal.application.streaming import suppress_answer_stream
 
 
 class ChatWorkflow:

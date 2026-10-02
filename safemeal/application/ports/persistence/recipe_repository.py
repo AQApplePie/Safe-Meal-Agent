@@ -8,7 +8,7 @@ from safemeal.application.contracts.recipes.catalog import (
     RecipeQuery,
     RecipeSearchResult,
 )
-from safemeal.modules.recipe_catalog.recipe_models import Recipe
+from safemeal.application.contracts.recipes.models import Recipe
 
 
 class RecipeRepository(Protocol):

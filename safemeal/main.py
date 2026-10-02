@@ -12,10 +12,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse, Response
 from loguru import logger
 
-from safemeal.application.service.composition.application_container import ApplicationContainer
+from safemeal.application.service.composition.application_container import (
+    ApplicationContainer,
+)
 from safemeal.application.exceptions import (
+    AccountDisabledError,
     AgentExecutionError,
     ApplicationError,
+    AuthenticationError,
     BusinessConstraintError,
     ConflictError,
     DatabaseOperationError,
@@ -34,12 +38,10 @@ from safemeal.application.service.composition.operations import configure_loggin
 from safemeal.application.service.composition.operations import get_runtime_readiness
 from safemeal.shared.types import JsonObject
 from safemeal.interfaces.http import (
-    RequestObservabilityMiddleware,
+    RequestIdentityMiddleware,
     RedisTokenBucketMiddleware,
     RequestSizeLimitMiddleware,
 )
-from safemeal.interfaces.mcp_server import create_authenticated_mcp_app
-from safemeal.application.service.composition.operations import configure_telemetry
 
 
 def _include_routers(application: FastAPI) -> None:
@@ -94,16 +96,9 @@ def create_application() -> FastAPI:
             redis_url=settings.REDIS_RATE_LIMIT_URL,
             requests_per_minute=settings.HTTP_RATE_LIMIT_PER_MINUTE,
         )
-    application.add_middleware(RequestObservabilityMiddleware)
+    application.add_middleware(RequestIdentityMiddleware)
 
     _include_routers(application)
-    if settings.MCP_SERVER_ENABLED:
-        application.mount(
-            settings.MCP_SERVER_PATH,
-            create_authenticated_mcp_app(application.state.container),
-        )
-    configure_telemetry(application, settings)
-
     @application.get("/")
     async def root_redirect():
         return RedirectResponse(url="/docs")
@@ -167,6 +162,10 @@ def create_application() -> FastAPI:
     ) -> JSONResponse:
         if isinstance(exc, (ResourceOwnershipError, ResourceNotFoundError)):
             status_code = 404
+        elif isinstance(exc, AccountDisabledError):
+            status_code = 403
+        elif isinstance(exc, AuthenticationError):
+            status_code = 401
         elif isinstance(exc, ConflictError):
             status_code = 409
         elif isinstance(exc, (InputValidationError, BusinessConstraintError)):

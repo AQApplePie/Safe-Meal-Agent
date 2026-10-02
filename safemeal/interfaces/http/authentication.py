@@ -1,13 +1,14 @@
-"""Small single-host API-key authentication boundary."""
+"""Human bearer-token authentication boundary."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from hmac import compare_digest
-from fastapi import Header, HTTPException, status
+from fastapi import Depends, Header, HTTPException
 import jwt
 
 from safemeal.config.settings import settings
+from safemeal.application.service.auth import AuthService
+from safemeal.interfaces.http.dependencies import get_auth_service
 
 
 @dataclass(frozen=True)
@@ -58,61 +59,29 @@ def _oidc_principal(token: str) -> Principal:
 
 
 def get_current_principal(
-    api_key: str | None = Header(default=None, alias="X-API-Key"),
-    subject: str | None = Header(default=None, alias="X-SafeMeal-User-ID"),
-    tenant_id: str | None = Header(default=None, alias="X-SafeMeal-Tenant-ID"),
     authorization: str | None = Header(default=None, alias="Authorization"),
+    auth_service: AuthService = Depends(get_auth_service),
 ) -> Principal:
-    """Require one optional local API key and accept a demo user header."""
-
-    return authenticate_credentials(
-        api_key=api_key,
-        subject=subject,
-        tenant_id=tenant_id,
-        authorization=authorization,
-    )
-
-
-def authenticate_credentials(
-    *,
-    api_key: str | None,
-    subject: str | None,
-    tenant_id: str | None,
-    authorization: str | None,
-) -> Principal:
-    """Authenticate HTTP or mounted-ASGI requests through one boundary."""
+    """Authenticate a human API request from a signed access token."""
 
     if settings.ENABLE_OIDC:
-        scheme, _, token = (authorization or "").partition(" ")
-        if scheme.casefold() != "bearer" or not token:
-            raise HTTPException(status_code=401, detail="Bearer token is required")
-        return _oidc_principal(token)
-
-    expected_key = (settings.API_KEY or "").strip()
-    if expected_key and (not api_key or not compare_digest(api_key, expected_key)):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing or invalid API key",
-        )
+        return _oidc_principal(_bearer_token(authorization))
+    user = auth_service.authenticate_access_token(_bearer_token(authorization))
     return Principal(
-        subject=(subject or "demo-user").strip() or "demo-user",
-        tenant_id=(tenant_id or settings.DEFAULT_TENANT_ID).strip()
-        or settings.DEFAULT_TENANT_ID,
+        subject=user.id,
+        tenant_id=user.tenant_id,
+        roles=tuple(user.roles),
     )
 
 
-def authorize_user_id(principal: Principal, claimed_user_id: str) -> str:
-    """Bind a user-owned resource to the authenticated principal."""
-
-    claimed = claimed_user_id.strip() or principal.subject
-    if claimed not in {principal.subject, principal.storage_subject}:
-        raise HTTPException(status_code=403, detail="Cannot access another user")
-    return principal.storage_subject
+def _bearer_token(authorization: str | None) -> str:
+    scheme, _, token = (authorization or "").partition(" ")
+    if scheme.casefold() != "bearer" or not token.strip():
+        raise HTTPException(status_code=401, detail="Bearer token is required")
+    return token.strip()
 
 
 __all__ = [
     "Principal",
-    "authenticate_credentials",
-    "authorize_user_id",
     "get_current_principal",
 ]

@@ -13,6 +13,7 @@ from safemeal.application.contracts.conversation.models import (
     ConversationHistory,
     ConversationMessage,
 )
+from safemeal.application.contracts.agent.intent import IntentDecision
 from safemeal.shared.types import JsonObject
 
 from safemeal.application.contracts.conversation.models import AnswerSource, RouterInfo
@@ -51,6 +52,7 @@ class AgentInputState(TypedDict, total=False):
 
 
 class AgentState(TypedDict, total=False):
+    intent: IntentDecision | None
     messages: Annotated[list[MessageInput], add_messages]
     agent_context: JsonObject
     question: str

@@ -5,11 +5,15 @@ import msgpack
 from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 
 _MODULES = {
+    "safemeal.modules.recipe_catalog.recipe_models": "safemeal.application.contracts.recipes.models",
+    "safemeal.modules.recipe_catalog.generated_recipe": "safemeal.application.contracts.recipes.generated",
+    "safemeal.modules.user_memory.memory_models": "safemeal.application.contracts.memory.extraction",
+    "safemeal.modules.dietary_safety.dietary_constraints": "safemeal.application.contracts.dietary_safety.constraints",
+    "safemeal.modules.dietary_safety.recipe_safety": "safemeal.application.contracts.dietary_safety.models",
     "safemeal.shared.contracts.tools": "safemeal.application.contracts.tools.base",
     "safemeal.shared.contracts.agent_conversation": "safemeal.application.contracts.conversation.models",
     "safemeal.shared.contracts.agent_context": "safemeal.application.contracts.agent.context",
     "safemeal.shared.contracts.memory": "safemeal.application.contracts.memory.models",
-    "safemeal.application.observability.trace_models": "safemeal.application.contracts.observability.trace",
     "safemeal.application.contracts.agent": "safemeal.application.contracts.agent.api",
     "safemeal.application.contracts.agent_context": "safemeal.application.contracts.agent.context",
     "safemeal.application.contracts.agent_state": "safemeal.application.contracts.agent.state",
@@ -27,9 +31,6 @@ _MODULES = {
     "safemeal.application.contracts.memory": "safemeal.application.contracts.memory.models",
     "safemeal.application.contracts.upload": "safemeal.application.contracts.upload.models",
     "safemeal.application.contracts.ingestion": "safemeal.application.contracts.upload.ingestion",
-    "safemeal.application.contracts.cost": "safemeal.application.contracts.observability.cost",
-    "safemeal.application.contracts.trace": "safemeal.application.contracts.observability.trace",
-    "safemeal.application.contracts.evaluation": "safemeal.application.contracts.evaluation.models",
 }
 
 

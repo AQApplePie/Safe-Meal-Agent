@@ -15,7 +15,7 @@ from safemeal.application.contracts.agent.decisions import (
     ReflectionDecision,
 )
 from safemeal.application.contracts.recipes.generation import RecipeGenerationRequest
-from safemeal.modules.recipe_catalog.generated_recipe import GeneratedRecipe
+from safemeal.application.contracts.recipes.generated import GeneratedRecipe
 
 
 class LanguageModelGateway(Protocol):

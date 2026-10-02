@@ -2,7 +2,6 @@
 
 from typing import Protocol
 from safemeal.application.contracts.tools.payloads import DietarySafeRecipeQueryResult
-from safemeal.shared.types import JsonObject
 
 
 class DietarySearch(Protocol):
@@ -14,10 +13,3 @@ class DietarySearch(Protocol):
         recommend_limit: int,
         excluded_limit: int,
     ) -> DietarySafeRecipeQueryResult: ...
-
-
-class McpGateway(Protocol):
-    async def list_tools(self) -> list[JsonObject]: ...
-    async def call_tool(
-        self, server_name: str, tool_name: str, arguments: JsonObject
-    ) -> JsonObject: ...

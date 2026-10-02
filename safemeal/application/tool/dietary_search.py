@@ -12,11 +12,24 @@ from safemeal.application.ports.tools.handler import ToolHandler
 
 
 class DietarySafeRecipeQueryTool(ToolHandler[DietarySafeRecipeQueryArgs]):
+    """Query graph-backed ingredient relations for deterministic exclusions."""
+
     name = "dietary_safe_recipe_query"
-    description = (
-        "针对过敏、忌口、不能吃、不含、避开等饮食安全问题，在 Neo4j 中确定性查询菜品食材。"
-        "输入禁忌食材后返回 safe_recipes、excluded_recipes、unknown_recipes 和证据；"
-        "判断指定菜是否适合时传 target_dish。"
+    purpose = "在 Neo4j 中查询菜品与食材关系，为过敏和忌口判断提供结构化证据。"
+    use_when = (
+        "问题涉及过敏、忌口、不含某食材或避开某食材",
+        "需要判断指定菜品是否命中禁忌食材",
+        "推荐前需要图谱侧安全候选与排除证据",
+    )
+    do_not_use_when = (
+        "用户只询问普通菜谱详情且不存在饮食安全条件",
+        "需要读取用户记忆或修改用户画像",
+        "图谱未返回完整证据时，不得单独据此宣称绝对安全",
+    )
+    input_constraints = (
+        "excluded_ingredients 不能为空且由可信约束合并",
+        "判断指定菜时才传 target_dish",
+        "只能使用参数化字段，禁止传入 Cypher",
     )
     args_schema = DietarySafeRecipeQueryArgs
 

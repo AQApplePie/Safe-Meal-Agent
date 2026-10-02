@@ -13,7 +13,7 @@ DASHSCOPE_RERANK_BASE_URL = "https://dashscope.aliyuncs.com/api/v1/services"
 
 
 def _configured_pricing_models(raw: str) -> set[str]:
-    """Validate pricing JSON without importing the application observability layer."""
+    """Validate pricing JSON used by Agent execution budgets."""
 
     payload = json.loads(raw or "{}")
     if not isinstance(payload, dict):
@@ -55,16 +55,27 @@ class Settings(BaseSettings):
     HTTP_RATE_LIMIT_PER_MINUTE: int = Field(default=120, ge=1, le=10_000)
     REDIS_RATE_LIMIT_URL: Optional[str] = None
     LLM_MAX_OUTPUT_TOKENS: int = Field(default=2_048, ge=64, le=32_768)
-    MODEL_COST_CURRENCY: str = Field(default="CNY", min_length=3, max_length=8)
     MODEL_PRICING_JSON: str = "{}"
     CORS_ORIGINS: str = "http://localhost:3000,http://localhost:5173"
-    API_KEY: Optional[str] = None
+    AUTH_JWT_SECRET: str = "development-only-change-me"
+    AUTH_JWT_ISSUER: str = "safemeal"
+    AUTH_JWT_AUDIENCE: str = "safemeal-api"
+    AUTH_ACCESS_TOKEN_MINUTES: int = Field(default=15, ge=1, le=1_440)
+    AUTH_REFRESH_TOKEN_DAYS: int = Field(default=30, ge=1, le=365)
 
     # Optional integrations
     ENABLE_LLM: bool = True
     ENABLE_EMBEDDINGS: bool = True
     ENABLE_MILVUS: bool = True
     ENABLE_NEO4J: bool = True
+    ENABLE_EXTERNAL_RECIPE_SEARCH: bool = True
+    EXTERNAL_RECIPE_ENDPOINT: str = "https://zh.wikibooks.org/w/api.php"
+    EXTERNAL_RECIPE_TIMEOUT: float = Field(default=8.0, gt=0, le=30)
+    REQUEST_UNDERSTANDING_BACKEND: Literal["rules", "local_model"] = "rules"
+    REQUEST_UNDERSTANDING_MODEL_PATH: Optional[str] = None
+    REQUEST_UNDERSTANDING_CONFIDENCE_THRESHOLD: float = Field(
+        default=0.7, ge=0, le=1
+    )
     INTEGRATION_PROBE_TIMEOUT: float = Field(default=10.0, gt=0, le=60)
 
     # Alibaba Cloud DashScope through its OpenAI-compatible API.
@@ -145,8 +156,6 @@ class Settings(BaseSettings):
     STREAM_FIRST_PACKET_TIMEOUT: float = Field(default=8.0, gt=0, le=120)
     STREAM_CHUNK_CHARS: int = Field(default=64, ge=1, le=1000)
 
-    ENABLE_AGENT_TRACE_PERSISTENCE: bool = True
-    AGENT_TRACE_PATH: str = "data/runtime/agent_traces.jsonl"
     AGENT_CHECKPOINT_PATH: str = "data/runtime/agent_checkpoints.sqlite3"
     AGENT_CHECKPOINT_DATABASE_URL: Optional[str] = None
     AGENT_REQUIRE_HUMAN_APPROVAL: bool = True
@@ -175,19 +184,6 @@ class Settings(BaseSettings):
     INGESTION_QUEUE_URL: Optional[str] = None
     INGESTION_QUEUE_NAME: str = "safemeal:ingestion"
     INGESTION_JOB_TTL_SECONDS: int = Field(default=86_400, ge=60)
-
-    # MCP server and external MCP clients
-    MCP_SERVER_ENABLED: bool = True
-    MCP_SERVER_PATH: str = "/mcp"
-    MCP_EXTERNAL_SERVERS_JSON: str = "[]"
-
-    # OpenTelemetry and LLMOps exporters. JSONL traces remain independent.
-    ENABLE_OTEL: bool = False
-    OTEL_SERVICE_NAME: str = "safemeal-agent"
-    OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
-    OTEL_EXPORTER_OTLP_INSECURE: bool = True
-    LLMOPS_ENDPOINT: Optional[str] = None
-    LLMOPS_API_KEY: Optional[str] = None
 
     # OIDC and tenant isolation
     ENABLE_OIDC: bool = False
@@ -269,8 +265,16 @@ class Settings(BaseSettings):
                 production_issues.append(
                     "production CORS_ORIGINS must not contain wildcard or loopback origins"
                 )
-            if not self.API_KEY and not self.ENABLE_OIDC:
-                production_issues.append("production API_KEY or OIDC is required")
+            if (
+                not self.ENABLE_OIDC
+                and (
+                    self.AUTH_JWT_SECRET == "development-only-change-me"
+                    or len(self.AUTH_JWT_SECRET) < 32
+                )
+            ):
+                production_issues.append(
+                    "production AUTH_JWT_SECRET must be changed and contain at least 32 characters"
+                )
             if self.ENABLE_OIDC and not (self.OIDC_ISSUER and self.OIDC_AUDIENCE):
                 production_issues.append("production OIDC requires issuer and audience")
             if not self.AGENT_CHECKPOINT_DATABASE_URL:

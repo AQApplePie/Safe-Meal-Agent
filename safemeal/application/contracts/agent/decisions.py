@@ -1,7 +1,7 @@
 """Agent 内部结构化模型。
 
 Planner、工具执行、Observation 和 Reflection 节点通过这些模型传递结构化数据，
-保证 LLM 输出、工具参数、证据来源和 Trace 记录可以被稳定解析。
+保证 LLM 输出、工具参数、证据来源和状态记录可以被稳定解析。
 """
 
 from __future__ import annotations

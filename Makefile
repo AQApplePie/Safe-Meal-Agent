@@ -1,4 +1,4 @@
-.PHONY: install run-server run-worker lint format-check typecheck test test-integration check init-data db-upgrade neo4j-sync eval-prepare eval-run docker-up docker-down docker-smoke help
+.PHONY: install run-server run-worker lint format-check typecheck test test-integration check init-data db-upgrade neo4j-sync docker-up docker-down docker-smoke help
 
 install:
 	python -m pip install -r requirements.txt
@@ -35,12 +35,6 @@ db-upgrade:
 neo4j-sync:
 	python -m safemeal.infrastructure.retrieval.neo4j.dietary_migration
 
-eval-prepare:
-	python -m safemeal.evaluation prepare --target milvus
-
-eval-run:
-	python -m safemeal.evaluation run --output evaluation_results/latest.json
-
 docker-up:
 	docker compose up -d --wait
 
@@ -57,7 +51,5 @@ help:
 	@echo "make check         - run lint, type checking and tests"
 	@echo "make db-upgrade    - apply Alembic migrations"
 	@echo "make neo4j-sync    - import the domain recipe graph"
-	@echo "make eval-prepare  - index the frozen corpus in Milvus"
-	@echo "make eval-run      - run metrics and LLM Judge evaluation"
 	@echo "make docker-up     - start the complete local stack"
 	@echo "make docker-down   - stop the local stack"

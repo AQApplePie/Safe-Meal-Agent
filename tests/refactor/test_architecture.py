@@ -128,3 +128,75 @@ def test_contracts_are_grouped_without_eager_graph_dependencies():
         [sys.executable, "-c", code], cwd=ROOT, capture_output=True, text=True
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_legacy_modules_removed_and_contracts_do_not_depend_on_services():
+    assert not (ROOT / "safemeal" / "modules").exists()
+    for path in (ROOT / "safemeal").rglob("*.py"):
+        assert not any(
+            module.startswith("safemeal.modules") for module in imports(path)
+        ), str(path)
+
+
+def test_agent_exposes_all_six_architecture_layers():
+    """Keep the learning architecture visible as real importable boundaries."""
+
+    agent_root = APP / "agent"
+    expected = {
+        "gateway",
+        "orchestration",
+        "model",
+        "tools",
+        "memory",
+        "aggregation",
+    }
+    assert expected <= {path.name for path in agent_root.iterdir() if path.is_dir()}
+    for layer in expected:
+        assert (agent_root / layer / "__init__.py").is_file()
+
+
+def test_production_composition_uses_agent_layer_facades():
+    """Prevent new production wiring from bypassing the six public layers."""
+
+    container = APP / "service" / "composition" / "application_container.py"
+    imported = set(imports(container))
+    assert "safemeal.application.agent.gateway" in imported
+    assert "safemeal.application.agent.orchestration" in imported
+    assert "safemeal.application.agent.tools" in imported
+    assert "safemeal.application.agent.execution_service" not in imported
+    assert "safemeal.application.agent.tool_registry" not in imported
+    assert "safemeal.application.agent.tool_runtime" not in imported
+
+
+def test_production_tools_publish_complete_usage_boundaries():
+    """Every real Tool must explain purpose, positive use and negative use."""
+
+    from safemeal.application.tool.dietary_search import DietarySafeRecipeQueryTool
+    from safemeal.application.tool.recipe_tools import (
+        GenerateRecipeTool,
+        GetRecipeTool,
+        RecommendRecipesTool,
+        SearchRecipesTool,
+    )
+    from safemeal.application.tool.vector_search import VectorSearchTool
+
+    tool_types = (
+        SearchRecipesTool,
+        GetRecipeTool,
+        RecommendRecipesTool,
+        GenerateRecipeTool,
+        DietarySafeRecipeQueryTool,
+        VectorSearchTool,
+    )
+    for tool_type in tool_types:
+        assert tool_type.purpose
+        assert tool_type.use_when
+        assert tool_type.do_not_use_when
+        assert tool_type.input_constraints
+    for path in (APP / "contracts").rglob("*.py"):
+        assert not any(
+            module.startswith(
+                ("safemeal.application.service", "safemeal.infrastructure")
+            )
+            for module in imports(path)
+        ), str(path)

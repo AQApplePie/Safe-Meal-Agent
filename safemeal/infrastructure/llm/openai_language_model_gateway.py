@@ -26,7 +26,7 @@ from safemeal.application.exceptions import (
 )
 from safemeal.application.contracts.recipes.generation import RecipeGenerationRequest
 from safemeal.application.contracts.recipes.generated import GeneratedRecipe
-from safemeal.application.agent.utils.prompts import (
+from safemeal.application.agent.model.prompts import (
     DEFAULT_PROMPT_BUNDLE,
     PromptBundle,
 )

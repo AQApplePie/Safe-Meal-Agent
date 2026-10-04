@@ -1,4 +1,4 @@
-.PHONY: install run-server run-worker lint format-check typecheck test test-integration check init-data db-upgrade neo4j-sync docker-up docker-down docker-smoke help
+.PHONY: install run-server run-worker lint format-check typecheck test test-integration check init-data db-upgrade neo4j-sync docker-up docker-up-ingestion docker-down docker-smoke help
 
 install:
 	python -m pip install -r requirements.txt
@@ -38,6 +38,10 @@ neo4j-sync:
 docker-up:
 	docker compose up -d --wait
 
+# 文档上传/向量入库需要 EMBEDDING_API_KEY；普通 Agent 测试无需启动。
+docker-up-ingestion:
+	docker compose --profile ingestion up -d --wait
+
 docker-down:
 	docker compose down
 
@@ -51,5 +55,6 @@ help:
 	@echo "make check         - run lint, type checking and tests"
 	@echo "make db-upgrade    - apply Alembic migrations"
 	@echo "make neo4j-sync    - import the domain recipe graph"
-	@echo "make docker-up     - start the complete local stack"
+	@echo "make docker-up     - start the core Agent stack"
+	@echo "make docker-up-ingestion - additionally start document ingestion (requires embeddings)"
 	@echo "make docker-down   - stop the local stack"

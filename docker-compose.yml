@@ -28,6 +28,11 @@ services:
       ENABLE_EXTERNAL_RECIPE_SEARCH: "${ENABLE_EXTERNAL_RECIPE_SEARCH:-true}"
       EXTERNAL_RECIPE_ENDPOINT: "${EXTERNAL_RECIPE_ENDPOINT:-https://zh.wikibooks.org/w/api.php}"
       EXTERNAL_RECIPE_TIMEOUT: "${EXTERNAL_RECIPE_TIMEOUT:-8}"
+      REQUEST_UNDERSTANDING_BACKEND: "${REQUEST_UNDERSTANDING_BACKEND:-rules}"
+      REQUEST_UNDERSTANDING_ENDPOINT: "${REQUEST_UNDERSTANDING_ENDPOINT_DOCKER:-http://host.docker.internal:18080}"
+      REQUEST_UNDERSTANDING_CATALOG_PATH: "${REQUEST_UNDERSTANDING_CATALOG_PATH:-training/nlu/recipe_catalog.json}"
+      REQUEST_UNDERSTANDING_TIMEOUT: "${REQUEST_UNDERSTANDING_TIMEOUT:-15}"
+      REQUEST_UNDERSTANDING_CONFIDENCE_THRESHOLD: "${REQUEST_UNDERSTANDING_CONFIDENCE_THRESHOLD:-0.7}"
       ENABLE_EMBEDDINGS: "${ENABLE_EMBEDDINGS:-true}"
       ENABLE_MILVUS: "${ENABLE_MILVUS:-true}"
       MILVUS_HOST: milvus
@@ -62,8 +67,14 @@ services:
 
   ingestion-worker:
     <<: *backend
+    # 文档向量化是可选能力，需要单独的 Embedding API 凭据。普通 Agent
+    # 调试不启动该 profile，避免无关的入库进程阻塞整套服务的 --wait。
+    profiles: ["ingestion"]
     init: true
     command: ["python", "-m", "safemeal.infrastructure.ingestion.worker"]
+    # Dockerfile 的 /livez 检查只适用于 HTTP API；后台 Worker 不监听端口。
+    healthcheck:
+      disable: true
     environment:
       APP_ENV: development
       DATABASE_URL: "${DATABASE_URL_DOCKER:-mysql+pymysql://recipe_user:safemeal-local@mysql:3306/recipe_db}"

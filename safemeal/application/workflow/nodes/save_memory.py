@@ -45,10 +45,16 @@ class SaveMemoryNode:
                 message,
             )
         )
+        participant_meal = bool(
+            frame
+            and frame.primary_task == "menu_planning"
+            and any(owner in {"spouse", "child"} for owner in frame.participants)
+        )
         if (
             request.use_user_memory
             and personal
             and not temporary
+            and not participant_meal
             and not UserMemoryExtractor().extract_dietary_retractions(message)
             and (intent is None or intent.kind != "clarify")
         ):

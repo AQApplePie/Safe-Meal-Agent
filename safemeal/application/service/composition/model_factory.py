@@ -2,7 +2,7 @@
 
 from safemeal.config.settings import settings
 from safemeal.application.contracts.agent.prompts import PromptBundle
-from safemeal.application.agent.utils.prompts import DEFAULT_PROMPT_BUNDLE
+from safemeal.application.agent.model.prompts import DEFAULT_PROMPT_BUNDLE
 from safemeal.infrastructure.llm.openai_language_model_gateway import (
     OpenAILanguageModelGateway,
 )

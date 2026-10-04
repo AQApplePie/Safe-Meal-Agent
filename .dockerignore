@@ -2,6 +2,7 @@
 .github
 .env
 .venv
+.venv-*
 .mypy_cache
 .pytest_cache
 .ruff_cache
@@ -18,3 +19,6 @@ courses
 final-project
 uploads/*
 !uploads/.gitkeep
+models
+artifacts
+training/external

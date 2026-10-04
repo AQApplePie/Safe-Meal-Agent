@@ -28,6 +28,8 @@ async def resolve_constraints(state: WorkflowState) -> WorkflowState:
         allergy_constraints = [requirements.allergies]
         restriction_constraints = [requirements.restrictions]
         for item in frame.current_constraints:
+            if item.kind in {"food_category", "avoid_food_category"}:
+                continue
             parsed = extract_dietary_constraint(
                 f"对{item.value}过敏"
                 if item.kind == "allergy"
@@ -45,5 +47,10 @@ async def resolve_constraints(state: WorkflowState) -> WorkflowState:
             }
         )
     context.requirements = requirements.model_copy(deep=True)
+    context.resolved_constraints = requirements.resolved.model_copy(deep=True)
     context.dietary_constraints = hard_constraints(requirements).model_dump(mode="json")
-    return {"context": context, "requirements": requirements}
+    return {
+        "context": context,
+        "requirements": requirements,
+        "resolved_constraints": requirements.resolved,
+    }

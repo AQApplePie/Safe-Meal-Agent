@@ -22,13 +22,12 @@ safemeal/application/
     context/                 历史窗口与记忆选择
     nodes/                   准备上下文、约束解析、Agent 调用、复核等
   agent/
-    graph.py                 只组装 Agent 节点与边
-    routing.py               Agent 循环分支
-    execution_service.py     独立执行、超时、预算、checkpoint 恢复
-    tool_registry.py         工具注册和启用清单校验
-    tool_policy.py           调用审核、硬约束注入
-    tool_runtime.py          参数校验调度、超时、并发限制
-    nodes/                   初始化、规划、执行、观察、反思、审批、回答
+    gateway/                 公共入口、超时、预算、checkpoint 恢复
+    orchestration/           图、循环路由以及规划/执行/观察/反思节点
+    model/                   模型能力协议与 Prompt
+    tools/                   工具注册、策略审核与运行时
+    memory/                  AgentContext 到安全 Observation 的转换
+    aggregation/             最终回答、检索语义与来源归因
   tool/                      仅放具体工具适配器
 ```
 

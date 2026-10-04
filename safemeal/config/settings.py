@@ -73,6 +73,9 @@ class Settings(BaseSettings):
     EXTERNAL_RECIPE_TIMEOUT: float = Field(default=8.0, gt=0, le=30)
     REQUEST_UNDERSTANDING_BACKEND: Literal["rules", "local_model"] = "rules"
     REQUEST_UNDERSTANDING_MODEL_PATH: Optional[str] = None
+    REQUEST_UNDERSTANDING_ENDPOINT: Optional[str] = None
+    REQUEST_UNDERSTANDING_CATALOG_PATH: str = "training/nlu/recipe_catalog.json"
+    REQUEST_UNDERSTANDING_TIMEOUT: float = Field(default=15.0, gt=0, le=120)
     REQUEST_UNDERSTANDING_CONFIDENCE_THRESHOLD: float = Field(
         default=0.7, ge=0, le=1
     )

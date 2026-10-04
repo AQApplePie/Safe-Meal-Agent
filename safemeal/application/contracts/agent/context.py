@@ -18,6 +18,9 @@ from safemeal.application.contracts.dietary_safety.requirements import (
     DietaryRequirements,
 )
 from safemeal.application.contracts.workflow.request_frame import RequestFrame
+from safemeal.application.contracts.dietary_safety.control_plane import (
+    ResolvedConstraints,
+)
 
 
 class AgentContext(BaseModel):
@@ -32,6 +35,7 @@ class AgentContext(BaseModel):
     user_profile: Optional[JsonObject] = None
     dietary_constraints: Optional[JsonObject] = None
     requirements: DietaryRequirements | None = None
+    resolved_constraints: ResolvedConstraints | None = None
     intent: Optional[str] = None
     request_frame: RequestFrame | None = None
     episodic_memories: list[JsonObject] = Field(default_factory=list, max_length=100)

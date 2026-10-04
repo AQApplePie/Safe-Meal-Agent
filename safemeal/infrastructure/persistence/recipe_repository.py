@@ -194,6 +194,10 @@ class SqlAlchemyRecipeRepository:
         predicates = []
         if query.name_contains:
             predicates.append(recipes.c.name.contains(query.name_contains))
+        if query.exclude_recipe_ids:
+            predicates.append(recipes.c.id.not_in(query.exclude_recipe_ids))
+        if query.exclude_recipe_names:
+            predicates.append(recipes.c.name.not_in(query.exclude_recipe_names))
         if query.difficulties:
             predicates.append(
                 recipes.c.difficulty.in_([item.value for item in query.difficulties])

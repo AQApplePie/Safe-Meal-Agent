@@ -319,7 +319,9 @@ class ApplicationContainer:
                 memory_service=self.get_user_memory_service(),
                 request_understanding_gateway=(
                     LocalModelRequestUnderstandingGateway(
-                        settings.REQUEST_UNDERSTANDING_MODEL_PATH
+                        settings.REQUEST_UNDERSTANDING_ENDPOINT,
+                        catalog_path=settings.REQUEST_UNDERSTANDING_CATALOG_PATH,
+                        timeout=settings.REQUEST_UNDERSTANDING_TIMEOUT,
                     )
                     if settings.REQUEST_UNDERSTANDING_BACKEND == "local_model"
                     else RuleBasedRequestUnderstandingGateway()

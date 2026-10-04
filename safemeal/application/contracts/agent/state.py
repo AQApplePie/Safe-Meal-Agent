@@ -48,6 +48,8 @@ class AgentInputState(TypedDict, total=False):
 | `route` | 下一步行为 |
 | `sources` | 数据来源 |
 | `dietary_constraints` | 忌口/过敏等饮食安全约束 |
+| `menu_execution_plan` | 复杂菜单的稳定配额目标 |
+| `menu_task_progress` | 已完成、剩余、候选和已选菜品 |
 """
 
 
@@ -81,6 +83,9 @@ class AgentState(TypedDict, total=False):
     loop_stop_reason: str
     human_approved: bool
     approval_required: bool
+    menu_execution_plan: JsonObject
+    menu_task_progress: JsonObject
+    tool_trace: list[JsonObject]
 
 
 class AgentStateUpdate(AgentState, total=False):

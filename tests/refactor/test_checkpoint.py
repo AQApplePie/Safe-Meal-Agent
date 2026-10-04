@@ -10,6 +10,11 @@ from typing import TypedDict
 from safemeal.infrastructure.persistence.threaded_checkpoint import (
     ThreadedCheckpointSaver,
 )
+from safemeal.application.contracts.agent.menu_planning import initialize_menu_task
+from safemeal.application.contracts.workflow.request_frame import (
+    CategoryQuota,
+    MenuPlanningRequirements,
+)
 
 
 @pytest.mark.parametrize(
@@ -119,3 +124,32 @@ def test_legacy_domain_values_survive_modules_removal(kind, encoding):
     )
     assert restored["value"] == serializer.loads_typed(current_encoded)["value"]
     assert restored["text"] == legacy_module
+
+
+@pytest.mark.parametrize("encoding", ["msgpack", "json"])
+def test_menu_task_progress_survives_checkpoint_round_trip(encoding):
+    requirements = MenuPlanningRequirements(
+        category_quotas=(
+            CategoryQuota(category="cold_dish", count=3),
+            CategoryQuota(category="soup", count=3),
+        )
+    )
+    plan, progress = initialize_menu_task(requirements, scenario="农村宴席")
+    payload = {
+        "menu_execution_plan": plan.model_dump(mode="json"),
+        "menu_task_progress": progress.model_dump(mode="json"),
+    }
+    serializer = ContractCheckpointSerializer()
+    encoded = (
+        serializer.dumps_typed(payload)
+        if encoding == "msgpack"
+        else ("json", serializer.dumps(payload))
+    )
+
+    restored = serializer.loads_typed(encoded)
+
+    assert restored == payload
+    assert restored["menu_task_progress"]["remaining"] == {
+        "cold_dish": 3,
+        "soup": 3,
+    }

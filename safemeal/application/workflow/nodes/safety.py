@@ -6,7 +6,10 @@ from safemeal.application.contracts.agent.decisions import Observation
 from safemeal.application.service.dietary_safety.dietary_safety_service import (
     DietarySafetyService,
 )
-from safemeal.application.workflow.review_reply import render_review_reply
+from safemeal.application.workflow.review_reply import (
+    render_conversational_review_reply,
+)
+from safemeal.application.service.recipes.menu_output import render_menu_plan
 
 _RECIPE_TOOLS = {
     "search_recipes",
@@ -82,6 +85,72 @@ async def check_final_safety(state: WorkflowState) -> WorkflowState:
             result.recipe = None
     requirements = state["requirements"]
     review = DietarySafetyService().review_recipes(requirements, observations)
+    if result.intent is not None and result.intent.kind == "menu_planning":
+        # The Agent deliberately oversamples candidates.  Publish only recipes
+        # selected into quota slots and independently accepted by final safety.
+        selected_progress = result.metadata.get("menu_task_progress")
+        execution_plan = result.metadata.get("menu_execution_plan")
+        passed_names = {
+            item.name for item in review.recipes if item.decision == "passed"
+        }
+        selected_names = {
+            str(item.get("name"))
+            for item in (selected_progress or {}).get("selected_recipes", [])
+            if isinstance(item, dict) and item.get("name")
+        }
+        publishable = selected_names & passed_names
+        selected_rows = [
+            item
+            for item in (selected_progress or {}).get("selected_recipes", [])
+            if isinstance(item, dict)
+        ]
+        required = (
+            execution_plan.get("required", {})
+            if isinstance(execution_plan, dict)
+            else {}
+        )
+        post_safety_fulfilled = {
+            category: sum(
+                1
+                for item in selected_rows
+                if item.get("name") in publishable
+                and item.get("assigned_category") == category
+            )
+            for category in required
+        }
+        result.metadata["post_safety_coverage"] = {
+            "fulfilled": post_safety_fulfilled,
+            "remaining": {
+                category: max(0, int(count) - post_safety_fulfilled.get(category, 0))
+                for category, count in required.items()
+            },
+            "complete": bool(required)
+            and all(
+                post_safety_fulfilled.get(category, 0) >= int(count)
+                for category, count in required.items()
+            ),
+        }
+        result.metadata["safe_recipe_names"] = sorted(publishable)
+        result.metadata["recipe_reviews"] = [
+            item.model_dump(mode="json", exclude={"evidence"})
+            for item in review.recipes
+            if item.name in selected_names
+        ]
+        if isinstance(execution_plan, dict) and isinstance(selected_progress, dict):
+            result.message = render_menu_plan(
+                execution_plan,
+                selected_progress,
+                allowed_names=publishable,
+            )
+        result.sources = []
+        all_selected_safe = bool(selected_names) and publishable == selected_names
+        result.metadata["safety_review"] = (
+            "passed" if all_selected_safe else "blocked"
+        )
+        if not all_selected_safe:
+            result.status = "degraded"
+            result.error_code = "insufficient_safety_evidence"
+        return {"result": result}
     if result.intent is not None and result.intent.kind == "recipe_detail":
         result.metadata["recipe_reviews"] = [
             item.model_dump(mode="json", exclude={"evidence"})
@@ -104,13 +173,23 @@ async def check_final_safety(state: WorkflowState) -> WorkflowState:
     passed = [item.name for item in review.recipes if item.decision == "passed"]
     if result.recipe is not None and result.recipe.name not in passed:
         result.recipe = None
-    result.message = render_review_reply(review)
+    frame = state.get("request_frame") or state["context"].request_frame
+    result.message = render_conversational_review_reply(
+        review,
+        max_recommendations=(frame.recommendation_count if frame is not None else None),
+    )
     result.sources = []  # Draft attributions may include excluded recipe recommendations.
     result.metadata["safety_review"] = "passed" if passed else "blocked"
     result.metadata["safe_recipe_names"] = passed
     result.metadata["recipe_reviews"] = [
         item.model_dump(mode="json", exclude={"evidence"}) for item in review.recipes
     ]
+    completion = result.metadata.get("recommendation_completion")
+    if isinstance(completion, dict) and not completion.get("complete", True):
+        result.message += (
+            f"\n\n说明：你请求了 {completion.get('requested')} 道，目前可核验的结果"
+            f"只有 {completion.get('fulfilled')} 道，因此这是部分结果。"
+        )
     if not passed:
         result.status = "degraded"
         result.error_code = "insufficient_safety_evidence"

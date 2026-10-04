@@ -26,6 +26,7 @@ class SearchRecipesTool(ToolHandler[RecipeQuery]):
     use_when = (
         "用户询问某道具体菜的材料或做法",
         "需要按食材、菜系、时间或营养条件筛选已有菜谱",
+        "复杂菜单规划需要按分类批量召回轻量候选",
         "需要为后续饮食安全复核提供结构化食材证据",
     )
     do_not_use_when = (
@@ -37,6 +38,7 @@ class SearchRecipesTool(ToolHandler[RecipeQuery]):
         "具体菜名查询必须设置 exact_name=true，不能用其他菜替代",
         "只使用 RecipeQuery 声明的字段，禁止传入 SQL 或租户身份",
         "过敏和禁忌排除项由可信上下文注入，模型不得删除",
+        "菜单候选查询使用 category、candidate_mode 和排除已选菜参数",
     )
     args_schema = RecipeQuery
 

@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 .venv/
+.venv-*/
 venv/
 
 # Python
@@ -35,6 +36,9 @@ data/milvus/
 data/neo4j/graph.json
 
 # Large local model artifacts
+models/
+training/external/
+artifacts/nlu-*/
 *.onnx
 *.pt
 *.pth

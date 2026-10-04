@@ -13,6 +13,9 @@ from safemeal.application.contracts.agent.api import AgentProcessResponse
 from safemeal.application.contracts.agent.context import AgentContext
 from safemeal.application.contracts.conversation.models import ConversationHistory
 from safemeal.application.contracts.workflow.request_frame import RequestFrame
+from safemeal.application.contracts.dietary_safety.control_plane import (
+    ResolvedConstraints,
+)
 
 
 class WorkflowRequest(BaseModel):
@@ -31,6 +34,7 @@ class WorkflowState(TypedDict, total=False):
     context: AgentContext
     result: AgentProcessResponse
     requirements: DietaryRequirements
+    resolved_constraints: ResolvedConstraints
     request_frame: RequestFrame
     recent_history: ConversationHistory
 

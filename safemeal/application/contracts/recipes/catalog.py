@@ -14,6 +14,10 @@ from safemeal.application.contracts.recipes.models import (
     RecipeDifficulty,
 )
 from safemeal.application.contracts.recipes.lookup import RecipeCandidate
+from safemeal.application.contracts.recipes.lookup import MenuRecipeCandidate
+from safemeal.application.contracts.workflow.request_frame import MenuCategory
+
+FoodCategory = Literal["fish", "seafood", "vegetarian"]
 
 
 class RecipeSortField(str, Enum):
@@ -37,11 +41,27 @@ class RecipeQuery(BaseModel):
     max_total_time_minutes: int | None = Field(default=None, ge=0, le=7 * 24 * 60)
     max_calories: Decimal | None = Field(default=None, ge=0, le=100000)
     dietary_types: tuple[DietaryType, ...] = Field(default_factory=tuple, max_length=3)
+    food_categories: tuple[FoodCategory, ...] = Field(default_factory=tuple, max_length=3)
+    exclude_food_categories: tuple[FoodCategory, ...] = Field(
+        default_factory=tuple, max_length=3
+    )
     sort_by: RecipeSortField = RecipeSortField.NAME
     sort_order: Literal["asc", "desc"] = "asc"
     offset: int = Field(default=0, ge=0, le=100000)
     limit: int = Field(default=10, ge=1, le=50)
+    requested_count: int | None = Field(default=None, ge=1, le=50)
+    # Candidate scans may be wider than the public result page because safety
+    # and food-category checks run against fully loaded ingredient structures.
+    candidate_limit: int | None = Field(default=None, ge=1, le=200)
     exact_name: bool = False
+    required_fields: tuple[
+        Literal["ingredients", "steps", "time", "nutrition"], ...
+    ] = ()
+    category: MenuCategory | None = None
+    candidate_mode: bool = False
+    exclude_recipe_ids: tuple[int, ...] = Field(default_factory=tuple, max_length=200)
+    exclude_recipe_names: tuple[str, ...] = Field(default_factory=tuple, max_length=200)
+    scope: Literal["local", "all"] = "local"
 
     @field_validator("include_ingredients", "exclude_ingredients", mode="before")
     @classmethod
@@ -59,11 +79,14 @@ class RecipeSearchResult(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    items: tuple[Recipe | RecipeCandidate, ...]
+    items: tuple[Recipe | RecipeCandidate | MenuRecipeCandidate, ...]
     total: int = Field(ge=0)
     offset: int = Field(ge=0)
     limit: int = Field(ge=1)
-    status: Literal["FOUND", "NOT_FOUND", "ERROR"] = "FOUND"
+    status: Literal["FOUND", "PARTIAL", "NOT_FOUND", "ERROR", "FIELD_MISSING"] = "FOUND"
+    requested_count: int | None = Field(default=None, ge=1, le=50)
+    fulfilled_count: int | None = Field(default=None, ge=0, le=50)
+    missing_fields: tuple[Literal["ingredients", "steps", "time", "nutrition"], ...] = ()
     query: str | None = None
     exact_name: bool = False
     match_type: Literal["exact", "normalized", "lexical", "none"] = "none"

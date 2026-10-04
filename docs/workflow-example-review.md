@@ -69,9 +69,9 @@ Workflow 不再识别意图或直接回答，所有新请求进入 Agent。意�
 
 ### 步骤 6：Agent 初始化与 Plan
 
-`agent/nodes/initializer/node.py` 将问题、历史、用户记忆、饮食限制、意图与偏好准备为 Agent 状态及上下文 Observation。Agent 再解析/合并约束，是支持独立调用时的防御；可共享解析函数，但不宜简单删除防护。
+`agent/orchestration/nodes/initializer/node.py` 将问题、历史、用户记忆、饮食限制、意图与偏好准备为 Agent 状态及上下文 Observation。Agent 再解析/合并约束，是支持独立调用时的防御；可共享解析函数，但不宜简单删除防护。
 
-Planner 首次运行时通过 `agent/nodes/planner/intent.py` 识别意图并写入状态，随后获得工具规格、问题、历史与 Observation。memory/clarify/out_of_scope 返回固定答复，其余意图进入工具规划，可能产生如下调用：
+Planner 首次运行时通过 `agent/orchestration/nodes/planner/intent.py` 识别意图并写入状态，随后获得工具规格、问题、历史与 Observation。memory/clarify/out_of_scope 返回固定答复，其余意图进入工具规划，可能产生如下调用：
 
 ```json
 {
@@ -130,7 +130,7 @@ SaveMemoryNode 可保存会话压缩摘要；只对符合规则的明确个人�
 
 ### 1. P1：上下文被误当成成功工具证据
 
-位置：`application/agent/execution_service.py:238` 的 actual_tool_observations 与 `nodes/initializer/node.py:170`。
+位置：`application/agent/gateway/service.py` 的 actual_tool_observations 与 `agent/orchestration/nodes/initializer/node.py`。
 
 Initializer 无条件增加 ok=True、has_data=True 的 task_context，但执行服务排除上下文工具时没有排除它。所以即便唯一真实的 recommend_recipes 工具失败，successful_evidence 仍非空，预期的 error 分支不生效，结果为 degraded/partial_evidence_unavailable。普通聊天可能据此保存为一次可发布回复；存在过敏限制时虽有后续门禁，状态统计仍不准确。
 
@@ -138,7 +138,7 @@ Initializer 无条件增加 ok=True、has_data=True 的 task_context，但执行
 
 ### 2. P2：直接回答分支在正常 Agent 图中不可达
 
-位置：`application/agent/nodes/responder/node.py:37`。
+位置：`application/agent/aggregation/responder.py`。
 
 条件是 direct_answer 且 observations 为空；Initializer 已无条件加入 task_context，正常图运行中 observations 不会为空。Planner 已给出直接回答时仍再次调用 model_gateway.answer，形成无意义的额外模型调用。
 
@@ -146,7 +146,7 @@ Initializer 无条件增加 ok=True、has_data=True 的 task_context，但执行
 
 ### 3. P2：持久化历史摘要只有加载和计数，没有模型消费闭环
 
-位置：`workflow/context/builder.py:60`、`agent/nodes/initializer/node.py:166`、`agent/nodes/planner/node.py`。
+位置：`workflow/context/builder.py`、`agent/orchestration/nodes/initializer/node.py`、`agent/orchestration/nodes/planner/node.py`。
 
 MemoryContextProvider 加载的 episodic_memories 进入 AgentContext，但初始化未把它们纳入模型可见的历史或 Observation。Planner/Reflector/Responder 接口只拿到问题、历史与 Observation；计数出现在 metadata 并不等于记忆参与回答。
 

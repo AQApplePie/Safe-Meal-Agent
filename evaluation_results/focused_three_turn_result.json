@@ -1,0 +1,5093 @@
+[
+  {
+    "turn": 1,
+    "query": "我现在在进行农村宴席，请你帮我推荐十几道菜，要求三道凉菜，两道热菜，四道素菜，五道荤菜，一道汤，一道主食",
+    "http_status": 200,
+    "body": {
+      "message": "按你的农村宴席需求，我整理了下面这份菜单：\n\n凉菜（3/3）\n- 香油凉拌豆腐（主要食材：嫩豆腐）\n- 凉拌萝卜丝（主要食材：白萝卜、盐、香油、生抽、香醋）\n- 凉拌粉条韭菜（主要食材：红薯粉条、韭菜、小米椒、蒜泥、盐）\n\n热菜（2/2）\n- 木耳炒鸡蛋（主要食材：鸡蛋）\n- 柠檬炖鸡腿（主要食材：鸡腿肉）\n\n素菜（4/4）\n- 小白菜豆腐汤（主要食材：嫩豆腐）\n- 清炒小白菜（主要食材：小白菜）\n- 清炒西葫芦（主要食材：西葫芦）\n- 玉米青豆汤（主要食材：玉米粒）\n\n荤菜（5/5）\n- 双椒牛肉丝（主要食材：牛里脊）\n- 双椒鸡丁（主要食材：鸡胸肉）\n- 姜汁蒸鸡腿（主要食材：鸡腿肉）\n- 姜葱牛肉（主要食材：牛里脊）\n- 家常豆腐（主要食材：嫩豆腐）\n\n汤（1/1）\n- 番茄虾仁汤（主要食材：虾仁）\n\n主食（1/1）\n- 蒜蓉粉丝蒸虾（主要食材：虾仁）\n\n共 16 道不同菜品，已按每类配额完成核验。",
+      "session_id": "081eba2f-41fb-4f43-ba20-8caeb285d885",
+      "message_id": "332",
+      "route": "agent-tools-loop",
+      "route_logic": "agent-tools-loop",
+      "sources": [],
+      "metadata": {
+        "session_id": "081eba2f-41fb-4f43-ba20-8caeb285d885",
+        "iteration": 2,
+        "tool_call_count": 8,
+        "budget_exhausted": false,
+        "loop_stop_reason": "",
+        "evidence_sufficient": true,
+        "missing_information": [],
+        "user_memory_count": 4,
+        "episodic_memory_count": 0,
+        "has_user_profile": false,
+        "observations": [
+          {
+            "tools": "user_memory_context",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "dietary_context",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "task_context",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "dietary_safety_filter",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          }
+        ],
+        "agent_status": "ok",
+        "tool_trace": [
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "meat",
+              "candidate_mode": true,
+              "limit": 10,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "meat",
+              "candidate_mode": true,
+              "limit": 10,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 10,
+            "result_names": [
+              "双椒牛肉丝",
+              "双椒鸡丁",
+              "姜汁蒸鸡腿",
+              "姜葱牛肉",
+              "家常豆腐",
+              "木耳炒鸡蛋",
+              "柠檬炖鸡腿",
+              "柠檬蒸三文鱼",
+              "柠檬蒸虾仁",
+              "柠檬青豆鸡丁"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "meat"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "vegetarian",
+              "candidate_mode": true,
+              "limit": 8,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "vegetarian",
+              "candidate_mode": true,
+              "limit": 8,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 8,
+            "result_names": [
+              "小白菜豆腐汤",
+              "清炒小白菜",
+              "清炒西葫芦",
+              "玉米青豆汤",
+              "番茄豆腐汤",
+              "花椒土豆片",
+              "蒜蓉蒸西兰花",
+              "蒜蓉西兰花"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "soup",
+              "vegetarian"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "cold_dish",
+              "candidate_mode": true,
+              "limit": 6,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "cold_dish",
+              "candidate_mode": true,
+              "limit": 6,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 1,
+            "result_names": [
+              "香油凉拌豆腐"
+            ],
+            "result_categories": [
+              "cold_dish",
+              "vegetarian"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "hot_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "hot_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 5,
+            "result_names": [
+              "双椒牛肉丝",
+              "双椒鸡丁",
+              "姜汁蒸鸡腿",
+              "姜葱牛肉",
+              "家常豆腐"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "meat"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "cold_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                41,
+                22,
+                37,
+                21,
+                19,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "双椒牛肉丝",
+                "双椒鸡丁",
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "all"
+            },
+            "effective_args": {
+              "category": "cold_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                41,
+                22,
+                37,
+                21,
+                19,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "双椒牛肉丝",
+                "双椒鸡丁",
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "all",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 5,
+            "result_names": [
+              "凉拌萝卜丝",
+              "凉拌粉条韭菜",
+              "凉拌木耳腐竹",
+              "凉拌海参",
+              "凉拌木耳洋葱"
+            ],
+            "result_categories": [
+              "cold_dish",
+              "staple",
+              "vegetarian"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "hot_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                41,
+                22,
+                37,
+                21,
+                19,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "双椒牛肉丝",
+                "双椒鸡丁",
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "all"
+            },
+            "effective_args": {
+              "category": "hot_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                41,
+                22,
+                37,
+                21,
+                19,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "双椒牛肉丝",
+                "双椒鸡丁",
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "all",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 5,
+            "result_names": [
+              "木耳炒鸡蛋",
+              "柠檬炖鸡腿",
+              "柠檬蒸三文鱼",
+              "柠檬蒸虾仁",
+              "柠檬青豆鸡丁"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "meat"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "soup",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                41,
+                22,
+                37,
+                21,
+                19,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "双椒牛肉丝",
+                "双椒鸡丁",
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "soup",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                41,
+                22,
+                37,
+                21,
+                19,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "双椒牛肉丝",
+                "双椒鸡丁",
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 5,
+            "result_names": [
+              "番茄虾仁汤",
+              "番茄豆腐汤",
+              "葱香牛腩汤",
+              "西兰花玉米鸡汤",
+              "香菇鸡蛋汤"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "meat",
+              "soup",
+              "vegetarian"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "staple",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                41,
+                22,
+                37,
+                21,
+                19,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "双椒牛肉丝",
+                "双椒鸡丁",
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "staple",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                41,
+                22,
+                37,
+                21,
+                19,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "双椒牛肉丝",
+                "双椒鸡丁",
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 2,
+            "result_names": [
+              "蒜蓉粉丝蒸虾",
+              "香葱牛肉煎饼"
+            ],
+            "result_categories": [
+              "meat",
+              "staple"
+            ]
+          }
+        ],
+        "request_frame": {
+          "tasks": [
+            {
+              "kind": "menu_planning"
+            }
+          ],
+          "memory_updates": [],
+          "current_constraints": [],
+          "turn_preferences": [],
+          "target": {
+            "recipe_name": null,
+            "ingredient": null
+          },
+          "requested_fields": [],
+          "exact_match_required": false,
+          "recommendation_count": 16,
+          "servings": null,
+          "meal_type": null,
+          "scenario": "农村宴席",
+          "menu_planning": {
+            "category_quotas": [
+              {
+                "category": "cold_dish",
+                "count": 3
+              },
+              {
+                "category": "hot_dish",
+                "count": 2
+              },
+              {
+                "category": "vegetarian",
+                "count": 4
+              },
+              {
+                "category": "meat",
+                "count": 5
+              },
+              {
+                "category": "soup",
+                "count": 1
+              },
+              {
+                "category": "staple",
+                "count": 1
+              }
+            ],
+            "distinct_recipes": true,
+            "allow_cross_category_counting": false
+          },
+          "context_needs": [
+            "allergies",
+            "dietary_restrictions",
+            "food_preferences"
+          ],
+          "confidence": 0.9,
+          "understanding_status": "fallback",
+          "backend": "local_model:rules_fallback",
+          "fallback_used": true,
+          "clarification_question": null,
+          "validation_errors": [
+            "ValidationError"
+          ]
+        },
+        "resolved_constraints": {
+          "allergies": {
+            "active": true,
+            "trigger_terms": [
+              "长期记忆"
+            ],
+            "raw_ingredients": [
+              "花生"
+            ],
+            "excluded_ingredients": [
+              "花生",
+              "花生米",
+              "熟花生米",
+              "油炸花生",
+              "花生碎",
+              "花生酱",
+              "花生油"
+            ],
+            "strictness": "hard_exclusion_contextual"
+          },
+          "restrictions": {
+            "active": false,
+            "trigger_terms": [],
+            "raw_ingredients": [],
+            "excluded_ingredients": [],
+            "strictness": "hard_exclusion_contextual"
+          },
+          "preferences": [
+            {
+              "kind": "avoid_ingredient",
+              "value": "姜",
+              "required": false,
+              "source": "memory"
+            },
+            {
+              "kind": "other",
+              "value": "吃鱼",
+              "required": false,
+              "source": "memory"
+            },
+            {
+              "kind": "other",
+              "value": "宫保鸡丁",
+              "required": false,
+              "source": "memory"
+            }
+          ]
+        },
+        "reflect": {
+          "rationale": "所有菜单分类配额已经由确定性计数验证完成。",
+          "evidence_sufficient": true,
+          "missing_information": []
+        },
+        "request_tasks": [
+          "menu_planning"
+        ],
+        "request_understanding_backend": "local_model:rules_fallback",
+        "understanding_status": "fallback",
+        "loaded_context_types": [
+          "allergies",
+          "food_preferences"
+        ],
+        "request_understanding_confidence": 0.9,
+        "fallback_used": true,
+        "context_needs": [
+          "allergies",
+          "dietary_restrictions",
+          "food_preferences"
+        ],
+        "menu_execution_plan": {
+          "scenario": "农村宴席",
+          "required": {
+            "cold_dish": 3,
+            "hot_dish": 2,
+            "vegetarian": 4,
+            "meat": 5,
+            "soup": 1,
+            "staple": 1
+          },
+          "distinct_recipes": true,
+          "allow_cross_category_counting": false
+        },
+        "menu_task_progress": {
+          "fulfilled": {
+            "cold_dish": 3,
+            "hot_dish": 2,
+            "vegetarian": 4,
+            "meat": 5,
+            "soup": 1,
+            "staple": 1
+          },
+          "remaining": {
+            "cold_dish": 0,
+            "hot_dish": 0,
+            "vegetarian": 0,
+            "meat": 0,
+            "soup": 0,
+            "staple": 0
+          },
+          "selected_recipes": [
+            {
+              "recipe_id": 41,
+              "name": "双椒牛肉丝",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "牛里脊"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 22,
+              "name": "双椒鸡丁",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡胸肉"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 37,
+              "name": "姜汁蒸鸡腿",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡腿肉"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 21,
+              "name": "姜葱牛肉",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "牛里脊"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 19,
+              "name": "家常豆腐",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 26,
+              "name": "小白菜豆腐汤",
+              "assigned_category": "vegetarian",
+              "categories": [
+                "hot_dish",
+                "vegetarian",
+                "soup"
+              ],
+              "credited_categories": [
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "evidence_call_id": "menu-vegetarian-1"
+            },
+            {
+              "recipe_id": 42,
+              "name": "清炒小白菜",
+              "assigned_category": "vegetarian",
+              "categories": [
+                "hot_dish",
+                "vegetarian"
+              ],
+              "credited_categories": [
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "小白菜"
+              ],
+              "evidence_call_id": "menu-vegetarian-1"
+            },
+            {
+              "recipe_id": 16,
+              "name": "清炒西葫芦",
+              "assigned_category": "vegetarian",
+              "categories": [
+                "hot_dish",
+                "vegetarian"
+              ],
+              "credited_categories": [
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "西葫芦"
+              ],
+              "evidence_call_id": "menu-vegetarian-1"
+            },
+            {
+              "recipe_id": 45,
+              "name": "玉米青豆汤",
+              "assigned_category": "vegetarian",
+              "categories": [
+                "hot_dish",
+                "vegetarian",
+                "soup"
+              ],
+              "credited_categories": [
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "玉米粒"
+              ],
+              "evidence_call_id": "menu-vegetarian-1"
+            },
+            {
+              "recipe_id": 65,
+              "name": "香油凉拌豆腐",
+              "assigned_category": "cold_dish",
+              "categories": [
+                "cold_dish",
+                "vegetarian"
+              ],
+              "credited_categories": [
+                "cold_dish"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "evidence_call_id": "menu-cold_dish-1"
+            },
+            {
+              "recipe_id": null,
+              "name": "凉拌萝卜丝",
+              "assigned_category": "cold_dish",
+              "categories": [
+                "cold_dish",
+                "vegetarian"
+              ],
+              "credited_categories": [
+                "cold_dish"
+              ],
+              "main_ingredients": [
+                "白萝卜",
+                "盐",
+                "香油",
+                "生抽",
+                "香醋"
+              ],
+              "evidence_call_id": "menu-cold_dish-2"
+            },
+            {
+              "recipe_id": null,
+              "name": "凉拌粉条韭菜",
+              "assigned_category": "cold_dish",
+              "categories": [
+                "cold_dish",
+                "vegetarian",
+                "staple"
+              ],
+              "credited_categories": [
+                "cold_dish"
+              ],
+              "main_ingredients": [
+                "红薯粉条",
+                "韭菜",
+                "小米椒",
+                "蒜泥",
+                "盐"
+              ],
+              "evidence_call_id": "menu-cold_dish-2"
+            },
+            {
+              "recipe_id": 29,
+              "name": "木耳炒鸡蛋",
+              "assigned_category": "hot_dish",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "hot_dish"
+              ],
+              "main_ingredients": [
+                "鸡蛋"
+              ],
+              "evidence_call_id": "menu-hot_dish-2"
+            },
+            {
+              "recipe_id": 60,
+              "name": "柠檬炖鸡腿",
+              "assigned_category": "hot_dish",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "hot_dish"
+              ],
+              "main_ingredients": [
+                "鸡腿肉"
+              ],
+              "evidence_call_id": "menu-hot_dish-2"
+            },
+            {
+              "recipe_id": 57,
+              "name": "番茄虾仁汤",
+              "assigned_category": "soup",
+              "categories": [
+                "hot_dish",
+                "meat",
+                "soup"
+              ],
+              "credited_categories": [
+                "soup"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "evidence_call_id": "menu-soup-1"
+            },
+            {
+              "recipe_id": 15,
+              "name": "蒜蓉粉丝蒸虾",
+              "assigned_category": "staple",
+              "categories": [
+                "meat",
+                "staple"
+              ],
+              "credited_categories": [
+                "staple"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "evidence_call_id": "menu-staple-1"
+            }
+          ],
+          "candidate_pool": [
+            {
+              "id": 41,
+              "name": "双椒牛肉丝",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "牛里脊"
+              ],
+              "ingredients": [
+                "牛里脊",
+                "青椒",
+                "干辣椒",
+                "花椒",
+                "蒜",
+                "酱油",
+                "米醋",
+                "黑胡椒碎",
+                "玉米淀粉",
+                "香油",
+                "食用油",
+                "食盐"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:41",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 22,
+              "name": "双椒鸡丁",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡胸肉"
+              ],
+              "ingredients": [
+                "鸡胸肉",
+                "青椒",
+                "干辣椒",
+                "蒜",
+                "姜",
+                "酱油",
+                "白砂糖",
+                "米醋",
+                "玉米淀粉",
+                "香油",
+                "食用油",
+                "食盐"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:22",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 37,
+              "name": "姜汁蒸鸡腿",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡腿肉"
+              ],
+              "ingredients": [
+                "鸡腿肉",
+                "姜",
+                "蒜",
+                "酱油",
+                "料酒",
+                "蒸鱼豉油",
+                "香油",
+                "食盐"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:37",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 21,
+              "name": "姜葱牛肉",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "牛里脊"
+              ],
+              "ingredients": [
+                "牛里脊",
+                "姜",
+                "小葱",
+                "酱油",
+                "黑胡椒碎",
+                "玉米淀粉",
+                "香油",
+                "食用油",
+                "食盐"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:21",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 19,
+              "name": "家常豆腐",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "ingredients": [
+                "嫩豆腐",
+                "猪肉里脊",
+                "青椒",
+                "胡萝卜",
+                "郫县豆瓣酱",
+                "蒜",
+                "酱油",
+                "玉米淀粉",
+                "食盐",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:19",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 26,
+              "name": "小白菜豆腐汤",
+              "categories": [
+                "hot_dish",
+                "vegetarian",
+                "soup"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "ingredients": [
+                "嫩豆腐",
+                "小白菜",
+                "香菇",
+                "姜",
+                "食盐",
+                "香油",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:26",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 42,
+              "name": "清炒小白菜",
+              "categories": [
+                "hot_dish",
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "小白菜"
+              ],
+              "ingredients": [
+                "小白菜",
+                "蒜",
+                "食盐",
+                "香油",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:42",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 16,
+              "name": "清炒西葫芦",
+              "categories": [
+                "hot_dish",
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "西葫芦"
+              ],
+              "ingredients": [
+                "西葫芦",
+                "胡萝卜",
+                "蒜",
+                "食盐",
+                "白砂糖",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:16",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 45,
+              "name": "玉米青豆汤",
+              "categories": [
+                "hot_dish",
+                "vegetarian",
+                "soup"
+              ],
+              "main_ingredients": [
+                "玉米粒"
+              ],
+              "ingredients": [
+                "玉米粒",
+                "青豆",
+                "胡萝卜",
+                "小葱",
+                "食盐",
+                "白砂糖",
+                "香油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:45",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 65,
+              "name": "香油凉拌豆腐",
+              "categories": [
+                "cold_dish",
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "ingredients": [
+                "嫩豆腐",
+                "小葱",
+                "蒜",
+                "米醋",
+                "白砂糖",
+                "食盐",
+                "香油",
+                "花椒"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:65",
+              "safety_status": "eligible"
+            },
+            {
+              "id": null,
+              "name": "凉拌萝卜丝",
+              "categories": [
+                "cold_dish",
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "白萝卜",
+                "盐",
+                "香油",
+                "生抽",
+                "香醋"
+              ],
+              "ingredients": [
+                "白萝卜",
+                "盐",
+                "香油",
+                "生抽",
+                "香醋"
+              ],
+              "ingredients_complete": true,
+              "source_type": "local_json",
+              "source_title": "data/recipe.json",
+              "safety_status": "eligible"
+            },
+            {
+              "id": null,
+              "name": "凉拌粉条韭菜",
+              "categories": [
+                "cold_dish",
+                "vegetarian",
+                "staple"
+              ],
+              "main_ingredients": [
+                "红薯粉条",
+                "韭菜",
+                "小米椒",
+                "蒜泥",
+                "盐"
+              ],
+              "ingredients": [
+                "红薯粉条",
+                "韭菜",
+                "小米椒",
+                "蒜泥",
+                "盐",
+                "白糖",
+                "味精",
+                "生抽",
+                "陈醋",
+                "花椒油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "local_json",
+              "source_title": "data/recipe.json",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 29,
+              "name": "木耳炒鸡蛋",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡蛋"
+              ],
+              "ingredients": [
+                "鸡蛋",
+                "木耳",
+                "青椒",
+                "蒜",
+                "酱油",
+                "食盐",
+                "香油",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:29",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 60,
+              "name": "柠檬炖鸡腿",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡腿肉"
+              ],
+              "ingredients": [
+                "鸡腿肉",
+                "柠檬",
+                "番茄",
+                "蒜",
+                "姜",
+                "酱油",
+                "玉米淀粉",
+                "白砂糖",
+                "食盐",
+                "香油",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:60",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 57,
+              "name": "番茄虾仁汤",
+              "categories": [
+                "hot_dish",
+                "meat",
+                "soup"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "ingredients": [
+                "虾仁",
+                "番茄",
+                "鸡蛋",
+                "小葱",
+                "玉米淀粉",
+                "白砂糖",
+                "食盐",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:57",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 15,
+              "name": "蒜蓉粉丝蒸虾",
+              "categories": [
+                "meat",
+                "staple"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "ingredients": [
+                "虾仁",
+                "粉丝",
+                "蒜",
+                "酱油",
+                "香油",
+                "食盐"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:15",
+              "safety_status": "eligible"
+            }
+          ],
+          "attempted_categories": {
+            "cold_dish": 2,
+            "hot_dish": 2,
+            "vegetarian": 1,
+            "meat": 1,
+            "soup": 1,
+            "staple": 1
+          },
+          "exhausted_categories": [],
+          "coverage_history": [
+            {
+              "batch": 1,
+              "fulfilled": {
+                "cold_dish": 1,
+                "hot_dish": 0,
+                "vegetarian": 4,
+                "meat": 5,
+                "soup": 0,
+                "staple": 0
+              },
+              "remaining": {
+                "cold_dish": 2,
+                "hot_dish": 2,
+                "vegetarian": 0,
+                "meat": 0,
+                "soup": 1,
+                "staple": 1
+              }
+            },
+            {
+              "batch": 2,
+              "fulfilled": {
+                "cold_dish": 3,
+                "hot_dish": 2,
+                "vegetarian": 4,
+                "meat": 5,
+                "soup": 1,
+                "staple": 1
+              },
+              "remaining": {
+                "cold_dish": 0,
+                "hot_dish": 0,
+                "vegetarian": 0,
+                "meat": 0,
+                "soup": 0,
+                "staple": 0
+              }
+            }
+          ],
+          "complete": true,
+          "partial_reason": ""
+        },
+        "safe_recipe_names": [
+          "凉拌粉条韭菜",
+          "凉拌萝卜丝",
+          "双椒牛肉丝",
+          "双椒鸡丁",
+          "姜汁蒸鸡腿",
+          "姜葱牛肉",
+          "家常豆腐",
+          "小白菜豆腐汤",
+          "木耳炒鸡蛋",
+          "柠檬炖鸡腿",
+          "清炒小白菜",
+          "清炒西葫芦",
+          "玉米青豆汤",
+          "番茄虾仁汤",
+          "蒜蓉粉丝蒸虾",
+          "香油凉拌豆腐"
+        ],
+        "recipe_reviews": [
+          {
+            "name": "双椒牛肉丝",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "家常豆腐",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "木耳炒鸡蛋",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "清炒小白菜",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "清炒西葫芦",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "玉米青豆汤",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "香油凉拌豆腐",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "凉拌萝卜丝",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "凉拌粉条韭菜",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "番茄虾仁汤",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "蒜蓉粉丝蒸虾",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "双椒鸡丁",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "姜汁蒸鸡腿",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "姜葱牛肉",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "柠檬炖鸡腿",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "小白菜豆腐汤",
+            "decision": "passed",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          }
+        ],
+        "safety_review": "passed"
+      },
+      "recipe": null,
+      "timestamp": "2026-10-04T04:14:36.488853Z"
+    }
+  },
+  {
+    "turn": 2,
+    "query": "我媳妇不吃辣，帮我们两个人安排晚饭",
+    "http_status": 200,
+    "body": {
+      "message": "目前候选食谱的食材信息不够完整，无法确认它们是否同时满足你的要求。你可以换一个目标食材，或者让我生成一份符合条件的新食谱。",
+      "session_id": "081eba2f-41fb-4f43-ba20-8caeb285d885",
+      "message_id": "334",
+      "route": "agent-tools-loop",
+      "route_logic": "agent-tools-loop",
+      "sources": [],
+      "metadata": {
+        "session_id": "081eba2f-41fb-4f43-ba20-8caeb285d885",
+        "iteration": 1,
+        "tool_call_count": 2,
+        "budget_exhausted": false,
+        "loop_stop_reason": "",
+        "evidence_sufficient": true,
+        "missing_information": [],
+        "user_memory_count": 4,
+        "episodic_memory_count": 0,
+        "has_user_profile": false,
+        "observations": [
+          {
+            "tools": "user_memory_context",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "dietary_context",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "task_context",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "recommend_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "dietary_safe_recipe_query",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "multi_route_retrieval",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "dietary_safety_filter",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          }
+        ],
+        "agent_status": "degraded",
+        "tool_trace": [
+          {
+            "tool": "recommend_recipes",
+            "args": {
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣椒",
+                "干辣椒",
+                "泡椒",
+                "红辣椒",
+                "青椒"
+              ],
+              "requested_count": 6,
+              "limit": 12,
+              "required_fields": [
+                "ingredients",
+                "time"
+              ]
+            },
+            "effective_args": {
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣椒",
+                "干辣椒",
+                "泡椒",
+                "红辣椒",
+                "青椒"
+              ],
+              "requested_count": 6,
+              "limit": 12,
+              "required_fields": [
+                "ingredients",
+                "time"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 6,
+            "result_names": [
+              "姜汁蒸鸡腿",
+              "姜葱牛肉",
+              "小白菜豆腐汤",
+              "柠檬炖鸡腿",
+              "柠檬蒸三文鱼",
+              "柠檬蒸虾仁"
+            ],
+            "result_categories": []
+          },
+          {
+            "tool": "dietary_safe_recipe_query",
+            "args": {
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣椒",
+                "干辣椒",
+                "泡椒",
+                "红辣椒",
+                "青椒"
+              ],
+              "limit": 12
+            },
+            "effective_args": {
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣椒",
+                "干辣椒",
+                "泡椒",
+                "红辣椒",
+                "青椒"
+              ],
+              "limit": 12,
+              "excluded_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣椒",
+                "干辣椒",
+                "泡椒",
+                "红辣椒",
+                "青椒"
+              ]
+            },
+            "status": null,
+            "result_count": 0,
+            "result_names": [],
+            "result_categories": []
+          }
+        ],
+        "request_frame": {
+          "tasks": [
+            {
+              "kind": "menu_planning"
+            }
+          ],
+          "memory_updates": [],
+          "current_constraints": [
+            {
+              "kind": "restriction",
+              "value": "辣椒"
+            }
+          ],
+          "turn_preferences": [
+            {
+              "kind": "taste",
+              "value": "不辣",
+              "required": true,
+              "source": "input"
+            }
+          ],
+          "target": {
+            "recipe_name": null,
+            "ingredient": null
+          },
+          "requested_fields": [],
+          "exact_match_required": false,
+          "recommendation_count": null,
+          "servings": 2,
+          "meal_type": "dinner",
+          "scenario": null,
+          "menu_planning": null,
+          "context_needs": [
+            "allergies",
+            "dietary_restrictions",
+            "food_preferences"
+          ],
+          "confidence": 0.96,
+          "understanding_status": "accepted",
+          "backend": "local_model:mlx",
+          "fallback_used": false,
+          "clarification_question": null,
+          "validation_errors": []
+        },
+        "resolved_constraints": {
+          "allergies": {
+            "active": true,
+            "trigger_terms": [
+              "长期记忆"
+            ],
+            "raw_ingredients": [
+              "花生"
+            ],
+            "excluded_ingredients": [
+              "花生",
+              "花生米",
+              "熟花生米",
+              "油炸花生",
+              "花生碎",
+              "花生酱",
+              "花生油"
+            ],
+            "strictness": "hard_exclusion_contextual"
+          },
+          "restrictions": {
+            "active": true,
+            "trigger_terms": [
+              "不能吃"
+            ],
+            "raw_ingredients": [
+              "辣椒"
+            ],
+            "excluded_ingredients": [
+              "辣椒",
+              "干辣椒",
+              "泡椒",
+              "红辣椒",
+              "青椒"
+            ],
+            "strictness": "hard_exclusion_contextual"
+          },
+          "preferences": [
+            {
+              "kind": "avoid_ingredient",
+              "value": "姜",
+              "required": false,
+              "source": "memory"
+            },
+            {
+              "kind": "other",
+              "value": "吃鱼",
+              "required": false,
+              "source": "memory"
+            },
+            {
+              "kind": "other",
+              "value": "宫保鸡丁",
+              "required": false,
+              "source": "memory"
+            },
+            {
+              "kind": "taste",
+              "value": "不辣",
+              "required": true,
+              "source": "input"
+            }
+          ]
+        },
+        "reflect": {
+          "rationale": "普通推荐完成度由代码验证：6/6。",
+          "evidence_sufficient": true,
+          "missing_information": []
+        },
+        "request_tasks": [
+          "menu_planning"
+        ],
+        "request_understanding_backend": "local_model:mlx",
+        "understanding_status": "accepted",
+        "loaded_context_types": [
+          "recent_conversation",
+          "allergies",
+          "food_preferences"
+        ],
+        "request_understanding_confidence": 0.96,
+        "fallback_used": false,
+        "context_needs": [
+          "allergies",
+          "dietary_restrictions",
+          "food_preferences"
+        ],
+        "menu_execution_plan": {},
+        "menu_task_progress": {},
+        "recommendation_completion": {
+          "requested": 6,
+          "fulfilled": 6,
+          "complete": true
+        },
+        "safety_review": "blocked",
+        "safe_recipe_names": [],
+        "recipe_reviews": [
+          {
+            "name": "姜汁蒸鸡腿",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "input"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "姜葱牛肉",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "input"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "小白菜豆腐汤",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "input"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "柠檬炖鸡腿",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "input"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "柠檬蒸三文鱼",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "input"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "柠檬蒸虾仁",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "input"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          }
+        ]
+      },
+      "recipe": null,
+      "timestamp": "2026-10-04T04:14:42.167935Z"
+    }
+  },
+  {
+    "turn": 3,
+    "query": "我现在在进行农村宴席，请你帮我推荐十几道菜，要求三道凉菜，两道热菜，四道素菜，五道荤菜，一道汤，一道主食",
+    "http_status": 200,
+    "body": {
+      "message": "按你的农村宴席需求，我整理了下面这份菜单：\n\n凉菜（0/3）\n- 暂无经过核验的合适菜品\n\n热菜（0/2）\n- 暂无经过核验的合适菜品\n\n素菜（0/4）\n- 暂无经过核验的合适菜品\n\n荤菜（0/5）\n- 暂无经过核验的合适菜品\n\n汤（0/1）\n- 暂无经过核验的合适菜品\n\n主食（0/1）\n- 暂无经过核验的合适菜品\n\n当前是可确认的部分方案：凉菜还缺 3 道；热菜还缺 2 道；素菜还缺 4 道；荤菜还缺 5 道；汤还缺 1 道；主食还缺 1 道。",
+      "session_id": "081eba2f-41fb-4f43-ba20-8caeb285d885",
+      "message_id": "336",
+      "route": "agent-tools-loop",
+      "route_logic": "agent-tools-loop",
+      "sources": [],
+      "metadata": {
+        "session_id": "081eba2f-41fb-4f43-ba20-8caeb285d885",
+        "iteration": 2,
+        "tool_call_count": 8,
+        "budget_exhausted": false,
+        "loop_stop_reason": "",
+        "evidence_sufficient": true,
+        "missing_information": [],
+        "user_memory_count": 4,
+        "episodic_memory_count": 0,
+        "has_user_profile": false,
+        "observations": [
+          {
+            "tools": "user_memory_context",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "dietary_context",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "task_context",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "search_recipes",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          },
+          {
+            "tools": "dietary_safety_filter",
+            "ok": true,
+            "status": "ok",
+            "error_code": null,
+            "has_data": true
+          }
+        ],
+        "agent_status": "degraded",
+        "tool_trace": [
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "meat",
+              "candidate_mode": true,
+              "limit": 10,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "meat",
+              "candidate_mode": true,
+              "limit": 10,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 10,
+            "result_names": [
+              "姜汁蒸鸡腿",
+              "姜葱牛肉",
+              "家常豆腐",
+              "木耳炒鸡蛋",
+              "柠檬炖鸡腿",
+              "柠檬蒸三文鱼",
+              "柠檬蒸虾仁",
+              "柠檬青豆鸡丁",
+              "柠檬香煎鸡胸",
+              "清蒸鲈鱼"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "meat"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "vegetarian",
+              "candidate_mode": true,
+              "limit": 8,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "vegetarian",
+              "candidate_mode": true,
+              "limit": 8,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 8,
+            "result_names": [
+              "小白菜豆腐汤",
+              "清炒小白菜",
+              "清炒西葫芦",
+              "玉米青豆汤",
+              "番茄豆腐汤",
+              "蒜蓉蒸西兰花",
+              "蒜蓉西兰花",
+              "蒜香玉米青豆"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "soup",
+              "vegetarian"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "cold_dish",
+              "candidate_mode": true,
+              "limit": 6,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "cold_dish",
+              "candidate_mode": true,
+              "limit": 6,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 1,
+            "result_names": [
+              "香油凉拌豆腐"
+            ],
+            "result_categories": [
+              "cold_dish",
+              "vegetarian"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "hot_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "hot_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [],
+              "exclude_recipe_names": [],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 5,
+            "result_names": [
+              "姜汁蒸鸡腿",
+              "姜葱牛肉",
+              "家常豆腐",
+              "小白菜豆腐汤",
+              "木耳炒鸡蛋"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "meat",
+              "soup",
+              "vegetarian"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "cold_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                37,
+                21,
+                19,
+                29,
+                60,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "木耳炒鸡蛋",
+                "柠檬炖鸡腿",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "all"
+            },
+            "effective_args": {
+              "category": "cold_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                37,
+                21,
+                19,
+                29,
+                60,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "木耳炒鸡蛋",
+                "柠檬炖鸡腿",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "all",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 5,
+            "result_names": [
+              "凉拌萝卜丝",
+              "凉拌粉条韭菜",
+              "凉拌木耳腐竹",
+              "凉拌海参",
+              "凉拌木耳洋葱"
+            ],
+            "result_categories": [
+              "cold_dish",
+              "staple",
+              "vegetarian"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "hot_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                37,
+                21,
+                19,
+                29,
+                60,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "木耳炒鸡蛋",
+                "柠檬炖鸡腿",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "all"
+            },
+            "effective_args": {
+              "category": "hot_dish",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                37,
+                21,
+                19,
+                29,
+                60,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "木耳炒鸡蛋",
+                "柠檬炖鸡腿",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "all",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 5,
+            "result_names": [
+              "柠檬蒸三文鱼",
+              "柠檬蒸虾仁",
+              "柠檬青豆鸡丁",
+              "柠檬香煎鸡胸",
+              "清蒸鲈鱼"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "meat"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "soup",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                37,
+                21,
+                19,
+                29,
+                60,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "木耳炒鸡蛋",
+                "柠檬炖鸡腿",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "soup",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                37,
+                21,
+                19,
+                29,
+                60,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "木耳炒鸡蛋",
+                "柠檬炖鸡腿",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 5,
+            "result_names": [
+              "番茄虾仁汤",
+              "番茄豆腐汤",
+              "葱香牛腩汤",
+              "西兰花玉米鸡汤",
+              "香菇鸡蛋汤"
+            ],
+            "result_categories": [
+              "hot_dish",
+              "meat",
+              "soup",
+              "vegetarian"
+            ]
+          },
+          {
+            "tool": "search_recipes",
+            "args": {
+              "category": "staple",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                37,
+                21,
+                19,
+                29,
+                60,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "木耳炒鸡蛋",
+                "柠檬炖鸡腿",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "local"
+            },
+            "effective_args": {
+              "category": "staple",
+              "candidate_mode": true,
+              "limit": 5,
+              "exclude_recipe_ids": [
+                37,
+                21,
+                19,
+                29,
+                60,
+                26,
+                42,
+                16,
+                45,
+                65
+              ],
+              "exclude_recipe_names": [
+                "姜汁蒸鸡腿",
+                "姜葱牛肉",
+                "家常豆腐",
+                "木耳炒鸡蛋",
+                "柠檬炖鸡腿",
+                "小白菜豆腐汤",
+                "清炒小白菜",
+                "清炒西葫芦",
+                "玉米青豆汤",
+                "香油凉拌豆腐"
+              ],
+              "scope": "local",
+              "exclude_ingredients": [
+                "花生",
+                "花生米",
+                "熟花生米",
+                "油炸花生",
+                "花生碎",
+                "花生酱",
+                "花生油",
+                "辣"
+              ]
+            },
+            "status": "FOUND",
+            "result_count": 2,
+            "result_names": [
+              "蒜蓉粉丝蒸虾",
+              "香葱牛肉煎饼"
+            ],
+            "result_categories": [
+              "meat",
+              "staple"
+            ]
+          }
+        ],
+        "request_frame": {
+          "tasks": [
+            {
+              "kind": "menu_planning"
+            }
+          ],
+          "memory_updates": [],
+          "current_constraints": [],
+          "turn_preferences": [],
+          "target": {
+            "recipe_name": null,
+            "ingredient": null
+          },
+          "requested_fields": [],
+          "exact_match_required": false,
+          "recommendation_count": 16,
+          "servings": null,
+          "meal_type": null,
+          "scenario": "农村宴席",
+          "menu_planning": {
+            "category_quotas": [
+              {
+                "category": "cold_dish",
+                "count": 3
+              },
+              {
+                "category": "hot_dish",
+                "count": 2
+              },
+              {
+                "category": "vegetarian",
+                "count": 4
+              },
+              {
+                "category": "meat",
+                "count": 5
+              },
+              {
+                "category": "soup",
+                "count": 1
+              },
+              {
+                "category": "staple",
+                "count": 1
+              }
+            ],
+            "distinct_recipes": true,
+            "allow_cross_category_counting": false
+          },
+          "context_needs": [
+            "allergies",
+            "dietary_restrictions",
+            "food_preferences"
+          ],
+          "confidence": 0.9,
+          "understanding_status": "fallback",
+          "backend": "local_model:rules_fallback",
+          "fallback_used": true,
+          "clarification_question": null,
+          "validation_errors": [
+            "ValidationError"
+          ]
+        },
+        "resolved_constraints": {
+          "allergies": {
+            "active": true,
+            "trigger_terms": [
+              "长期记忆"
+            ],
+            "raw_ingredients": [
+              "花生"
+            ],
+            "excluded_ingredients": [
+              "花生",
+              "花生米",
+              "熟花生米",
+              "油炸花生",
+              "花生碎",
+              "花生酱",
+              "花生油"
+            ],
+            "strictness": "hard_exclusion_contextual"
+          },
+          "restrictions": {
+            "active": true,
+            "trigger_terms": [
+              "不吃"
+            ],
+            "raw_ingredients": [
+              "辣"
+            ],
+            "excluded_ingredients": [
+              "辣"
+            ],
+            "strictness": "hard_exclusion_contextual"
+          },
+          "preferences": [
+            {
+              "kind": "avoid_ingredient",
+              "value": "姜",
+              "required": false,
+              "source": "memory"
+            },
+            {
+              "kind": "other",
+              "value": "吃鱼",
+              "required": false,
+              "source": "memory"
+            },
+            {
+              "kind": "other",
+              "value": "宫保鸡丁",
+              "required": false,
+              "source": "memory"
+            },
+            {
+              "kind": "taste",
+              "value": "不辣",
+              "required": true,
+              "source": "history"
+            }
+          ]
+        },
+        "reflect": {
+          "rationale": "所有菜单分类配额已经由确定性计数验证完成。",
+          "evidence_sufficient": true,
+          "missing_information": []
+        },
+        "request_tasks": [
+          "menu_planning"
+        ],
+        "request_understanding_backend": "local_model:rules_fallback",
+        "understanding_status": "fallback",
+        "loaded_context_types": [
+          "recent_conversation",
+          "allergies",
+          "food_preferences"
+        ],
+        "request_understanding_confidence": 0.9,
+        "fallback_used": true,
+        "context_needs": [
+          "allergies",
+          "dietary_restrictions",
+          "food_preferences"
+        ],
+        "menu_execution_plan": {
+          "scenario": "农村宴席",
+          "required": {
+            "cold_dish": 3,
+            "hot_dish": 2,
+            "vegetarian": 4,
+            "meat": 5,
+            "soup": 1,
+            "staple": 1
+          },
+          "distinct_recipes": true,
+          "allow_cross_category_counting": false
+        },
+        "menu_task_progress": {
+          "fulfilled": {
+            "cold_dish": 3,
+            "hot_dish": 2,
+            "vegetarian": 4,
+            "meat": 5,
+            "soup": 1,
+            "staple": 1
+          },
+          "remaining": {
+            "cold_dish": 0,
+            "hot_dish": 0,
+            "vegetarian": 0,
+            "meat": 0,
+            "soup": 0,
+            "staple": 0
+          },
+          "selected_recipes": [
+            {
+              "recipe_id": 37,
+              "name": "姜汁蒸鸡腿",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡腿肉"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 21,
+              "name": "姜葱牛肉",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "牛里脊"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 19,
+              "name": "家常豆腐",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 29,
+              "name": "木耳炒鸡蛋",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡蛋"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 60,
+              "name": "柠檬炖鸡腿",
+              "assigned_category": "meat",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡腿肉"
+              ],
+              "evidence_call_id": "menu-meat-1"
+            },
+            {
+              "recipe_id": 26,
+              "name": "小白菜豆腐汤",
+              "assigned_category": "vegetarian",
+              "categories": [
+                "hot_dish",
+                "vegetarian",
+                "soup"
+              ],
+              "credited_categories": [
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "evidence_call_id": "menu-vegetarian-1"
+            },
+            {
+              "recipe_id": 42,
+              "name": "清炒小白菜",
+              "assigned_category": "vegetarian",
+              "categories": [
+                "hot_dish",
+                "vegetarian"
+              ],
+              "credited_categories": [
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "小白菜"
+              ],
+              "evidence_call_id": "menu-vegetarian-1"
+            },
+            {
+              "recipe_id": 16,
+              "name": "清炒西葫芦",
+              "assigned_category": "vegetarian",
+              "categories": [
+                "hot_dish",
+                "vegetarian"
+              ],
+              "credited_categories": [
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "西葫芦"
+              ],
+              "evidence_call_id": "menu-vegetarian-1"
+            },
+            {
+              "recipe_id": 45,
+              "name": "玉米青豆汤",
+              "assigned_category": "vegetarian",
+              "categories": [
+                "hot_dish",
+                "vegetarian",
+                "soup"
+              ],
+              "credited_categories": [
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "玉米粒"
+              ],
+              "evidence_call_id": "menu-vegetarian-1"
+            },
+            {
+              "recipe_id": 65,
+              "name": "香油凉拌豆腐",
+              "assigned_category": "cold_dish",
+              "categories": [
+                "cold_dish",
+                "vegetarian"
+              ],
+              "credited_categories": [
+                "cold_dish"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "evidence_call_id": "menu-cold_dish-1"
+            },
+            {
+              "recipe_id": null,
+              "name": "凉拌萝卜丝",
+              "assigned_category": "cold_dish",
+              "categories": [
+                "cold_dish",
+                "vegetarian"
+              ],
+              "credited_categories": [
+                "cold_dish"
+              ],
+              "main_ingredients": [
+                "白萝卜",
+                "盐",
+                "香油",
+                "生抽",
+                "香醋"
+              ],
+              "evidence_call_id": "menu-cold_dish-2"
+            },
+            {
+              "recipe_id": null,
+              "name": "凉拌粉条韭菜",
+              "assigned_category": "cold_dish",
+              "categories": [
+                "cold_dish",
+                "vegetarian",
+                "staple"
+              ],
+              "credited_categories": [
+                "cold_dish"
+              ],
+              "main_ingredients": [
+                "红薯粉条",
+                "韭菜",
+                "小米椒",
+                "蒜泥",
+                "盐"
+              ],
+              "evidence_call_id": "menu-cold_dish-2"
+            },
+            {
+              "recipe_id": 17,
+              "name": "柠檬蒸三文鱼",
+              "assigned_category": "hot_dish",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "hot_dish"
+              ],
+              "main_ingredients": [
+                "三文鱼"
+              ],
+              "evidence_call_id": "menu-hot_dish-2"
+            },
+            {
+              "recipe_id": 52,
+              "name": "柠檬蒸虾仁",
+              "assigned_category": "hot_dish",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "credited_categories": [
+                "hot_dish"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "evidence_call_id": "menu-hot_dish-2"
+            },
+            {
+              "recipe_id": 57,
+              "name": "番茄虾仁汤",
+              "assigned_category": "soup",
+              "categories": [
+                "hot_dish",
+                "meat",
+                "soup"
+              ],
+              "credited_categories": [
+                "soup"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "evidence_call_id": "menu-soup-1"
+            },
+            {
+              "recipe_id": 15,
+              "name": "蒜蓉粉丝蒸虾",
+              "assigned_category": "staple",
+              "categories": [
+                "meat",
+                "staple"
+              ],
+              "credited_categories": [
+                "staple"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "evidence_call_id": "menu-staple-1"
+            }
+          ],
+          "candidate_pool": [
+            {
+              "id": 37,
+              "name": "姜汁蒸鸡腿",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡腿肉"
+              ],
+              "ingredients": [
+                "鸡腿肉",
+                "姜",
+                "蒜",
+                "酱油",
+                "料酒",
+                "蒸鱼豉油",
+                "香油",
+                "食盐"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:37",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 21,
+              "name": "姜葱牛肉",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "牛里脊"
+              ],
+              "ingredients": [
+                "牛里脊",
+                "姜",
+                "小葱",
+                "酱油",
+                "黑胡椒碎",
+                "玉米淀粉",
+                "香油",
+                "食用油",
+                "食盐"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:21",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 19,
+              "name": "家常豆腐",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "ingredients": [
+                "嫩豆腐",
+                "猪肉里脊",
+                "青椒",
+                "胡萝卜",
+                "郫县豆瓣酱",
+                "蒜",
+                "酱油",
+                "玉米淀粉",
+                "食盐",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:19",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 29,
+              "name": "木耳炒鸡蛋",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡蛋"
+              ],
+              "ingredients": [
+                "鸡蛋",
+                "木耳",
+                "青椒",
+                "蒜",
+                "酱油",
+                "食盐",
+                "香油",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:29",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 60,
+              "name": "柠檬炖鸡腿",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "鸡腿肉"
+              ],
+              "ingredients": [
+                "鸡腿肉",
+                "柠檬",
+                "番茄",
+                "蒜",
+                "姜",
+                "酱油",
+                "玉米淀粉",
+                "白砂糖",
+                "食盐",
+                "香油",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:60",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 26,
+              "name": "小白菜豆腐汤",
+              "categories": [
+                "hot_dish",
+                "vegetarian",
+                "soup"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "ingredients": [
+                "嫩豆腐",
+                "小白菜",
+                "香菇",
+                "姜",
+                "食盐",
+                "香油",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:26",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 42,
+              "name": "清炒小白菜",
+              "categories": [
+                "hot_dish",
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "小白菜"
+              ],
+              "ingredients": [
+                "小白菜",
+                "蒜",
+                "食盐",
+                "香油",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:42",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 16,
+              "name": "清炒西葫芦",
+              "categories": [
+                "hot_dish",
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "西葫芦"
+              ],
+              "ingredients": [
+                "西葫芦",
+                "胡萝卜",
+                "蒜",
+                "食盐",
+                "白砂糖",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:16",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 45,
+              "name": "玉米青豆汤",
+              "categories": [
+                "hot_dish",
+                "vegetarian",
+                "soup"
+              ],
+              "main_ingredients": [
+                "玉米粒"
+              ],
+              "ingredients": [
+                "玉米粒",
+                "青豆",
+                "胡萝卜",
+                "小葱",
+                "食盐",
+                "白砂糖",
+                "香油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:45",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 65,
+              "name": "香油凉拌豆腐",
+              "categories": [
+                "cold_dish",
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "嫩豆腐"
+              ],
+              "ingredients": [
+                "嫩豆腐",
+                "小葱",
+                "蒜",
+                "米醋",
+                "白砂糖",
+                "食盐",
+                "香油",
+                "花椒"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:65",
+              "safety_status": "eligible"
+            },
+            {
+              "id": null,
+              "name": "凉拌萝卜丝",
+              "categories": [
+                "cold_dish",
+                "vegetarian"
+              ],
+              "main_ingredients": [
+                "白萝卜",
+                "盐",
+                "香油",
+                "生抽",
+                "香醋"
+              ],
+              "ingredients": [
+                "白萝卜",
+                "盐",
+                "香油",
+                "生抽",
+                "香醋"
+              ],
+              "ingredients_complete": true,
+              "source_type": "local_json",
+              "source_title": "data/recipe.json",
+              "safety_status": "eligible"
+            },
+            {
+              "id": null,
+              "name": "凉拌粉条韭菜",
+              "categories": [
+                "cold_dish",
+                "vegetarian",
+                "staple"
+              ],
+              "main_ingredients": [
+                "红薯粉条",
+                "韭菜",
+                "小米椒",
+                "蒜泥",
+                "盐"
+              ],
+              "ingredients": [
+                "红薯粉条",
+                "韭菜",
+                "小米椒",
+                "蒜泥",
+                "盐",
+                "白糖",
+                "味精",
+                "生抽",
+                "陈醋",
+                "花椒油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "local_json",
+              "source_title": "data/recipe.json",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 17,
+              "name": "柠檬蒸三文鱼",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "三文鱼"
+              ],
+              "ingredients": [
+                "三文鱼",
+                "柠檬",
+                "姜",
+                "食盐",
+                "香油",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:17",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 52,
+              "name": "柠檬蒸虾仁",
+              "categories": [
+                "hot_dish",
+                "meat"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "ingredients": [
+                "虾仁",
+                "粉丝",
+                "柠檬",
+                "姜",
+                "食盐",
+                "玉米淀粉",
+                "香油",
+                "蒸鱼豉油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:52",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 57,
+              "name": "番茄虾仁汤",
+              "categories": [
+                "hot_dish",
+                "meat",
+                "soup"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "ingredients": [
+                "虾仁",
+                "番茄",
+                "鸡蛋",
+                "小葱",
+                "玉米淀粉",
+                "白砂糖",
+                "食盐",
+                "食用油"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:57",
+              "safety_status": "eligible"
+            },
+            {
+              "id": 15,
+              "name": "蒜蓉粉丝蒸虾",
+              "categories": [
+                "meat",
+                "staple"
+              ],
+              "main_ingredients": [
+                "虾仁"
+              ],
+              "ingredients": [
+                "虾仁",
+                "粉丝",
+                "蒜",
+                "酱油",
+                "香油",
+                "食盐"
+              ],
+              "ingredients_complete": true,
+              "source_type": "canonical_database",
+              "source_title": "recipe:15",
+              "safety_status": "eligible"
+            }
+          ],
+          "attempted_categories": {
+            "cold_dish": 2,
+            "hot_dish": 2,
+            "vegetarian": 1,
+            "meat": 1,
+            "soup": 1,
+            "staple": 1
+          },
+          "exhausted_categories": [],
+          "coverage_history": [
+            {
+              "batch": 1,
+              "fulfilled": {
+                "cold_dish": 1,
+                "hot_dish": 0,
+                "vegetarian": 4,
+                "meat": 5,
+                "soup": 0,
+                "staple": 0
+              },
+              "remaining": {
+                "cold_dish": 2,
+                "hot_dish": 2,
+                "vegetarian": 0,
+                "meat": 0,
+                "soup": 1,
+                "staple": 1
+              }
+            },
+            {
+              "batch": 2,
+              "fulfilled": {
+                "cold_dish": 3,
+                "hot_dish": 2,
+                "vegetarian": 4,
+                "meat": 5,
+                "soup": 1,
+                "staple": 1
+              },
+              "remaining": {
+                "cold_dish": 0,
+                "hot_dish": 0,
+                "vegetarian": 0,
+                "meat": 0,
+                "soup": 0,
+                "staple": 0
+              }
+            }
+          ],
+          "complete": true,
+          "partial_reason": ""
+        },
+        "safe_recipe_names": [],
+        "recipe_reviews": [
+          {
+            "name": "家常豆腐",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "木耳炒鸡蛋",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "清炒小白菜",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "清炒西葫芦",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "玉米青豆汤",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "香油凉拌豆腐",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "凉拌萝卜丝",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "凉拌粉条韭菜",
+            "decision": "excluded",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "not_satisfied",
+                "reason": "食材包含辣味配料。"
+              }
+            ]
+          },
+          {
+            "name": "番茄虾仁汤",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "蒜蓉粉丝蒸虾",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "姜汁蒸鸡腿",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "姜葱牛肉",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "柠檬炖鸡腿",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "柠檬蒸三文鱼",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "柠檬蒸虾仁",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          },
+          {
+            "name": "小白菜豆腐汤",
+            "decision": "unknown",
+            "allergy_status": "safe",
+            "preference_status": "partial",
+            "preferences": [
+              {
+                "preference": {
+                  "kind": "avoid_ingredient",
+                  "value": "姜",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "not_satisfied",
+                "reason": "已对照完整食材证据。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "吃鱼",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "other",
+                  "value": "宫保鸡丁",
+                  "required": false,
+                  "source": "memory"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              },
+              {
+                "preference": {
+                  "kind": "taste",
+                  "value": "不辣",
+                  "required": true,
+                  "source": "history"
+                },
+                "status": "unknown",
+                "reason": "结构化证据不足，无法确认此要求。"
+              }
+            ]
+          }
+        ],
+        "safety_review": "blocked"
+      },
+      "recipe": null,
+      "timestamp": "2026-10-04T04:14:53.316869Z"
+    }
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "seed": 20261002,
+  "total": 6000,
+  "splits": {
+    "train": 4800,
+    "valid": 600,
+    "test": 600
+  },
+  "categories": {
+    "recipe_detail": 800,
+    "out_of_scope": 400,
+    "input_noise": 1000,
+    "multi_constraint": 1000,
+    "normal": 1500,
+    "clarification": 500,
+    "context_reference": 800
+  },
+  "format": "mlx-lm-chat-jsonl",
+  "base_model": "Qwen/Qwen3-1.7B"
+}

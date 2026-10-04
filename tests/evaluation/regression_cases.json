@@ -1,0 +1,22 @@
+[
+  {"id":"T001","group":"request_contract","query":"推荐一道鱼","tags":["NLU_COUNT_ERROR","RETRIEVAL_FILTER_ERROR"]},
+  {"id":"T002","group":"request_contract","query":"推荐四道鱼","tags":["NLU_COUNT_ERROR","PLANNER_ARGUMENT_ERROR","PREMATURE_COMPLETION"]},
+  {"id":"T003","group":"request_contract","query":"推荐六道家常菜","tags":["RETRIEVAL_COUNT_ERROR"]},
+  {"id":"T004","group":"request_contract","query":"推荐两道素菜","tags":["CATEGORY_TAXONOMY_ERROR"]},
+  {"id":"T005","group":"request_contract","query":"推荐四道海鲜","tags":["CATEGORY_TAXONOMY_ERROR"]},
+  {"id":"T006","group":"recipe_detail","query":"水煮鱼有什么材料","tags":["NLU_FIELD_ERROR"]},
+  {"id":"T007","group":"recipe_detail","query":"水煮鱼怎么做","tags":["NLU_ENTITY_ERROR","NLU_FIELD_ERROR"]},
+  {"id":"T008","group":"recipe_detail","query":"水煮鱼多久能做好","tags":["NLU_FIELD_ERROR"]},
+  {"id":"T009","group":"recipe_detail","query":"水煮鱼材料和步骤","tags":["FIELD_MISSING_ERROR"]},
+  {"id":"T010","group":"reference","query":"这个怎么做","tags":["REFERENCE_RESOLUTION_ERROR"]},
+  {"id":"T011","group":"reference","query":"第二个怎么做","tags":["REFERENCE_RESOLUTION_ERROR"]},
+  {"id":"T012","group":"reference","query":"具体步骤呢","tags":["REFERENCE_RESOLUTION_ERROR"]},
+  {"id":"T013","group":"menu","query":"给四个人安排两道荤菜","tags":["NLU_TASK_ERROR","GOAL_VERIFICATION_ERROR"]},
+  {"id":"T014","group":"menu","query":"给四个人安排两荤两素一汤","tags":["REQUESTFRAME_CONTRACT_ERROR","PREMATURE_COMPLETION"]},
+  {"id":"T015","group":"semantics","query":"给四个人推荐午餐","tags":["NLU_COUNT_ERROR"]},
+  {"id":"T016","group":"semantics","query":"推荐十道鱼","tags":["NLU_TASK_ERROR","CATEGORY_TAXONOMY_ERROR"]},
+  {"id":"T017","group":"safety","query":"我花生过敏，推荐四道菜","tags":["SAFETY_ERROR","MEMORY_SCOPE_ERROR"]},
+  {"id":"T018","group":"safety","query":"今天不想吃鱼","tags":["MEMORY_SCOPE_ERROR"]},
+  {"id":"T019","group":"tool_status","query":"database timeout","tags":["TOOL_ERROR_MISCLASSIFIED"]},
+  {"id":"T020","group":"loop","query":"same tool args and outcome","tags":["LOOP_CONTROL_ERROR"]}
+]

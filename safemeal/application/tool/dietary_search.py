@@ -1,4 +1,4 @@
-"""Neo4j dietary safety Agent tools."""
+"""实现智能体可调用的应用层工具。"""
 
 import asyncio
 
@@ -12,7 +12,6 @@ from safemeal.application.ports.tools.handler import ToolHandler
 
 
 class DietarySafeRecipeQueryTool(ToolHandler[DietarySafeRecipeQueryArgs]):
-    """Query graph-backed ingredient relations for deterministic exclusions."""
 
     name = "dietary_safe_recipe_query"
     purpose = "在 Neo4j 中查询菜品与食材关系，为过敏和忌口判断提供结构化证据。"

@@ -68,8 +68,8 @@ def create_responder_node(model_gateway: AgentModelGateway):
             answer = state["direct_answer"]
             await emit_answer_chunk(answer)
         elif intent is not None and intent.kind == "menu_planning":
-            # Menu completion is code-verified by Observer/Reflector.  Rendering
-            # consumes that cumulative state instead of asking the LLM to recount.
+
+
             answer = render_menu_plan(
                 state.get("menu_execution_plan") or {},
                 state.get("menu_task_progress") or {},

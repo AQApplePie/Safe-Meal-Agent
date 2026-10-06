@@ -1,4 +1,4 @@
-"""Application contracts for recipe searches and recommendations."""
+"""定义跨层传递的稳定数据契约。"""
 
 from __future__ import annotations
 
@@ -27,7 +27,6 @@ class RecipeSortField(str, Enum):
 
 
 class RecipeQuery(BaseModel):
-    """Validated request accepted by recipe catalog use cases."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -50,8 +49,8 @@ class RecipeQuery(BaseModel):
     offset: int = Field(default=0, ge=0, le=100000)
     limit: int = Field(default=10, ge=1, le=50)
     requested_count: int | None = Field(default=None, ge=1, le=50)
-    # Candidate scans may be wider than the public result page because safety
-    # and food-category checks run against fully loaded ingredient structures.
+
+
     candidate_limit: int | None = Field(default=None, ge=1, le=200)
     exact_name: bool = False
     required_fields: tuple[
@@ -75,7 +74,6 @@ class RecipeQuery(BaseModel):
 
 
 class RecipeSearchResult(BaseModel):
-    """Paginated recipe result returned across application boundaries."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

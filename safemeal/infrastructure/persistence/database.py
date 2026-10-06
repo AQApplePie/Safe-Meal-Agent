@@ -1,4 +1,4 @@
-"""Application database configuration and session utilities."""
+"""实现持久化基础设施适配。"""
 
 from contextlib import contextmanager
 from collections.abc import Callable
@@ -29,7 +29,6 @@ class Base(DeclarativeBase):
 def configure_database(
     url: str, *, debug: bool = False, connect_timeout: int = 10
 ) -> None:
-    """Accept deployment settings from the application composition service."""
     global _database_url, _debug, _connect_timeout
     if _engine is not None and url != _database_url:
         raise RuntimeError("Cannot reconfigure an active database engine")
@@ -37,7 +36,6 @@ def configure_database(
 
 
 def get_engine() -> Engine:
-    """Return the application database engine, creating it on first use."""
     global _engine
 
     if _engine is None:
@@ -59,7 +57,6 @@ def get_engine() -> Engine:
 
 
 def dispose_engine() -> None:
-    """Dispose the process-scoped connection pool during application shutdown."""
 
     global _engine
     if _engine is not None:
@@ -74,14 +71,6 @@ def session_scope(
     commit: bool = True,
     session_factory: Callable[[], Session] | None = None,
 ) -> Iterator[Session]:
-    """
-    Own one Session lifecycle and handle commit/rollback automatically.
-
-    ``session_factory`` is injectable so Unit-of-Work tests can use an isolated
-    engine without mutating the process-global ``SessionLocal`` binding. Set
-    ``commit=False`` when an explicit Unit of Work owns the commit decision;
-    exceptional exit still rolls back and every exit closes the Session.
-    """
     if session_factory is None:
         get_engine()
         session = SessionLocal()

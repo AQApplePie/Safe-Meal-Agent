@@ -41,11 +41,6 @@ class ToolHandler(Generic[ToolArgs], ABC):
     args_schema: type[ToolArgs]
 
     def _planner_description(self) -> str:
-        """Build one readable description from the same structured metadata.
-
-        Keeping this text derived from fields prevents the prompt description and
-        the runtime/tool documentation from drifting into two contradictory copies.
-        """
 
         sections = [
             f"用途：{self.purpose}",
@@ -58,7 +53,6 @@ class ToolHandler(Generic[ToolArgs], ABC):
         return "\n".join(sections)
 
     def specification(self) -> ToolSpecification:
-        """Return the Planner contract generated from executable metadata."""
 
         required = {
             "purpose": self.purpose,

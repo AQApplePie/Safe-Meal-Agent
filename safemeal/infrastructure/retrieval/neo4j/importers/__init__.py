@@ -1,4 +1,4 @@
-"""Neo4j data import helpers."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 from .recipe_importer import RecipeGraphImporter
 from .recipe_json_parser import (

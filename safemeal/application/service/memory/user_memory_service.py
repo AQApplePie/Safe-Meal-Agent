@@ -1,4 +1,4 @@
-"""User long-term-memory use cases."""
+"""协调用户长期记忆的读取、写入与归档。"""
 
 from __future__ import annotations
 
@@ -16,7 +16,6 @@ from safemeal.shared.types import JsonObject, to_json_object
 
 
 class UserMemoryService:
-    """Coordinate memory extraction and persistence through an explicit UoW."""
 
     def __init__(
         self,
@@ -132,7 +131,6 @@ class UserMemoryService:
         memory_types: set[str],
         limit: int = 50,
     ) -> List[JsonObject]:
-        """Load only requested memory classes; hard constraints stay explicit."""
 
         if not memory_types:
             return []
@@ -166,7 +164,6 @@ class UserMemoryService:
         summary: str,
         message_count: int,
     ) -> UserMemoryRead:
-        """Persist the latest compacted summary for one conversation."""
 
         normalized = " ".join(summary.split())[:2_000]
         if not normalized:

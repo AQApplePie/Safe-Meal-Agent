@@ -1,4 +1,4 @@
-"""Repair and verify Neo4j's dietary-safety data projection."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 from __future__ import annotations
 

@@ -23,7 +23,6 @@ from safemeal.application.service.composition.application_container import (
 
 
 def get_container(request: Request) -> ApplicationContainer:
-    """Return the process container attached during application creation."""
 
     return request.app.state.container
 

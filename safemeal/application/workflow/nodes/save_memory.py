@@ -1,4 +1,4 @@
-"""Persist explicit personal facts separately from recommendation generation."""
+"""实现聊天工作流中的对应职责。"""
 
 import asyncio
 import re
@@ -31,7 +31,7 @@ class SaveMemoryNode:
                     )
                 except Exception:
                     state["result"].metadata["episodic_memory_saved"] = False
-        # Temporary requests, third-party facts and hypothetical text stay in turn context.
+
         frame = state.get("request_frame") or state["context"].request_frame
         personal = bool(frame and frame.memory_updates) or bool(
             re.search(

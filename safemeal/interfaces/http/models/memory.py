@@ -1,4 +1,4 @@
-"""HTTP models for user memory routers."""
+"""实现 HTTP 接口层的请求与响应适配。"""
 
 from __future__ import annotations
 

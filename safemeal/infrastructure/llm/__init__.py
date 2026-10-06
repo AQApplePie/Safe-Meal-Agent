@@ -1,3 +1,3 @@
-"""LLM provider adapters."""
+"""实现语言模型基础设施适配。"""
 
 __all__: list[str] = []

@@ -1,4 +1,4 @@
-"""Agent task understanding, called once by the planner per invocation."""
+"""把规范化请求契约转换为 Agent 内部任务类型。"""
 
 import asyncio
 import re
@@ -9,10 +9,10 @@ from safemeal.application.service.memory.memory_extraction import UserMemoryExtr
 
 
 def intent_from_request_frame(context: AgentContext) -> IntentDecision | None:
+    """优先使用 Workflow 已确认的请求事实，不在 Agent 内重复理解原文。"""
+
     frame = context.request_frame
-    # Explicit category quotas are parsed deterministically even when the local
-    # NLU model is unavailable and Workflow marks the overall frame as fallback.
-    # They must enter the menu branch before any general LLM planning call.
+    # 显式菜单配额属于确定性事实，即使小模型降级也必须进入菜单规划分支。
     if (
         frame is not None
         and frame.primary_task == "menu_planning"
@@ -25,9 +25,7 @@ def intent_from_request_frame(context: AgentContext) -> IntentDecision | None:
         and frame.menu_planning is None
         and frame.canonical
     ):
-        # Quota-less meal coordination is completed by the existing autonomous
-        # recommendation path.  Only explicit quotas enter deterministic menu
-        # coverage accounting.
+        # 未提供分类配额的配餐请求沿用普通推荐，不启动配额完成度计算。
         return IntentDecision(kind="recommend", reason="adaptive_meal_request")
     if (
         frame is not None
@@ -36,15 +34,9 @@ def intent_from_request_frame(context: AgentContext) -> IntentDecision | None:
         and frame.requested_fields
         and frame.exact_match_required
     ):
-        # A rule-fallback detail frame is executable when all semantic fields are
-        # complete.  Rejecting it solely because the model failed would discard
-        # stronger deterministic evidence and let the planner change task type.
+        # 规则降级结果只要菜名和字段完整，就可以直接执行精确查询。
         return IntentDecision(kind="recipe_detail", reason="complete_detail_contract")
-    if (
-        frame is None
-        or not frame.tasks
-        or frame.understanding_status != "accepted"
-    ):
+    if frame is None or not frame.canonical or not frame.tasks:
         return None
     mapping = {
         "recipe_recommendation": "recommend",
@@ -61,6 +53,8 @@ def intent_from_request_frame(context: AgentContext) -> IntentDecision | None:
 async def resolve_agent_intent(
     message: str, context: AgentContext, classifier: IntentClassifier | None = None
 ) -> IntentDecision:
+    """解析 Agent 任务；原文规则仅服务于没有 RequestFrame 的兼容调用。"""
+
     message = message.strip()
     framed = intent_from_request_frame(context)
     if framed is not None:

@@ -1,10 +1,4 @@
-"""Agent input context contract.
-
-This DTO is the single boundary object for data that should accompany one
-Agent run.  New context capabilities should be added here and assembled by an
-application context builder instead of being threaded through every caller as a
-new ``process`` parameter.
-"""
+"""定义跨层传递的稳定数据契约。"""
 
 from __future__ import annotations
 
@@ -24,7 +18,6 @@ from safemeal.application.contracts.dietary_safety.control_plane import (
 
 
 class AgentContext(BaseModel):
-    """Structured context consumed by the Agent graph."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -62,7 +55,6 @@ class AgentContext(BaseModel):
 
 
 class AgentContextPatch(BaseModel):
-    """Partial context returned by one Agent context provider."""
 
     model_config = ConfigDict(extra="forbid")
 

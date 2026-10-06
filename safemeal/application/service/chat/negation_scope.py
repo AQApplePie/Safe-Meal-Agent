@@ -1,4 +1,4 @@
-"""Normalize negative food mentions before they become executable constraints."""
+"""归一化否定食材及其约束作用范围。"""
 
 from __future__ import annotations
 
@@ -24,7 +24,6 @@ _STRONG_CUES = {"不想吃", "不能吃", "不要", "不吃", "别"}
 
 
 def _terms(value: str) -> tuple[str, ...]:
-    """Extract compact coordinated mentions, not complete request phrases."""
 
     value = re.split(r"推荐|安排|帮|给|做|来|有没有", value)[0]
     values = []
@@ -36,7 +35,6 @@ def _terms(value: str) -> tuple[str, ...]:
 
 
 def normalize_negation_scope(message: str, frame: RequestFrame) -> RequestFrame:
-    """Make negated mentions exclusive from positive target/include semantics."""
 
     negative: list[tuple[str, bool]] = []
     for match in _NEGATIVE_PATTERN.finditer(message):

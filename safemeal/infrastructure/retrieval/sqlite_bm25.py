@@ -1,4 +1,4 @@
-"""Persistent BM25 index backed by SQLite FTS5."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 from __future__ import annotations
 
@@ -22,7 +22,6 @@ def _tokens(text: str) -> list[str]:
 
 
 class SqliteBm25Repository:
-    """FTS5 BM25 retrieval with idempotent document replacement."""
 
     def __init__(self, path: str | Path) -> None:
         self.path = Path(path)

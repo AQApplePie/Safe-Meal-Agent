@@ -1,4 +1,4 @@
-"""Document reranking boundary."""
+"""定义应用层依赖的能力端口。"""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ from safemeal.shared.types import JsonObject
 
 
 class DocumentReranker(Protocol):
-    """Rank retrieved documents by relevance to the current query."""
 
     enabled: bool
 

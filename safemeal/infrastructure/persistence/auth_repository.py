@@ -1,4 +1,4 @@
-"""SQLAlchemy account and refresh-token repositories."""
+"""实现持久化基础设施适配。"""
 
 from __future__ import annotations
 

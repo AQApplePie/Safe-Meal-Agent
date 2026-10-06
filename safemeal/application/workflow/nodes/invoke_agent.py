@@ -1,4 +1,4 @@
-"""Agent invocation through an application port, never graph internals."""
+"""实现聊天工作流中的对应职责。"""
 
 from safemeal.application.streaming import emit_workflow_progress
 from safemeal.application.contracts.workflow.models import WorkflowState
@@ -13,7 +13,7 @@ class InvokeAgentNode:
     async def __call__(self, state: WorkflowState) -> WorkflowState:
         await emit_workflow_progress("invoke_agent", "正在查找和整理食谱")
         request = state["request"]
-        # Drafts are private until the workflow's final safety check completes.
+
         with suppress_answer_stream():
             result = await self.agent.process(
                 request.message,

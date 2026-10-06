@@ -54,7 +54,6 @@ def _is_placeholder_secret(value: str) -> bool:
 
 
 def is_retryable_model_error(exc: Exception) -> bool:
-    """Retry only transient transport, timeout, rate-limit and provider 5xx failures."""
 
     return isinstance(
         exc,
@@ -86,7 +85,6 @@ def _json_payload(value: object, max_chars: int = 24000) -> str:
 
 
 def _compact_schema(value: object) -> object:
-    """Keep validation-relevant JSON Schema fields and drop prompt-heavy metadata."""
 
     payload = to_json_value(value)
     if isinstance(payload, list):
@@ -102,7 +100,6 @@ def _compact_schema(value: object) -> object:
 
 
 def _compact_prompt_value(value: object, *, depth: int = 0) -> object:
-    """Bound nested tools evidence before serializing it into an LLM prompt."""
 
     payload = to_json_value(value)
     if depth >= 7:
@@ -126,12 +123,6 @@ def _compact_prompt_value(value: object, *, depth: int = 0) -> object:
 
 
 def _tool_spec_payload(tool_specs: list[ToolSpecification]) -> list[object]:
-    """Expose the complete Tool contract to planning and reflection.
-
-    The model receives explicit positive and negative boundaries instead of one
-    free-form sentence. The argument schema remains the exact schema enforced by
-    the runtime, so planning and execution cannot silently drift apart.
-    """
 
     return [
         {
@@ -151,7 +142,6 @@ def _tool_spec_payload(tool_specs: list[ToolSpecification]) -> list[object]:
 
 
 def _requirement_message(observations: list[Observation]) -> ChatPromptMessage:
-    """Keep resolved constraints outside the truncated evidence preview."""
     payloads = [item.data for item in observations if item.tool_name == "task_context"]
     return (
         "human",
@@ -175,7 +165,7 @@ def _observation_payload(observations: list[Observation]) -> list[object]:
             "search_recipes",
             "get_recipe",
             "recommend_recipes",
-            "milvus_vector_search",
+            "search_knowledge",
             "dietary_safe_recipe_query",
         }
         selected = [
@@ -428,7 +418,6 @@ class OpenAILanguageModelGateway:
     async def generate_recipe(
         self, request: RecipeGenerationRequest
     ) -> GeneratedRecipe:
-        """Generate a candidate recipe through the same provider lifecycle."""
 
         return await self._invoke_structured(
             stage="recipe_generation",

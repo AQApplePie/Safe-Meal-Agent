@@ -1,3 +1,3 @@
-"""Milvus adapter and retrieval pipeline factory."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 __all__: list[str] = []

@@ -1,4 +1,4 @@
-"""User-scoped session and history management use cases."""
+"""管理用户范围内的会话与历史记录。"""
 
 from __future__ import annotations
 
@@ -18,7 +18,6 @@ from safemeal.application.service.chat.chat_exceptions import ChatSessionNotFoun
 
 
 class ChatSessionService:
-    """Manage sessions through one explicit Unit of Work per use case."""
 
     def __init__(self, uow_factory: ChatUnitOfWorkFactory) -> None:
         self._uow_factory = uow_factory

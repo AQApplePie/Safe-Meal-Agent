@@ -1,4 +1,4 @@
-"""Remove the unused chat snapshot persistence slice.
+"""删除不再使用的聊天快照持久化结构。
 
 Revision ID: 20260713_0003
 Revises: 20260710_0002

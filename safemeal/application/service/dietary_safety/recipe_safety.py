@@ -1,9 +1,4 @@
-"""Deterministic ingredient matching and recipe safety classification.
-
-This module deliberately has no dependency on Pydantic, FastAPI, LangGraph, an
-ORM, or an external data source.  Infrastructure supplies structured evidence;
-these rules remain the final authority for recipe eligibility.
-"""
+"""根据完整食材证据判定单个菜谱的安全状态。"""
 
 from __future__ import annotations
 
@@ -30,13 +25,11 @@ def _unique(items: Iterable[str]) -> tuple[str, ...]:
 
 
 def normalize_ingredient_name(value: str) -> str:
-    """Normalize display-only differences without fuzzy substring matching."""
 
     return NORMALISE_REMOVE_PATTERN.sub("", str(value).strip().casefold())
 
 
 def ingredient_matches_forbidden_term(ingredient: str, term: str) -> bool:
-    """Match exact or explicitly supported ingredient derivations."""
 
     ingredient_name = normalize_ingredient_name(ingredient)
     forbidden = normalize_ingredient_name(term)
@@ -58,7 +51,6 @@ def ingredient_matches_forbidden_term(ingredient: str, term: str) -> bool:
 def match_forbidden_ingredients(
     ingredients: Iterable[str], forbidden_terms: Iterable[str]
 ) -> tuple[str, ...]:
-    """Return structured ingredient names that violate the profile."""
 
     terms = tuple(forbidden_terms)
     return _unique(
@@ -69,7 +61,6 @@ def match_forbidden_ingredients(
 
 
 def has_sufficient_evidence(bundle: EvidenceBundle) -> bool:
-    """Return whether a safety decision has complete, usable source evidence."""
 
     return (
         bundle.core_source_available
@@ -79,13 +70,11 @@ def has_sufficient_evidence(bundle: EvidenceBundle) -> bool:
 
 
 def has_conflicting_evidence(bundle: EvidenceBundle) -> bool:
-    """Return whether independent safety sources disagree."""
 
     return bool(bundle.conflicting_sources)
 
 
 class RecipeSafetyEvaluator:
-    """Classify one recipe using deterministic ingredient and evidence rules."""
 
     def evaluate(self, safety_input: RecipeSafetyInput) -> SafetyDecision:
         matched = match_forbidden_ingredients(

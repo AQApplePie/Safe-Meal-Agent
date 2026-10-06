@@ -12,7 +12,6 @@ from safemeal.application.contracts.agent.decisions import ToolCall
 
 
 class ToolExecutor(Protocol):
-    """Expose the tools catalogue and invocations required by the Agent graph."""
 
     def specifications(self) -> list[ToolSpecification]:
         """返回 Planner 可见的工具说明。"""

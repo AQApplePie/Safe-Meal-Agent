@@ -1,8 +1,4 @@
-"""Agent aggregation layer.
-
-This layer merges observations, attributes sources and creates the final Agent
-draft. Workflow still owns the independent business safety gate.
-"""
+"""组织智能体证据汇聚与回答渲染能力。"""
 
 from .responder import create_responder_node
 from .sources import collect_answer_sources

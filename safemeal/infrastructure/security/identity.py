@@ -1,4 +1,4 @@
-"""Argon2id password hashing and signed short-lived access tokens."""
+"""实现身份认证与令牌安全适配。"""
 
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4

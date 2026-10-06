@@ -39,7 +39,6 @@ FOREACH (item IN dish.aux_ingredients |
 
 
 class RecipeGraphImporter:
-    """Load recipes and ingredient metadata from JSON files into Neo4j."""
 
     def __init__(self, database: RecipeGraphDatabase, batch_size: int = 200) -> None:
         self._database = database
@@ -52,7 +51,6 @@ class RecipeGraphImporter:
         *,
         force: bool = False,
     ) -> bool:
-        """Populate the graph from JSON sources."""
         try:
             recipes, ingredients_used = load_recipe_records(recipe_json)
         except FileNotFoundError:
@@ -92,13 +90,6 @@ class RecipeGraphImporter:
         return True
 
     def sync_dietary_safety_from_json(self, recipe_json: Path) -> JsonObject:
-        """Idempotently repair the structured ingredient safety projection.
-
-        Existing dishes are first marked incomplete, so only rows proven by the
-        versioned source dataset can subsequently be returned as safe. The sync
-        merges missing dishes, ingredients and role relationships without
-        deleting unrelated graph knowledge.
-        """
 
         recipes, _ = load_recipe_records(recipe_json)
         if not recipes:
@@ -194,7 +185,6 @@ class RecipeGraphImporter:
             yield batch
 
     def _create_constraints(self) -> None:
-        """Create stable identity constraints and the dietary lookup index."""
 
         statements = (
             "CREATE CONSTRAINT dish_name_unique IF NOT EXISTS "

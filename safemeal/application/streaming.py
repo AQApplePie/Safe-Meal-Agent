@@ -1,4 +1,4 @@
-"""Request-scoped answer token stream used by the SSE transport."""
+"""管理请求范围内的回答与进度事件流。"""
 
 from __future__ import annotations
 
@@ -34,7 +34,6 @@ def use_answer_stream(queue: asyncio.Queue[str | WorkflowProgress]) -> Iterator[
 
 @contextmanager
 def suppress_answer_stream() -> Iterator[None]:
-    """Keep unreviewed drafts private, including nested async model calls."""
     token = _ANSWER_STREAM.set(None)
     try:
         yield

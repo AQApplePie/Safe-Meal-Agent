@@ -1,3 +1,3 @@
-"""Neo4j domain queries and Milvus document retrieval adapters."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 __all__: list[str] = []

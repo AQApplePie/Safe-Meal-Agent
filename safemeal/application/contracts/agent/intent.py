@@ -1,4 +1,4 @@
-"""Agent-owned task classification contract."""
+"""定义跨层传递的稳定数据契约。"""
 
 from typing import Literal
 from pydantic import BaseModel

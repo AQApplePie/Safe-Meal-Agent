@@ -8,7 +8,6 @@ from safemeal.shared.types import JsonObject
 
 
 class DietaryEvidenceObservation(Protocol):
-    """Minimal evidence shape consumed by dietary safety filtering."""
 
     call_id: str
     tool_name: str

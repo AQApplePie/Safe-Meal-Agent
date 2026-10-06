@@ -1,4 +1,4 @@
-"""Single-provider model invocation boundary."""
+"""实现语言模型基础设施适配。"""
 
 from __future__ import annotations
 
@@ -24,7 +24,6 @@ class ProviderRouteExhaustedError(RuntimeError):
 
 
 class LLMProviderRouter(Generic[T]):
-    """Keep one stable adapter boundary without fallback/circuit machinery."""
 
     def __init__(self, providers: Sequence[LLMProvider], **_: object) -> None:
         if len(providers) != 1:

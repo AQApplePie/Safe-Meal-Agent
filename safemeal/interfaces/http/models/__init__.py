@@ -1,9 +1,4 @@
-"""
-Pydantic request/response models used by the HTTP API layer.
-
-This package consolidates what used to live under ``safemeal.schemas`` so that the
-name makes their purpose (API-facing contracts) explicit.
-"""
+"""实现 HTTP 接口层的请求与响应适配。"""
 
 from .chat_message import ChatMessageResponse
 from .chat_session import (

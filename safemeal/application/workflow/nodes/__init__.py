@@ -1,1 +1,1 @@
-"""Individually testable chat workflow nodes."""
+"""实现聊天工作流中的对应职责。"""

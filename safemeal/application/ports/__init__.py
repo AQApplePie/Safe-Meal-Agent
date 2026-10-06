@@ -1,4 +1,4 @@
-"""Application-facing capability boundaries and persistence contracts."""
+"""定义应用层依赖的能力端口。"""
 
 from safemeal.application.ports.persistence.chat_repository import (
     ChatMessageRepository,

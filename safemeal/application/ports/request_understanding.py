@@ -1,4 +1,4 @@
-"""Boundary for replaceable lightweight request-understanding backends."""
+"""定义应用层依赖的能力端口。"""
 
 from typing import Protocol
 

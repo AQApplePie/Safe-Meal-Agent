@@ -1,4 +1,4 @@
-"""Add local users and rotating refresh tokens.
+"""增加本地用户与可轮换刷新令牌。
 
 Revision ID: 20261001_0006
 Revises: 20260802_0005

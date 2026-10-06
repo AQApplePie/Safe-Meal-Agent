@@ -1,4 +1,4 @@
-"""Composition facade for infrastructure operations used by HTTP entry points."""
+"""协调应用启动、健康检查与资源关闭。"""
 
 from safemeal.infrastructure.operations.logging import configure_logging
 from safemeal.infrastructure.operations.health import (

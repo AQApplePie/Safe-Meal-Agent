@@ -1,4 +1,4 @@
-"""Business food-category taxonomy, deliberately independent from allergy rules."""
+"""根据结构化食材判定菜品分类。"""
 
 from __future__ import annotations
 
@@ -37,7 +37,6 @@ def _matches_member(ingredient: str, members: Iterable[str]) -> bool:
 
 
 def recipe_matches_category(recipe: Recipe, category: FoodCategory) -> bool:
-    """Classify by structured ingredients, never by a misleading recipe name."""
 
     ingredients = tuple(item.ingredient.name for item in recipe.ingredients)
     if category == "fish":

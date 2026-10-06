@@ -1,4 +1,4 @@
-"""Local TXT, Markdown and PDF document-parser adapter."""
+"""实现文档摄取基础设施适配。"""
 
 from __future__ import annotations
 
@@ -67,7 +67,6 @@ def _parse_image(content: bytes) -> str:
 
 
 class DocumentParserRegistry:
-    """Select one deterministic in-process parser by file suffix."""
 
     def __init__(self) -> None:
         self._parsers: dict[str, tuple[str, Parser]] = {

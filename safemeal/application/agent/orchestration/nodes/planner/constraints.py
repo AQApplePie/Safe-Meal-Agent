@@ -26,7 +26,7 @@ def _retrieval_call(tool_name: str, question: str) -> ToolCall:
         arguments={"query": question},
         purpose=(
             "检索与用户问题直接相关的原文证据。"
-            if tool_name == "milvus_vector_search"
+            if tool_name == "search_knowledge"
             else "检索跨文档关系并归纳主题证据。"
         ),
         success_criteria="返回可追踪、可用于回答当前问题的知识库证据。",
@@ -60,8 +60,6 @@ def _apply_generation_guard(
     calls: list[ToolCall],
     *,
     question: str,
-    dietary_active: bool,
-    dietary_exclusions: list[str],
     available_tools: set[str],
     intent: str | None,
 ) -> tuple[list[ToolCall], bool]:
@@ -77,30 +75,11 @@ def _apply_generation_guard(
             ToolCall(
                 id=f"recipe-generation-{uuid4().hex[:12]}",
                 tool_name="generate_recipe",
-                arguments={
-                    "requirements": question,
-                    "exclude_ingredients": dietary_exclusions,
-                },
+                arguments={"requirements": question},
                 purpose="生成满足用户要求且通过 Schema 与确定性规则校验的新菜谱。",
                 success_criteria="返回完整食材数量、连续步骤、营养和约束校验结果。",
             )
         ], True
-    if dietary_active:
-        calls = [
-            (
-                call.model_copy(
-                    update={
-                        "arguments": {
-                            **call.arguments,
-                            "exclude_ingredients": dietary_exclusions,
-                        }
-                    }
-                )
-                if call.tool_name == "generate_recipe"
-                else call
-            )
-            for call in calls
-        ]
     return calls, True
 
 
@@ -109,7 +88,6 @@ def _apply_safety_guard(
     *,
     state: AgentState,
     dietary_active: bool,
-    dietary_exclusions: list[str],
     generation_requested: bool,
     available_tools: set[str],
 ) -> tuple[list[ToolCall], bool]:
@@ -140,7 +118,7 @@ def _apply_safety_guard(
     safety_call = ToolCall(
         id=f"dietary-safety-{uuid4().hex[:12]}",
         tool_name="recommend_recipes",
-        arguments={"exclude_ingredients": dietary_exclusions, "limit": 3},
+        arguments={"limit": 3},
         purpose="确定性验证候选菜是否满足本轮忌口或过敏约束。",
         success_criteria="只把 safe_recipes 作为推荐；excluded/unknown 不得推荐。",
     )
@@ -154,20 +132,17 @@ def build_planning_update(
     tool_specs: list[ToolSpecification],
     budget: ModelBudgetUsage,
 ) -> AgentStateUpdate:
-    """Enforce deterministic retrieval, safety, generation, and budget rules."""
+    """执行确定性的检索路由、安全调用、生成调用和预算限制。"""
 
     calls = list(decision.calls if decision.decision == "tools" else [])
     question = state["question"]
     calls = _apply_retrieval_guards(calls, question, tool_specs)
     dietary = state.get("dietary_constraints") or {}
     dietary_active = bool(isinstance(dietary, dict) and dietary.get("active"))
-    dietary_exclusions = list(dietary.get("excluded_ingredients") or [])
     available_tools = {spec.name for spec in tool_specs}
     calls, generation_requested = _apply_generation_guard(
         calls,
         question=question,
-        dietary_active=dietary_active,
-        dietary_exclusions=dietary_exclusions,
         available_tools=available_tools,
         intent=state.get("agent_context", {}).get("intent"),
     )
@@ -175,7 +150,6 @@ def build_planning_update(
         calls,
         state=state,
         dietary_active=dietary_active,
-        dietary_exclusions=dietary_exclusions,
         generation_requested=generation_requested,
         available_tools=available_tools,
     )

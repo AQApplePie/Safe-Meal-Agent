@@ -1,4 +1,4 @@
-"""Serializable workflow input and state; no Agent implementation imports."""
+"""定义跨层传递的稳定数据契约。"""
 
 from __future__ import annotations
 from dataclasses import dataclass

@@ -1,4 +1,4 @@
-"""SQLAlchemy chat repositories and their explicit Unit of Work."""
+"""实现持久化基础设施适配。"""
 
 from __future__ import annotations
 
@@ -26,7 +26,6 @@ from safemeal.infrastructure.persistence.db.models import (
 
 
 class SqlAlchemyChatSessionRepository:
-    """SQLAlchemy data access for the chat-session aggregate."""
 
     def __init__(self, session: Session) -> None:
         self._session = session
@@ -115,7 +114,6 @@ class SqlAlchemyChatSessionRepository:
 
 
 class SqlAlchemyChatMessageRepository:
-    """SQLAlchemy data access for chat messages in a single-host application."""
 
     def __init__(self, session: Session) -> None:
         self._session = session
@@ -252,7 +250,6 @@ class SqlAlchemyChatMessageRepository:
 
 
 class SqlAlchemyChatUnitOfWork:
-    """Own one Session and coordinate all chat repositories in one transaction."""
 
     def __init__(
         self,
@@ -318,7 +315,6 @@ class SqlAlchemyChatUnitOfWork:
 
 
 def sqlalchemy_chat_unit_of_work() -> ChatUnitOfWork:
-    """Create a Unit of Work using the process-configured Session factory."""
 
     return cast(ChatUnitOfWork, SqlAlchemyChatUnitOfWork())
 

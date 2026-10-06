@@ -1,4 +1,4 @@
-"""Food-category matching used for preference ranking, separate from safety rules."""
+"""提供与过敏规则隔离的食物分类匹配。"""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ from .recipe_safety import normalize_ingredient_name
 
 
 def ingredient_belongs_to_category(ingredient: str, category: str) -> bool:
-    """Return category membership without broadening allergy matching semantics."""
 
     normalized = normalize_ingredient_name(ingredient)
     members = INGREDIENT_ALIASES.get(category, [category])

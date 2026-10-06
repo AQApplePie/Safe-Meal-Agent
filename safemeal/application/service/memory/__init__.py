@@ -1,3 +1,3 @@
-"""Memory application use cases."""
+"""组织用户记忆的提取与持久化用例。"""
 
 __all__: list[str] = []

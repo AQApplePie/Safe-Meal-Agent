@@ -1,4 +1,4 @@
-"""Keep the former local schema revision resolvable after feature removal.
+"""功能移除后继续保留旧本地结构的版本定位能力。
 
 Revision ID: 20260716_0004
 Revises: 20260713_0003

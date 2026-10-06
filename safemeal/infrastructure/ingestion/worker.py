@@ -1,4 +1,4 @@
-"""Background document ingestion worker entry point."""
+"""实现文档摄取基础设施适配。"""
 
 from __future__ import annotations
 

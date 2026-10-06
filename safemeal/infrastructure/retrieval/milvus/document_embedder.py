@@ -16,7 +16,6 @@ import httpx
 
 
 class OpenAICompatibleDocumentEmbedder:
-    """Thin wrapper around the official OpenAI client for embedding requests."""
 
     def __init__(
         self,
@@ -36,9 +35,9 @@ class OpenAICompatibleDocumentEmbedder:
         try:
             self._client = OpenAI(api_key=api_key, base_url=base_url)
         except ValueError as exc:
-            # Some environments set ALL_PROXY to an unsupported scheme like `socks://...`,
-            # which makes httpx (and therefore the OpenAI client) crash at import-time.
-            # Fall back to a client that ignores env proxies to keep the KB functional.
+
+
+
 
             if "Unknown shceme for proxy URL" in str(exc):
                 logger.warning(
@@ -59,11 +58,9 @@ class OpenAICompatibleDocumentEmbedder:
         )
 
     def embed_documents(self, texts: Sequence[str]) -> List[List[float]]:
-        """Embed a sequence of texts."""
         return self._embed(texts)
 
     def embed_query(self, text: str) -> List[float]:
-        """Embed a single query string."""
         embeddings = self._embed([text])
         return embeddings[0] if embeddings else []
 

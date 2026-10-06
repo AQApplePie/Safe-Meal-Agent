@@ -1,8 +1,4 @@
-"""Agent memory/context consumption layer.
-
-Workflow owns persistence and retrieval. This layer only converts the trusted
-``AgentContext`` supplied by Workflow into safe observations for the Agent loop.
-"""
+"""组织智能体读取可信上下文与记忆的适配逻辑。"""
 
 from .context import build_memory_observations
 

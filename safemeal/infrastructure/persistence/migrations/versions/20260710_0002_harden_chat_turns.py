@@ -1,4 +1,4 @@
-"""Harden chat ownership, ordering, and turn idempotency.
+"""强化聊天归属、消息顺序和轮次幂等约束。
 
 Revision ID: 20260710_0002
 Revises: 20260705_0001
@@ -20,8 +20,7 @@ depends_on: str | None = None
 def upgrade() -> None:
     bind = op.get_bind()
 
-    # Historical anonymous rows receive distinct, non-empty owners before the
-    # database constraint is tightened.
+    # 收紧数据库约束前，先为历史匿名会话分配互不冲突的非空归属标识。
     sessions = sa.table(
         "chat_sessions",
         sa.column("id", sa.String(length=255)),

@@ -1,4 +1,4 @@
-"""Canonical control-plane contracts shared by resolution and safety."""
+"""定义跨层传递的稳定数据契约。"""
 
 from __future__ import annotations
 
@@ -11,7 +11,6 @@ from safemeal.shared.types import JsonObject
 
 
 class ResolvedConstraints(BaseModel):
-    """The only authoritative set of constraints for one workflow turn."""
 
     model_config = ConfigDict(extra="forbid")
     hard_safety: tuple[ConstraintStatement, ...] = ()
@@ -30,7 +29,6 @@ class ResolvedConstraints(BaseModel):
 
 
 class ToolEvidence(BaseModel):
-    """Recipe facts returned by tools; it contains no inferred user intent."""
 
     model_config = ConfigDict(extra="forbid")
     recipe_name: str = Field(min_length=1, max_length=255)
@@ -44,7 +42,6 @@ class ToolEvidence(BaseModel):
 
 
 class ConstraintDecision(BaseModel):
-    """One deterministic judgment over one statement and one evidence item."""
 
     model_config = ConfigDict(extra="forbid")
     status: Literal["satisfied", "violated", "unknown"]

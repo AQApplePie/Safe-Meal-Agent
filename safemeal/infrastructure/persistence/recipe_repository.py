@@ -1,4 +1,4 @@
-"""SQLAlchemy implementation of the authoritative structured recipe read model."""
+"""实现持久化基础设施适配。"""
 
 from __future__ import annotations
 
@@ -107,7 +107,6 @@ recipe_steps = Table(
 
 
 class SqlAlchemyRecipeRepository:
-    """Load recipe aggregates with a bounded four-query search plan."""
 
     def __init__(self, engine: Engine | None = None) -> None:
         self._engine = engine or get_engine()

@@ -1,4 +1,4 @@
-"""Human bearer-token authentication boundary."""
+"""实现 HTTP 接口层的请求与响应适配。"""
 
 from __future__ import annotations
 
@@ -13,7 +13,6 @@ from safemeal.interfaces.http.dependencies import get_auth_service
 
 @dataclass(frozen=True)
 class Principal:
-    """Caller identity used to scope sessions and memories."""
 
     subject: str
     tenant_id: str = "default"
@@ -21,7 +20,6 @@ class Principal:
 
     @property
     def storage_subject(self) -> str:
-        """Collision-free identity used by existing persistence ports."""
 
         return f"{self.tenant_id}:{self.subject}"
 
@@ -62,7 +60,6 @@ def get_current_principal(
     authorization: str | None = Header(default=None, alias="Authorization"),
     auth_service: AuthService = Depends(get_auth_service),
 ) -> Principal:
-    """Authenticate a human API request from a signed access token."""
 
     if settings.ENABLE_OIDC:
         return _oidc_principal(_bearer_token(authorization))

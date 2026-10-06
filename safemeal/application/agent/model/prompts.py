@@ -36,7 +36,7 @@ PLANNER_SYSTEM_PROMPT = """
 11. 当用户明确要求生成、设计或创作一份新菜谱时，必须调用 generate_recipe；
     不得用 direct_answer 返回未经 Schema 校验的自由文本菜谱。
 12. 用户明确要求“按资料、原文、证据、知识库、跨文档”回答时必须使用
-    milvus_vector_search。菜名出现在问题中不代表要改用结构化菜谱工具。
+    search_knowledge。菜名出现在问题中不代表要改用结构化菜谱工具。
 
 只根据提供的工具清单制定计划，不得虚构工具。
 """.strip()

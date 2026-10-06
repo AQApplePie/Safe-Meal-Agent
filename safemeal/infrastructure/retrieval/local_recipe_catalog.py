@@ -1,4 +1,4 @@
-"""Read-only adapter for the bundled recipe JSON catalog."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 from __future__ import annotations
 
@@ -108,7 +108,6 @@ class LocalRecipeDocumentCatalog:
         limit: int,
         exclude_ingredients: tuple[str, ...] = (),
     ) -> tuple[MenuRecipeCandidate, ...]:
-        """Enumerate lightweight bundled candidates for a missing menu quota."""
 
         candidates: list[MenuRecipeCandidate] = []
         for name, row in self._load().items():
@@ -120,8 +119,8 @@ class LocalRecipeDocumentCatalog:
                 for item in row.get(section, []) or []
                 if isinstance(item, list) and item
             ]
-            # A hard exclusion cannot be proven against an ingredient-less row.
-            # Fail closed before the row can enter the Agent's candidate pool.
+
+
             if exclude_ingredients and not ingredients:
                 continue
             if any(

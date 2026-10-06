@@ -1,4 +1,4 @@
-"""Lexical document retrieval boundary."""
+"""定义应用层依赖的能力端口。"""
 
 from typing import Protocol
 from safemeal.shared.types import JsonObject

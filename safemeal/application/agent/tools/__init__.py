@@ -1,8 +1,4 @@
-"""Agent tool-governance layer.
-
-Concrete recipe and retrieval adapters live in ``application/tool``. This package
-owns registration, descriptions, policy checks and safe execution.
-"""
+"""组织智能体工具治理与安全执行能力。"""
 
 from .policy import review_tool_calls
 from .registry import build_tool_executor

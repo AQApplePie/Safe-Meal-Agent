@@ -1,8 +1,4 @@
-"""Agent model layer.
-
-This layer defines semantic model capabilities used by planning, reflection and
-answer composition. Provider SDKs remain in ``infrastructure/llm``.
-"""
+"""定义智能体使用的模型能力接口。"""
 
 from .protocol import AgentModelGateway
 from .intent_classifier import IntentClassifier

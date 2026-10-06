@@ -1,4 +1,4 @@
-"""Request-local model budget accounting; no trace storage or telemetry export."""
+"""统计单次请求中的模型令牌与费用预算。"""
 
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -26,7 +26,6 @@ def parse_model_pricing(raw: str) -> dict[str, ModelPrice]:
 
 
 class ModelBudget:
-    """Mutable counters shared by child tasks within one Agent invocation."""
 
     def __init__(self, pricing: Mapping[str, ModelPrice]):
         self.pricing = pricing

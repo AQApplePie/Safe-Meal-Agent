@@ -1,4 +1,4 @@
-"""Central ownership of application services and external resources."""
+"""集中创建并持有应用运行所需的依赖。"""
 
 from __future__ import annotations
 
@@ -103,7 +103,6 @@ from safemeal.infrastructure.security import Argon2PasswordHasher, JwtTokenIssue
 
 
 class ApplicationContainer:
-    """Own process-scoped application services and external resources."""
 
     def __init__(self) -> None:
         configure_database(
@@ -149,7 +148,6 @@ class ApplicationContainer:
         )
 
     async def get_document_knowledge_service(self) -> DocumentKnowledgeService:
-        """Return the shared Milvus service, creating it off the event loop."""
 
         if not (settings.ENABLE_MILVUS and settings.ENABLE_EMBEDDINGS):
             raise FeatureUnavailableError("Vector knowledge search is disabled")
@@ -163,7 +161,6 @@ class ApplicationContainer:
         return self._document_knowledge_service
 
     def get_recipe_service(self) -> RecipeService:
-        """Return the process-scoped structured recipe application service."""
 
         if self._recipe_service is None:
             with self._singleton_lock:
@@ -188,7 +185,6 @@ class ApplicationContainer:
         return self._recipe_service
 
     def get_language_model_gateway(self) -> OpenAILanguageModelGateway:
-        """Return the single production model adapter used by Agent and generation."""
 
         if self._language_model_gateway is None:
             with self._singleton_lock:
@@ -197,7 +193,6 @@ class ApplicationContainer:
         return self._language_model_gateway
 
     def get_tool_executor(self) -> LocalToolExecutor:
-        """Return the process-scoped local tools executor."""
 
         if self._tool_executor is None:
             with self._singleton_lock:
@@ -207,9 +202,10 @@ class ApplicationContainer:
                         "get_recipe",
                         "recommend_recipes",
                         "generate_recipe",
+                        "verify_recipe_constraints",
                     }
                     if settings.ENABLE_MILVUS and settings.ENABLE_EMBEDDINGS:
-                        enabled_tools.add("milvus_vector_search")
+                        enabled_tools.add("search_knowledge")
                     if settings.ENABLE_NEO4J:
                         enabled_tools.add("dietary_safe_recipe_query")
                     self._tool_executor = build_tool_executor(
@@ -250,19 +246,16 @@ class ApplicationContainer:
         return self._agent_execution_service
 
     def get_chat_turn_persistence(self) -> ChatTurnPersistence:
-        """Build chat-turn persistence with the production SQLAlchemy UoW."""
 
         return ChatTurnPersistence(
             uow_factory=sqlalchemy_chat_unit_of_work,
         )
 
     def get_chat_session_service(self) -> ChatSessionService:
-        """Build session use cases with the production SQLAlchemy UoW."""
 
         return ChatSessionService(uow_factory=sqlalchemy_chat_unit_of_work)
 
     def get_user_memory_service(self) -> UserMemoryService:
-        """Build user-memory use cases with the production SQLAlchemy UoW."""
 
         return UserMemoryService(uow_factory=sqlalchemy_user_memory_unit_of_work)
 
@@ -285,7 +278,6 @@ class ApplicationContainer:
         return self._auth_service
 
     def get_agent_context_builder(self) -> AgentContextBuilder:
-        """Build the production Agent context pipeline."""
 
         memory_service = self.get_user_memory_service()
         return AgentContextBuilder(
@@ -304,7 +296,6 @@ class ApplicationContainer:
         )
 
     def get_chat_turn_service(self) -> ChatTurnService:
-        """Build the complete application service for one persisted chat turn."""
 
         return ChatTurnService(
             persistence=self.get_chat_turn_persistence(),
@@ -336,7 +327,6 @@ class ApplicationContainer:
     async def get_uploaded_document_ingestion_service(
         self,
     ) -> UploadedDocumentIngestionService:
-        """Build the complete save, parse and knowledge-indexing use case."""
 
         return UploadedDocumentIngestionService(
             file_upload_service=self._file_upload_service,
@@ -385,7 +375,6 @@ class ApplicationContainer:
         return self._ingestion_queue
 
     async def shutdown(self) -> None:
-        """Release only resources that were actually initialized."""
 
         closers = []
         if self._document_knowledge_service is not None:

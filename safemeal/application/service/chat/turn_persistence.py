@@ -1,4 +1,4 @@
-"""Simple single-host persistence orchestration for one chat turn."""
+"""协调单轮聊天消息的事务性持久化。"""
 
 from __future__ import annotations
 from safemeal.application.contracts.chat.turn import ChatTurnStart
@@ -29,7 +29,6 @@ _GENERIC_AGENT_ERROR = "抱歉，处理您的请求时出现了错误。请稍�
 
 
 class ChatTurnPersistence:
-    """Append chat messages without distributed locks or replay protocols."""
 
     def __init__(
         self,
@@ -45,7 +44,6 @@ class ChatTurnPersistence:
         *,
         request_id: Optional[str] = None,
     ) -> ChatTurnStart:
-        """Create a session when needed and append the question."""
 
         with self._uow_factory() as uow:
             if session_id is None:

@@ -1,9 +1,4 @@
-"""Build the process-scoped registry of concrete Agent tools.
-
-Composition supplies business services and optional backends. The registry owns
-the enabled-name allowlist and produces one runtime without importing deployment
-settings or creating infrastructure clients itself.
-"""
+"""创建进程级工具注册表并发布工具契约。"""
 
 from collections.abc import Awaitable, Callable, Iterable
 from typing import Any
@@ -22,7 +17,10 @@ from safemeal.application.tool.recipe_tools import (
     RecommendRecipesTool,
     SearchRecipesTool,
 )
-from safemeal.application.tool.vector_search import VectorSearchTool
+from safemeal.application.tool.knowledge_search import KnowledgeSearchTool
+from safemeal.application.tool.constraint_verification import (
+    VerifyRecipeConstraintsTool,
+)
 
 DocumentKnowledgeProvider = Callable[[], Awaitable[DocumentKnowledgeService]]
 
@@ -35,14 +33,16 @@ def build_tool_executor(
     timeout_seconds: float = 60.0,
     dietary_search: DietarySearch | None = None,
 ) -> LocalToolExecutor:
-    """Instantiate enabled handlers and expose them through the safe runtime."""
 
     factories: dict[str, Callable[[], ToolHandler[Any]]] = {
         "search_recipes": lambda: SearchRecipesTool(recipe_service),
         "get_recipe": lambda: GetRecipeTool(recipe_service),
         "recommend_recipes": lambda: RecommendRecipesTool(recipe_service),
         "generate_recipe": lambda: GenerateRecipeTool(recipe_service),
-        "milvus_vector_search": lambda: VectorSearchTool(
+        "verify_recipe_constraints": lambda: VerifyRecipeConstraintsTool(
+            recipe_service
+        ),
+        "search_knowledge": lambda: KnowledgeSearchTool(
             document_knowledge_provider=document_knowledge_provider
         ),
     }

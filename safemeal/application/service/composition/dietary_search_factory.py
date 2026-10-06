@@ -1,4 +1,4 @@
-"""Neo4j adapter composition for culinary tools."""
+"""装配饮食安全图检索能力。"""
 
 from neo4j import GraphDatabase
 from safemeal.config.settings import settings

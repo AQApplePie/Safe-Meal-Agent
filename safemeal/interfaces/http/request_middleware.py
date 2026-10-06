@@ -1,4 +1,4 @@
-"""HTTP request correlation, body limits and lightweight rate limiting."""
+"""实现 HTTP 接口层的请求与响应适配。"""
 
 from __future__ import annotations
 
@@ -13,7 +13,6 @@ from safemeal.application.service.composition.operations import create_rate_limi
 
 
 class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
-    """Reject declared request bodies that exceed the process safety limit."""
 
     def __init__(self, app, *, max_bytes: int) -> None:
         super().__init__(app)
@@ -38,7 +37,6 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
 
 
 class RedisTokenBucketMiddleware(BaseHTTPMiddleware):
-    """Optional Redis Token Bucket for HTTP requests."""
 
     _EXEMPT_PATHS = {"/health", "/livez", "/readyz"}
 
@@ -67,7 +65,6 @@ class RedisTokenBucketMiddleware(BaseHTTPMiddleware):
 
 
 class RequestIdentityMiddleware(BaseHTTPMiddleware):
-    """Provide the request identity used by chat-turn idempotency."""
 
     async def dispatch(self, request: Request, call_next) -> Response:
         supplied = request.headers.get("X-Request-ID", "")[:128]

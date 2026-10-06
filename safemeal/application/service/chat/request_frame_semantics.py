@@ -1,4 +1,4 @@
-"""Cross-field semantic validation for structurally valid RequestFrames."""
+"""对结构合法的 RequestFrame 执行跨字段语义校验。"""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from safemeal.application.service.recipes.food_category import canonical_food_ca
 
 
 class RequestFrameSemanticValidator:
-    """Normalize contradictions without re-parsing the user's natural language."""
+    """不重新解析用户原文，只归一化字段之间的冲突。"""
 
     def normalize(
         self,
@@ -35,8 +35,7 @@ class RequestFrameSemanticValidator:
             )
         )
         if categories:
-            # Category words describe a taxonomy, not a literal ingredient that
-            # must appear verbatim in a recipe's ingredient list.
+            # 品类词表示分类体系，不要求原样出现在食材列表中。
             preferences = [
                 item
                 for item in preferences
@@ -53,9 +52,7 @@ class RequestFrameSemanticValidator:
             preferences = [
                 item
                 for item in preferences
-                if not (
-                    item.kind == "include_ingredient" and item.value in excluded
-                )
+                if not (item.kind == "include_ingredient" and item.value in excluded)
             ]
 
         target = frame.target

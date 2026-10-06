@@ -1,4 +1,4 @@
-"""HTTP reranker integration for explicitly supported providers."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 import httpx
 from time import perf_counter
@@ -10,7 +10,6 @@ from safemeal.shared.types import JsonObject
 
 
 class HttpDocumentReranker:
-    """HTTP adapter supporting custom/DashScope, Jina, and Voyage rerank APIs."""
 
     def __init__(
         self,
@@ -48,7 +47,6 @@ class HttpDocumentReranker:
         documents: List[JsonObject],
         top_k: int,
     ) -> List[JsonObject]:
-        """Rerank documents based on relevance to query."""
         if not self.enabled or not documents:
             return documents[:top_k]
 
@@ -97,7 +95,6 @@ class HttpDocumentReranker:
     async def _custom_rerank(
         self, query: str, documents: List[JsonObject], top_k: int
     ) -> List[JsonObject]:
-        """Custom reranker API (e.g., BGE reranker)."""
 
         if not self.base_url:
             logger.error("Custom reranker requires RERANK_BASE_URL")
@@ -163,7 +160,6 @@ class HttpDocumentReranker:
         documents: List[JsonObject],
         top_k: int,
     ) -> List[JsonObject]:
-        """Jina AI reranker."""
         texts = [doc.get("content") or doc.get("document") or "" for doc in documents]
 
         url = "https://api.jina.ai/v1/rerank"
@@ -193,7 +189,6 @@ class HttpDocumentReranker:
         documents: List[JsonObject],
         top_k: int,
     ) -> List[JsonObject]:
-        """Voyage AI reranker."""
         texts = [doc.get("content") or doc.get("document") or "" for doc in documents]
 
         url = "https://api.voyageai.com/v1/rerank"
@@ -223,7 +218,6 @@ class HttpDocumentReranker:
         documents: List[JsonObject],
         top_k: int,
     ) -> List[JsonObject]:
-        """Process reranker results into reordered document list."""
         reranked = []
 
         for item in results:

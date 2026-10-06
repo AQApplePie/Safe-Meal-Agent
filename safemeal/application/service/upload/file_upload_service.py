@@ -102,7 +102,7 @@ class FileUploadService:
         self.storage.save_record(record)
 
     def delete_document_file(self, record: UploadedDocumentRecord) -> None:
-        # Index cleanup has already succeeded; allow retries after partial deletion.
+
         try:
             path = self.resolve(record.file.filename)
         except UploadNotFoundError:

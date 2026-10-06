@@ -14,7 +14,6 @@ from safemeal.shared.types import JsonObject, to_json_object
 
 
 def create_driver():
-    """Create a configured Neo4j driver for short-lived tools calls."""
 
     auth = None
     if settings.NEO4J_USER and settings.NEO4J_PASSWORD:
@@ -66,7 +65,6 @@ class RecipeGraphDatabase:
         self._database = database
 
     def close(self) -> None:
-        """Close the underlying driver."""
         if self._driver:
             self._driver.close()
 
@@ -79,7 +77,6 @@ class RecipeGraphDatabase:
             session.close()
 
     def execute(self, query: str, parameters: Optional[JsonObject] = None) -> None:
-        """Execute a write query without returning records."""
         with self._session() as session:
             session.execute_write(lambda tx: tx.run(query, parameters or {}).consume())
 
@@ -88,7 +85,6 @@ class RecipeGraphDatabase:
         query: str,
         parameters: Optional[JsonObject] = None,
     ) -> list[JsonObject]:
-        """Execute a read query and materialize records before closing the session."""
 
         with self._session() as session:
             return session.execute_read(
@@ -103,7 +99,6 @@ class RecipeGraphDatabase:
         query: str,
         parameters: Optional[JsonObject] = None,
     ) -> Graph:
-        """Execute a read query and return the graph projection."""
         with self._session() as session:
             return session.execute_read(
                 lambda tx: tx.run(query, parameters or {}).graph()

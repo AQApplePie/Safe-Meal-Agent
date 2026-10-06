@@ -1,4 +1,4 @@
-"""Initial application persistence schema.
+"""建立应用初始持久化结构。
 
 Revision ID: 20260705_0001
 Revises:
@@ -70,11 +70,10 @@ _LEGACY_INDEXES = {
 
 
 def _is_reviewed_legacy_schema() -> bool:
-    """Recognize the one unversioned schema approved for data-preserving adoption.
+    """识别唯一允许在保留数据前提下接管的未标记旧结构。
 
-    Alembic invokes this revision both for fresh databases and through the explicit
-    migration-gate ``adopt`` command.  Partial or drifted application schemas fail
-    before any DDL is issued; the migration never guesses how to repair them.
+    新数据库和显式接管命令都会进入这里；如果旧结构不完整或已发生漂移，必须在
+    执行任何结构变更前失败，迁移不会猜测修复方式。
     """
 
     bind = op.get_bind()

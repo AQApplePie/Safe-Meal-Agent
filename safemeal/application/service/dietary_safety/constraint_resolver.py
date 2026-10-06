@@ -1,4 +1,4 @@
-"""Resolve canonical statements and typed memory into one active snapshot."""
+"""把多来源要求归并为本轮权威约束。"""
 
 from __future__ import annotations
 
@@ -13,7 +13,6 @@ from safemeal.shared.types import JsonObject
 
 
 class ConstraintResolver:
-    """The sole authority for activating constraints for a workflow turn."""
 
     def resolve(
         self,
@@ -56,7 +55,7 @@ class ConstraintResolver:
             )
         statements.extend(frame.statements)
 
-        # Current input wins over carryover for the same semantic dimension.
+
         selected: dict[tuple[str, str], ConstraintStatement] = {}
         for item in statements:
             dimension = (

@@ -1,4 +1,4 @@
-"""Contracts for deterministic recipe-name lookup."""
+"""定义跨层传递的稳定数据契约。"""
 
 from __future__ import annotations
 
@@ -9,7 +9,6 @@ from safemeal.application.contracts.workflow.request_frame import MenuCategory
 
 
 class RecipeCandidate(BaseModel):
-    """Normalized, read-only recipe evidence from any source."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
     name: str
@@ -42,20 +41,19 @@ class RecipeLookupResult(BaseModel):
     error: str | None = None
 
 
-# Compatibility name for callers introduced with the original local JSON lookup.
+
 RecipeEvidence = RecipeCandidate
 
 
 class MenuRecipeCandidate(BaseModel):
-    """Lightweight evidence returned while filling a composite menu quota."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
     id: int | None = None
     name: str
     categories: tuple[MenuCategory, ...]
     main_ingredients: tuple[str, ...] = ()
-    # Full ingredients are retained for the independent final safety review;
-    # ``main_ingredients`` remains the concise chat-display projection.
+
+
     ingredients: tuple[str, ...] = ()
     ingredients_complete: bool = True
     source_type: Literal["canonical_database", "local_json", "wikibooks"]

@@ -1,4 +1,4 @@
-"""Alembic environment for the application persistence database."""
+"""应用持久化数据库的 Alembic 迁移环境。"""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from sqlalchemy import engine_from_config, pool
 from safemeal.config.settings import settings
 from safemeal.infrastructure.persistence.database import Base
 
-# Import model modules so Base.metadata is populated for autogenerate.
+# 导入模型模块，确保自动生成迁移时基础元数据已经完整注册。
 import safemeal.infrastructure.persistence.db.models  # noqa: F401
 
 
@@ -27,7 +27,7 @@ def _database_url() -> str:
 
 
 def run_migrations_offline() -> None:
-    """Run migrations without creating an Engine."""
+    """不创建数据库引擎，直接按连接地址运行离线迁移。"""
 
     context.configure(
         url=_database_url(),
@@ -43,7 +43,7 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations against a live database connection."""
+    """通过真实数据库连接运行在线迁移。"""
 
     configuration = config.get_section(config.config_ini_section, {})
     configuration["sqlalchemy.url"] = _database_url()

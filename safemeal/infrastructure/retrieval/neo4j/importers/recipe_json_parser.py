@@ -74,7 +74,7 @@ def load_ingredient_profiles(
 
 
 # --------------------------------------------------------------------------- #
-# Internal helpers shared by import/export pipelines
+
 # --------------------------------------------------------------------------- #
 def _load_json(path: Path) -> JsonObject:
     if not path.is_file():

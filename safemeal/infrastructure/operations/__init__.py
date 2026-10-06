@@ -1,3 +1,3 @@
-"""Cross-cutting runtime operations used by infrastructure adapters."""
+"""实现运行期运维能力。"""
 
 __all__: list[str] = []

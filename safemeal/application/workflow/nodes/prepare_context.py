@@ -1,4 +1,4 @@
-"""Prepare history and memories once, before resolving this turn's requirements."""
+"""在解析本轮约束前统一准备历史、记忆和活动菜单上下文。"""
 
 import asyncio
 
@@ -6,8 +6,16 @@ from safemeal.application.contracts.workflow.models import WorkflowState
 from safemeal.application.service.chat.request_understanding import (
     RequestUnderstandingService,
 )
+from safemeal.application.service.chat.menu_planning import (
+    resolve_active_menu_recipe_reference,
+)
 from safemeal.application.streaming import emit_workflow_progress
 from safemeal.application.workflow.context.builder import AgentContextBuilder
+from safemeal.application.contracts.workflow.request_frame import (
+    CategoryQuota,
+    MenuPlanningRequirements,
+    RequestTask,
+)
 
 
 class PrepareContextNode:
@@ -21,8 +29,7 @@ class PrepareContextNode:
         request = state["request"]
         frame = state.get("request_frame")
         if frame is None:
-            # Keeps the node usable in isolation. The compiled workflow always
-            # supplies the frame from understand_request before reaching here.
+            # 仅为节点独立测试保留；正式 Workflow 一定由上游提供 RequestFrame。
             frame = RequestUnderstandingService().understand(request.message)
         safety_tasks = {
             "recipe_recommendation",
@@ -31,7 +38,10 @@ class PrepareContextNode:
             "food_safety",
         }
         needs = set(frame.context_needs)
-        if frame.primary_task in safety_tasks or frame.understanding_status != "accepted":
+        if (
+            frame.primary_task in safety_tasks
+            or frame.understanding_status != "accepted"
+        ):
             needs.update({"allergies", "dietary_restrictions"})
         frame = frame.model_copy(update={"context_needs": tuple(sorted(needs))})
         context = await asyncio.to_thread(
@@ -46,6 +56,91 @@ class PrepareContextNode:
             request_frame=frame,
             preloaded_history=state.get("recent_history"),
         )
+        active_menu = context.context_metadata.get("active_menu")
+        if frame.primary_task == "recipe_detail" and isinstance(active_menu, dict):
+            # “第二道荤菜”优先从结构化活动菜单解析，不依赖助手自然语言文本。
+            referenced_name = resolve_active_menu_recipe_reference(
+                request.message, active_menu
+            )
+            if referenced_name is not None:
+                frame = frame.model_copy(
+                    update={
+                        "target": frame.target.model_copy(
+                            update={"recipe_name": referenced_name}
+                        ),
+                        "context_relation": "reference",
+                        "exact_match_required": True,
+                    }
+                )
+                context.request_frame = frame
+        if (
+            frame.context_relation == "modification"
+            and frame.operation == "replace"
+            and frame.target.menu_category is not None
+            and isinstance(active_menu, dict)
+        ):
+            plan = active_menu.get("plan")
+            progress = active_menu.get("progress")
+            category = frame.target.menu_category
+            if isinstance(plan, dict) and isinstance(progress, dict):
+                required = plan.get("required")
+                inherited = (
+                    required.get(category) if isinstance(required, dict) else None
+                )
+                count = frame.recommendation_count or inherited
+                if isinstance(count, int) and count > 0:
+                    previous = [
+                        item
+                        for item in progress.get("selected_recipes", [])
+                        if isinstance(item, dict)
+                        and item.get("assigned_category") == category
+                    ]
+                    # 替换分类时同时排除保留分类中的菜，防止合并后破坏全菜单去重约束。
+                    preserved = [
+                        item
+                        for item in progress.get("selected_recipes", [])
+                        if isinstance(item, dict)
+                        and item.get("assigned_category") != category
+                    ]
+                    excluded = [*previous, *preserved]
+                    frame = frame.model_copy(
+                        update={
+                            "tasks": (RequestTask(kind="menu_planning"),),
+                            "recommendation_count": count,
+                            "scenario": plan.get("scenario"),
+                            "menu_planning": MenuPlanningRequirements(
+                                category_quotas=(
+                                    CategoryQuota(category=category, count=count),
+                                )
+                            ),
+                        }
+                    )
+                    context.request_frame = frame
+                    context.context_metadata["menu_modification"] = {
+                        "operation": "replace",
+                        "target_category": category,
+                        "requested_count": count,
+                        "exclude_recipe_ids": [
+                            item["recipe_id"]
+                            for item in excluded
+                            if item.get("recipe_id") is not None
+                        ],
+                        "exclude_recipe_names": [
+                            item["name"]
+                            for item in excluded
+                            if isinstance(item.get("name"), str)
+                        ],
+                        "replaced_recipe_ids": [
+                            item["recipe_id"]
+                            for item in previous
+                            if item.get("recipe_id") is not None
+                        ],
+                        "replaced_recipe_names": [
+                            item["name"]
+                            for item in previous
+                            if isinstance(item.get("name"), str)
+                        ],
+                    }
         if request.context:
             supplied = request.context.model_copy(deep=True)
             context.observations.extend(supplied.observations)

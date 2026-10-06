@@ -1,4 +1,4 @@
-"""Batch planning strategy for composite menus inside the existing Planner node."""
+"""根据未满足的菜单配额生成分批检索计划。"""
 
 from __future__ import annotations
 
@@ -18,22 +18,23 @@ def build_menu_search_plan(
     plan_payload: dict,
     progress_payload: dict,
 ) -> list[ToolCall]:
-    """Plan one batched search per unfinished quota, bounded by graph call limits."""
 
     plan = MenuExecutionPlan.model_validate(plan_payload)
     progress = MenuTaskProgress.model_validate(progress_payload)
     selected_ids = [
         item.recipe_id for item in progress.selected_recipes if item.recipe_id is not None
     ]
+    selected_ids.extend(progress.excluded_recipe_ids)
     selected_names = [item.name for item in progress.selected_recipes]
+    selected_names.extend(progress.excluded_recipe_names)
     unfinished = [
         (category, progress.remaining.get(category, required))
         for category, required in plan.required.items()
         if progress.remaining.get(category, required) > 0
         and category not in progress.exhausted_categories
     ]
-    # Larger deficits go first; stable category order makes checkpoint retries
-    # reproducible while still adapting every batch to current progress.
+
+
     unfinished.sort(key=lambda item: -item[1])
     calls: list[ToolCall] = []
     for category, remaining in unfinished[:MAX_MENU_CALLS_PER_BATCH]:

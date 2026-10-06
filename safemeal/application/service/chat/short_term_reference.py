@@ -1,4 +1,4 @@
-"""Resolve recipe references from a small recent assistant-context window."""
+"""解析近期对话中的菜谱指代。"""
 
 from __future__ import annotations
 
@@ -15,7 +15,6 @@ _REFERENCE_ONLY = {"这个", "那个", "它", "刚才那个", "刚才的", "具�
 
 
 def recent_recipe_references(history: ConversationHistory) -> tuple[str, ...]:
-    """Read canonical-looking names from the latest assistant answer."""
 
     assistant_turns = [
         item.get("content", "")
@@ -37,7 +36,6 @@ def resolve_recipe_reference(
     message: str,
     history: ConversationHistory,
 ) -> tuple[str | None, str | None]:
-    """Return a unique target or a clarification question for an ambiguous ref."""
 
     candidates = recent_recipe_references(history)
     ordinal = re.search(r"第([一二两三四五六七八九十]|\d{1,2})个", message)

@@ -58,9 +58,9 @@ def extract_dietary_constraint(question: str) -> DietaryConstraint:
     表达，但它稳定、可测试，并且足以触发后续确定性安全过滤。
     """
 
-    # Remove only the negated clause instead of disabling the entire message. A mixed
+
     # statement such as "花生不是过敏原，但我对鸡蛋过敏" must retain the positive
-    # chicken-egg constraint.
+
     working_question = question
     negated_clause_found = False
     explicitly_negated_ingredients = {
@@ -125,6 +125,29 @@ def extract_dietary_constraint(question: str) -> DietaryConstraint:
                 else "hard_exclusion"
             )
         ),
+    )
+
+
+def dietary_constraint_from_values(
+    ingredients: Iterable[str],
+    *,
+    trigger_term: str,
+    strictness: str = "hard_exclusion",
+) -> DietaryConstraint:
+    """把已经结构化的禁忌食材直接转换成安全约束。"""
+
+    raw_ingredients = _unique(ingredients)
+    expanded = _unique(
+        alias
+        for ingredient in raw_ingredients
+        for alias in INGREDIENT_ALIASES.get(ingredient, [ingredient])
+    )
+    return DietaryConstraint(
+        active=bool(expanded),
+        trigger_terms=[trigger_term] if expanded else [],
+        raw_ingredients=raw_ingredients,
+        excluded_ingredients=expanded,
+        strictness=strictness,
     )
 
 
@@ -411,8 +434,8 @@ def build_dietary_safety_result(
                 except (ValueError, TypeError):
                     complete = False
         ingredients = _unique(ingredients)
-        # All same-name evidence is considered: a later conflicting source cannot be
-        # hidden by the first source or by the model's candidate ordering.
+
+
         decision = safety_evaluator.evaluate(
             RecipeSafetyInput(
                 recipe_name=name,
@@ -434,7 +457,9 @@ def build_dietary_safety_result(
             safety_status=decision.status.value,
             evidence_call_ids=_unique(item.reference for item in evidence),
             reason=decision.reason,
-            evidence=[to_json_object(row) for _, row in records if isinstance(row, dict)],
+            evidence=[
+                to_json_object(row) for _, row in records if isinstance(row, dict)
+            ],
         )
         if decision.status is SafetyStatus.UNSAFE:
             result.excluded_recipes.append(record)

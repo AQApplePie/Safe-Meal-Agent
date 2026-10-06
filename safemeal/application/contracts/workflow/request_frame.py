@@ -1,4 +1,4 @@
-"""Stable, model-independent understanding of one user turn."""
+"""与具体模型无关的单轮请求理解契约。"""
 
 from __future__ import annotations
 
@@ -45,7 +45,7 @@ MenuCategory = Literal[
 
 
 class CategoryQuota(BaseModel):
-    """One deterministic quantity requirement in a composite menu request."""
+    """复杂菜单中一个可确定计数的分类配额。"""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
     category: MenuCategory
@@ -53,7 +53,7 @@ class CategoryQuota(BaseModel):
 
 
 class MenuPlanningRequirements(BaseModel):
-    """Constraints whose completion must be counted by code, never by the LLM."""
+    """必须由代码验证完成度的菜单规划要求。"""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
     category_quotas: tuple[CategoryQuota, ...] = Field(min_length=1, max_length=12)
@@ -73,9 +73,7 @@ class MemoryUpdate(BaseModel):
 
 class CurrentConstraint(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
-    kind: Literal[
-        "allergy", "restriction", "food_category", "avoid_food_category"
-    ]
+    kind: Literal["allergy", "restriction", "food_category", "avoid_food_category"]
     value: str = Field(min_length=1, max_length=100)
 
 
@@ -83,10 +81,11 @@ class RequestTarget(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     recipe_name: str | None = Field(default=None, max_length=255)
     ingredient: str | None = Field(default=None, max_length=100)
+    menu_category: MenuCategory | None = None
 
 
 class RequestFrame(BaseModel):
-    """Facts extracted independently; memory updates never replace business tasks."""
+    """当前用户输入经过归一化后形成的唯一业务语义事实。"""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
     tasks: tuple[RequestTask, ...] = ()
@@ -96,6 +95,7 @@ class RequestFrame(BaseModel):
     statements: tuple[ConstraintStatement, ...] = ()
     participants: tuple[str, ...] = ()
     context_relation: ContextRelation = "new_task"
+    operation: Literal["replace"] | None = None
     canonical: bool = True
     target: RequestTarget = Field(default_factory=RequestTarget)
     requested_fields: tuple[
@@ -104,8 +104,7 @@ class RequestFrame(BaseModel):
     exact_match_required: bool = False
     recommendation_count: int | None = Field(default=None, ge=1, le=100)
     servings: int | None = Field(default=None, ge=1, le=1000)
-    # Meal type remains useful even when the user leaves the menu composition
-    # adaptive and therefore has no deterministic category quotas.
+    # 即使用户没有提供分类配额，用餐时段仍用于普通配餐推荐。
     meal_type: Literal["breakfast", "lunch", "dinner"] | None = None
     scenario: str | None = Field(default=None, max_length=100)
     menu_planning: MenuPlanningRequirements | None = None
@@ -123,9 +122,7 @@ class RequestFrame(BaseModel):
     confidence: float = Field(default=1.0, ge=0, le=1)
     understanding_status: Literal[
         "accepted", "low_confidence", "fallback", "incomplete"
-    ] = (
-        "accepted"
-    )
+    ] = "accepted"
     backend: str = "rules"
     fallback_used: bool = False
     clarification_question: str | None = Field(default=None, max_length=300)
@@ -136,8 +133,7 @@ class RequestFrame(BaseModel):
         return self.tasks[0].kind if self.tasks else "out_of_scope"
 
 
-# A raw frame has the same transport shape during the compatibility period but
-# is explicitly marked untrusted until SemanticNormalizer canonicalizes it.
+# 原始契约尚未通过语义归一化，不能直接驱动 Planner。
 class RawRequestFrame(RequestFrame):
     canonical: bool = False
 

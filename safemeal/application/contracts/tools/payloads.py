@@ -1,9 +1,13 @@
-"""Typed tool inputs and outputs shared across adapter boundaries."""
+"""定义跨层传递的稳定数据契约。"""
 
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from safemeal.shared.types import JsonObject
 from safemeal.application.contracts.dietary_safety.constraints import RecipeSafetyRecord
+from safemeal.application.contracts.dietary_safety.control_plane import (
+    ConstraintDecision,
+)
+from safemeal.application.contracts.workflow.semantic import ConstraintStatement
 
 
 class DietarySafeRecipeQueryArgs(BaseModel):
@@ -31,15 +35,14 @@ class DietarySafeRecipeQueryArgs(BaseModel):
     )
 
 
-class VectorSearchResult(BaseModel):
-    """Milvus 语义召回返回值。"""
+class KnowledgeSearchResult(BaseModel):
 
     query: str
     documents: list[JsonObject] = Field(default_factory=list)
     count: int
 
 
-class VectorSearchArgs(BaseModel):
+class KnowledgeSearchArgs(BaseModel):
     query: str
     top_k: int = Field(default=5, ge=1, le=20)
     filter_expr: Optional[str] = None
@@ -63,3 +66,23 @@ class GetRecipeArgs(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     recipe_id: int = Field(gt=0)
+
+
+class VerifyRecipeConstraintsArgs(BaseModel):
+
+    model_config = ConfigDict(extra="forbid")
+    recipe_ids: list[int] = Field(min_length=1, max_length=20)
+    constraints: list[ConstraintStatement] = Field(min_length=1, max_length=20)
+
+    @model_validator(mode="after")
+    def validate_unique_recipe_ids(self) -> "VerifyRecipeConstraintsArgs":
+        if len(self.recipe_ids) != len(set(self.recipe_ids)):
+            raise ValueError("recipe_ids must be unique")
+        return self
+
+
+class RecipeConstraintVerificationResult(BaseModel):
+
+    verified: bool
+    recipe_count: int
+    decisions: list[ConstraintDecision]

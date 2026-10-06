@@ -7,7 +7,6 @@ from enum import Enum
 
 
 class SafetyStatus(str, Enum):
-    """Externally stable safety classifications."""
 
     SAFE = "safe"
     UNSAFE = "excluded"
@@ -56,6 +55,5 @@ class SafetyDecision:
 
     @property
     def eligible(self) -> bool:
-        """Fail closed: only an explicit SAFE decision is recommendable."""
 
         return self.status is SafetyStatus.SAFE

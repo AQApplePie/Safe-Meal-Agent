@@ -51,8 +51,7 @@ def deterministic_evidence_is_sufficient(
         and item.ok
         and isinstance(item.data, dict)
         and item.data.get("exact_name") is True
-        and item.data.get("status")
-        in {"FOUND", "FIELD_MISSING", "NOT_FOUND", "ERROR"}
+        and item.data.get("status") in {"FOUND", "FIELD_MISSING", "NOT_FOUND", "ERROR"}
         for item in observations
     ):
         return True
@@ -74,7 +73,7 @@ def deterministic_evidence_is_sufficient(
 def recommendation_completion(
     observations: list[Observation],
 ) -> tuple[int, int, bool] | None:
-    """Return requested, fulfilled and completion for a counted recommendation."""
+    """返回普通数量推荐的请求数、满足数和完成状态。"""
 
     for observation in reversed(observations):
         if (

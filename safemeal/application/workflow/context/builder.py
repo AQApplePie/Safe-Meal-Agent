@@ -1,9 +1,4 @@
-"""Build the context object passed into an Agent run.
-
-The chat use case should not know which kinds of context the Agent consumes.
-This builder is the extension point for short-term history, long-term user
-memory, user profiles and future episodic memory retrieval.
-"""
+"""实现聊天工作流中的对应职责。"""
 
 from __future__ import annotations
 
@@ -21,7 +16,6 @@ from .conversation_context import ConversationContextWindow, MemoryRelevanceSele
 
 
 class AgentContextProvider(Protocol):
-    """Collect one slice of context for an Agent run."""
 
     def collect(
         self,
@@ -36,7 +30,6 @@ class AgentContextProvider(Protocol):
 
 
 class MemoryContextProvider:
-    """Collect long-term user memories for an Agent run."""
 
     def __init__(
         self,
@@ -122,7 +115,6 @@ class MemoryContextProvider:
 
 
 class AgentContextBuilder:
-    """Assemble Agent context from application-level providers."""
 
     def __init__(
         self,
@@ -153,7 +145,6 @@ class AgentContextBuilder:
         request_frame: RequestFrame | None = None,
         preloaded_history: ConversationHistory | None = None,
     ) -> AgentContext:
-        """Build context for a persisted user chat turn."""
 
         if preloaded_history is not None:
             conversation_history = list(preloaded_history)
@@ -188,6 +179,14 @@ class AgentContextBuilder:
                 ),
             },
         )
+        if source_message_id is not None and self._history_service is not None:
+            active_menu = self._history_service.load_active_menu_before_turn(
+                user_id=user_id,
+                session_id=session_id,
+                source_message_id=source_message_id,
+            )
+            if active_menu is not None:
+                context.context_metadata["active_menu"] = active_menu
         needs = set(request_frame.context_needs if request_frame else ())
         for provider in self._providers if use_user_memory else ():
             if isinstance(provider, MemoryContextProvider) and request_frame is not None:
@@ -283,7 +282,6 @@ def create_default_agent_context_providers(
     memory_service: UserMemoryService,
     memory_limit: int = 20,
 ) -> list[AgentContextProvider]:
-    """Build the context providers used by the chat pipeline."""
 
     return [
         MemoryContextProvider(

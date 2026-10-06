@@ -1,4 +1,4 @@
-"""Conservative extraction and evidence-based comparison of non-allergy needs."""
+"""提取非过敏偏好并依据证据判断满足情况。"""
 
 import re
 from collections.abc import Mapping
@@ -34,8 +34,8 @@ def preference_from_memory(
     if not key:
         return None
 
-    # Food-category preferences participate in recipe evidence matching.  Other
-    # taste labels remain soft preferences rather than being treated as foods.
+
+
     if memory_type == "taste_preference":
         if key in {"清淡", "辣", "不辣"}:
             return DietaryPreference(kind="taste", value=key, source="memory")
@@ -50,7 +50,7 @@ def preference_from_memory(
         )
 
     # Cooking time is stored as e.g. ``30分钟`` but the requirement contract
-    # intentionally carries only the numeric upper bound.
+
     if memory_type == "cooking_time":
         match = re.fullmatch(r"(\d{1,4})\s*分钟", key)
         if match and 1 <= int(match[1]) <= 10080:
@@ -62,8 +62,8 @@ def preference_from_memory(
     if memory_type == "cooking_equipment":
         return DietaryPreference(kind="equipment", value=key, source="memory")
 
-    # Health goals and negative equipment constraints do not yet have dedicated
-    # executable kinds, so preserve their structured key as a soft requirement.
+
+
     if memory_type in {"health_goal", "cooking_constraint"}:
         return DietaryPreference(kind="other", value=key, source="memory")
 
@@ -83,7 +83,6 @@ def preferences_from_text(
         )
 
     def clean_food_term(value: str) -> str:
-        """Keep a compact food entity and discard conversational suffixes."""
 
         term = re.split(
             r"[、和及]|的菜|口味|但是|但|然后|请|帮|给|推荐|有没有|是否",
@@ -91,7 +90,7 @@ def preferences_from_text(
         )[0]
         return re.sub(r"^(?:我|本人|一份|一道|几个|几道)", "", term).strip()
 
-    # Contrast words start a new semantic clause even when users omit punctuation.
+
     for clause in re.split(r"[，。；;！？!?\n]|但是|但", text):
         if re.search(r"假如|假设|例如|比如|如果", clause):
             continue
@@ -125,9 +124,9 @@ def preferences_from_text(
         ):
             if label in clause and not re.search(r"不(?:要|吃|是).*" + label, clause):
                 add("dietary_type", kind, required or "只吃" in clause)
-        # Stable likes are soft preferences.  A present-turn eating request is a
-        # hard target, while the same wording in history must not constrain a new
-        # transaction.
+
+
+
         for match in re.finditer(
             r"(?<!不)(?:喜欢|爱吃|偏好)([^，。；;]{1,12})", clause
         ):
@@ -154,8 +153,8 @@ def preferences_from_text(
                 add("taste", "不辣")
 
         # “不含 X 的 Y” carries two independent hard requirements: exclude X
-        # and include Y.  This works for arbitrary compact food entities rather
-        # than special-casing one ingredient pair.
+
+
         if source == "input":
             for match in re.finditer(
                 r"(?:没有|不含|不放|不加)([\u4e00-\u9fff]{1,8})的([\u4e00-\u9fff]{1,12})",
@@ -295,6 +294,6 @@ def assess_preference(
             if verified and all(item is True for item in verified):
                 status, reason = "satisfied", "完整食材及类别通过饮食类型检查。"
             elif any(item is False for item in verified):
-                # Missing categories also return False; do not label an uncertain recipe unsafe.
+
                 reason = "食材类别不完整或不符合饮食类型，无法确认满足要求。"
     return PreferenceAssessment(preference=preference, status=status, reason=reason)

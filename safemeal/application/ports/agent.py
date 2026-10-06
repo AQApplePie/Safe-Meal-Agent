@@ -1,4 +1,4 @@
-"""The only dependency of the chat workflow on an Agent system."""
+"""定义应用层依赖的能力端口。"""
 
 from typing import Protocol
 from safemeal.application.contracts.agent.api import (

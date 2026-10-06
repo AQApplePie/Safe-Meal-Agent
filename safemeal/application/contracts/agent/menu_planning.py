@@ -1,4 +1,4 @@
-"""Serializable execution state for composite menu-planning tasks."""
+"""复杂菜单规划任务的可序列化执行状态。"""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from safemeal.shared.types import JsonObject
 
 
 class MenuExecutionPlan(BaseModel):
-    """Stable goal copied from RequestFrame into the Agent checkpoint state."""
+    """从 RequestFrame 写入 Agent 检查点的稳定目标。"""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
     scenario: str | None = None
@@ -22,7 +22,7 @@ class MenuExecutionPlan(BaseModel):
 
 
 class SelectedMenuRecipe(BaseModel):
-    """One selected candidate and the quota slot it occupies."""
+    """已选菜品及其占用的分类配额。"""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
     recipe_id: int | None = None
@@ -35,7 +35,7 @@ class SelectedMenuRecipe(BaseModel):
 
 
 class MenuTaskProgress(BaseModel):
-    """Deterministic cumulative progress persisted between Agent iterations."""
+    """在 Agent 多次迭代之间持续保存的确定性进度。"""
 
     model_config = ConfigDict(extra="forbid")
     fulfilled: dict[MenuCategory, int]
@@ -47,6 +47,8 @@ class MenuTaskProgress(BaseModel):
     coverage_history: tuple[JsonObject, ...] = ()
     complete: bool = False
     partial_reason: str = ""
+    excluded_recipe_ids: tuple[int, ...] = ()
+    excluded_recipe_names: tuple[str, ...] = ()
 
     @model_validator(mode="after")
     def validate_non_negative_counts(self) -> "MenuTaskProgress":
@@ -61,7 +63,7 @@ def initialize_menu_task(
     *,
     scenario: str | None,
 ) -> tuple[MenuExecutionPlan, MenuTaskProgress]:
-    """Create a checkpoint-safe plan and zeroed progress from accepted quotas."""
+    """根据已确认配额创建计划和初始进度。"""
 
     required = {item.category: item.count for item in requirements.category_quotas}
     plan = MenuExecutionPlan(

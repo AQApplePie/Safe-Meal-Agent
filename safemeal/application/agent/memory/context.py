@@ -1,9 +1,4 @@
-"""Convert trusted context into bounded observations consumed by the Agent.
-
-No database, Redis or vector store is accessed here. Keeping this function pure
-prevents the Agent from bypassing Workflow ownership and makes memory behaviour
-straightforward to unit test.
-"""
+"""把可信上下文转换为智能体可消费的观察。"""
 
 from .observations import (
     build_dietary_context_observation,
@@ -18,7 +13,6 @@ def build_memory_observations(
     context: AgentContext,
     dietary_constraint: DietaryConstraint,
 ) -> list[Observation]:
-    """Build safe observations for structured memories and hard constraints."""
 
     candidates = (
         build_user_memory_observation(context.user_memories),

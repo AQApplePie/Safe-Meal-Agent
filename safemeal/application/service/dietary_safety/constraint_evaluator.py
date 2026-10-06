@@ -1,4 +1,4 @@
-"""Evaluate canonical constraints against tool evidence exactly once."""
+"""根据结构化菜谱证据确定性评估约束。"""
 
 from safemeal.application.contracts.dietary_safety.control_plane import (
     ConstraintDecision,
@@ -14,7 +14,6 @@ from safemeal.application.service.dietary_safety.recipe_safety import (
 
 
 class ConstraintEvaluator:
-    """Shared three-state evaluator for candidate and publication checks."""
 
     def evaluate(
         self, constraint: ConstraintStatement, evidence: ToolEvidence

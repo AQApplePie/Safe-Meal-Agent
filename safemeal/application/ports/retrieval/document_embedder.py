@@ -1,4 +1,4 @@
-"""Document embedding boundary."""
+"""定义应用层依赖的能力端口。"""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ from typing import Protocol
 
 
 class DocumentEmbedder(Protocol):
-    """Convert knowledge documents and queries into embedding vectors."""
 
     def embed_documents(self, texts: Sequence[str]) -> list[list[float]]: ...
 

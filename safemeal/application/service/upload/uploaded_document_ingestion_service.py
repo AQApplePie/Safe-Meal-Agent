@@ -1,4 +1,4 @@
-"""Application orchestration for uploaded knowledge documents."""
+"""协调上传文件的保存、解析与知识索引。"""
 
 from __future__ import annotations
 from safemeal.application.contracts.upload.models import (
@@ -20,7 +20,6 @@ from safemeal.application.service.upload.file_upload_service import FileUploadSe
 
 
 class UploadedDocumentIngestionService:
-    """Coordinate storage, parsing and indexing behind one application use case."""
 
     def __init__(
         self,
@@ -41,7 +40,6 @@ class UploadedDocumentIngestionService:
         chunk_strategy: ChunkStrategyName = "auto",
         tenant_id: str = "default",
     ) -> DocumentIngestionResult:
-        """Persist, parse and idempotently index an uploaded document."""
 
         saved = await self._file_upload_service.save(original_filename, content)
         record = UploadedDocumentRecord(

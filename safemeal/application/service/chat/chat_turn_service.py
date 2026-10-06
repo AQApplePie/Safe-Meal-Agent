@@ -1,8 +1,4 @@
-"""Persist a chat turn around an independent chat workflow.
-
-The workflow owns context, intent, Agent invocation and final safety review;
-this service only owns the durable user/assistant turn lifecycle.
-"""
+"""协调单轮聊天的持久化与工作流执行。"""
 
 from __future__ import annotations
 
@@ -101,9 +97,9 @@ class ChatTurnService:
         except ChatAgentUnavailableError:
             raise
         except Exception:
-            # The Agent call cannot share a transaction with an external model.
-            # Marking the durable user turn failed makes the same request_id
-            # explicitly retryable instead of leaving it permanently in progress.
+
+
+
             try:
                 await asyncio.to_thread(
                     self._persistence.mark_turn_failed,
@@ -112,8 +108,8 @@ class ChatTurnService:
                     user_message_id=turn.user_message_id,
                 )
             except Exception:
-                # Preserve the original failure; persistence diagnostics are logged
-                # by the outer application boundary.
+
+
                 pass
             raise
 

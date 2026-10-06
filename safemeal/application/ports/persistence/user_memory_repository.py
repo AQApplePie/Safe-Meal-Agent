@@ -82,7 +82,6 @@ class UserMemoryRepository(Protocol):
 
 
 class UserMemoryUnitOfWork(Protocol):
-    """One memory transaction and the persistence participating in it."""
 
     @property
     def memories(self) -> UserMemoryRepository: ...

@@ -234,7 +234,10 @@ def test_production_tools_publish_complete_usage_boundaries():
         RecommendRecipesTool,
         SearchRecipesTool,
     )
-    from safemeal.application.tool.vector_search import VectorSearchTool
+    from safemeal.application.tool.knowledge_search import KnowledgeSearchTool
+    from safemeal.application.tool.constraint_verification import (
+        VerifyRecipeConstraintsTool,
+    )
 
     tool_types = (
         SearchRecipesTool,
@@ -242,7 +245,8 @@ def test_production_tools_publish_complete_usage_boundaries():
         RecommendRecipesTool,
         GenerateRecipeTool,
         DietarySafeRecipeQueryTool,
-        VectorSearchTool,
+        KnowledgeSearchTool,
+        VerifyRecipeConstraintsTool,
     )
     for tool_type in tool_types:
         assert tool_type.purpose

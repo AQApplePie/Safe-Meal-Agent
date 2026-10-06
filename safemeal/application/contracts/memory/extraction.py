@@ -1,4 +1,4 @@
-"""Pure domain values produced while extracting user memories."""
+"""定义跨层传递的稳定数据契约。"""
 
 from __future__ import annotations
 
@@ -22,7 +22,6 @@ ExtractedMemoryType: TypeAlias = Literal[
 
 @dataclass(frozen=True, slots=True)
 class MemoryCandidate:
-    """A user fact worth remembering, without persistence identity or provenance."""
 
     memory_type: ExtractedMemoryType
     key: str
@@ -33,7 +32,6 @@ class MemoryCandidate:
 
 @dataclass(frozen=True, slots=True)
 class MemoryExtractionResult:
-    """Domain outcome of analysing one user utterance."""
 
     candidates: tuple[MemoryCandidate, ...] = ()
     retracted_dietary_keys: tuple[str, ...] = ()

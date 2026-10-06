@@ -1,4 +1,4 @@
-"""Logging utilities centralised for the application runtime."""
+"""实现运行期运维能力。"""
 
 import sys
 from typing import Optional
@@ -21,9 +21,6 @@ def configure_logging(
     log_format: Optional[str] = None,
     serialize: bool = False,
 ) -> None:
-    """
-    Configure the global Loguru logger with a consistent format.
-    """
     resolved_level = level or ("DEBUG" if debug else "INFO")
     logger.remove()
     logger.configure(extra={"request_id": "-"})

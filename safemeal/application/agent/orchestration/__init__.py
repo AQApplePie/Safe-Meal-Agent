@@ -1,8 +1,4 @@
-"""Agent orchestration layer: plan, approve, execute, observe and reflect.
-
-The layer decides *when* capabilities run. It never owns database connections,
-model SDK clients or recipe business implementations.
-"""
+"""编排智能体的规划、执行、观察与反思流程。"""
 
 from .graph import build_agent_graph
 

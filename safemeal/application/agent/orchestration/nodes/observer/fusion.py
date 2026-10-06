@@ -20,7 +20,7 @@ RETRIEVAL_TOOLS = frozenset(
         "search_recipes",
         "get_recipe",
         "recommend_recipes",
-        "milvus_vector_search",
+        "search_knowledge",
         "dietary_safe_recipe_query",
     }
 )
@@ -30,7 +30,7 @@ _SOURCE_WEIGHTS = {
     "get_recipe": 1.2,
     "recommend_recipes": 1.2,
     "dietary_safe_recipe_query": 1.15,
-    "milvus_vector_search": 1.0,
+    "search_knowledge": 1.0,
 }
 
 
@@ -38,7 +38,7 @@ def _items(observation: Observation) -> list[JsonObject]:
     data = observation.data
     if not isinstance(data, dict):
         return []
-    if observation.tool_name == "milvus_vector_search":
+    if observation.tool_name == "search_knowledge":
         values = data.get("documents") or []
     elif observation.tool_name in {"search_recipes", "recommend_recipes"}:
         values = data.get("items") or []

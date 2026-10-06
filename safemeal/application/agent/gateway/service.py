@@ -30,6 +30,12 @@ from safemeal.application.contracts.agent.context import AgentContext
 from safemeal.shared.types import JsonObject, to_json_object
 from safemeal.application.contracts.recipes.generated import GeneratedRecipe
 from safemeal.application.exceptions import ModelOutputValidationError
+from safemeal.application.agent.orchestration.nodes.reflector.assessment import (
+    recommendation_completion,
+)
+from safemeal.application.service.chat.active_menu import (
+    merge_active_menu_replacement,
+)
 
 
 class AgentGraph(Protocol):
@@ -46,7 +52,7 @@ class AgentGraph(Protocol):
 
 
 class HumanApprovalPending(Exception):
-    """The durable graph paused before one or more guarded tool calls."""
+    """持久化图在受保护工具执行前暂停，等待人工审批。"""
 
     def __init__(self, calls: list[object]) -> None:
         super().__init__("human approval is required")
@@ -54,7 +60,7 @@ class HumanApprovalPending(Exception):
 
 
 class UnsafeRequestDetector:
-    """Detect explicit requests outside the Agent's authority boundary."""
+    """识别明确超出 Agent 权限边界的请求。"""
 
     _DESTRUCTIVE_REQUEST = re.compile(
         r"(?:绕过|跳过|无视|规避).{0,12}(?:权限|鉴权|授权|限制)"
@@ -138,7 +144,9 @@ class AgentExecutionService:
                 message=deterministic_route.message,
                 route=deterministic_route.route,
                 route_logic="unsafe_request_guard",
-                intent=IntentDecision(kind="out_of_scope", reason="unsafe_request_guard"),
+                intent=IntentDecision(
+                    kind="out_of_scope", reason="unsafe_request_guard"
+                ),
                 metadata={
                     "deterministic": True,
                     "guard_reason": deterministic_route.reason,
@@ -283,18 +291,13 @@ class AgentExecutionService:
                     ),
                     "reflect": {
                         "rationale": result.get("reflection_rationale", ""),
-                        "evidence_sufficient": result.get(
-                            "evidence_sufficient", False
-                        ),
-                        "missing_information": result.get(
-                            "missing_information", []
-                        ),
+                        "evidence_sufficient": result.get("evidence_sufficient", False),
+                        "missing_information": result.get("missing_information", []),
                     },
                 }
                 rendered_names = re.findall(r"「([^」]{1,40})」", answer)
                 if rendered_names:
-                    # Persist the actual user-visible sequence for audit and for
-                    # clients that maintain structured conversational references.
+                    # 保存真实展示顺序，供审计和下一轮结构化引用使用。
                     metadata["rendered_recipe_refs"] = [
                         {"position": index, "name": name}
                         for index, name in enumerate(
@@ -315,8 +318,7 @@ class AgentExecutionService:
                         metadata[key] = context.context_metadata[key]
                 if generated_recipe is not None:
                     metadata["generated_recipe"] = to_json_object(generated_recipe)
-                # Workflow's independent publication review needs the exact menu
-                # selection, not every oversampled candidate returned by tools.
+                # Workflow 发布复核只接收最终入选菜单，不接收工具的过采样候选。
                 if result.get("menu_execution_plan") is not None:
                     metadata["menu_execution_plan"] = to_json_object(
                         result["menu_execution_plan"]
@@ -325,22 +327,41 @@ class AgentExecutionService:
                     metadata["menu_task_progress"] = to_json_object(
                         result["menu_task_progress"]
                     )
-                for observation in reversed(observations):
-                    if (
-                        observation.tool_name == "recommend_recipes"
-                        and isinstance(observation.data, dict)
-                        and observation.data.get("requested_count") is not None
+                previous_active = context.context_metadata.get("active_menu")
+                modification = context.context_metadata.get("menu_modification")
+                current_plan = metadata.get("menu_execution_plan")
+                current_required = (
+                    current_plan.get("required")
+                    if isinstance(current_plan, dict)
+                    else None
+                )
+                if isinstance(current_required, dict) and current_required:
+                    if isinstance(previous_active, dict) and isinstance(
+                        modification, dict
                     ):
-                        requested = int(observation.data["requested_count"])
-                        fulfilled = int(
-                            observation.data.get("fulfilled_count") or 0
+                        metadata["active_menu"] = merge_active_menu_replacement(
+                            previous_active,
+                            metadata["menu_execution_plan"],
+                            metadata["menu_task_progress"],
+                            modification,
                         )
-                        metadata["recommendation_completion"] = {
-                            "requested": requested,
-                            "fulfilled": fulfilled,
-                            "complete": fulfilled >= requested,
+                        metadata["menu_modification"] = modification
+                    else:
+                        metadata["active_menu"] = {
+                            "plan": metadata["menu_execution_plan"],
+                            "progress": metadata["menu_task_progress"],
                         }
-                        break
+                elif isinstance(previous_active, dict) and previous_active:
+                    # 非菜单轮次可以读取活动菜单，但不能用空计划覆盖它。
+                    metadata["active_menu"] = to_json_object(previous_active)
+                completion = recommendation_completion(observations)
+                if completion is not None:
+                    requested, fulfilled, complete = completion
+                    metadata["recommendation_completion"] = {
+                        "requested": requested,
+                        "fulfilled": fulfilled,
+                        "complete": complete,
+                    }
                 response = AgentProcessResponse(
                     intent=result.get("intent"),
                     status=outcome_status,
@@ -386,7 +407,7 @@ class AgentExecutionService:
         return response
 
     async def resume(self, session_id: str, *, approved: bool) -> AgentResumeResult:
-        """Return a resumed draft plus its trusted checkpoint context for review."""
+        """恢复暂停任务，并返回草稿及发布复核所需的可信上下文。"""
         if self._graph is None:
             return AgentResumeResult(
                 response=AgentProcessResponse(

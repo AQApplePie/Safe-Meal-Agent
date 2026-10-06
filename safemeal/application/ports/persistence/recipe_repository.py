@@ -1,4 +1,4 @@
-"""Application port for the authoritative structured recipe read model."""
+"""定义应用层依赖的能力端口。"""
 
 from __future__ import annotations
 

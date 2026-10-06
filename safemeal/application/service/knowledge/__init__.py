@@ -1,3 +1,3 @@
-"""Knowledge and retrieval application use cases."""
+"""组织文档知识摄取与检索用例。"""
 
 __all__: list[str] = []

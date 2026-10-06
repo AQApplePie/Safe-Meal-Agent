@@ -1,4 +1,4 @@
-"""Chat-turn application contracts."""
+"""定义跨层传递的稳定数据契约。"""
 
 from __future__ import annotations
 from dataclasses import dataclass
@@ -27,8 +27,8 @@ class ChatRequest(BaseModel):
         max_length=255,
         description="客户端生成的幂等请求 ID；同一会话内必须唯一。",
     )
-    # Compatibility-only input. HTTP always replaces it with the authenticated
-    # principal, so callers cannot select another user's storage identity.
+
+
     user_id: Optional[str] = Field(default=None, min_length=1, max_length=255)
 
 

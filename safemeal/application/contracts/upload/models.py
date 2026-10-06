@@ -19,7 +19,6 @@ class UploadSaveResult(BaseModel):
 
 
 class DocumentIngestionResult(BaseModel):
-    """Stable result of saving and indexing one uploaded document."""
 
     success: bool
     file: UploadSaveResult
@@ -35,7 +34,6 @@ class ParsedDocument:
 
 
 class UploadedDocumentRecord(BaseModel):
-    """Durable ownership and index identity for one uploaded file."""
 
     file: UploadSaveResult
     tenant_id: str

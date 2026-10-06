@@ -1,4 +1,4 @@
-"""File upload storage port."""
+"""定义应用层依赖的能力端口。"""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ from safemeal.application.contracts.upload.models import UploadedDocumentRecord
 
 
 class UploadStorage(Protocol):
-    """Storage capability required by FileUploadService."""
 
     async def write(self, relative_path: str, content: bytes) -> Path: ...
 

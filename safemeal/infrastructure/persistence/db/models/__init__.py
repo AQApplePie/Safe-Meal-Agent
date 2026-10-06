@@ -1,4 +1,4 @@
-"""Active SQLAlchemy ORM models used by the chat-session API."""
+"""实现持久化基础设施适配。"""
 
 from .chat_message import ChatMessage
 from .chat_session import ChatSession

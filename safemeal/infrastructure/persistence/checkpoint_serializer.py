@@ -1,4 +1,4 @@
-"""Read existing checkpoints after contract relocation without restoring old code."""
+"""实现持久化基础设施适配。"""
 
 import json
 import msgpack
@@ -35,8 +35,8 @@ _MODULES = {
 
 
 def _rewrite_extension(code, payload):
-    # Constructor extensions carry [module, class, arguments, ...]. Keep other
-    # application strings unchanged and let the upstream serializer instantiate.
+
+
     value = msgpack.unpackb(payload, ext_hook=_rewrite_extension, strict_map_key=False)
     if isinstance(value, list) and len(value) >= 2 and isinstance(value[0], str):
         value[0] = _MODULES.get(value[0], value[0])

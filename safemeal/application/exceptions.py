@@ -1,10 +1,9 @@
-"""Application exception hierarchy safe for interface mapping."""
+"""定义可安全映射到接口响应的应用异常。"""
 
 from __future__ import annotations
 
 
 class ApplicationError(Exception):
-    """Base class for expected application failures."""
 
     public_message = "Application error"
     code = "application_error"
@@ -20,21 +19,18 @@ class ExternalProviderError(ApplicationError):
 
 
 class FeatureUnavailableError(ApplicationError):
-    """A configured application capability is intentionally unavailable."""
 
     public_message = "Requested feature is unavailable"
     code = "feature_unavailable"
 
 
 class AgentExecutionError(ApplicationError):
-    """The Agent run failed and must not be represented as a successful chat turn."""
 
     public_message = "Agent execution failed"
     code = "agent_execution_failed"
 
 
 class ResourceOwnershipError(ApplicationError):
-    """A resource exists but does not belong to the requesting subject."""
 
     public_message = "Resource not found"
     code = "resource_not_found"
@@ -71,11 +67,6 @@ class ModelOutputValidationError(ExternalModelError):
 
 
 class PartialStreamInterruptedError(ExternalModelError):
-    """A provider failed after answer bytes were already visible to the client.
-
-    Retrying another provider would concatenate two different answers, so this
-    failure is deliberately non-retryable.
-    """
 
     public_message = "Model stream was interrupted after output started"
     code = "model_partial_stream_interrupted"

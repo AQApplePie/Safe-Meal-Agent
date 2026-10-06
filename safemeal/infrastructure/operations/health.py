@@ -82,7 +82,6 @@ async def _safe_probe(probe: Callable[[], Awaitable[JsonObject]]) -> JsonObject:
 
 
 async def get_runtime_readiness() -> JsonObject:
-    """Probe required, non-billable runtime dependencies for orchestration readiness."""
 
     checks: dict[str, JsonObject] = {
         "database": await _safe_probe(_probe_database),

@@ -1,4 +1,4 @@
-"""Conversation persistence ports and their transaction boundary."""
+"""定义应用层依赖的能力端口。"""
 
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ from safemeal.shared.types import JsonObject
 
 
 class ChatSessionRecord(Protocol):
-    """Chat session record shape without binding the application to an ORM."""
 
     id: str
     title: str
@@ -28,7 +27,6 @@ class ChatSessionRecord(Protocol):
 
 
 class ChatMessageRecord(Protocol):
-    """Chat message record shape without binding the application to an ORM."""
 
     id: int
     session_id: str
@@ -44,7 +42,6 @@ class ChatMessageRecord(Protocol):
 
 
 class ChatSessionRepository(Protocol):
-    """Persistence operations for the chat-session aggregate."""
 
     def get_active(
         self,
@@ -90,7 +87,6 @@ class ChatSessionRepository(Protocol):
 
 
 class ChatMessageRepository(Protocol):
-    """Persistence operations for messages belonging to a chat session."""
 
     def next_order(
         self,
@@ -144,7 +140,6 @@ class ChatMessageRepository(Protocol):
 
 
 class ChatUnitOfWork(Protocol):
-    """One chat transaction and all repositories participating in it."""
 
     @property
     def sessions(self) -> ChatSessionRepository: ...

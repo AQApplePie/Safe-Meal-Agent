@@ -1,4 +1,4 @@
-"""Minimal Redis token bucket used at the HTTP request boundary."""
+"""实现运行期运维能力。"""
 
 from __future__ import annotations
 
@@ -40,7 +40,6 @@ class TokenBucketDecision:
 
 
 class RedisTokenBucket:
-    """One atomic, shared request limiter backed by Redis."""
 
     def __init__(self, url: str, *, prefix: str = "safemeal:rate") -> None:
         self.client = redis.from_url(url, decode_responses=True)

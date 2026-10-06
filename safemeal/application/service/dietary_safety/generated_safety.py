@@ -1,4 +1,4 @@
-"""Validate generated ingredients and prose, including steps and substitutions."""
+"""校验模型生成菜谱是否违反硬安全约束。"""
 
 import re
 from collections.abc import Iterable
@@ -27,7 +27,7 @@ def generated_recipe_violations(
             for term in terms:
                 for hit in re.finditer(re.escape(term), clause):
                     prefix = clause[: hit.start()]
-                    # Negative instructions are not affirmative ingredient use.
+
                     if not re.search(
                         r"(?:不要|勿|避免|禁止|无需|不放|不加|不含|不使用|不需要|不能|不得|不可)(?:加入|添加|使用|放入)?\s*$",
                         prefix,

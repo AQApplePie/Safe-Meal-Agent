@@ -10,7 +10,6 @@ def dietary_constraint_is_active(constraint: object) -> bool:
 
 
 def render_dietary_safety_answer(observations: list[Observation]) -> str:
-    """Render a safety answer exclusively from deterministic classified evidence."""
 
     safety = next(
         (

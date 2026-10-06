@@ -25,10 +25,10 @@ class ChatSession(Base):
 
     __tablename__ = "chat_sessions"
 
-    # Primary key - using UUID string for session ID
+
     id = Column(String(255), primary_key=True, index=True, comment="Session UUID")
 
-    # Lightweight user identification (no FK, just a string)
+
     user_id = Column(
         String(255),
         nullable=False,
@@ -36,14 +36,14 @@ class ChatSession(Base):
         comment="User identifier (device ID, anonymous UUID, etc.) - no authentication",
     )
 
-    # Session metadata
+
     title = Column(
         String(500),
         nullable=False,
         comment="Session title (usually derived from first query)",
     )
 
-    # Timestamps
+
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -58,7 +58,7 @@ class ChatSession(Base):
         comment="Last update timestamp",
     )
 
-    # Status flag for soft delete
+
     is_active = Column(
         Boolean,
         default=True,
@@ -66,8 +66,8 @@ class ChatSession(Base):
         comment="Whether the session is active (soft delete flag)",
     )
 
-    # Monotonic allocator for message positions. Updating this value is a single
-    # database write, so concurrent turns never race on ``MAX(order_index) + 1``.
+
+
     next_message_order = Column(
         Integer,
         nullable=False,
@@ -76,7 +76,7 @@ class ChatSession(Base):
         comment="Next unreserved message order within this session",
     )
 
-    # Relationships
+
     messages = relationship(
         "ChatMessage",
         back_populates="session",

@@ -181,7 +181,6 @@ class RecipeService:
         )
 
     def _search_menu_candidates(self, query: RecipeQuery) -> RecipeSearchResult:
-        """Scan bounded local pages and return lightweight classified candidates."""
 
         selected: list[MenuRecipeCandidate] = []
         seen_names = set(query.exclude_recipe_names)

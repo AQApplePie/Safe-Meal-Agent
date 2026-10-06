@@ -104,7 +104,6 @@ class ModelBudgetUsage:
 
 @dataclass(frozen=True, slots=True)
 class DeterministicRouteDecision:
-    """A request decision that is safe to make without a language model."""
 
     route: str
     message: str

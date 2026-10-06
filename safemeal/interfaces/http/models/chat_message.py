@@ -1,4 +1,4 @@
-"""HTTP-only request and response schemas for chat messages."""
+"""实现 HTTP 接口层的请求与响应适配。"""
 
 from __future__ import annotations
 
@@ -14,7 +14,6 @@ MessageType = Literal["user_query", "agent_response", "knowledge", "error"]
 
 
 class ChatMessageResponse(BaseModel):
-    """Serialized persisted message."""
 
     model_config = ConfigDict(from_attributes=True)
 

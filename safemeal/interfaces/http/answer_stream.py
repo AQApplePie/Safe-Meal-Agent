@@ -1,4 +1,4 @@
-"""Shared SSE transport for internal Agent and public Chat routers."""
+"""实现 HTTP 接口层的请求与响应适配。"""
 
 from __future__ import annotations
 
@@ -31,13 +31,6 @@ async def stream_answer_events(
     timeout_seconds: float,
     chunk_chars: int,
 ) -> AsyncIterator[str]:
-    """Stream answer chunks and detect the first-answer deadline.
-
-    The task is created while the answer-stream ContextVar is active, allowing
-    LangChain's responder to publish tokens without coupling application use
-    cases to HTTP. Exceptions are represented as SSE events because response
-    headers may already have been sent.
-    """
 
     queue: asyncio.Queue[str | WorkflowProgress] = asyncio.Queue()
     with use_answer_stream(queue), use_progress_stream(queue):

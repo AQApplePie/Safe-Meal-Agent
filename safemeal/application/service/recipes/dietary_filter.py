@@ -1,4 +1,4 @@
-"""Filter structured recipes by allergens and dietary preferences."""
+"""按过敏、忌口和饮食类型过滤结构化菜谱。"""
 
 from __future__ import annotations
 
@@ -18,7 +18,6 @@ _ANIMAL_PRODUCT_TERMS = frozenset(
 
 
 class DietaryRecipeFilter:
-    """Apply allergen and dietary-type constraints to structured ingredients."""
 
     @staticmethod
     def excluded_terms_for(dietary_types: Iterable[DietaryType]) -> tuple[str, ...]:

@@ -1,4 +1,4 @@
-"""Read-only provider boundary for non-canonical recipe sources."""
+"""定义应用层依赖的能力端口。"""
 
 from typing import Protocol
 

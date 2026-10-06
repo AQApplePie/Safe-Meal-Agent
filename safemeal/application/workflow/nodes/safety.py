@@ -1,4 +1,4 @@
-"""Review structured recipes against the unchanged pre-Agent requirements."""
+"""按照 Agent 执行前冻结的要求复核结构化菜谱证据。"""
 
 from safemeal.application.streaming import emit_workflow_progress
 from safemeal.application.contracts.workflow.models import WorkflowState
@@ -10,6 +10,13 @@ from safemeal.application.workflow.review_reply import (
     render_conversational_review_reply,
 )
 from safemeal.application.service.recipes.menu_output import render_menu_plan
+from safemeal.application.contracts.agent.menu_planning import (
+    MenuExecutionPlan,
+    MenuTaskProgress,
+)
+from safemeal.application.service.recipes.menu_coverage import (
+    calculate_menu_coverage,
+)
 
 _RECIPE_TOOLS = {
     "search_recipes",
@@ -58,8 +65,7 @@ async def check_final_safety(state: WorkflowState) -> WorkflowState:
     ):
         result.metadata["safety_review"] = "no_recommendation"
         return {"result": result}
-    # A card is a second publication surface. Compare it as additional evidence,
-    # but never let a card alone manufacture a successful tool result.
+    # 菜谱卡片也是发布内容，只能补充已有生成证据，不能单独伪造成功结果。
     if result.recipe is not None:
         backed = any(
             o.ok
@@ -86,8 +92,7 @@ async def check_final_safety(state: WorkflowState) -> WorkflowState:
     requirements = state["requirements"]
     review = DietarySafetyService().review_recipes(requirements, observations)
     if result.intent is not None and result.intent.kind == "menu_planning":
-        # The Agent deliberately oversamples candidates.  Publish only recipes
-        # selected into quota slots and independently accepted by final safety.
+        # 工具会过采样候选；这里只发布已占用配额且通过最终安全复核的菜品。
         selected_progress = result.metadata.get("menu_task_progress")
         execution_plan = result.metadata.get("menu_execution_plan")
         passed_names = {
@@ -99,36 +104,19 @@ async def check_final_safety(state: WorkflowState) -> WorkflowState:
             if isinstance(item, dict) and item.get("name")
         }
         publishable = selected_names & passed_names
-        selected_rows = [
-            item
-            for item in (selected_progress or {}).get("selected_recipes", [])
-            if isinstance(item, dict)
-        ]
-        required = (
-            execution_plan.get("required", {})
-            if isinstance(execution_plan, dict)
-            else {}
-        )
-        post_safety_fulfilled = {
-            category: sum(
-                1
-                for item in selected_rows
-                if item.get("name") in publishable
-                and item.get("assigned_category") == category
+        validated_plan = MenuExecutionPlan.model_validate(execution_plan or {})
+        validated_progress = MenuTaskProgress.model_validate(selected_progress or {})
+        post_safety_fulfilled, post_safety_remaining, post_safety_complete = (
+            calculate_menu_coverage(
+                validated_plan,
+                validated_progress.selected_recipes,
+                allowed_names=publishable,
             )
-            for category in required
-        }
+        )
         result.metadata["post_safety_coverage"] = {
             "fulfilled": post_safety_fulfilled,
-            "remaining": {
-                category: max(0, int(count) - post_safety_fulfilled.get(category, 0))
-                for category, count in required.items()
-            },
-            "complete": bool(required)
-            and all(
-                post_safety_fulfilled.get(category, 0) >= int(count)
-                for category, count in required.items()
-            ),
+            "remaining": post_safety_remaining,
+            "complete": post_safety_complete,
         }
         result.metadata["safe_recipe_names"] = sorted(publishable)
         result.metadata["recipe_reviews"] = [
@@ -144,9 +132,7 @@ async def check_final_safety(state: WorkflowState) -> WorkflowState:
             )
         result.sources = []
         all_selected_safe = bool(selected_names) and publishable == selected_names
-        result.metadata["safety_review"] = (
-            "passed" if all_selected_safe else "blocked"
-        )
+        result.metadata["safety_review"] = "passed" if all_selected_safe else "blocked"
         if not all_selected_safe:
             result.status = "degraded"
             result.error_code = "insufficient_safety_evidence"
@@ -178,7 +164,8 @@ async def check_final_safety(state: WorkflowState) -> WorkflowState:
         review,
         max_recommendations=(frame.recommendation_count if frame is not None else None),
     )
-    result.sources = []  # Draft attributions may include excluded recipe recommendations.
+    # 草稿来源可能包含已排除候选，发布结果不沿用未经复核的来源。
+    result.sources = []
     result.metadata["safety_review"] = "passed" if passed else "blocked"
     result.metadata["safe_recipe_names"] = passed
     result.metadata["recipe_reviews"] = [

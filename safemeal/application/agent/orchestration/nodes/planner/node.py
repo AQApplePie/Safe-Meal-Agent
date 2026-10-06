@@ -74,11 +74,11 @@ def create_planner_node(
                 for item in frame.current_constraints
                 if item.kind == "avoid_food_category"
             ]
-            # Food categories are verified from complete ingredient structures in
-            # the service layer, not from a database column.  A small multiple of
-            # the requested count can therefore discard valid matches merely
-            # because they sort later by name.  Scan the bounded catalog window
-            # whenever such a post-query classification is required.
+
+
+
+
+
             candidate_limit = (
                 200
                 if food_categories or exclude_food_categories
@@ -95,8 +95,8 @@ def create_planner_node(
                         arguments={
                             "requested_count": requested_count,
                             "candidate_limit": candidate_limit,
-                            # `limit` remains a repository page-size contract;
-                            # `candidate_limit` controls the complete scan budget.
+
+
                             "limit": min(50, candidate_limit),
                             "food_categories": food_categories,
                             "exclude_food_categories": exclude_food_categories,

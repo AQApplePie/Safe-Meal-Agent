@@ -1,4 +1,4 @@
-"""Deterministically render recipe candidates without leaking internal fields."""
+"""根据结构化候选确定性渲染推荐回答。"""
 
 from __future__ import annotations
 
@@ -9,7 +9,6 @@ from safemeal.application.contracts.agent.decisions import Observation
 
 
 def _ingredient_names(recipe: Mapping[str, Any]) -> list[str]:
-    """Read names from both Recipe and RecipeCandidate shapes; ignore metadata."""
 
     names: list[str] = []
     for item in recipe.get("ingredients", []) or []:
@@ -21,8 +20,8 @@ def _ingredient_names(recipe: Mapping[str, Any]) -> list[str]:
             name = name or item.get("name") or item.get("ingredient_name")
         elif isinstance(item, str):
             name = item
-        # bool is deliberately excluded: fields such as is_main and
-        # ingredients_complete are evidence metadata, never ingredients.
+
+
         if name and not isinstance(name, bool):
             text = str(name).strip()
             if text and text not in names:
@@ -33,7 +32,6 @@ def _ingredient_names(recipe: Mapping[str, Any]) -> list[str]:
 def render_recipe_recommendations(
     observations: Sequence[Observation], *, limit: int = 3
 ) -> str | None:
-    """Return a concise chat answer from the latest structured candidate list."""
 
     for observation in reversed(observations):
         if observation.tool_name not in {"recommend_recipes", "search_recipes"}:

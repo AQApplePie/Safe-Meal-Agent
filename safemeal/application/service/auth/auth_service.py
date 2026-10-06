@@ -1,4 +1,4 @@
-"""Registration, login, refresh rotation and access-token authentication."""
+"""处理注册、登录、令牌轮换与身份认证。"""
 
 from __future__ import annotations
 
@@ -94,8 +94,8 @@ class AuthService:
             if user is None:
                 raise InvalidRefreshTokenError()
             if stored.revoked_at is not None:
-                # A rotated token was reused. Revoke the complete token family and
-                # invalidate outstanding access tokens for this user.
+
+
                 if stored.replaced_by_hash is not None:
                     uow.auth.revoke_all_refresh_tokens(user.id, revoked_at=now)
                     uow.auth.increment_token_version(user.id)

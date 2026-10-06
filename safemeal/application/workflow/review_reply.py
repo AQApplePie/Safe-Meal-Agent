@@ -1,4 +1,4 @@
-"""Render the reviewed publication result; never reuse an unreviewed draft."""
+"""实现聊天工作流中的对应职责。"""
 
 from safemeal.application.contracts.dietary_safety.requirements import (
     DietaryReviewResult,
@@ -12,12 +12,6 @@ def render_review_reply(review: DietaryReviewResult) -> str:
 def render_conversational_review_reply(
     review: DietaryReviewResult, *, max_recommendations: int | None = None
 ) -> str:
-    """Present reviewed evidence as chat while retaining audits in metadata.
-
-    The safety layer keeps every assessment in ``recipe_reviews``.  This renderer
-    intentionally exposes only decisions that help a person choose a dish; soft
-    unknown assessments and excluded candidates remain available for diagnostics.
-    """
 
     limit = max_recommendations or 3
     passed = [item for item in review.recipes if item.decision == "passed"][:limit]
@@ -60,7 +54,6 @@ def render_conversational_review_reply(
 
 
 def _human_confirmations(assessments) -> list[str]:
-    """Turn satisfied hard checks into short, non-technical explanations."""
 
     confirmations: list[str] = []
     for assessment in assessments:

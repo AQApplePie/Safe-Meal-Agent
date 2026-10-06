@@ -75,7 +75,6 @@ async def upload_and_ingest_file(
     ),
     principal: Principal = Depends(get_current_principal),
 ) -> JsonObject:
-    """Save and ingest a document through the application use case."""
 
     try:
         content = await _read_upload(file, file_upload_service)
@@ -100,7 +99,6 @@ async def enqueue_uploaded_document(
     container: ApplicationContainer = Depends(get_container),
     principal: Principal = Depends(get_current_principal),
 ) -> JsonObject:
-    """Queue parsing, OCR and indexing outside the request lifecycle."""
 
     if container.ingestion_queue is None:
         raise HTTPException(status_code=503, detail="后台摄取队列未配置")

@@ -39,7 +39,6 @@ _STRUCTURED_DATA_MARKERS = (
 
 
 def knowledge_retrieval_tools(question: str) -> tuple[str, ...]:
-    """Return required retrieval tools when the user clearly asks for KB evidence."""
 
     text = " ".join(question.strip().split())
     if not text:
@@ -58,17 +57,18 @@ def knowledge_retrieval_tools(question: str) -> tuple[str, ...]:
         "过敏" in text and any(marker in text for marker in ("替换", "替代", "证据"))
     )
 
-    wants_milvus = wants_document
-    wants_milvus = wants_milvus or wants_cross_document or wants_relationship_summary
+    wants_knowledge = wants_document
+    wants_knowledge = (
+        wants_knowledge or wants_cross_document or wants_relationship_summary
+    )
 
     tools: list[str] = []
-    if wants_milvus:
-        tools.append("milvus_vector_search")
+    if wants_knowledge:
+        tools.append("search_knowledge")
     return tuple(dict.fromkeys(tools))
 
 
 def is_pure_knowledge_request(question: str) -> bool:
-    """Whether a guarded retrieval intent has no simultaneous structured-data task."""
 
     if not knowledge_retrieval_tools(question):
         return False

@@ -1,4 +1,4 @@
-"""Production model configuration and concrete adapter construction."""
+"""根据配置装配语言模型能力。"""
 
 from safemeal.config.settings import settings
 from safemeal.application.contracts.agent.prompts import PromptBundle

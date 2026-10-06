@@ -1,4 +1,4 @@
-"""Chat-oriented rendering for deterministic menu-planning progress."""
+"""把确定性菜单规划进度渲染为聊天回答。"""
 
 from __future__ import annotations
 
@@ -28,7 +28,6 @@ def render_menu_plan(
     *,
     allowed_names: Collection[str] | None = None,
 ) -> str:
-    """Render selected evidence by requested quota without exposing loop internals."""
 
     plan = MenuExecutionPlan.model_validate(plan_payload)
     progress = MenuTaskProgress.model_validate(progress_payload)

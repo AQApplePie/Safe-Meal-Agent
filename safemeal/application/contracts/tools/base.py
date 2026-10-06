@@ -18,8 +18,8 @@ class ToolSpecification(BaseModel):
     """
 
     name: str = Field(description="工具名称，必须唯一。")
-    # Defaults preserve compatibility with lightweight test doubles. Production
-    # ToolHandler instances reject missing metadata before publishing a spec.
+
+
     purpose: str = Field(default="", description="工具唯一的核心用途。")
     use_when: tuple[str, ...] = Field(default=(), description="应该调用该工具的场景。")
     do_not_use_when: tuple[str, ...] = Field(

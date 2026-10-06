@@ -127,13 +127,11 @@ def create_application() -> FastAPI:
 
     @application.get("/livez", include_in_schema=False)
     async def liveness() -> dict:
-        """Process liveness; deliberately performs no external network I/O."""
 
         return {"status": "alive"}
 
     @application.get("/readyz", include_in_schema=False)
     async def readiness() -> Response:
-        """Configuration readiness without paid or destructive probes."""
 
         issues = settings.configuration_issues
         runtime: JsonObject = (

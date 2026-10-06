@@ -1,4 +1,4 @@
-"""Durable SQLite checkpointer for LangGraph interrupt/resume workflows."""
+"""实现持久化基础设施适配。"""
 
 from __future__ import annotations
 
@@ -23,7 +23,6 @@ from langgraph.checkpoint.serde.types import TASKS
 
 
 class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
-    """Process-safe local saver using Python's built-in SQLite driver."""
 
     def __init__(self, path: str | Path, *, serde=None) -> None:
         super().__init__(serde=serde)

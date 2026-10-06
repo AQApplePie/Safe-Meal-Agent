@@ -1,9 +1,4 @@
-"""Agent entry-gateway layer.
-
-This package is the only application-facing entry into the Agent subsystem. It
-hides LangGraph state, checkpoint commands, concurrency and timeout handling from
-Workflow callers.
-"""
+"""公开智能体入口网关，隔离工作流与图内部状态。"""
 
 from .service import AgentExecutionService, HumanApprovalPending, UnsafeRequestDetector
 

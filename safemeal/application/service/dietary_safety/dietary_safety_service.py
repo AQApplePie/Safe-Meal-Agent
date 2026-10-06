@@ -1,4 +1,4 @@
-"""Resolve user needs once and review recipe evidence against that snapshot."""
+"""解析饮食要求并复核菜谱安全性。"""
 
 import re
 from typing import Literal
@@ -60,8 +60,8 @@ class DietarySafetyService:
         for memory in context.user_memories:
             if memory.get("memory_type") in {"dietary_allergy", "dietary_restriction"}:
                 continue
-            # Memories are already typed at write time.  Consume their stable key
-            # directly instead of running NLP over the human-readable value again.
+
+
             preference = preference_from_memory(memory)
             if preference is not None:
                 preferences.append(preference)
@@ -73,7 +73,7 @@ class DietarySafetyService:
             restrictions.append(
                 DietaryConstraint.model_validate(context.dietary_constraints)
             )
-        # Legacy explicit profile data remains visible and is reviewed conservatively.
+
         profile = context.user_profile or {}
         if isinstance(profile.get("taste"), str):
             preferences.extend(
@@ -81,15 +81,15 @@ class DietarySafetyService:
             )
         frame = context.request_frame
         if frame is not None:
-            # Accepted and fallback frames now have identical authority.  Raw
-            # history is reference context only and can never create an active
-            # dietary constraint here.
+
+
+
             preferences.extend(frame.turn_preferences)
         else:
-            # Compatibility adapter for direct service callers that predate the
-            # RequestFrame boundary.  Production workflow calls always supply a
-            # canonical frame.  Only the current message is parsed here; history
-            # never receives constraint authority.
+
+
+
+
             texts: list[tuple[str, Literal["input"]]] = [(message, "input")]
             for text, source in texts:
                 clauses = re.split(
@@ -101,7 +101,7 @@ class DietarySafetyService:
                         constraint
                     )
                 preferences.extend(preferences_from_text(text, source))
-        # Later explicit turn requirements override earlier soft defaults in the same dimension.
+
         selected: dict[tuple[str, str], DietaryPreference] = {}
         for preference in preferences:
             key = (
@@ -185,7 +185,7 @@ class DietarySafetyService:
                     evidence=record,
                 )
             )
-        # Safety eligibility comes first; preference satisfaction ranks eligible candidates.
+
         reviewed.sort(
             key=lambda r: (
                 r.decision != "passed",

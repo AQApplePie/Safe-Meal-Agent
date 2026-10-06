@@ -1,4 +1,4 @@
-"""HTTP-only request and response schemas for chat sessions."""
+"""实现 HTTP 接口层的请求与响应适配。"""
 
 from __future__ import annotations
 
@@ -9,7 +9,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 
 class ChatSessionUpdateRequest(BaseModel):
-    """Mutable session fields; ownership cannot be transferred over HTTP."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -28,7 +27,6 @@ class ChatSessionUpdateRequest(BaseModel):
 
 
 class ChatSessionResponse(BaseModel):
-    """Serialized chat session."""
 
     model_config = ConfigDict(from_attributes=True)
 

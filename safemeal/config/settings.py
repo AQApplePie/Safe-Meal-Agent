@@ -13,7 +13,6 @@ DASHSCOPE_RERANK_BASE_URL = "https://dashscope.aliyuncs.com/api/v1/services"
 
 
 def _configured_pricing_models(raw: str) -> set[str]:
-    """Validate pricing JSON used by Agent execution budgets."""
 
     payload = json.loads(raw or "{}")
     if not isinstance(payload, dict):
@@ -32,7 +31,6 @@ def _configured_pricing_models(raw: str) -> set[str]:
 
 
 class Settings(BaseSettings):
-    """Application configuration loaded from ``.env`` and environment variables."""
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -41,7 +39,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # Application and HTTP API
+
     APP_ENV: Literal["development", "test", "production"] = "development"
     APP_NAME: str = "SafeMeal Agent"
     APP_VERSION: str = "0.1.2"
@@ -63,7 +61,7 @@ class Settings(BaseSettings):
     AUTH_ACCESS_TOKEN_MINUTES: int = Field(default=15, ge=1, le=1_440)
     AUTH_REFRESH_TOKEN_DAYS: int = Field(default=30, ge=1, le=365)
 
-    # Optional integrations
+
     ENABLE_LLM: bool = True
     ENABLE_EMBEDDINGS: bool = True
     ENABLE_MILVUS: bool = True
@@ -81,8 +79,8 @@ class Settings(BaseSettings):
     )
     INTEGRATION_PROBE_TIMEOUT: float = Field(default=10.0, gt=0, le=60)
 
-    # Alibaba Cloud DashScope through its OpenAI-compatible API.
-    # OPENAI_* aliases are accepted for compatibility with OpenAI SDK-based tooling.
+
+
     LLM_MODEL: str = Field(
         default="qwen3-max",
         validation_alias=AliasChoices("LLM_MODEL", "OPENAI_MODEL"),
@@ -103,14 +101,14 @@ class Settings(BaseSettings):
     LLM_MAX_RETRIES: int = Field(default=2, ge=0, le=10)
     LLM_STRUCTURED_REPAIR_RETRIES: int = Field(default=1, ge=0, le=3)
 
-    # DashScope text embeddings. The API key and base URL inherit the LLM
-    # settings when omitted, so one Alibaba Cloud key is normally sufficient.
+
+
     EMBEDDING_MODEL: str = "text-embedding-v4"
     EMBEDDING_API_KEY: Optional[str] = None
     EMBEDDING_BASE_URL: Optional[str] = None
     EMBEDDING_DIMENSION: int = Field(default=1024, gt=0)
 
-    # DashScope reranker uses a native endpoint rather than the compatible API.
+
     RERANK_ENABLED: bool = True
     RERANK_PROVIDER: Literal["custom", "jina", "voyage"] = "custom"
     RERANK_BASE_URL: str = DASHSCOPE_RERANK_BASE_URL
@@ -121,11 +119,11 @@ class Settings(BaseSettings):
     RERANK_TOP_N: int = Field(default=6, ge=1, le=100)
     RERANK_TIMEOUT: float = Field(default=30.0, gt=0, le=300)
 
-    # MySQL
+
     DATABASE_URL: str = Field(min_length=1)
     DB_CONNECT_TIMEOUT: int = Field(default=10, ge=1, le=120)
 
-    # Milvus
+
     MILVUS_HOST: str = "localhost"
     MILVUS_PORT: int = Field(default=19530, ge=1, le=65535)
     MILVUS_COLLECTION: str = "recipes_current"
@@ -133,7 +131,7 @@ class Settings(BaseSettings):
     MILVUS_METRIC_TYPE: str = "IP"
     MILVUS_LOAD_TIMEOUT: float = Field(default=30.0, gt=0, le=300)
 
-    # Neo4j recipe knowledge graph
+
     NEO4J_URI: str = "bolt://localhost:17687"
     NEO4J_USER: Optional[str] = None
     NEO4J_PASSWORD: Optional[str] = None
@@ -143,7 +141,7 @@ class Settings(BaseSettings):
     NEO4J_RECIPE_JSON_PATH: str = "data/recipe.json"
     NEO4J_INGREDIENT_JSON_PATH: Optional[str] = "data/neo4j/excipients.json"
 
-    # Agent runtime
+
     MAX_ITERATIONS: int = Field(default=4, ge=1, le=6)
     AGENT_TIMEOUT: int = Field(default=300, gt=0, le=1800)
     AGENT_TOOL_TIMEOUT: float = Field(default=60.0, gt=0, le=300)
@@ -163,7 +161,7 @@ class Settings(BaseSettings):
     AGENT_CHECKPOINT_DATABASE_URL: Optional[str] = None
     AGENT_REQUIRE_HUMAN_APPROVAL: bool = True
 
-    # Knowledge retrieval
+
     KB_TOP_K: int = Field(default=5, ge=1, le=100)
     KB_SIMILARITY_THRESHOLD: float = Field(default=0.2, ge=-1, le=1)
     KB_CHUNK_SIZE: int = Field(default=512, ge=64)
@@ -183,12 +181,12 @@ class Settings(BaseSettings):
     OCR_LANGUAGES: str = "chi_sim+eng"
     OCR_MIN_EXTRACTED_CHARS: int = Field(default=32, ge=0, le=10_000)
 
-    # Background ingestion
+
     INGESTION_QUEUE_URL: Optional[str] = None
     INGESTION_QUEUE_NAME: str = "safemeal:ingestion"
     INGESTION_JOB_TTL_SECONDS: int = Field(default=86_400, ge=60)
 
-    # OIDC and tenant isolation
+
     ENABLE_OIDC: bool = False
     OIDC_ISSUER: Optional[str] = None
     OIDC_AUDIENCE: Optional[str] = None
@@ -199,7 +197,6 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def inherit_dashscope_credentials(self) -> "Settings":
-        """Reuse the main DashScope credentials unless a service overrides them."""
         self.LLM_API_KEY = (self.LLM_API_KEY or "").strip() or None
         self.LLM_BASE_URL = (self.LLM_BASE_URL or "").strip().rstrip("/")
         if not self.LLM_BASE_URL:
@@ -292,17 +289,14 @@ class Settings(BaseSettings):
 
     @property
     def OPENAI_API_KEY(self) -> Optional[str]:
-        """Compatibility alias used by OpenAI-compatible clients."""
         return self.LLM_API_KEY
 
     @property
     def OPENAI_API_BASE(self) -> str:
-        """Compatibility alias used by OpenAI-compatible clients."""
         return self.LLM_BASE_URL
 
     @property
     def OPENAI_MODEL(self) -> str:
-        """Compatibility alias used by OpenAI-compatible clients."""
         return self.LLM_MODEL
 
     @property
@@ -313,7 +307,6 @@ class Settings(BaseSettings):
 
     @property
     def configuration_issues(self) -> List[str]:
-        """Return startup-readiness issues without performing network probes."""
 
         issues: List[str] = []
         if self.ENABLE_LLM and not self.LLM_API_KEY:
@@ -343,6 +336,6 @@ class Settings(BaseSettings):
         return issues
 
 
-# DATABASE_URL is intentionally required from Settings sources rather than a
-# constructor literal; the static Pydantic signature cannot express env loading.
+
+
 settings = Settings()  # type: ignore[call-arg]

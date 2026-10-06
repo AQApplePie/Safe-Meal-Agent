@@ -1,4 +1,4 @@
-"""Read-only Wikibooks recipe provider with strict field extraction."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 from __future__ import annotations
 

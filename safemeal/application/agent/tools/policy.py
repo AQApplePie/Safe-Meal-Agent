@@ -1,9 +1,4 @@
-"""Pre-execution policy enforcement for every Agent Tool call.
-
-Model arguments are proposals, not trusted commands. This module injects hard
-dietary requirements immediately before execution and rejects malformed fields so
-the model cannot remove constraints supplied by Workflow.
-"""
+"""在工具执行前统一校验参数并注入可信约束。"""
 
 from safemeal.application.contracts.agent.decisions import ToolCall
 from safemeal.application.contracts.dietary_safety.requirements import (
@@ -19,13 +14,40 @@ def review_tool_calls(
     *,
     requirements: DietaryRequirements | None = None,
 ) -> tuple[list[ToolCall], list[ToolResult]]:
-    """Return accepted calls with trusted constraints plus explicit rejections."""
+    """返回已注入可信约束的调用，以及因参数非法而拒绝的结果。"""
 
     accepted: list[ToolCall] = []
     rejected: list[ToolResult] = []
     excluded = list((constraint or {}).get("excluded_ingredients") or [])
     for call in calls:
-        # Neo4j uses a plural field name distinct from typed recipe tools.
+        if excluded and call.tool_name == "verify_recipe_constraints":
+            arguments = dict(call.arguments)
+            existing = arguments.get("constraints", [])
+            if not isinstance(existing, (list, tuple)):
+                rejected.append(
+                    ToolResult(
+                        call_id=call.id,
+                        tool_name=call.tool_name,
+                        ok=False,
+                        status="rejected",
+                        error="Invalid constraint statements",
+                        error_code="invalid_tool_arguments",
+                    )
+                )
+                continue
+            injected = [
+                {
+                    "type": "restriction",
+                    "value": ingredient,
+                    "strength": "hard_safety",
+                    "source": "current_input",
+                    "scope": "current_turn",
+                }
+                for ingredient in excluded
+            ]
+            arguments["constraints"] = [*existing, *injected]
+            call = call.model_copy(update={"arguments": arguments})
+        # 图检索工具沿用复数字段名，其余菜谱工具使用统一的单数字段名。
         key = (
             "excluded_ingredients"
             if call.tool_name == "dietary_safe_recipe_query"
@@ -103,8 +125,7 @@ def review_tool_calls(
                 )
                 continue
             if call.tool_name == "generate_recipe":
-                # Generation receives a readable copy in addition to structured
-                # fields because its provider request contains one requirements text.
+                # 生成模型还需要可读文本，因此把结构化约束附加到生成要求中。
                 arguments["requirements"] = (
                     str(arguments.get("requirements") or "生成食谱")
                     + "\n用户偏好与硬约束（required=true 必须满足）："

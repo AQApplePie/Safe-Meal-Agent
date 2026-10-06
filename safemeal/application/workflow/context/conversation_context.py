@@ -1,4 +1,4 @@
-"""Token-budgeted conversation context and relevance-ranked long-term memory."""
+"""实现聊天工作流中的对应职责。"""
 
 from __future__ import annotations
 from safemeal.application.contracts.workflow.models import ConversationContextResult
@@ -16,7 +16,6 @@ _TOKEN_PATTERN = re.compile(r"[\u4e00-\u9fff]|[a-zA-Z0-9_]+")
 
 
 def estimate_tokens(text: str) -> int:
-    """Conservative model-independent estimate for mixed Chinese/English text."""
 
     pieces = _TOKEN_PATTERN.findall(text)
     if not pieces:
@@ -47,7 +46,6 @@ def _cosine(left: Counter[str], right: Counter[str]) -> float:
 
 
 class ConversationContextWindow:
-    """Keep recent turns verbatim and compress older turns into one episode."""
 
     def __init__(
         self,
@@ -147,7 +145,6 @@ class ConversationContextWindow:
 
 
 class MemoryRelevanceSelector:
-    """Rank explicit memories by hard-constraint priority and text relevance."""
 
     HARD_TYPES = {"dietary_allergy", "dietary_restriction"}
 

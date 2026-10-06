@@ -1,4 +1,1 @@
-"""Infrastructure configuration, dependency assembly and resource ownership.
-
-Import factories explicitly; importing this package creates no external resources.
-"""
+"""组织应用服务的依赖装配。"""

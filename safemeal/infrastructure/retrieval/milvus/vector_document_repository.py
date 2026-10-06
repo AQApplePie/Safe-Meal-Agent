@@ -1,4 +1,4 @@
-"""Milvus vector-store adapter used by the knowledge application service."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 from __future__ import annotations
 
@@ -31,7 +31,6 @@ def _load_collection_worker(
     timeout_seconds: float,
     result_queue: multiprocessing.Queue,
 ) -> None:
-    """Load in an isolated process so a stuck SDK call can be terminated."""
 
     alias = f"safemeal_load_{uuid4().hex}"
     try:
@@ -43,7 +42,7 @@ def _load_collection_worker(
         )
         Collection(name=collection_name, using=alias).load(timeout=timeout_seconds)
         result_queue.put(None)
-    except BaseException as exc:  # process boundary must serialize every failure
+    except BaseException as exc:
         result_queue.put(f"{type(exc).__name__}: {exc}")
     finally:
         try:
@@ -59,7 +58,6 @@ def load_collection_with_hard_timeout(
     collection_name: str,
     timeout_seconds: float,
 ) -> None:
-    """Load a collection with an enforceable wall-clock deadline."""
 
     context = multiprocessing.get_context("spawn")
     result_queue = context.Queue(maxsize=1)
@@ -89,7 +87,6 @@ def load_collection_with_hard_timeout(
 
 
 class MilvusVectorDocumentRepository:
-    """Synchronous Milvus adapter with an instance-scoped connection."""
 
     _REQUIRED_FIELDS = {
         "id",
@@ -129,7 +126,6 @@ class MilvusVectorDocumentRepository:
         self._initialize()
 
     def _initialize(self) -> None:
-        """Connect and load a schema-compatible collection."""
 
         started = perf_counter()
         logger.info(
@@ -180,7 +176,6 @@ class MilvusVectorDocumentRepository:
             raise
 
     def _load_if_populated(self, collection: Collection) -> None:
-        """Avoid a Milvus 2.3 empty-collection load that may ignore its timeout."""
 
         if collection.num_entities == 0:
             logger.info(
@@ -200,7 +195,6 @@ class MilvusVectorDocumentRepository:
             collection.load(timeout=self.load_timeout_seconds)
 
     def _create_collection(self) -> None:
-        """Create the current collection schema and vector index."""
 
         fields = [
             FieldSchema(
@@ -242,11 +236,6 @@ class MilvusVectorDocumentRepository:
         )
 
     def _ensure_vector_index(self, collection: Collection) -> None:
-        """Build the vector index only after data exists.
-
-        Milvus 2.3 can block indefinitely while indexing an empty collection,
-        so collection creation and first index build are deliberately separate.
-        """
 
         if collection.indexes:
             return
@@ -267,12 +256,6 @@ class MilvusVectorDocumentRepository:
         )
 
     def _validate_collection_schema(self) -> None:
-        """Fail loudly for legacy collections that cannot preserve document ids.
-
-        Milvus cannot add a scalar field to an existing collection in place.  A
-        legacy collection without ``document_id`` would make document-level
-        deletion ambiguous, so continuing would silently retain stale chunks.
-        """
 
         collection = self._require_collection()
         fields = {field.name: field for field in collection.schema.fields}
@@ -356,7 +339,6 @@ class MilvusVectorDocumentRepository:
         documents: List[str],
         metadatas: Optional[List[JsonObject]] = None,
     ) -> bool:
-        """Insert chunks and their stable parent ``document_id`` values."""
 
         if not ids:
             return True
@@ -407,13 +389,6 @@ class MilvusVectorDocumentRepository:
         documents: List[str],
         metadatas: List[JsonObject],
     ) -> bool:
-        """Replace one logical document's chunks after embeddings are prepared.
-
-        Milvus has no multi-step transaction spanning delete and insert. Keeping
-        this sequence inside the adapter nevertheless gives callers one explicit
-        replacement operation and prevents stale chunks when a document is
-        re-ingested with fewer chunks.
-        """
 
         normalized_id = str(document_id).strip()
         if not normalized_id:
@@ -433,7 +408,6 @@ class MilvusVectorDocumentRepository:
         top_k: int = 10,
         filter_expr: Optional[str] = None,
     ) -> List[JsonObject]:
-        """Search similar chunks; provider errors are deliberately propagated."""
 
         if len(query_embedding) != self.dimension:
             raise ValueError(
@@ -513,7 +487,6 @@ class MilvusVectorDocumentRepository:
         return f"{field} in [{serialized}]"
 
     def delete_documents(self, ids: List[str]) -> bool:
-        """Delete every chunk belonging to the supplied parent document ids."""
 
         document_ids = list(
             dict.fromkeys(str(value).strip() for value in ids if str(value).strip())
@@ -539,7 +512,6 @@ class MilvusVectorDocumentRepository:
         return True
 
     def get_collection_stats(self) -> JsonObject:
-        """Return collection statistics; provider failures are propagated."""
 
         return {
             "name": self.collection_name,
@@ -550,7 +522,6 @@ class MilvusVectorDocumentRepository:
         }
 
     def clear_collection(self) -> bool:
-        """Drop and recreate the collection using the current schema."""
 
         self._require_collection().drop()
         self.collection = None
@@ -561,7 +532,6 @@ class MilvusVectorDocumentRepository:
         return True
 
     def close(self) -> None:
-        """Close only this adapter's connection; safe to call more than once."""
 
         if self._closed:
             return

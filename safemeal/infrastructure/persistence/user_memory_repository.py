@@ -146,9 +146,9 @@ class SqlAlchemyUserMemoryRepository:
     ) -> int:
         if not memory_keys:
             return 0
-        # The current schema keeps one archived snapshot per logical key. Remove an
-        # older archived snapshot before moving a reactivated row back to archived,
-        # otherwise the status-inclusive unique constraint would reject the update.
+
+
+
         (
             self._session.query(UserMemory)
             .filter(
@@ -177,7 +177,6 @@ class SqlAlchemyUserMemoryRepository:
 
 
 class SqlAlchemyUserMemoryUnitOfWork:
-    """Own one Session and one explicit memory transaction."""
 
     def __init__(
         self,
@@ -234,7 +233,6 @@ class SqlAlchemyUserMemoryUnitOfWork:
 
 
 def sqlalchemy_user_memory_unit_of_work() -> UserMemoryUnitOfWork:
-    """Create a Unit of Work using the process-configured Session factory."""
 
     return cast(UserMemoryUnitOfWork, SqlAlchemyUserMemoryUnitOfWork())
 

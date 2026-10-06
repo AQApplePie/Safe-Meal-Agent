@@ -1,4 +1,4 @@
-"""Typed Agent tools adapters for structured recipe use cases."""
+"""实现智能体可调用的应用层工具。"""
 
 from __future__ import annotations
 from safemeal.application.contracts.tools.payloads import GetRecipeArgs
@@ -19,7 +19,6 @@ from safemeal.application.contracts.recipes.models import Recipe
 
 
 class SearchRecipesTool(ToolHandler[RecipeQuery]):
-    """Read existing recipes by exact name or structured filters."""
 
     name = "search_recipes"
     purpose = "按名称或结构化条件查找已经存在的菜谱及完整食材证据。"
@@ -50,7 +49,6 @@ class SearchRecipesTool(ToolHandler[RecipeQuery]):
 
 
 class GetRecipeTool(ToolHandler[GetRecipeArgs]):
-    """Read the canonical detail for one known recipe identifier."""
 
     name = "get_recipe"
     purpose = "按已知 recipe_id 读取单道菜的食材、用量、步骤和营养详情。"
@@ -77,7 +75,6 @@ class GetRecipeTool(ToolHandler[GetRecipeArgs]):
 
 
 class RecommendRecipesTool(ToolHandler[RecipeQuery]):
-    """Rank existing recipes while enforcing deterministic hard filters."""
 
     name = "recommend_recipes"
     purpose = "从已有结构化菜谱中推荐候选，并用确定性代码执行硬约束过滤。"
@@ -105,7 +102,6 @@ class RecommendRecipesTool(ToolHandler[RecipeQuery]):
 
 
 class GenerateRecipeTool(ToolHandler[RecipeGenerationRequest]):
-    """Create a new validated candidate recipe without persisting it."""
 
     name = "generate_recipe"
     purpose = "生成一份新的强类型菜谱候选，并验证食材、步骤和饮食约束。"

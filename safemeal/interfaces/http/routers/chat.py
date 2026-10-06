@@ -67,13 +67,6 @@ async def create_chat_turn(
     turn_service: ChatTurnService = Depends(get_chat_turn_service),
     principal: Principal = Depends(get_current_principal),
 ) -> ChatResponse:
-    """
-    Unified chat endpoint with automatic agent routing
-
-    - Automatically routes queries to appropriate agents
-    - Persists conversation history through the Chat Turn use case
-    - Supports the database and retrieval tools listed by `/routes`
-    """
     try:
         return await turn_service.handle(
             request.model_copy(update={"user_id": principal.storage_subject})
@@ -104,7 +97,6 @@ async def stream_chat_turn(
     turn_service: ChatTurnService = Depends(get_chat_turn_service),
     principal: Principal = Depends(get_current_principal),
 ) -> StreamingResponse:
-    """Public SSE chat with first-answer timeout detection and durable turns."""
 
     bound_request = request.model_copy(
         update={"user_id": principal.storage_subject}
@@ -146,9 +138,6 @@ async def get_chat_history(
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
 ) -> List[ChatMessageResponse]:
-    """
-    Get chat history for a session
-    """
     user_id = principal.storage_subject
     session = await run_in_threadpool(
         session_service.get_session,
@@ -178,9 +167,6 @@ async def clear_chat_session(
     session_service: ChatSessionService = Depends(get_chat_session_service),
     principal: Principal = Depends(get_current_principal),
 ) -> dict[str, str]:
-    """
-    Clear all messages in a session
-    """
 
     user_id = principal.storage_subject
     session = await run_in_threadpool(
@@ -203,7 +189,7 @@ async def clear_chat_session(
 
 
 def _session_not_found() -> HTTPException:
-    # Missing and foreign-owned sessions intentionally have identical responses.
+
     return HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Session not found",
@@ -219,7 +205,6 @@ def list_chat_sessions(
     active_only: bool = True,
     principal: Principal = Depends(get_current_principal),
 ) -> List[ChatSessionResponse]:
-    """List only sessions owned by ``user_id``."""
 
     user_id = principal.storage_subject
     return [

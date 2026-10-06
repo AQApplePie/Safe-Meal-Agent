@@ -1,4 +1,4 @@
-"""Vector-document persistence boundary."""
+"""定义应用层依赖的能力端口。"""
 
 from __future__ import annotations
 
@@ -8,7 +8,6 @@ from safemeal.shared.types import JsonObject
 
 
 class VectorDocumentRepository(Protocol):
-    """Persist and query chunked knowledge documents by embedding vector."""
 
     def add_documents(
         self,

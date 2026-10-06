@@ -1,4 +1,4 @@
-"""Resolve separate user preferences and allergies before invoking the Agent."""
+"""调用 Agent 前分别解析用户偏好、过敏和饮食限制。"""
 
 from safemeal.application.streaming import emit_workflow_progress
 from safemeal.application.contracts.workflow.models import WorkflowState
@@ -7,7 +7,7 @@ from safemeal.application.service.dietary_safety.dietary_safety_service import (
     hard_constraints,
 )
 from safemeal.application.service.dietary_safety.constraints import (
-    extract_dietary_constraint,
+    dietary_constraint_from_values,
     merge_dietary_constraints,
 )
 
@@ -30,10 +30,10 @@ async def resolve_constraints(state: WorkflowState) -> WorkflowState:
         for item in frame.current_constraints:
             if item.kind in {"food_category", "avoid_food_category"}:
                 continue
-            parsed = extract_dietary_constraint(
-                f"对{item.value}过敏"
-                if item.kind == "allergy"
-                else f"不能吃{item.value}"
+            parsed = dietary_constraint_from_values(
+                [item.value],
+                trigger_term="过敏" if item.kind == "allergy" else "不能吃",
+                strictness="request_frame_hard_exclusion",
             )
             (
                 allergy_constraints

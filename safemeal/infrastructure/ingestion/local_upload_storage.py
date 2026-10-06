@@ -1,4 +1,4 @@
-"""Local-filesystem adapter for uploaded files."""
+"""实现文档摄取基础设施适配。"""
 
 from pathlib import Path
 import os

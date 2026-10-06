@@ -27,7 +27,6 @@ from .chunking import (
 
 
 class DocumentKnowledgeService:
-    """Facade for ingesting documents and performing similarity search."""
 
     def __init__(
         self,
@@ -193,9 +192,9 @@ class DocumentKnowledgeService:
             else self.default_similarity_threshold
         )
 
-        # Cross-document synthesis needs enough candidates to avoid returning only
-        # adjacent chunks from one long document. Reranking and document-level
-        # diversity are applied after this broader recall.
+
+
+
         recall_k = max(top_k * self.document_recall_multiplier, top_k)
         if self.reranker.enabled:
             recall_k = max(recall_k, self.rerank_max_candidates)
@@ -323,13 +322,6 @@ class DocumentKnowledgeService:
         *,
         top_k: int,
     ) -> list[JsonObject]:
-        """Select relevant chunks while preserving cross-document coverage.
-
-        Candidates remain ordered by vector/rerank relevance. We group them by
-        their stable parent document and take one item from each group per round.
-        This keeps the first pass maximally diverse, then uses additional chunks
-        from the same source only when capacity remains.
-        """
 
         groups: dict[str, list[JsonObject]] = defaultdict(list)
         order: list[str] = []

@@ -50,10 +50,10 @@ class ChatMessage(Base):
         ),
     )
 
-    # Primary key
+
     id = Column(Integer, primary_key=True, index=True)
 
-    # Session relationship
+
     session_id = Column(
         String(255),
         ForeignKey("chat_sessions.id", ondelete="CASCADE"),
@@ -62,7 +62,7 @@ class ChatMessage(Base):
         comment="Parent session ID",
     )
 
-    # Message type classification
+
     message_type = Column(
         String(50),
         nullable=False,
@@ -70,31 +70,31 @@ class ChatMessage(Base):
         comment="Message type: user_query, agent_response, knowledge, error, etc.",
     )
 
-    # Message content
+
     content = Column(Text, nullable=False, comment="Message content text")
 
-    # Additional metadata (flexible JSON storage)
+
     message_metadata = Column(
         JSON,
         nullable=True,
         comment="Additional metadata: route info, confidence, sources, etc.",
     )
 
-    # Message ordering within session
+
     order_index = Column(
         Integer, nullable=False, comment="Message order within the session"
     )
 
-    # Idempotency key supplied by the client. Only user messages populate it;
-    # SQL unique constraints permit multiple NULL values.
+
+
     client_request_id = Column(
         String(255),
         nullable=True,
         comment="Client idempotency key scoped to the parent session",
     )
 
-    # Stable association between a user question and its reserved response
-    # position. It also prevents duplicate responses for one turn.
+
+
     reply_to_message_id = Column(
         Integer,
         ForeignKey("chat_messages.id", ondelete="SET NULL"),
@@ -109,7 +109,7 @@ class ChatMessage(Base):
         comment="User turn state: processing, completed, or failed",
     )
 
-    # Timestamp
+
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -124,7 +124,7 @@ class ChatMessage(Base):
         comment="Last turn-state or response update timestamp",
     )
 
-    # Relationships
+
     session = relationship("ChatSession", back_populates="messages")
 
     def __repr__(self) -> str:

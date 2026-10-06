@@ -1,4 +1,4 @@
-"""Password and access-token boundaries implemented by infrastructure adapters."""
+"""定义应用层依赖的能力端口。"""
 
 from datetime import datetime
 from typing import Protocol

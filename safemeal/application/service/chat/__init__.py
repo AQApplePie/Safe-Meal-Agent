@@ -1,3 +1,3 @@
-"""Chat session and turn orchestration use cases."""
+"""组织聊天会话与轮次处理用例。"""
 
 __all__: list[str] = []

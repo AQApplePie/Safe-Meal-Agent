@@ -1,9 +1,4 @@
-"""Render exact recipe evidence according to the fields requested this turn.
-
-Request understanding decides *which* fields the user asked for. This module only
-formats trusted structured evidence; it never guesses missing instructions or
-asks the language model to reconstruct a recipe.
-"""
+"""按本轮请求字段渲染精确菜谱证据。"""
 
 from __future__ import annotations
 
@@ -21,7 +16,6 @@ _NUTRITION_LABELS = {
 
 
 def _ingredient_lines(recipe: Mapping[str, Any]) -> list[str]:
-    """Format only validated ingredient rows returned by a recipe provider."""
 
     return [
         f"- {item.get('name')}：{item.get('amount') or '适量'}"
@@ -31,7 +25,6 @@ def _ingredient_lines(recipe: Mapping[str, Any]) -> list[str]:
 
 
 def _step_lines(recipe: Mapping[str, Any]) -> list[str]:
-    """Turn provider step text into a stable numbered list without inventing text."""
 
     raw = str(recipe.get("steps") or "").strip()
     if not raw:
@@ -50,7 +43,6 @@ def _step_lines(recipe: Mapping[str, Any]) -> list[str]:
 
 
 def _nutrition_lines(recipe: Mapping[str, Any]) -> list[str]:
-    """Format available nutrition facts while preserving their declared basis."""
 
     nutrition = recipe.get("nutrition")
     if not isinstance(nutrition, Mapping):
@@ -70,7 +62,6 @@ def _nutrition_lines(recipe: Mapping[str, Any]) -> list[str]:
 def render_exact_recipe_detail(
     recipe: Mapping[str, Any], requested_fields: Iterable[str]
 ) -> str:
-    """Render ingredients, steps or nutrition selected by the accepted RequestFrame."""
 
     name = str(recipe.get("name") or "该食谱")
     fields = tuple(dict.fromkeys(requested_fields)) or ("ingredients", "steps")

@@ -1,1 +1,1 @@
-"""Infrastructure adapters for external systems and runtime integrations."""
+"""外部系统与运行期能力的基础设施适配器。"""

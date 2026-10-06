@@ -1,4 +1,4 @@
-"""Rank fusion shared by vector and lexical retrieval adapters."""
+"""融合向量检索与关键词检索的排序结果。"""
 
 from safemeal.shared.types import JsonObject
 
@@ -9,7 +9,6 @@ def reciprocal_rank_fusion(
     *,
     rank_constant: int = 60,
 ) -> list[JsonObject]:
-    """Fuse heterogeneous scores using stable rank positions."""
 
     if rank_constant < 1:
         raise ValueError("rank_constant must be positive")

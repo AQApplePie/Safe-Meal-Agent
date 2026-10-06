@@ -1,4 +1,4 @@
-"""Chat workflow wiring only. Node implementations live in nodes/."""
+"""实现聊天工作流中的对应职责。"""
 
 from langgraph.graph import StateGraph, START, END
 from safemeal.application.contracts.workflow.models import WorkflowState
@@ -48,7 +48,6 @@ def build_chat_workflow(
 
 
 def build_resume_workflow(*, agent):
-    """Resume checkpoints through the same constraint and publication gates."""
     graph = StateGraph(WorkflowState)
     graph.add_node("resume_agent", ResumeAgentNode(agent))
     graph.add_node("resolve_constraints", resolve_constraints)

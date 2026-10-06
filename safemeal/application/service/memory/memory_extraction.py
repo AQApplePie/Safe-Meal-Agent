@@ -49,7 +49,7 @@ def _unique(values: Iterable[str]) -> list[str]:
 
 def _clean_memory_key(value: str) -> str:
     cleaned = value.strip().strip("：:").strip()
-    # Remove phrase suffixes as units.  Character-set stripping corrupts valid
+
     # ingredients such as 香菜、花菜 and 生菜.
     return re.sub(r"(?:类|等|一点|一些|食物|口味|风格|偏好)$", "", cleaned).strip()
 
@@ -81,11 +81,6 @@ class UserMemoryExtractor:
         )
 
     def extract_dietary_retractions(self, message: str) -> list[str]:
-        """Return explicitly retracted allergy/restriction keys.
-
-        Retractions are deliberately conservative: a historical hard constraint is
-        archived only when the same ingredient occurs in an explicit negation pattern.
-        """
 
         retracted: list[str] = []
         for ingredient in INGREDIENT_ALIASES:

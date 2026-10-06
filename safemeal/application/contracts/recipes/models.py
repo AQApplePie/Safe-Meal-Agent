@@ -1,4 +1,4 @@
-"""Stable recipe read models and deterministic validation rules."""
+"""定义跨层传递的稳定数据契约。"""
 
 from __future__ import annotations
 
@@ -71,7 +71,6 @@ _UNIT_DEFINITIONS: dict[str, tuple[UnitDimension, Decimal, str]] = {
 
 
 def normalize_quantity(value: Decimal | str | int, unit: str) -> NormalizedQuantity:
-    """Normalize supported units without guessing density or count equivalence."""
 
     try:
         quantity = Decimal(str(value).strip())

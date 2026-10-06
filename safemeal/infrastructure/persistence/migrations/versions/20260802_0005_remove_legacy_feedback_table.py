@@ -1,4 +1,4 @@
-"""Remove the table left by older local installations.
+"""删除旧版本地安装遗留的反馈表。
 
 Revision ID: 20260802_0005
 Revises: 20260716_0004
@@ -22,5 +22,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    # Removed product functionality is intentionally not recreated.
+    # 已下线的产品功能不在降级迁移中重新创建。
     pass

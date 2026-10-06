@@ -45,9 +45,9 @@ def _summary(data: JsonValue, error: str | None) -> str:
 
 def _compact_data(data: JsonValue, depth: int = 0, parent_key: str = "") -> JsonValue:
     """限制状态体积，同时保留Recipe固定聚合中的食材和营养字段。"""
-    # RecipeSearchResult -> items -> Recipe -> ingredients -> quantity ->
-    # Ingredient -> nutrition is seven levels deep. A smaller limit turns the
-    # typed ingredient object into a string and destroys safety evidence.
+
+
+
     if depth >= 8:
         return str(data)[:500]
     if isinstance(data, str):

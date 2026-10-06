@@ -1,4 +1,4 @@
-"""Build a request frame before loading long-term user context."""
+"""在加载长期用户上下文前建立本轮请求契约。"""
 
 from __future__ import annotations
 
@@ -57,8 +57,7 @@ class UnderstandRequestNode:
                     }
                 )
             except Exception as fallback_error:
-                # A malformed understanding result must become an observable,
-                # controlled clarification state instead of escaping as HTTP 500.
+                # 无法校验的理解结果转成可观察的澄清状态，不能直接抛出 HTTP 500。
                 frame = RequestFrame(
                     tasks=(RequestTask(kind="clarify"),),
                     confidence=0.0,

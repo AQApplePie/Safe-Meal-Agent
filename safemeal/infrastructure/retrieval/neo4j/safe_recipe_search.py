@@ -1,4 +1,4 @@
-"""Bounded, deterministic Neo4j dietary-safety queries."""
+"""实现知识与菜谱检索基础设施适配。"""
 
 from __future__ import annotations
 
@@ -21,7 +21,6 @@ from safemeal.application.contracts.tools.payloads import DietarySafeRecipeQuery
 
 
 def expand_excluded_ingredients(ingredients: list[str]) -> list[str]:
-    """Expand configured aliases while preserving deterministic order."""
 
     seen: set[str] = set()
     expanded: list[str] = []
@@ -38,12 +37,6 @@ def expand_excluded_ingredients(ingredients: list[str]) -> list[str]:
 
 
 def _forbidden_normalized_names(excluded_terms: list[str]) -> list[str]:
-    """Materialize the exact names accepted by the domain matcher.
-
-    This lets Neo4j filter rows before returning them without replacing the
-    domain classifier.  Aliases plus controlled preparation prefixes and
-    derived suffixes mirror ``ingredient_matches_forbidden_term``.
-    """
 
     values: set[str] = set()
     for term in excluded_terms:
@@ -63,7 +56,6 @@ def _forbidden_normalized_names(excluded_terms: list[str]) -> list[str]:
 
 
 class SafeRecipeGraphSearch:
-    """Classify bounded recipe rows using complete structured ingredients."""
 
     def __init__(self, driver_factory, database: str | None = None):
         self._driver_factory = driver_factory

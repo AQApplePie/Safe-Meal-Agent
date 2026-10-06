@@ -77,8 +77,8 @@ def create_initializer_node(
             )
         dietary_constraint = hard_constraints(agent_context.requirements)
         agent_context.dietary_constraints = dietary_constraint.model_dump(mode="json")
-        # The memory layer consumes trusted Workflow context; this node only
-        # orchestrates when those observations enter the Agent state.
+
+
         initial_observations = build_memory_observations(
             agent_context, dietary_constraint
         )
@@ -93,6 +93,20 @@ def create_initializer_node(
                 scenario=agent_context.request_frame.scenario,
             )
             menu_execution_plan = plan.model_dump(mode="json")
+            modification = agent_context.context_metadata.get("menu_modification")
+            if isinstance(modification, dict):
+                progress = progress.model_copy(
+                    update={
+                        "excluded_recipe_ids": tuple(
+                            int(item)
+                            for item in modification.get("exclude_recipe_ids", [])
+                        ),
+                        "excluded_recipe_names": tuple(
+                            str(item)
+                            for item in modification.get("exclude_recipe_names", [])
+                        ),
+                    }
+                )
             menu_task_progress = progress.model_dump(mode="json")
         task_payload = {
             "intent": agent_context.intent,

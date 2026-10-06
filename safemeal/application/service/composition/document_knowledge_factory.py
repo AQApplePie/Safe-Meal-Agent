@@ -1,4 +1,4 @@
-"""Build document knowledge services with Milvus-backed adapters."""
+"""装配文档知识摄取与检索服务。"""
 
 import asyncio
 
@@ -83,6 +83,5 @@ def create_document_knowledge_service() -> DocumentKnowledgeService:
 
 
 async def create_document_knowledge_service_async() -> DocumentKnowledgeService:
-    """Build the service outside the asyncio event-loop thread."""
 
     return await asyncio.to_thread(create_document_knowledge_service)

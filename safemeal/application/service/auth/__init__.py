@@ -1,4 +1,4 @@
-"""Local account authentication service."""
+"""组织本地账号认证用例。"""
 
 from .auth_service import AuthService
 

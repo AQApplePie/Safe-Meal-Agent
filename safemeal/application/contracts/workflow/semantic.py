@@ -1,4 +1,4 @@
-"""Small semantic value objects shared across control-plane contracts."""
+"""定义跨层传递的稳定数据契约。"""
 
 from typing import Literal
 
@@ -18,7 +18,6 @@ ContextRelation = Literal["new_task", "continuation", "reference", "modification
 
 
 class ConstraintStatement(BaseModel):
-    """One semantic statement with explicit authority and lifetime."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
     type: Literal[

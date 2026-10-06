@@ -1,4 +1,4 @@
-"""Public local-account endpoints and authenticated account inspection."""
+"""实现 HTTP 接口层的请求与响应适配。"""
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 

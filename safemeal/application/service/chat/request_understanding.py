@@ -1,4 +1,4 @@
-"""Deterministic request understanding for the recipe assistant workflow."""
+"""菜谱对话 Workflow 使用的确定性请求理解服务。"""
 
 from __future__ import annotations
 
@@ -14,6 +14,7 @@ from safemeal.application.contracts.workflow.request_frame import (
 )
 from safemeal.application.service.memory.memory_extraction import UserMemoryExtractor
 from safemeal.application.service.chat.menu_planning import (
+    extract_menu_modification,
     extract_menu_planning_requirements,
     is_menu_planning_request,
 )
@@ -47,8 +48,17 @@ class RequestUnderstandingService:
     def understand(self, message: str, recent_context=()) -> RequestFrame:
         text = message.strip()
         number_values = {
-            "一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5,
-            "六": 6, "七": 7, "八": 8, "九": 9, "十": 10,
+            "一": 1,
+            "二": 2,
+            "两": 2,
+            "三": 3,
+            "四": 4,
+            "五": 5,
+            "六": 6,
+            "七": 7,
+            "八": 8,
+            "九": 9,
+            "十": 10,
         }
         servings_match = re.search(
             r"(?:给|供|为)?\s*([一二两三四五六七八九十]|\d{1,3})\s*个人",
@@ -67,6 +77,7 @@ class RequestUnderstandingService:
                 else number_values[raw_servings]
             )
         scenario, menu_planning = extract_menu_planning_requirements(text)
+        modification_category, modification_count = extract_menu_modification(text)
         adaptive_menu = is_menu_planning_request(text) and menu_planning is None
         meal_type = (
             "breakfast"
@@ -78,9 +89,9 @@ class RequestUnderstandingService:
             else None
         )
         extraction = UserMemoryExtractor().extract(text)
-        temporary_scope = bool(re.search(r"今天|这顿|本轮|现在|这次", text)) and not bool(
-            re.search(r"以后|今后|一直|都不要|永远", text)
-        )
+        temporary_scope = bool(
+            re.search(r"今天|这顿|本轮|现在|这次", text)
+        ) and not bool(re.search(r"以后|今后|一直|都不要|永远", text))
         updates: list[MemoryUpdate] = []
         constraints: list[CurrentConstraint] = []
         for candidate in extraction.candidates:
@@ -94,8 +105,7 @@ class RequestUnderstandingService:
                 continue
             if temporary_scope and kind in {"preference", "dislike"}:
                 continue
-            # Participant-scoped meal requirements describe this shared meal;
-            # they are not consent to alter the account owner's persistent profile.
+            # 家庭成员的本餐要求只属于当前用餐，不能据此修改账号所有者画像。
             persist = not (
                 kind == "restriction"
                 and is_menu_planning_request(text)
@@ -118,9 +128,7 @@ class RequestUnderstandingService:
         detail = _DETAIL_TARGET_PATTERN.search(text)
         if detail:
             target_name = re.split(r"[，,。；;]", detail.group(1))[-1].strip()
-            # Polite request scaffolding is not part of the canonical recipe name.
-            # Normalize it after matching so new conversational prefixes do not
-            # make an otherwise exact lookup fail.
+            # 礼貌用语不属于规范菜名，匹配后统一移除，避免精确查询失败。
             target_name = _DETAIL_PREFIX_PATTERN.sub("", target_name).strip()
             target_name = re.sub(
                 r"^(?:我(?:很)?爱吃|我喜欢|我想吃)", "", target_name
@@ -134,8 +142,7 @@ class RequestUnderstandingService:
             if resolved:
                 target_name = resolved
 
-        # Transactional wording creates a hard selection category for this turn.
-        # Stable likes remain memory/preferences and are not promoted here.
+        # 本轮明确点选的品类进入强筛选条件；长期喜好仍保留为偏好，不在此升级。
         category_match = re.search(
             r"(?:推荐|来|给我|想吃|想要吃|今天(?:就)?想吃)"
             r"(?:[一二两三四五六七八九十\d]+(?:份|道|个)?)?"
@@ -182,7 +189,9 @@ class RequestUnderstandingService:
             ]
 
         tasks: list[RequestTask] = []
-        if clarification_question:
+        if modification_category is not None:
+            tasks.append(RequestTask(kind="replace"))
+        elif clarification_question:
             tasks.append(RequestTask(kind="clarify"))
         elif menu_planning is not None or adaptive_menu:
             tasks.append(RequestTask(kind="menu_planning"))
@@ -198,7 +207,13 @@ class RequestUnderstandingService:
         elif any(
             term in text
             for term in (
-                "推荐", "吃什么", "吃点", "想吃", "有没有什么", "几道", "家常菜"
+                "推荐",
+                "吃什么",
+                "吃点",
+                "想吃",
+                "有没有什么",
+                "几道",
+                "家常菜",
             )
         ):
             tasks.append(RequestTask(kind="recipe_recommendation"))
@@ -230,7 +245,10 @@ class RequestUnderstandingService:
                 }
                 raw_count = count_match.group(1)
                 recommendation_count = min(
-                    10, chinese_counts.get(raw_count, int(raw_count) if raw_count.isdigit() else 3)
+                    10,
+                    chinese_counts.get(
+                        raw_count, int(raw_count) if raw_count.isdigit() else 3
+                    ),
                 )
             elif re.search(r"几(?:份|道|个)", text):
                 recommendation_count = 3
@@ -269,7 +287,8 @@ class RequestUnderstandingService:
             "reference"
             if fields and (target_name is None or is_reference_only_target(target_name))
             else "modification"
-            if re.search(r"还是|改成|换成|现在想|不要了", text)
+            if modification_category is not None
+            or re.search(r"还是|重新|重选|重来|替换|改成|换成|现在想|不要了", text)
             else "continuation"
             if re.search(r"再来|按刚才|继续|同样", text)
             else "new_task"
@@ -280,10 +299,14 @@ class RequestUnderstandingService:
             current_constraints=tuple(constraints),
             participants=participants,
             context_relation=context_relation,
-            target=RequestTarget(recipe_name=target_name),
+            operation="replace" if modification_category is not None else None,
+            target=RequestTarget(
+                recipe_name=target_name,
+                menu_category=modification_category,
+            ),
             requested_fields=tuple(fields),
             exact_match_required=bool(target_name),
-            recommendation_count=recommendation_count,
+            recommendation_count=modification_count or recommendation_count,
             servings=servings,
             meal_type=meal_type,
             scenario=scenario,
@@ -316,7 +339,7 @@ class RequestUnderstandingService:
 
 
 class RuleBasedRequestUnderstandingGateway:
-    """Dependency-free fast path used until a trained local checkpoint is supplied."""
+    """无外部依赖的规则实现，也作为本地模型不可用时的降级路径。"""
 
     backend_name = "rules"
 

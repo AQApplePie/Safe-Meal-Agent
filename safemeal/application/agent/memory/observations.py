@@ -1,9 +1,4 @@
-"""Safe conversion of persisted memory records into Agent observations.
-
-Persisted free text is untrusted input. This module reconstructs supported memory
-sentences from typed fields, bounds their size and exposes only the attributes the
-Agent needs. It performs no storage access and therefore remains deterministic.
-"""
+"""把持久化记忆转换为有边界的结构化观察。"""
 
 from __future__ import annotations
 
@@ -31,7 +26,6 @@ _MEMORY_TEMPLATES = {
 def build_dietary_context_observation(
     constraint: DietaryConstraint,
 ) -> Optional[Observation]:
-    """Wrap active hard constraints as immutable planning evidence."""
 
     if not constraint.active:
         return None
@@ -55,7 +49,6 @@ def build_dietary_context_observation(
 
 
 def _safe_memory_value(memory: JsonObject) -> str:
-    """Rebuild prompt text from typed fields instead of stored free text."""
 
     memory_type = str(memory.get("memory_type", ""))
     key = re.sub(r"[\x00-\x1f\x7f]", "", str(memory.get("memory_key", ""))).strip()
@@ -67,7 +60,6 @@ def _safe_memory_value(memory: JsonObject) -> str:
 def build_user_memory_observation(
     user_memories: list[JsonObject],
 ) -> Optional[Observation]:
-    """Group supported long-term memories into bounded, source-aware evidence."""
 
     if not user_memories:
         return None

@@ -1,4 +1,4 @@
-"""Security capability ports."""
+"""定义应用层依赖的能力端口。"""
 
 from .identity import PasswordHasher, TokenIssuer
 

@@ -1,4 +1,4 @@
-"""Stable user-memory data contracts shared across application boundaries."""
+"""定义跨层传递的稳定数据契约。"""
 
 from __future__ import annotations
 

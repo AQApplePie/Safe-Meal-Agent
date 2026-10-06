@@ -1,4 +1,4 @@
-"""Account and refresh-token persistence boundaries."""
+"""定义应用层依赖的能力端口。"""
 
 from collections.abc import Callable
 from datetime import datetime

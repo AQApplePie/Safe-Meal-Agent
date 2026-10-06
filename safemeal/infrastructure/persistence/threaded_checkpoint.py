@@ -1,4 +1,4 @@
-"""Expose synchronous database checkpointers to an async LangGraph runner."""
+"""实现持久化基础设施适配。"""
 
 from __future__ import annotations
 import asyncio
@@ -7,7 +7,6 @@ from langgraph.checkpoint.base import BaseCheckpointSaver
 
 
 class ThreadedCheckpointSaver(BaseCheckpointSaver):
-    """Keep synchronous PostgreSQL checkpoint I/O off the event loop."""
 
     def __init__(self, delegate: BaseCheckpointSaver):
         super().__init__(serde=delegate.serde)

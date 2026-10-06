@@ -1,1 +1,1 @@
-"""SQLAlchemy ORM model package for application persistence."""
+"""实现持久化基础设施适配。"""

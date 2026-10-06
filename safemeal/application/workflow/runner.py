@@ -1,4 +1,4 @@
-"""Public chat workflow entry point, independent of Agent implementation."""
+"""实现聊天工作流中的对应职责。"""
 
 from safemeal.application.contracts.workflow.models import WorkflowRequest
 from safemeal.application.contracts.agent.api import AgentProcessResponse
@@ -15,7 +15,7 @@ class ChatWorkflow:
             state = await self.graph.ainvoke({"request": request})
         result = state["result"]
         result.metadata["agent_status"] = result.status
-        # Evidence is an Agent-to-workflow contract, not a second unreviewed UI output.
+
         return result.model_copy(update={"evidence": []})
 
     async def resume(self, session_id: str, *, approved: bool) -> AgentProcessResponse:
@@ -35,5 +35,5 @@ class ChatWorkflow:
             )
         result = state["result"]
         result.metadata["agent_status"] = result.status
-        # Evidence is an Agent-to-workflow contract, not a second unreviewed UI output.
+
         return result.model_copy(update={"evidence": []})

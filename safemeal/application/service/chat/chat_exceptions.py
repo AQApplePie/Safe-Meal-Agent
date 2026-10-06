@@ -1,4 +1,4 @@
-"""Expected chat-use-case exceptions safe for interface-layer mapping."""
+"""定义聊天用例可预期的业务异常。"""
 
 from __future__ import annotations
 
@@ -6,23 +6,23 @@ from safemeal.application.exceptions import ApplicationError
 
 
 class ChatError(ApplicationError):
-    """Base class for expected chat failures."""
+    """聊天用例中可以映射为稳定接口响应的异常基类。"""
 
 
 class ChatSessionNotFoundError(ChatError):
-    """The session does not exist or is not owned by the supplied user."""
+    """表示会话不存在或不属于当前用户。"""
 
     public_message = "Chat session not found"
 
 
 class ChatTurnConflictError(ChatError):
-    """A request ID was reused incompatibly or its turn is still running."""
+    """表示请求标识冲突或对应轮次仍在处理中。"""
 
     public_message = "Chat turn conflict"
 
 
 class ChatAgentUnavailableError(ChatError):
-    """The Agent failed after the user message was durably accepted."""
+    """表示用户消息已保存，但智能体未能完成处理。"""
 
     public_message = "Agent is temporarily unavailable"
 

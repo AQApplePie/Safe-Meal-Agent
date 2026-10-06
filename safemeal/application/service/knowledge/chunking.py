@@ -1,4 +1,4 @@
-"""Document chunking strategies used by the knowledge ingestion pipeline."""
+"""实现知识文档的分块策略。"""
 
 from __future__ import annotations
 
@@ -45,12 +45,6 @@ class RecursiveChunkStrategy:
 
 
 class SemanticChunkStrategy:
-    """Split on adjacent-sentence embedding discontinuities.
-
-    The strategy intentionally caps the number of semantic units. Very large
-    documents fall back to recursive splitting so one upload cannot cause an
-    unbounded embedding request before the normal ingestion embedding call.
-    """
 
     name = "semantic"
     _BOUNDARY = re.compile(r"(?<=[。！？!?；;])|\n{2,}")

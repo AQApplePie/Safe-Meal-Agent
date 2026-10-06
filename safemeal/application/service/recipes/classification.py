@@ -1,4 +1,4 @@
-"""Derived multi-dimensional recipe classification without a database migration."""
+"""从可信字段派生菜谱的多维分类。"""
 
 from __future__ import annotations
 
@@ -24,7 +24,6 @@ def classify_menu_categories(
     ingredient_categories: Iterable[str] = (),
     description: str = "",
 ) -> tuple[MenuCategory, ...]:
-    """Derive independent serving/course/protein dimensions from trusted fields."""
 
     text = f"{name} {description}"
     ingredients = tuple(str(item) for item in ingredient_names)

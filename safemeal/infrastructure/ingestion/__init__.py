@@ -1,3 +1,3 @@
-"""Document parsing, source synchronization and upload storage adapters."""
+"""实现文档摄取基础设施适配。"""
 
 __all__: list[str] = []

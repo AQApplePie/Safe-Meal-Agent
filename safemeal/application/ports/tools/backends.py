@@ -1,4 +1,4 @@
-"""Infrastructure-independent capabilities required by Agent tools."""
+"""定义应用层依赖的能力端口。"""
 
 from typing import Protocol
 from safemeal.application.contracts.tools.payloads import DietarySafeRecipeQueryResult

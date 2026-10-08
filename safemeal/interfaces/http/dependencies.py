@@ -6,18 +6,18 @@
 
 from fastapi import Depends, Request
 
-from safemeal.application.workflow.runner import ChatWorkflow
-from safemeal.application.service.chat.chat_session_service import (
+from safemeal.agent.workflow.runner import ChatWorkflow
+from safemeal.modules.conversation.application.chat_session_service import (
     ChatSessionService,
 )
-from safemeal.application.service.chat.chat_turn_service import ChatTurnService
-from safemeal.application.service.memory.user_memory_service import UserMemoryService
-from safemeal.application.service.auth import AuthService
-from safemeal.application.service.upload.file_upload_service import FileUploadService
-from safemeal.application.service.upload.uploaded_document_ingestion_service import (
+from safemeal.agent.gateway.chat_turn_service import ChatTurnService
+from safemeal.modules.conversation.application.memory.user_memory_service import UserMemoryService
+from safemeal.modules.identity.application import AuthService
+from safemeal.modules.knowledge.application.upload.file_upload_service import FileUploadService
+from safemeal.modules.knowledge.application.upload.uploaded_document_ingestion_service import (
     UploadedDocumentIngestionService,
 )
-from safemeal.application.service.composition.application_container import (
+from safemeal.bootstrap.composition.application_container import (
     ApplicationContainer,
 )
 

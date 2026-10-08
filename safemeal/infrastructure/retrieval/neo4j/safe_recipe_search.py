@@ -6,18 +6,18 @@ from typing import Literal, Optional
 
 from neo4j import READ_ACCESS, Record, Session
 
-from safemeal.application.contracts.dietary_safety.constraints import RecipeSafetyRecord
-from safemeal.application.service.dietary_safety.recipe_safety import (
+from safemeal.modules.dietary.contracts.constraints import RecipeSafetyRecord
+from safemeal.modules.dietary.application.recipe_safety import (
     match_forbidden_ingredients,
     normalize_ingredient_name,
 )
-from safemeal.application.service.dietary_safety.ingredient_terms import (
+from safemeal.modules.dietary.application.ingredient_terms import (
     DERIVED_SUFFIXES,
     INGREDIENT_ALIASES,
     PREPARATION_PREFIXES,
 )
 from safemeal.shared.types import to_json_object
-from safemeal.application.contracts.tools.payloads import DietarySafeRecipeQueryResult
+from safemeal.agent.runtime.tools.contracts.payloads import DietarySafeRecipeQueryResult
 
 
 def expand_excluded_ingredients(ingredients: list[str]) -> list[str]:

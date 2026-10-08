@@ -11,13 +11,13 @@ from typing import List, Optional, cast
 from sqlalchemy import desc, func, select
 from sqlalchemy.orm import Query, Session
 
-from safemeal.application.contracts.chat.messages import (
+from safemeal.modules.conversation.contracts.chat.messages import (
     ChatMessageCreate,
     ChatMessageUpdate,
     ChatSessionCreate,
     ChatSessionUpdate,
 )
-from safemeal.application.ports.persistence.chat_repository import ChatUnitOfWork
+from safemeal.modules.conversation.ports.chat_repository import ChatUnitOfWork
 from safemeal.infrastructure.persistence.database import session_scope
 from safemeal.infrastructure.persistence.db.models import (
     ChatMessage,

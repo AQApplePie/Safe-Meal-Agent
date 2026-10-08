@@ -7,14 +7,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from safemeal.application.contracts.auth import LoginRequest, RegisterRequest
-from safemeal.application.exceptions import (
+from safemeal.modules.identity.contracts import LoginRequest, RegisterRequest
+from safemeal.shared.exceptions import (
     AuthenticationError,
     EmailAlreadyRegisteredError,
     InvalidAccessTokenError,
     InvalidRefreshTokenError,
 )
-from safemeal.application.service.auth import AuthService
+from safemeal.modules.identity.application import AuthService
 from safemeal.infrastructure.persistence.auth_repository import (
     SqlAlchemyAuthUnitOfWork,
 )
@@ -111,4 +111,3 @@ def test_logout_revokes_refresh_token(identity):
 
     with pytest.raises(InvalidRefreshTokenError):
         service.refresh(tokens.refresh_token)
-

@@ -1,16 +1,20 @@
-"""Enforce import directions so future features cannot silently recouple systems."""
+"""约束物理架构的依赖方向，防止后续功能重新耦合模块。"""
 
 import ast
+import os
 from pathlib import Path
 import subprocess
-import os
 import sys
 
 ROOT = Path(__file__).resolve().parents[2]
-APP = ROOT / "safemeal" / "application"
+PACKAGE = ROOT / "safemeal"
+AGENT = PACKAGE / "agent"
+MODULES = PACKAGE / "modules"
+BOOTSTRAP = PACKAGE / "bootstrap"
 
 
-def imports(path):
+def imports(path: Path):
+    """返回文件中的绝对导入模块名。"""
     for node in ast.walk(ast.parse(path.read_text())):
         if isinstance(node, ast.ImportFrom):
             yield node.module or ""
@@ -18,35 +22,51 @@ def imports(path):
             yield from (alias.name for alias in node.names)
 
 
-def test_infrastructure_only_imported_from_composition():
-    for path in (ROOT / "safemeal").rglob("*.py"):
-        relative = path.relative_to(ROOT / "safemeal").parts
-        if relative[0] == "infrastructure" or relative[:3] == (
-            "application",
-            "service",
-            "composition",
-        ):
+def test_infrastructure_only_imported_from_infrastructure_or_bootstrap():
+    """具体技术实现只能由基础设施内部或装配根引用。"""
+    for path in PACKAGE.rglob("*.py"):
+        relative = path.relative_to(PACKAGE).parts
+        if relative[0] in {"infrastructure", "bootstrap"} or relative == ("main.py",):
             continue
         assert not any(
-            x.startswith("safemeal.infrastructure") for x in imports(path)
+            module.startswith("safemeal.infrastructure") for module in imports(path)
         ), str(path)
 
 
-def test_agent_and_workflow_have_no_implementation_imports_between_them():
-    for owner, forbidden in [("workflow", "agent"), ("agent", "workflow")]:
-        for path in (APP / owner).rglob("*.py"):
-            assert not any(
-                x.startswith(f"safemeal.application.{forbidden}") for x in imports(path)
-            ), str(path)
+def test_business_modules_do_not_depend_on_agent():
+    """业务事实不能反向依赖智能体决策层。"""
+    violations = [
+        (str(path), module)
+        for path in MODULES.rglob("*.py")
+        for module in imports(path)
+        if module.startswith("safemeal.agent")
+    ]
+    assert violations == []
+
+
+def test_business_modules_do_not_import_framework_or_composition():
+    """业务模块不得依赖 LangGraph、装配根或运行时配置。"""
+    forbidden = ("langgraph", "safemeal.bootstrap", "safemeal.config")
+    for path in MODULES.rglob("*.py"):
+        assert not any(module.startswith(forbidden) for module in imports(path)), str(path)
+
+
+def test_outer_and_inner_graphs_remain_distinct():
+    """外层控制流与内层决策循环必须保留各自的装配入口。"""
+    assert (AGENT / "workflow" / "graph.py").is_file()
+    assert (AGENT / "runtime" / "orchestration" / "graph.py").is_file()
+    imported = set(imports(BOOTSTRAP / "composition" / "application_container.py"))
+    assert "safemeal.agent.runtime.orchestration" in imported
+    assert "safemeal.agent.workflow.graph" in imported
 
 
 def test_nodes_are_not_declared_inside_graph_wiring():
-    for owner in ("agent", "workflow"):
-        graph_path = (
-            APP / owner / "graph.py"
-            if owner == "workflow"
-            else APP / owner / "orchestration" / "graph.py"
-        )
+    """Graph 文件只负责装配，不重新内嵌节点实现。"""
+    graph_paths = (
+        AGENT / "workflow" / "graph.py",
+        AGENT / "runtime" / "orchestration" / "graph.py",
+    )
+    for graph_path in graph_paths:
         tree = ast.parse(graph_path.read_text())
         for node in tree.body:
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -58,185 +78,75 @@ def test_nodes_are_not_declared_inside_graph_wiring():
                 )
 
 
-def test_tools_contain_only_tool_implementations():
-    for path in (APP / "tool").glob("*.py"):
+def test_tools_are_adapters_without_infrastructure_dependencies():
+    """Tool 只适配应用服务，不能直接拥有技术实现。"""
+    adapters = AGENT / "runtime" / "tools" / "adapters"
+    for path in adapters.glob("*.py"):
         for node in ast.parse(path.read_text()).body:
             if isinstance(node, ast.ClassDef):
                 assert node.name.endswith("Tool"), (str(path), node.name)
         assert not any(
-            x.startswith(
-                (
-                    "safemeal.infrastructure",
-                    "safemeal.config",
-                    "safemeal.application.agent",
-                    "safemeal.application.workflow",
-                )
-            )
-            for x in imports(path)
-        )
+            module.startswith(("safemeal.infrastructure", "safemeal.config"))
+            for module in imports(path)
+        ), str(path)
 
 
 def test_core_systems_import_without_database_or_model_configuration():
+    """导入两个 Graph 不应隐式初始化数据库或配置。"""
     env = dict(os.environ)
     env.pop("DATABASE_URL", None)
-    code = 'from safemeal.application.agent.orchestration import build_agent_graph; from safemeal.application.workflow.graph import build_chat_workflow; import sys; assert "safemeal.config.settings" not in sys.modules'
+    code = (
+        "from safemeal.agent.runtime.orchestration import build_agent_graph; "
+        "from safemeal.agent.workflow.graph import build_chat_workflow; "
+        "import sys; assert 'safemeal.config.settings' not in sys.modules"
+    )
     result = subprocess.run(
         [sys.executable, "-c", code], cwd=ROOT, env=env, capture_output=True, text=True
     )
     assert result.returncode == 0, result.stderr
 
 
-def test_application_data_classes_are_declared_in_contracts():
-    for path in APP.rglob("*.py"):
-        if "contracts" in path.relative_to(APP).parts:
-            continue
-        for node in ast.parse(path.read_text()).body:
-            if not isinstance(node, ast.ClassDef):
-                continue
-            bases = {ast.unparse(base).split(".")[-1] for base in node.bases}
-            decorators = [ast.unparse(item) for item in node.decorator_list]
-            assert not bases & {"BaseModel", "TypedDict"}, (str(path), node.name)
-            # Stateful strategy objects hold dependencies and are not transport contracts.
-            if node.name != "ChunkStrategySelector":
-                assert not any(x.startswith("dataclass") for x in decorators), (
-                    str(path),
-                    node.name,
-                )
-
-
-def test_business_code_does_not_import_composition_or_runtime_settings():
-    for path in APP.rglob("*.py"):
-        if path.relative_to(APP).parts[:2] == ("service", "composition"):
-            continue
-        assert not any(
-            module.startswith(
-                ("safemeal.application.service.composition", "safemeal.config")
-            )
-            for module in imports(path)
-        ), str(path)
-
-
-def test_service_layout_has_no_legacy_imports_or_eager_factories():
-    assert not (APP / "use_cases").exists()
-    assert {path.name for path in (APP / "service").glob("*.py")} == {"__init__.py"}
-    for path in (ROOT / "safemeal").rglob("*.py"):
-        assert not any(
-            module.startswith("safemeal.application.use_cases")
-            for module in imports(path)
-        ), str(path)
-
-
-def test_contracts_are_grouped_without_eager_graph_dependencies():
-    assert {path.name for path in (APP / "contracts").glob("*.py")} == {"__init__.py"}
-    code = "from safemeal.application.contracts.memory.models import UserMemoryRead; import sys; assert 'langgraph.graph' not in sys.modules; assert 'safemeal.config.settings' not in sys.modules"
-    result = subprocess.run(
-        [sys.executable, "-c", code], cwd=ROOT, capture_output=True, text=True
+def test_legacy_application_implementations_are_removed():
+    """旧 application 目录不能继续承载第二套真实实现。"""
+    application = PACKAGE / "application"
+    remaining = (
+        [path for path in application.rglob("*.py") if path.name != "__init__.py"]
+        if application.exists()
+        else []
     )
-    assert result.returncode == 0, result.stderr
+    assert remaining == []
 
 
-def test_legacy_modules_removed_and_contracts_do_not_depend_on_services():
-    assert not (ROOT / "safemeal" / "modules").exists()
-    for path in (ROOT / "safemeal").rglob("*.py"):
-        assert not any(
-            module.startswith("safemeal.modules") for module in imports(path)
-        ), str(path)
-
-
-def test_agent_exposes_all_six_architecture_layers():
-    """Keep the learning architecture visible as six real boundaries, not aliases."""
-
-    agent_root = APP / "agent"
-    expected = {
-        "gateway",
-        "orchestration",
-        "model",
-        "tools",
-        "memory",
-        "aggregation",
-    }
-    assert expected <= {path.name for path in agent_root.iterdir() if path.is_dir()}
+def test_agent_exposes_physical_boundaries():
+    """Agent 的理解、上下文、外层流程与内层运行时均为真实目录。"""
+    expected = {"contracts", "understanding", "context", "workflow", "runtime", "gateway"}
+    assert expected <= {path.name for path in AGENT.iterdir() if path.is_dir()}
     for layer in expected:
-        assert (agent_root / layer / "__init__.py").is_file()
-
-    # Legacy implementation locations must not survive beside the six layers.
-    assert not {
-        "execution_service.py",
-        "graph.py",
-        "routing.py",
-        "nodes",
-        "utils",
-    } & {path.name for path in agent_root.iterdir()}
-
-    # Each public layer owns executable code or a protocol definition of its own.
-    owned_symbols = {
-        "gateway/service.py": "AgentExecutionService",
-        "orchestration/graph.py": "build_agent_graph",
-        "model/protocol.py": "AgentModelGateway",
-        "aggregation/responder.py": "create_responder_node",
-        "memory/context.py": "build_memory_observations",
-        "tools/runtime.py": "LocalToolExecutor",
-    }
-    for relative, symbol in owned_symbols.items():
-        tree = ast.parse((agent_root / relative).read_text())
-        declared = {
-            node.name
-            for node in tree.body
-            if isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
-        }
-        assert symbol in declared, relative
-
-    # Initializer consumes the memory layer instead of keeping a second copy of
-    # memory-to-observation rules beside the graph node.
-    assert not (
-        agent_root / "orchestration" / "nodes" / "initializer" / "observations.py"
-    ).exists()
+        assert (AGENT / layer / "__init__.py").is_file()
+    runtime_layers = {"orchestration", "model", "tools", "memory", "aggregation"}
+    runtime = AGENT / "runtime"
+    assert runtime_layers <= {path.name for path in runtime.iterdir() if path.is_dir()}
 
 
-def test_production_composition_uses_agent_public_layers():
-    """Prevent production wiring from bypassing the six public layers."""
-
-    container = APP / "service" / "composition" / "application_container.py"
-    imported = set(imports(container))
-    assert "safemeal.application.agent.gateway" in imported
-    assert "safemeal.application.agent.orchestration" in imported
-    assert "safemeal.application.agent.tools" in imported
-    assert "safemeal.application.agent.execution_service" not in imported
-    assert "safemeal.application.agent.tool_registry" not in imported
-    assert "safemeal.application.agent.tool_runtime" not in imported
-
-
-def test_agent_has_no_legacy_llm_port_or_layer_bypass_imports():
-    """Do not reintroduce compatibility shims that duplicate the model layer."""
-
-    assert not (APP / "ports" / "llm").exists()
-    forbidden = (
-        "safemeal.application.agent.execution_service",
-        "safemeal.application.agent.graph",
-        "safemeal.application.agent.nodes",
-        "safemeal.application.agent.routing",
-        "safemeal.application.agent.utils",
-        "safemeal.application.ports.llm",
-    )
-    for path in (ROOT / "safemeal").rglob("*.py"):
-        assert not any(
-            module.startswith(forbidden) for module in imports(path)
-        ), str(path)
+def test_production_composition_uses_public_agent_layers():
+    """生产装配通过公开边界连接 Agent，不依赖遗留路径。"""
+    imported = set(imports(BOOTSTRAP / "composition" / "application_container.py"))
+    assert "safemeal.agent.gateway" in imported
+    assert "safemeal.agent.runtime.orchestration" in imported
+    assert "safemeal.agent.runtime.tools" in imported
+    assert not any(module.startswith("safemeal.application") for module in imported)
 
 
 def test_production_tools_publish_complete_usage_boundaries():
-    """Every real Tool must explain purpose, positive use and negative use."""
-
-    from safemeal.application.tool.dietary_search import DietarySafeRecipeQueryTool
-    from safemeal.application.tool.recipe_tools import (
+    """每个生产 Tool 都必须声明用途、使用与禁用边界。"""
+    from safemeal.agent.runtime.tools.adapters.constraint_verification import VerifyRecipeConstraintsTool
+    from safemeal.agent.runtime.tools.adapters.dietary_search import DietarySafeRecipeQueryTool
+    from safemeal.agent.runtime.tools.adapters.knowledge_search import KnowledgeSearchTool
+    from safemeal.agent.runtime.tools.adapters.recipe_tools import (
         GenerateRecipeTool,
         GetRecipeTool,
         RecommendRecipesTool,
         SearchRecipesTool,
-    )
-    from safemeal.application.tool.knowledge_search import KnowledgeSearchTool
-    from safemeal.application.tool.constraint_verification import (
-        VerifyRecipeConstraintsTool,
     )
 
     tool_types = (
@@ -253,10 +163,3 @@ def test_production_tools_publish_complete_usage_boundaries():
         assert tool_type.use_when
         assert tool_type.do_not_use_when
         assert tool_type.input_constraints
-    for path in (APP / "contracts").rglob("*.py"):
-        assert not any(
-            module.startswith(
-                ("safemeal.application.service", "safemeal.infrastructure")
-            )
-            for module in imports(path)
-        ), str(path)

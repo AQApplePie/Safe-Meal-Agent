@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 import tempfile
 from uuid import UUID
-from safemeal.application.contracts.upload.models import UploadedDocumentRecord
+from safemeal.modules.knowledge.contracts.models import UploadedDocumentRecord
 
 import aiofiles  # type: ignore[import-untyped]
 

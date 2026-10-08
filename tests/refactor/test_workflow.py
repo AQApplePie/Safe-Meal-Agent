@@ -1,22 +1,20 @@
 import asyncio
 import pytest
 
-from safemeal.application.contracts.agent.api import AgentProcessResponse
-from safemeal.application.agent.orchestration.nodes.planner.intent import resolve_agent_intent
-from safemeal.application.contracts.agent.decisions import Observation
-from safemeal.application.contracts.workflow.models import WorkflowRequest
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.streaming import (
+from safemeal.agent.contracts.api import AgentProcessResponse
+from safemeal.agent.runtime.orchestration.nodes.planner.intent import resolve_agent_intent
+from safemeal.agent.contracts.decisions import Observation
+from safemeal.agent.contracts.workflow.models import WorkflowRequest
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.agent.workflow.streaming import (
     emit_answer_chunk,
     use_answer_stream,
 )
-from safemeal.application.workflow.graph import build_chat_workflow
-from safemeal.application.workflow.runner import ChatWorkflow
-from safemeal.application.workflow.context.builder import AgentContextBuilder
-from safemeal.application.workflow.context.conversation_context import (
-    MemoryRelevanceSelector,
-)
-from safemeal.application.contracts.recipes.generated import GeneratedRecipe
+from safemeal.agent.workflow.graph import build_chat_workflow
+from safemeal.agent.workflow.runner import ChatWorkflow
+from safemeal.agent.workflow.context.builder import AgentContextBuilder
+from safemeal.agent.context.relevance import MemoryRelevanceSelector
+from safemeal.modules.recipe.contracts.generated import GeneratedRecipe
 
 
 class Memory:

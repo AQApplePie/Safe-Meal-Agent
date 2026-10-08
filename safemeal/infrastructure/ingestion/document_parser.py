@@ -6,8 +6,8 @@ from io import BytesIO
 from pathlib import Path
 from typing import Callable
 
-from safemeal.application.contracts.upload.models import ParsedDocument
-from safemeal.application.ports.ingestion.document_parser import DocumentParseError
+from safemeal.modules.knowledge.contracts.models import ParsedDocument
+from safemeal.modules.knowledge.ports.ingestion.document_parser import DocumentParseError
 from safemeal.config.settings import settings
 
 

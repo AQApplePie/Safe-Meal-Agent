@@ -1,4 +1,4 @@
-from safemeal.application.contracts.upload.ingestion import IngestionJob
+from safemeal.modules.knowledge.contracts.ingestion import IngestionJob
 
 
 class RedisIngestionQueue:

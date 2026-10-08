@@ -4,19 +4,19 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from safemeal.application.agent.orchestration import build_agent_graph
-from safemeal.application.agent.gateway import AgentExecutionService
-from safemeal.application.contracts.agent.api import AgentProcessResponse
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.contracts.agent.intent import IntentDecision
-from safemeal.application.contracts.workflow.models import WorkflowRequest
-from safemeal.application.service.chat.turn_persistence import ChatTurnPersistence
-from safemeal.application.service.chat.conversation_history_service import (
+from safemeal.agent.runtime.orchestration import build_agent_graph
+from safemeal.agent.gateway import AgentExecutionService
+from safemeal.agent.contracts.api import AgentProcessResponse
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.agent.contracts.intent import IntentDecision
+from safemeal.agent.contracts.workflow.models import WorkflowRequest
+from safemeal.modules.conversation.application.turn_persistence import ChatTurnPersistence
+from safemeal.agent.context.history import (
     ConversationHistoryService,
 )
-from safemeal.application.service.chat.chat_exceptions import ChatTurnConflictError
-from safemeal.application.workflow.context.builder import AgentContextBuilder
-from safemeal.application.workflow.nodes.prepare_context import PrepareContextNode
+from safemeal.modules.conversation.application.chat_exceptions import ChatTurnConflictError
+from safemeal.agent.workflow.context.builder import AgentContextBuilder
+from safemeal.agent.workflow.nodes.prepare_context import PrepareContextNode
 from safemeal.infrastructure.persistence.database import Base
 from safemeal.infrastructure.persistence.chat_repository import SqlAlchemyChatUnitOfWork
 from test_agent_graph import Model, Tools
@@ -204,10 +204,10 @@ async def test_disabling_long_term_memory_still_prepares_history(stored_turns):
 async def test_persisted_chat_runs_prepare_agent_review_and_saves_final_answer(
     stored_turns,
 ):
-    from safemeal.application.contracts.chat.turn import ChatRequest
-    from safemeal.application.service.chat.chat_turn_service import ChatTurnService
-    from safemeal.application.workflow.graph import build_chat_workflow
-    from safemeal.application.workflow.runner import ChatWorkflow
+    from safemeal.modules.conversation.contracts.chat.turn import ChatRequest
+    from safemeal.agent.gateway.chat_turn_service import ChatTurnService
+    from safemeal.agent.workflow.graph import build_chat_workflow
+    from safemeal.agent.workflow.runner import ChatWorkflow
 
     uow, previous = stored_turns
     memory = Memory()

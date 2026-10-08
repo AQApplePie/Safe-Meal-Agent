@@ -15,15 +15,15 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import StreamingResponse
 from starlette.concurrency import run_in_threadpool
-from safemeal.application.service.chat.chat_exceptions import (
+from safemeal.modules.conversation.application.chat_exceptions import (
     ChatAgentUnavailableError,
     ChatSessionNotFoundError,
     ChatTurnConflictError,
 )
-from safemeal.application.service.chat.chat_session_service import (
+from safemeal.modules.conversation.application.chat_session_service import (
     ChatSessionService,
 )
-from safemeal.application.service.chat.chat_turn_service import ChatTurnService
+from safemeal.agent.gateway.chat_turn_service import ChatTurnService
 from safemeal.interfaces.http.dependencies import (
     get_chat_session_service,
     get_chat_turn_service,
@@ -36,27 +36,27 @@ from safemeal.interfaces.http.authentication import (
 )
 from safemeal.config.settings import settings
 from safemeal.shared.types import JsonObject
-from safemeal.application.contracts.chat.turn import ChatRequest, ChatResponse
+from safemeal.modules.conversation.contracts.chat.turn import ChatRequest, ChatResponse
 
 from fastapi import Response
-from safemeal.application.contracts.chat.messages import ChatSessionUpdate
+from safemeal.modules.conversation.contracts.chat.messages import ChatSessionUpdate
 from safemeal.interfaces.http.models import (
     ChatSessionResponse,
     ChatSessionUpdateRequest,
     UserMemoryResponse,
     UserMemoryUpdateRequest,
 )
-from safemeal.application.service.memory.user_memory_service import UserMemoryService
+from safemeal.modules.conversation.application.memory.user_memory_service import UserMemoryService
 from safemeal.interfaces.http.dependencies import (
     get_user_memory_service,
     get_chat_workflow,
 )
-from safemeal.application.contracts.memory.models import UserMemoryUpdate
-from safemeal.application.contracts.agent.api import (
+from safemeal.modules.conversation.contracts.memory.models import UserMemoryUpdate
+from safemeal.agent.contracts.api import (
     AgentResumeRequest,
     AgentProcessResponse,
 )
-from safemeal.application.workflow.runner import ChatWorkflow
+from safemeal.agent.workflow.runner import ChatWorkflow
 
 router = APIRouter()
 

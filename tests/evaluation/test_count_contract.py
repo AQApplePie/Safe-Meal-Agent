@@ -6,15 +6,15 @@ from decimal import Decimal
 
 import pytest
 
-from safemeal.application.agent.orchestration.nodes.planner.node import (
+from safemeal.agent.runtime.orchestration.nodes.planner.node import (
     create_planner_node,
 )
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.contracts.recipes.catalog import (
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.modules.recipe.contracts.catalog import (
     RecipeQuery,
     RecipeSearchResult,
 )
-from safemeal.application.contracts.recipes.models import (
+from safemeal.modules.recipe.contracts.models import (
     CookingStep,
     Ingredient,
     IngredientQuantity,
@@ -22,16 +22,16 @@ from safemeal.application.contracts.recipes.models import (
     Recipe,
     RecipeDifficulty,
 )
-from safemeal.application.contracts.tools.base import ToolSpecification
-from safemeal.application.contracts.workflow.request_frame import (
+from safemeal.agent.runtime.tools.contracts.base import ToolSpecification
+from safemeal.shared.contracts.request_frame import (
     CurrentConstraint,
     RequestFrame,
     RequestTask,
 )
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
-from safemeal.application.service.recipes.recipe_service import RecipeService
+from safemeal.modules.recipe.application.recipe_service import RecipeService
 
 
 def _recipe(

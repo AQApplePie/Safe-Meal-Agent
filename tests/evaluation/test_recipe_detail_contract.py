@@ -4,18 +4,18 @@ from __future__ import annotations
 
 import pytest
 
-from safemeal.application.contracts.recipes.catalog import (
+from safemeal.modules.recipe.contracts.catalog import (
     RecipeQuery,
     RecipeSearchResult,
 )
-from safemeal.application.contracts.recipes.lookup import (
+from safemeal.modules.recipe.contracts.lookup import (
     RecipeCandidate,
     RecipeLookupResult,
 )
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
-from safemeal.application.service.recipes.recipe_service import RecipeService
+from safemeal.modules.recipe.application.recipe_service import RecipeService
 
 
 @pytest.mark.parametrize(

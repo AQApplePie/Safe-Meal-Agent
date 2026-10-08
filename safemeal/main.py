@@ -12,10 +12,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, RedirectResponse, Response
 from loguru import logger
 
-from safemeal.application.service.composition.application_container import (
+from safemeal.bootstrap.composition.application_container import (
     ApplicationContainer,
 )
-from safemeal.application.exceptions import (
+from safemeal.shared.exceptions import (
     AccountDisabledError,
     AgentExecutionError,
     ApplicationError,
@@ -34,8 +34,8 @@ from safemeal.application.exceptions import (
     ResourceOwnershipError,
 )
 from safemeal.config.settings import settings
-from safemeal.application.service.composition.operations import configure_logging
-from safemeal.application.service.composition.operations import get_runtime_readiness
+from safemeal.bootstrap.composition.operations import configure_logging
+from safemeal.bootstrap.composition.operations import get_runtime_readiness
 from safemeal.shared.types import JsonObject
 from safemeal.interfaces.http import (
     RequestIdentityMiddleware,

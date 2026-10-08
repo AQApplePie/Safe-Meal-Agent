@@ -1,41 +1,41 @@
 import pytest
 from langgraph.checkpoint.memory import MemorySaver
-from safemeal.application.agent.orchestration import build_agent_graph
-from safemeal.application.agent.gateway import AgentExecutionService
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.contracts.agent.decisions import (
+from safemeal.agent.runtime.orchestration import build_agent_graph
+from safemeal.agent.gateway import AgentExecutionService
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.agent.contracts.decisions import (
     PlanDecision,
     Observation,
     ToolCall,
     ReflectionDecision,
 )
-from safemeal.application.contracts.tools.base import ToolResult, ToolSpecification
-from safemeal.application.workflow.graph import build_resume_workflow
-from safemeal.application.workflow.runner import ChatWorkflow
-from safemeal.application.agent.orchestration.nodes.planner.menu_planning import (
+from safemeal.agent.runtime.tools.contracts.base import ToolResult, ToolSpecification
+from safemeal.agent.workflow.graph import build_resume_workflow
+from safemeal.agent.workflow.runner import ChatWorkflow
+from safemeal.agent.runtime.orchestration.nodes.planner.menu_planning import (
     build_menu_search_plan,
 )
-from safemeal.application.contracts.agent.menu_planning import (
+from safemeal.agent.contracts.menu_planning import (
     MenuExecutionPlan,
     MenuTaskProgress,
     SelectedMenuRecipe,
 )
-from safemeal.application.agent.orchestration.nodes.observer.menu_progress import (
+from safemeal.agent.runtime.orchestration.nodes.observer.menu_progress import (
     update_menu_task_progress,
 )
-from safemeal.application.agent.orchestration.nodes.reflector.node import (
+from safemeal.agent.runtime.orchestration.nodes.reflector.node import (
     create_reflector_node,
 )
-from safemeal.application.agent.orchestration.nodes.planner.intent import (
+from safemeal.agent.runtime.orchestration.nodes.planner.intent import (
     intent_from_request_frame,
 )
-from safemeal.application.contracts.workflow.request_frame import (
+from safemeal.shared.contracts.request_frame import (
     CategoryQuota,
     MenuPlanningRequirements,
     RequestFrame,
     RequestTask,
 )
-from safemeal.application.service.recipes.menu_output import render_menu_plan
+from safemeal.agent.runtime.menu_output import render_menu_plan
 
 
 class Model:

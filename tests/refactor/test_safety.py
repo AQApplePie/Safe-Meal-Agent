@@ -1,14 +1,14 @@
 import pytest
-from safemeal.application.agent.tools.policy import review_tool_calls
-from safemeal.application.contracts.agent.decisions import ToolCall, Observation
-from safemeal.application.contracts.dietary_safety.constraints import DietaryConstraint
-from safemeal.application.service.dietary_safety.constraints import (
+from safemeal.agent.runtime.tools.policy import review_tool_calls
+from safemeal.agent.contracts.decisions import ToolCall, Observation
+from safemeal.modules.dietary.contracts.constraints import DietaryConstraint
+from safemeal.modules.dietary.application.constraints import (
     build_dietary_safety_result,
 )
-from safemeal.application.service.dietary_safety.generated_safety import (
+from safemeal.modules.dietary.application.generated_safety import (
     generated_recipe_violations,
 )
-from safemeal.application.contracts.recipes.generated import GeneratedRecipe
+from safemeal.modules.recipe.contracts.generated import GeneratedRecipe
 
 
 def call(name, args):

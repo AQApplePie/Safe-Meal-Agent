@@ -1,8 +1,8 @@
 """Regression contracts for current safety and persistent memory scope."""
 
-from safemeal.application.agent.tools.policy import review_tool_calls
-from safemeal.application.contracts.agent.decisions import ToolCall
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.agent.runtime.tools.policy import review_tool_calls
+from safemeal.agent.contracts.decisions import ToolCall
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
 

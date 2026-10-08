@@ -2,38 +2,38 @@
 
 import pytest
 from langgraph.checkpoint.memory import MemorySaver
-from safemeal.application.contracts.agent.api import AgentProcessResponse
-from safemeal.application.contracts.agent.intent import IntentDecision
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.contracts.agent.decisions import (
+from safemeal.agent.contracts.api import AgentProcessResponse
+from safemeal.agent.contracts.intent import IntentDecision
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.agent.contracts.decisions import (
     Observation,
     PlanDecision,
     ReflectionDecision,
     ToolCall,
 )
-from safemeal.application.contracts.dietary_safety.requirements import (
+from safemeal.modules.dietary.contracts.requirements import (
     DietaryPreference,
     DietaryRequirements,
 )
-from safemeal.application.contracts.tools.base import ToolResult, ToolSpecification
-from safemeal.application.contracts.workflow.models import WorkflowRequest
-from safemeal.application.contracts.workflow.request_frame import (
+from safemeal.agent.runtime.tools.contracts.base import ToolResult, ToolSpecification
+from safemeal.agent.contracts.workflow.models import WorkflowRequest
+from safemeal.shared.contracts.request_frame import (
     RequestFrame,
     RequestTask,
 )
-from safemeal.application.service.dietary_safety.dietary_safety_service import (
+from safemeal.agent.safety.dietary_safety_service import (
     DietarySafetyService,
 )
-from safemeal.application.agent.orchestration import build_agent_graph
-from safemeal.application.agent.gateway import AgentExecutionService
-from safemeal.application.agent.tools.policy import review_tool_calls
-from safemeal.application.workflow.graph import (
+from safemeal.agent.runtime.orchestration import build_agent_graph
+from safemeal.agent.gateway import AgentExecutionService
+from safemeal.agent.runtime.tools.policy import review_tool_calls
+from safemeal.agent.workflow.graph import (
     build_chat_workflow,
     build_resume_workflow,
 )
-from safemeal.application.workflow.context.builder import AgentContextBuilder
-from safemeal.application.workflow.runner import ChatWorkflow
-from safemeal.application.workflow.review_reply import (
+from safemeal.agent.workflow.context.builder import AgentContextBuilder
+from safemeal.agent.workflow.runner import ChatWorkflow
+from safemeal.agent.workflow.review_reply import (
     render_conversational_review_reply,
 )
 
@@ -539,7 +539,22 @@ async def test_model_receives_requirements_and_resume_reviews_same_time_limit():
             approval_tool_names=frozenset({"recommend_recipes"}),
         )
     )
-    response = await agent.process("推荐晚餐，30分钟内", "resume-needs")
+    response = await agent.process(
+        "推荐晚餐，30分钟内",
+        "resume-needs",
+        context=AgentContext(
+            requirements=DietaryRequirements(
+                preferences=[
+                    DietaryPreference(
+                        kind="max_minutes",
+                        value="30",
+                        required=True,
+                        source="provided",
+                    )
+                ]
+            )
+        ),
+    )
     assert response.metadata["approval_required"]
     result = await ChatWorkflow(None, build_resume_workflow(agent=agent)).resume(
         "resume-needs", approved=True

@@ -7,7 +7,7 @@ from fastapi import Depends, Header, HTTPException
 import jwt
 
 from safemeal.config.settings import settings
-from safemeal.application.service.auth import AuthService
+from safemeal.modules.identity.application import AuthService
 from safemeal.interfaces.http.dependencies import get_auth_service
 
 

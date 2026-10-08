@@ -6,7 +6,7 @@ import asyncio
 from loguru import logger
 
 from safemeal.infrastructure.ingestion.redis_queue import RedisIngestionQueue
-from safemeal.application.service.composition.application_container import ApplicationContainer
+from safemeal.bootstrap.composition.application_container import ApplicationContainer
 from safemeal.config.settings import settings
 
 

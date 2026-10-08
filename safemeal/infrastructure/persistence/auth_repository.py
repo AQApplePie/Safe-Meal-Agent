@@ -11,9 +11,9 @@ from typing import cast
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from safemeal.application.contracts.auth import UserCreate
-from safemeal.application.exceptions import EmailAlreadyRegisteredError
-from safemeal.application.ports.persistence.auth_repository import AuthUnitOfWork
+from safemeal.modules.identity.contracts import UserCreate
+from safemeal.shared.exceptions import EmailAlreadyRegisteredError
+from safemeal.modules.identity.ports.auth_repository import AuthUnitOfWork
 from safemeal.infrastructure.persistence.database import session_scope
 from safemeal.infrastructure.persistence.db.models import RefreshToken, User
 

@@ -7,7 +7,7 @@ from argon2 import PasswordHasher as Argon2Hasher
 from argon2.exceptions import InvalidHashError, VerificationError
 import jwt
 
-from safemeal.application.contracts.auth import AccessTokenClaims
+from safemeal.modules.identity.contracts import AccessTokenClaims
 
 
 class Argon2PasswordHasher:

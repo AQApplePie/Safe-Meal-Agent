@@ -12,26 +12,26 @@ from openai import (
     RateLimitError,
 )
 
-from safemeal.application.contracts.agent.intent import IntentDecision
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.contracts.agent.decisions import (
+from safemeal.agent.contracts.intent import IntentDecision
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.agent.contracts.decisions import (
     Observation,
     PlanDecision,
     ReflectionDecision,
 )
-from safemeal.application.exceptions import (
+from safemeal.shared.exceptions import (
     ExternalModelError,
     ModelOutputValidationError,
     PartialStreamInterruptedError,
 )
-from safemeal.application.contracts.recipes.generation import RecipeGenerationRequest
-from safemeal.application.contracts.recipes.generated import GeneratedRecipe
-from safemeal.application.agent.model.prompts import (
+from safemeal.modules.recipe.contracts.generation import RecipeGenerationRequest
+from safemeal.modules.recipe.contracts.generated import GeneratedRecipe
+from safemeal.agent.runtime.model.prompts import (
     DEFAULT_PROMPT_BUNDLE,
     PromptBundle,
 )
-from safemeal.application.runtime_budget import charge_model_usage
-from safemeal.application.streaming import (
+from safemeal.agent.runtime.budget import charge_model_usage
+from safemeal.agent.workflow.streaming import (
     answer_stream_active,
     emit_answer_chunk,
 )
@@ -40,8 +40,8 @@ from safemeal.infrastructure.llm.provider_router import (
     LLMProviderRouter,
     ProviderRouteExhaustedError,
 )
-from safemeal.application.contracts.conversation.models import ConversationMessage
-from safemeal.application.contracts.tools.base import ToolSpecification
+from safemeal.modules.conversation.contracts.conversation.models import ConversationMessage
+from safemeal.agent.runtime.tools.contracts.base import ToolSpecification
 from safemeal.shared.types import to_json_value
 
 StructuredOutput = TypeVar("StructuredOutput", bound=BaseModel)

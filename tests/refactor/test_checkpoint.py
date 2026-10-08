@@ -1,5 +1,5 @@
 from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
-from safemeal.application.contracts.tools.base import ToolResult
+from safemeal.agent.runtime.tools.contracts.base import ToolResult
 from safemeal.infrastructure.persistence.checkpoint_serializer import (
     ContractCheckpointSerializer,
 )
@@ -10,8 +10,8 @@ from typing import TypedDict
 from safemeal.infrastructure.persistence.threaded_checkpoint import (
     ThreadedCheckpointSaver,
 )
-from safemeal.application.contracts.agent.menu_planning import initialize_menu_task
-from safemeal.application.contracts.workflow.request_frame import (
+from safemeal.agent.contracts.menu_planning import initialize_menu_task
+from safemeal.shared.contracts.request_frame import (
     CategoryQuota,
     MenuPlanningRequirements,
 )
@@ -19,7 +19,7 @@ from safemeal.application.contracts.workflow.request_frame import (
 
 @pytest.mark.parametrize(
     "legacy_module",
-    ["safemeal.shared.contracts.tools", "safemeal.application.contracts.tools"],
+    ["safemeal.shared.contracts.tools", "safemeal.agent.runtime.tools.contracts"],
 )
 @pytest.mark.parametrize("encoding", ["msgpack", "json"])
 def test_existing_checkpoints_can_read_relocated_tool_contracts(
@@ -70,15 +70,15 @@ async def test_sync_checkpoint_adapter_supports_async_graph_execution():
     "kind", ["constraint", "generated_ingredient", "memory", "safety"]
 )
 def test_legacy_domain_values_survive_modules_removal(kind, encoding):
-    from safemeal.application.contracts.dietary_safety.constraints import (
+    from safemeal.modules.dietary.contracts.constraints import (
         DietaryConstraint,
     )
-    from safemeal.application.contracts.dietary_safety.models import (
+    from safemeal.modules.dietary.contracts.models import (
         SafetyDecision,
         SafetyStatus,
     )
-    from safemeal.application.contracts.recipes.generated import GeneratedIngredient
-    from safemeal.application.contracts.memory.extraction import MemoryCandidate
+    from safemeal.modules.recipe.contracts.generated import GeneratedIngredient
+    from safemeal.modules.conversation.contracts.memory.extraction import MemoryCandidate
 
     values = {
         "constraint": (

@@ -1,24 +1,24 @@
-from safemeal.application.contracts.dietary_safety.control_plane import (
+from safemeal.modules.dietary.contracts.control_plane import (
     ConstraintDecision,
     ResolvedConstraints,
     ToolEvidence,
 )
-from safemeal.application.contracts.workflow.request_frame import (
+from safemeal.shared.contracts.request_frame import (
     RawRequestFrame,
     RequestFrame,
 )
-from safemeal.application.contracts.workflow.semantic import ConstraintStatement
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.shared.contracts.semantic import ConstraintStatement
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
-from safemeal.application.service.dietary_safety.dietary_safety_service import (
+from safemeal.agent.safety.dietary_safety_service import (
     DietarySafetyService,
 )
-from safemeal.application.service.dietary_safety.constraint_resolver import (
+from safemeal.modules.dietary.application.constraint_resolver import (
     ConstraintResolver,
 )
-from safemeal.application.service.dietary_safety.constraint_evaluator import (
+from safemeal.modules.dietary.application.constraint_evaluator import (
     ConstraintEvaluator,
 )
 
@@ -134,3 +134,25 @@ def test_non_spicy_uses_complete_ingredient_evidence_without_taste_field():
     evaluator = ConstraintEvaluator()
     assert evaluator.evaluate(constraint, safe).status == "satisfied"
     assert evaluator.evaluate(constraint, spicy).status == "violated"
+
+
+def test_non_spicy_uses_every_term_from_shared_spicy_taxonomy():
+    from safemeal.modules.dietary.application.ingredient_terms import (
+        SPICY_INGREDIENT_TERMS,
+    )
+
+    constraint = ConstraintStatement(
+        type="taste",
+        value="non_spicy",
+        strength="strong_requirement",
+        scope="current_meal",
+    )
+    evaluator = ConstraintEvaluator()
+    for term in SPICY_INGREDIENT_TERMS:
+        evidence = ToolEvidence(
+            recipe_name=f"含{term}的菜",
+            ingredients=(term,),
+            ingredients_complete=True,
+            source_complete=True,
+        )
+        assert evaluator.evaluate(constraint, evidence).status == "violated"

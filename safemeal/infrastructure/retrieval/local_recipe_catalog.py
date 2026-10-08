@@ -6,16 +6,16 @@ import json
 import re
 from pathlib import Path
 
-from safemeal.application.contracts.recipes.lookup import (
+from safemeal.modules.recipe.contracts.lookup import (
     MenuRecipeCandidate,
     RecipeCandidate,
     RecipeLookupResult,
 )
-from safemeal.application.contracts.workflow.request_frame import MenuCategory
-from safemeal.application.service.recipes.classification import (
+from safemeal.shared.contracts.request_frame import MenuCategory
+from safemeal.modules.recipe.application.classification import (
     classify_menu_categories,
 )
-from safemeal.application.service.dietary_safety.recipe_safety import (
+from safemeal.modules.dietary.application.recipe_safety import (
     ingredient_matches_forbidden_term,
 )
 

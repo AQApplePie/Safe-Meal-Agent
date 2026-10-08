@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 
-from safemeal.application.contracts.auth import (
+from safemeal.modules.identity.contracts import (
     AuthTokens,
     CurrentIdentity,
     LoginRequest,
@@ -11,7 +11,7 @@ from safemeal.application.contracts.auth import (
     RegisterRequest,
 )
 from safemeal.config.settings import settings
-from safemeal.application.service.auth import AuthService
+from safemeal.modules.identity.application import AuthService
 from safemeal.interfaces.http.authentication import Principal, get_current_principal
 from safemeal.interfaces.http.dependencies import get_auth_service
 

@@ -5,20 +5,20 @@ from types import SimpleNamespace
 
 import pytest
 
-from safemeal.application.runtime_budget import (
+from safemeal.agent.runtime.budget import (
     charge_model_usage,
     current_model_cost_usage,
     current_model_token_usage,
     parse_model_pricing,
     use_model_budget,
 )
-from safemeal.application.agent.orchestration.nodes.planner.constraints import build_planning_update
-from safemeal.application.contracts.agent.decisions import (
+from safemeal.agent.runtime.orchestration.nodes.planner.constraints import build_planning_update
+from safemeal.agent.contracts.decisions import (
     ModelBudgetUsage,
     PlanDecision,
     ToolCall,
 )
-from safemeal.application.contracts.tools.base import ToolSpecification
+from safemeal.agent.runtime.tools.contracts.base import ToolSpecification
 
 
 @pytest.mark.asyncio

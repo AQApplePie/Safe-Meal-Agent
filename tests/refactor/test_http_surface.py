@@ -34,13 +34,13 @@ def test_file_http_api_scopes_metadata_and_download(monkeypatch, tmp_path):
     from safemeal.interfaces import api_router
     from safemeal.interfaces.http.authentication import get_current_principal, Principal
     from safemeal.interfaces.http.dependencies import get_file_upload_service
-    from safemeal.application.service.upload.file_upload_service import (
+    from safemeal.modules.knowledge.application.upload.file_upload_service import (
         FileUploadService,
     )
     from safemeal.infrastructure.ingestion.local_upload_storage import (
         LocalUploadStorage,
     )
-    from safemeal.application.contracts.upload.models import UploadedDocumentRecord
+    from safemeal.modules.knowledge.contracts.models import UploadedDocumentRecord
     import asyncio
 
     files = FileUploadService(LocalUploadStorage(tmp_path), 100)

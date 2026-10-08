@@ -1,12 +1,12 @@
 import pytest
-from safemeal.application.contracts.agent.api import AgentProcessResponse
-from safemeal.application.contracts.chat.turn import ChatRequest, ChatTurnStart
-from safemeal.application.streaming import (
+from safemeal.agent.contracts.api import AgentProcessResponse
+from safemeal.modules.conversation.contracts.chat.turn import ChatRequest, ChatTurnStart
+from safemeal.agent.workflow.streaming import (
     emit_answer_chunk,
     suppress_answer_stream,
     emit_workflow_progress,
 )
-from safemeal.application.service.chat.chat_turn_service import ChatTurnService
+from safemeal.agent.gateway.chat_turn_service import ChatTurnService
 
 
 class Workflow:

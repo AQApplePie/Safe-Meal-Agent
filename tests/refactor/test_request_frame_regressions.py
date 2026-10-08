@@ -2,37 +2,37 @@ from pathlib import Path
 
 import pytest
 
-from safemeal.application.agent.gateway import AgentExecutionService
-from safemeal.application.agent.orchestration import build_agent_graph
-from safemeal.application.agent.aggregation.recipe_detail import (
+from safemeal.agent.gateway import AgentExecutionService
+from safemeal.agent.runtime.orchestration import build_agent_graph
+from safemeal.agent.runtime.aggregation.recipe_detail import (
     render_exact_recipe_detail,
 )
-from safemeal.application.agent.aggregation.recommendation import (
+from safemeal.agent.runtime.aggregation.recommendation import (
     render_recipe_recommendations,
 )
-from safemeal.application.agent.tools.runtime import LocalToolExecutor
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.contracts.agent.decisions import Observation
-from safemeal.application.contracts.workflow.models import WorkflowRequest
-from safemeal.application.contracts.dietary_safety.requirements import (
+from safemeal.agent.runtime.tools.runtime import LocalToolExecutor
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.agent.contracts.decisions import Observation
+from safemeal.agent.contracts.workflow.models import WorkflowRequest
+from safemeal.modules.dietary.contracts.requirements import (
     DietaryPreference,
     DietaryRequirements,
 )
-from safemeal.application.service.dietary_safety.dietary_safety_service import (
+from safemeal.agent.safety.dietary_safety_service import (
     DietarySafetyService,
 )
-from safemeal.application.service.dietary_safety.food_taxonomy import (
+from safemeal.modules.dietary.application.food_taxonomy import (
     ingredient_belongs_to_category,
 )
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
-from safemeal.application.contracts.recipes.catalog import RecipeSearchResult
-from safemeal.application.service.recipes.recipe_service import RecipeService
-from safemeal.application.tool.recipe_tools import SearchRecipesTool
-from safemeal.application.workflow.context.builder import AgentContextBuilder
-from safemeal.application.workflow.graph import build_chat_workflow
-from safemeal.application.workflow.runner import ChatWorkflow
+from safemeal.modules.recipe.contracts.catalog import RecipeSearchResult
+from safemeal.modules.recipe.application.recipe_service import RecipeService
+from safemeal.agent.runtime.tools.adapters.recipe_tools import SearchRecipesTool
+from safemeal.agent.workflow.context.builder import AgentContextBuilder
+from safemeal.agent.workflow.graph import build_chat_workflow
+from safemeal.agent.workflow.runner import ChatWorkflow
 from safemeal.infrastructure.retrieval.local_recipe_catalog import (
     LocalRecipeDocumentCatalog,
 )
@@ -310,8 +310,8 @@ def test_graph_node_budgets_are_unchanged_for_agent_and_one_added_for_workflow()
         def specifications(self):
             return []
 
-    from safemeal.application.workflow.graph import build_chat_workflow
-    from safemeal.application.workflow.context.builder import AgentContextBuilder
+    from safemeal.agent.workflow.graph import build_chat_workflow
+    from safemeal.agent.workflow.context.builder import AgentContextBuilder
 
     class _Memory:
         def load_agent_memories(self, **kwargs):

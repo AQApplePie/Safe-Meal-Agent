@@ -3,20 +3,20 @@ from decimal import Decimal
 import pytest
 import httpx
 
-from safemeal.application.agent.gateway import AgentExecutionService
-from safemeal.application.agent.orchestration import build_agent_graph
-from safemeal.application.agent.tools.runtime import LocalToolExecutor
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.contracts.agent.decisions import Observation
-from safemeal.application.contracts.recipes.catalog import (
+from safemeal.agent.gateway import AgentExecutionService
+from safemeal.agent.runtime.orchestration import build_agent_graph
+from safemeal.agent.runtime.tools.runtime import LocalToolExecutor
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.agent.contracts.decisions import Observation
+from safemeal.modules.recipe.contracts.catalog import (
     RecipeQuery,
     RecipeSearchResult,
 )
-from safemeal.application.contracts.recipes.lookup import (
+from safemeal.modules.recipe.contracts.lookup import (
     RecipeCandidate,
     RecipeLookupResult,
 )
-from safemeal.application.contracts.recipes.models import (
+from safemeal.modules.recipe.contracts.models import (
     CookingStep,
     Ingredient,
     IngredientQuantity,
@@ -24,14 +24,14 @@ from safemeal.application.contracts.recipes.models import (
     Recipe,
     RecipeDifficulty,
 )
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
-from safemeal.application.service.dietary_safety.dietary_safety_service import (
+from safemeal.agent.safety.dietary_safety_service import (
     DietarySafetyService,
 )
-from safemeal.application.service.recipes.recipe_service import RecipeService
-from safemeal.application.tool.recipe_tools import SearchRecipesTool
+from safemeal.modules.recipe.application.recipe_service import RecipeService
+from safemeal.agent.runtime.tools.adapters.recipe_tools import SearchRecipesTool
 from safemeal.infrastructure.retrieval.wikibooks_recipe_provider import (
     WikibooksRecipeProvider,
 )

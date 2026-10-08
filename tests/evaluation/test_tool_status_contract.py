@@ -2,16 +2,16 @@
 
 import pytest
 
-from safemeal.application.agent.tools.runtime import LocalToolExecutor
-from safemeal.application.contracts.agent.decisions import ToolCall
-from safemeal.application.contracts.recipes.catalog import (
+from safemeal.agent.runtime.tools.runtime import LocalToolExecutor
+from safemeal.agent.contracts.decisions import ToolCall
+from safemeal.modules.recipe.contracts.catalog import (
     RecipeQuery,
     RecipeSearchResult,
 )
-from safemeal.application.contracts.recipes.lookup import RecipeLookupResult
-from safemeal.application.exceptions import DatabaseUnavailableError
-from safemeal.application.service.recipes.recipe_service import RecipeService
-from safemeal.application.tool.recipe_tools import SearchRecipesTool
+from safemeal.modules.recipe.contracts.lookup import RecipeLookupResult
+from safemeal.shared.exceptions import DatabaseUnavailableError
+from safemeal.modules.recipe.application.recipe_service import RecipeService
+from safemeal.agent.runtime.tools.adapters.recipe_tools import SearchRecipesTool
 
 
 class EmptyRepository:

@@ -1,6 +1,6 @@
 """Regression suite for bounded short-term recipe reference resolution."""
 
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
 

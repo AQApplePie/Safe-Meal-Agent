@@ -1,16 +1,16 @@
 import pytest
-from safemeal.application.contracts.upload.models import ParsedDocument
-from safemeal.application.service.upload.file_upload_service import (
+from safemeal.modules.knowledge.contracts.models import ParsedDocument
+from safemeal.modules.knowledge.application.upload.file_upload_service import (
     FileUploadService,
     UploadNotFoundError,
 )
-from safemeal.application.service.upload.uploaded_document_ingestion_service import (
+from safemeal.modules.knowledge.application.upload.uploaded_document_ingestion_service import (
     UploadedDocumentIngestionService,
 )
-from safemeal.application.service.knowledge.document_knowledge_service import (
+from safemeal.modules.knowledge.application.knowledge.document_knowledge_service import (
     DocumentKnowledgeService,
 )
-from safemeal.application.exceptions import ExternalServiceError
+from safemeal.shared.exceptions import ExternalServiceError
 from safemeal.infrastructure.ingestion.local_upload_storage import LocalUploadStorage
 
 

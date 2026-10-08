@@ -2,18 +2,18 @@
 
 import pytest
 
-from safemeal.application.contracts.agent.api import AgentProcessResponse
-from safemeal.application.contracts.workflow.models import WorkflowRequest
-from safemeal.application.contracts.workflow.request_frame import (
+from safemeal.agent.contracts.api import AgentProcessResponse
+from safemeal.agent.contracts.workflow.models import WorkflowRequest
+from safemeal.shared.contracts.request_frame import (
     RequestFrame,
     RequestTask,
 )
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
-from safemeal.application.workflow.context.builder import AgentContextBuilder
-from safemeal.application.workflow.graph import build_chat_workflow
-from safemeal.application.workflow.runner import ChatWorkflow
+from safemeal.agent.workflow.context.builder import AgentContextBuilder
+from safemeal.agent.workflow.graph import build_chat_workflow
+from safemeal.agent.workflow.runner import ChatWorkflow
 
 
 class SelectiveMemory:

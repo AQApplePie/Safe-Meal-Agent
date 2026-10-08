@@ -7,7 +7,7 @@ from urllib.parse import quote
 
 import httpx
 
-from safemeal.application.contracts.recipes.lookup import (
+from safemeal.modules.recipe.contracts.lookup import (
     RecipeCandidate,
     RecipeLookupResult,
 )

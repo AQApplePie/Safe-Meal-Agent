@@ -11,11 +11,11 @@ from typing import List, Optional, cast
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-from safemeal.application.contracts.memory.models import (
+from safemeal.modules.conversation.contracts.memory.models import (
     UserMemoryCreate,
     UserMemoryUpdate,
 )
-from safemeal.application.ports.persistence.user_memory_repository import (
+from safemeal.modules.conversation.ports.user_memory_repository import (
     UserMemoryUnitOfWork,
 )
 from safemeal.infrastructure.persistence.database import session_scope

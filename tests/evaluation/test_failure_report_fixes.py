@@ -4,23 +4,23 @@ from __future__ import annotations
 
 import pytest
 
-from safemeal.application.agent.orchestration.nodes.planner.intent import (
+from safemeal.agent.runtime.orchestration.nodes.planner.intent import (
     intent_from_request_frame,
 )
-from safemeal.application.contracts.agent.context import AgentContext
-from safemeal.application.contracts.workflow.request_frame import RequestFrame
-from safemeal.application.contracts.workflow.request_frame import (
+from safemeal.agent.contracts.context import AgentContext
+from safemeal.shared.contracts.request_frame import RequestFrame
+from safemeal.shared.contracts.request_frame import (
     CurrentConstraint,
     RequestTarget,
     RequestTask,
 )
-from safemeal.application.contracts.dietary_safety.requirements import (
+from safemeal.modules.dietary.contracts.requirements import (
     DietaryPreference,
 )
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
-from safemeal.application.service.chat.request_frame_semantics import (
+from safemeal.agent.understanding.frame_semantics import (
     RequestFrameSemanticValidator,
 )
 

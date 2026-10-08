@@ -1,9 +1,9 @@
 """Regression checks for repeated Tool outcome convergence."""
 
-from safemeal.application.agent.orchestration.loop_control import (
+from safemeal.agent.runtime.orchestration.loop_control import (
     filter_new_tool_calls,
 )
-from safemeal.application.contracts.agent.decisions import ToolCall
+from safemeal.agent.contracts.decisions import ToolCall
 
 
 def _call(call_id: str = "next") -> ToolCall:

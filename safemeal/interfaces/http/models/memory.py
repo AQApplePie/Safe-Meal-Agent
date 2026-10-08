@@ -6,7 +6,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from safemeal.application.contracts.memory.models import (
+from safemeal.modules.conversation.contracts.memory.models import (
     MemoryStatus,
     UserMemoryRead,
 )

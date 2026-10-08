@@ -11,11 +11,11 @@ from typing import Any, Literal
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
-from safemeal.application.contracts.conversation.models import ConversationHistory
-from safemeal.application.contracts.dietary_safety.requirements import (
+from safemeal.modules.conversation.contracts.conversation.models import ConversationHistory
+from safemeal.modules.dietary.contracts.requirements import (
     DietaryPreference,
 )
-from safemeal.application.contracts.workflow.request_frame import (
+from safemeal.shared.contracts.request_frame import (
     CurrentConstraint,
     MemoryUpdate,
     RequestFrame,
@@ -24,18 +24,18 @@ from safemeal.application.contracts.workflow.request_frame import (
     RequestTask,
     MenuPlanningRequirements,
 )
-from safemeal.application.service.chat.menu_planning import (
+from safemeal.agent.context.menu_planning import (
     extract_menu_planning_requirements,
 )
-from safemeal.application.service.recipes.food_category import canonical_food_category
-from safemeal.application.service.chat.request_understanding import (
+from safemeal.modules.recipe.application.food_category import canonical_food_category
+from safemeal.agent.understanding.request_understanding import (
     RequestUnderstandingService,
 )
-from safemeal.application.service.chat.negation_scope import normalize_negation_scope
-from safemeal.application.service.chat.request_frame_semantics import (
+from safemeal.agent.understanding.negation_scope import normalize_negation_scope
+from safemeal.agent.understanding.frame_semantics import (
     RequestFrameSemanticValidator,
 )
-from safemeal.application.service.chat.short_term_reference import (
+from safemeal.agent.context.short_term_reference import (
     recent_recipe_references,
 )
 

@@ -9,7 +9,7 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from starlette.responses import JSONResponse
-from safemeal.application.service.composition.operations import create_rate_limiter
+from safemeal.bootstrap.composition.operations import create_rate_limiter
 
 
 class RequestSizeLimitMiddleware(BaseHTTPMiddleware):

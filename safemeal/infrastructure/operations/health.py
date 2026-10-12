@@ -14,7 +14,17 @@ from safemeal.config.settings import settings
 from safemeal.shared.types import JsonObject
 
 
+# 方法说明：_probe_milvus
+# 作用：探测 Milvus 服务及目标集合的可用状态。
+# 入参：
+#   无显式入参。
+# 出参：JsonObject；JSON 字段映射。
 async def _probe_milvus() -> JsonObject:
+    # 方法说明：check
+    # 作用：探测当前外部存储连接，并按依赖类型检查可用集合或必要表结构。
+    # 入参：
+    #   无显式入参。
+    # 出参：list[str]；文本字符串的集合。
     def check() -> list[str]:
         from pymilvus import connections, utility
 
@@ -31,7 +41,17 @@ async def _probe_milvus() -> JsonObject:
     return {"status": "ok", "configured": True, "collections": len(collections)}
 
 
+# 方法说明：_probe_neo4j
+# 作用：探测 Neo4j 驱动连接及数据库可用状态。
+# 入参：
+#   无显式入参。
+# 出参：JsonObject；JSON 字段映射。
 async def _probe_neo4j() -> JsonObject:
+    # 方法说明：check
+    # 作用：探测当前外部存储连接，并按依赖类型检查可用集合或必要表结构。
+    # 入参：
+    #   无显式入参。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def check() -> None:
         from safemeal.infrastructure.retrieval.neo4j.recipe_graph import create_driver
 
@@ -45,7 +65,17 @@ async def _probe_neo4j() -> JsonObject:
     return {"status": "ok", "configured": True, "database": settings.NEO4J_DATABASE}
 
 
+# 方法说明：_probe_database
+# 作用：探测 SQL 数据库是否可建立连接并执行查询。
+# 入参：
+#   无显式入参。
+# 出参：JsonObject；JSON 字段映射。
 async def _probe_database() -> JsonObject:
+    # 方法说明：check
+    # 作用：探测当前外部存储连接，并按依赖类型检查可用集合或必要表结构。
+    # 入参：
+    #   无显式入参。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def check() -> None:
         from sqlalchemy import inspect, text
 
@@ -67,6 +97,11 @@ async def _probe_database() -> JsonObject:
     return {"status": "ok", "configured": True}
 
 
+# 方法说明：_safe_probe
+# 作用：为外部依赖探测应用超时和异常隔离，返回就绪状态。
+# 入参：
+#   probe（Callable[[], Awaitable[JsonObject]]）：外部依赖探测函数。
+# 出参：JsonObject；JSON 字段映射。
 async def _safe_probe(probe: Callable[[], Awaitable[JsonObject]]) -> JsonObject:
     try:
         return await asyncio.wait_for(
@@ -81,6 +116,11 @@ async def _safe_probe(probe: Callable[[], Awaitable[JsonObject]]) -> JsonObject:
         }
 
 
+# 方法说明：get_runtime_readiness
+# 作用：综合数据库和检索依赖的探测结果，生成运行就绪状态。
+# 入参：
+#   无显式入参。
+# 出参：JsonObject；JSON 字段映射。
 async def get_runtime_readiness() -> JsonObject:
 
     checks: dict[str, JsonObject] = {

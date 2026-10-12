@@ -24,6 +24,11 @@ JsonObject: TypeAlias = dict[str, JsonValue]
 """JSON 对象。"""
 
 
+# 方法说明：to_json_value
+# 作用：把外部对象压成 JSON 友好值。
+# 入参：
+#   value（object）：当前待转换或校验的值。
+# 出参：JsonValue；JSON 兼容数据。
 def to_json_value(value: object) -> JsonValue:
     """把外部对象压成 JSON 友好值。
 
@@ -47,6 +52,11 @@ def to_json_value(value: object) -> JsonValue:
     return str(value)
 
 
+# 方法说明：to_json_object
+# 作用：把对象转换为 JSON 对象；非对象值会包装进 ``value`` 字段。
+# 入参：
+#   value（object）：当前待转换或校验的值。
+# 出参：JsonObject；JSON 字段映射。
 def to_json_object(value: object) -> JsonObject:
     """把对象转换为 JSON 对象；非对象值会包装进 ``value`` 字段。"""
 
@@ -56,6 +66,11 @@ def to_json_object(value: object) -> JsonObject:
     return {"value": payload}
 
 
+# 方法说明：to_json_object_list
+# 作用：把一组外部记录转换为 JSON 对象列表。
+# 入参：
+#   values（Sequence[object]）：当前待处理的值集合。
+# 出参：list[JsonObject]；JSON 字段映射的集合。
 def to_json_object_list(values: Sequence[object]) -> list[JsonObject]:
     """把一组外部记录转换为 JSON 对象列表。"""
 

@@ -2,7 +2,9 @@ import asyncio
 import pytest
 
 from safemeal.agent.contracts.api import AgentProcessResponse
-from safemeal.agent.runtime.orchestration.nodes.planner.intent import resolve_agent_intent
+from safemeal.agent.runtime.orchestration.nodes.planner.intent import (
+    resolve_agent_intent,
+)
 from safemeal.agent.contracts.decisions import Observation
 from safemeal.agent.contracts.workflow.models import WorkflowRequest
 from safemeal.agent.contracts.context import AgentContext

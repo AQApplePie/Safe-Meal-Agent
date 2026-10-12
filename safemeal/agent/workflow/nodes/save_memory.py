@@ -3,16 +3,34 @@
 import asyncio
 import re
 from safemeal.agent.contracts.workflow.models import WorkflowState
-from safemeal.modules.conversation.application.memory.user_memory_service import UserMemoryService
+from safemeal.modules.conversation.application.memory.user_memory_service import (
+    UserMemoryService,
+)
 
 
-from safemeal.modules.conversation.application.memory.memory_extraction import UserMemoryExtractor
+from safemeal.modules.conversation.application.memory.memory_extraction import (
+    UserMemoryExtractor,
+)
 
 
+# 类说明（业务或基础设施实现类）：SaveMemoryNode
+# 作用：实现Workflow 长期记忆保存节点，封装该组件的业务处理与依赖协作。
 class SaveMemoryNode:
+    # 方法说明：__init__
+    # 作用：初始化Workflow 长期记忆保存节点，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   memory_service（UserMemoryService）：长期记忆业务服务。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(self, memory_service: UserMemoryService):
+        # 实例属性说明：memory_service
+        # 作用：长期记忆业务服务。
         self.memory_service = memory_service
 
+    # 方法说明：__call__
+    # 作用：执行Workflow 长期记忆保存节点，按当前图状态返回节点更新。
+    # 入参：
+    #   state（WorkflowState）：聊天 Workflow 完整状态。
+    # 出参：WorkflowState；聊天 Workflow 完整状态。
     async def __call__(self, state: WorkflowState) -> WorkflowState:
         request = state["request"]
         message = request.message

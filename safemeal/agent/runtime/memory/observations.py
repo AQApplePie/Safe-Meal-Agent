@@ -23,6 +23,11 @@ _MEMORY_TEMPLATES = {
 }
 
 
+# 方法说明：build_dietary_context_observation
+# 作用：把可信饮食约束构造成 Agent 可读取的上下文观察。
+# 入参：
+#   constraint（DietaryConstraint）：当前饮食硬约束。
+# 出参：Optional[Observation]；标准化工具观察或 None。
 def build_dietary_context_observation(
     constraint: DietaryConstraint,
 ) -> Optional[Observation]:
@@ -48,6 +53,11 @@ def build_dietary_context_observation(
     )
 
 
+# 方法说明：_safe_memory_value
+# 作用：规范化记忆内容并限制长度，避免异常数据进入上下文。
+# 入参：
+#   memory（JsonObject）：当前处理的长期记忆记录。
+# 出参：str；经过清理和长度限制的记忆内容。
 def _safe_memory_value(memory: JsonObject) -> str:
 
     memory_type = str(memory.get("memory_type", ""))
@@ -57,6 +67,11 @@ def _safe_memory_value(memory: JsonObject) -> str:
     return template.format(key=key) if template and key else ""
 
 
+# 方法说明：build_user_memory_observation
+# 作用：将用户记忆组织为附带来源的上下文证据。
+# 入参：
+#   user_memories（list[JsonObject]）：已经加载的用户长期记忆。
+# 出参：Optional[Observation]；标准化工具观察或 None。
 def build_user_memory_observation(
     user_memories: list[JsonObject],
 ) -> Optional[Observation]:

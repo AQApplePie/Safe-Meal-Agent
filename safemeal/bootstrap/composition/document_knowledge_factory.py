@@ -8,6 +8,11 @@ from safemeal.modules.knowledge.application.knowledge.document_knowledge_service
 from safemeal.config.settings import settings
 
 
+# 方法说明：create_document_knowledge_service
+# 作用：构建一个配置完整的知识服务。
+# 入参：
+#   无显式入参。
+# 出参：DocumentKnowledgeService；文档摄取与混合检索服务。
 def create_document_knowledge_service() -> DocumentKnowledgeService:
     """
     构建一个配置完整的知识服务。
@@ -82,6 +87,11 @@ def create_document_knowledge_service() -> DocumentKnowledgeService:
     )
 
 
+# 方法说明：create_document_knowledge_service_async
+# 作用：异步装配知识检索依赖，隔离阻塞的外部初始化。
+# 入参：
+#   无显式入参。
+# 出参：DocumentKnowledgeService；文档摄取与混合检索服务。
 async def create_document_knowledge_service_async() -> DocumentKnowledgeService:
 
     return await asyncio.to_thread(create_document_knowledge_service)

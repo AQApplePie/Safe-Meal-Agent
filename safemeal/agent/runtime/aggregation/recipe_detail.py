@@ -15,6 +15,11 @@ _NUTRITION_LABELS = {
 }
 
 
+# 方法说明：_ingredient_lines
+# 作用：将菜谱食材和用量渲染为详情文本行。
+# 入参：
+#   recipe（Mapping[str, Any]）：当前菜谱或菜谱记录。
+# 出参：list[str]；按展示顺序组织的详情文本行。
 def _ingredient_lines(recipe: Mapping[str, Any]) -> list[str]:
 
     return [
@@ -24,6 +29,11 @@ def _ingredient_lines(recipe: Mapping[str, Any]) -> list[str]:
     ]
 
 
+# 方法说明：_step_lines
+# 作用：将菜谱烹饪步骤渲染为有序文本行。
+# 入参：
+#   recipe（Mapping[str, Any]）：当前菜谱或菜谱记录。
+# 出参：list[str]；按展示顺序组织的详情文本行。
 def _step_lines(recipe: Mapping[str, Any]) -> list[str]:
 
     raw = str(recipe.get("steps") or "").strip()
@@ -42,6 +52,11 @@ def _step_lines(recipe: Mapping[str, Any]) -> list[str]:
     ]
 
 
+# 方法说明：_nutrition_lines
+# 作用：将营养字段渲染为供用户阅读的文本行。
+# 入参：
+#   recipe（Mapping[str, Any]）：当前菜谱或菜谱记录。
+# 出参：list[str]；按展示顺序组织的详情文本行。
 def _nutrition_lines(recipe: Mapping[str, Any]) -> list[str]:
 
     nutrition = recipe.get("nutrition")
@@ -59,6 +74,12 @@ def _nutrition_lines(recipe: Mapping[str, Any]) -> list[str]:
     return lines
 
 
+# 方法说明：render_exact_recipe_detail
+# 作用：用单道菜的完整结构化信息渲染详情回答。
+# 入参：
+#   recipe（Mapping[str, Any]）：当前菜谱或菜谱记录。
+#   requested_fields（Iterable[str]）：当前请求要求读取的字段集合。
+# 出参：str；供用户阅读的已组织回答文本。
 def render_exact_recipe_detail(
     recipe: Mapping[str, Any], requested_fields: Iterable[str]
 ) -> str:

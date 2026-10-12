@@ -14,6 +14,11 @@ branch_labels: str | None = None
 depends_on: str | None = None
 
 
+# 方法说明：upgrade
+# 作用：应用本版本数据库结构变更，推进 Alembic 迁移版本。
+# 入参：
+#   无显式入参。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 def upgrade() -> None:
     op.create_table(
         "users",
@@ -22,12 +27,28 @@ def upgrade() -> None:
         sa.Column("email", sa.String(length=320), nullable=False),
         sa.Column("password_hash", sa.String(length=512), nullable=False),
         sa.Column("display_name", sa.String(length=100), nullable=True),
-        sa.Column("status", sa.String(length=20), server_default="active", nullable=False),
+        sa.Column(
+            "status", sa.String(length=20), server_default="active", nullable=False
+        ),
         sa.Column("roles", sa.JSON(), nullable=False),
-        sa.Column("token_version", sa.Integer(), server_default=sa.text("0"), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=True),
-        sa.CheckConstraint("status IN ('active', 'disabled', 'locked')", name="ck_users_status"),
+        sa.Column(
+            "token_version", sa.Integer(), server_default=sa.text("0"), nullable=False
+        ),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.func.now(),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.func.now(),
+            nullable=True,
+        ),
+        sa.CheckConstraint(
+            "status IN ('active', 'disabled', 'locked')", name="ck_users_status"
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("tenant_id", "email", name="uq_users_tenant_email"),
     )
@@ -41,15 +62,27 @@ def upgrade() -> None:
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("revoked_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("replaced_by_hash", sa.String(length=64), nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.func.now(),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index("ix_refresh_tokens_user_id", "refresh_tokens", ["user_id"])
-    op.create_index("ix_refresh_tokens_token_hash", "refresh_tokens", ["token_hash"], unique=True)
+    op.create_index(
+        "ix_refresh_tokens_token_hash", "refresh_tokens", ["token_hash"], unique=True
+    )
     op.create_index("ix_refresh_tokens_expires_at", "refresh_tokens", ["expires_at"])
 
 
+# 方法说明：downgrade
+# 作用：撤销本版本数据库结构变更，恢复上一迁移版本。
+# 入参：
+#   无显式入参。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 def downgrade() -> None:
     op.drop_table("refresh_tokens")
     op.drop_table("users")

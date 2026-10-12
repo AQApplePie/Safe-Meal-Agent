@@ -6,13 +6,20 @@ from safemeal.agent.contracts.workflow.models import ConversationContextResult
 import re
 from typing import Sequence
 
-from safemeal.modules.conversation.contracts.conversation.models import ConversationHistory
+from safemeal.modules.conversation.contracts.conversation.models import (
+    ConversationHistory,
+)
 from safemeal.shared.types import JsonObject
 
 
 _TOKEN_PATTERN = re.compile(r"[\u4e00-\u9fff]|[a-zA-Z0-9_]+")
 
 
+# 方法说明：estimate_tokens
+# 作用：估算文本或结构化对象的 Token 数，供上下文预算裁剪使用。
+# 入参：
+#   text（str）：待解析、检索、切分或渲染的文本。
+# 出参：int；用于上下文裁剪的估算 Token 数。
 def estimate_tokens(text: str) -> int:
 
     pieces = _TOKEN_PATTERN.findall(text)
@@ -23,8 +30,17 @@ def estimate_tokens(text: str) -> int:
     )
 
 
+# 类说明（业务或基础设施实现类）：ConversationContextWindow
+# 作用：实现历史消息裁剪与摘要窗口，封装该组件的业务处理与依赖协作。
 class ConversationContextWindow:
-
+    # 方法说明：__init__
+    # 作用：初始化历史消息裁剪与摘要窗口，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   token_budget（int）：上下文允许使用的 Token 预算。
+    #   response_token_reserve（int）：为最终回答预留的 Token 预算。
+    #   minimum_recent_messages（int）：摘要裁剪后至少保留的近期消息数；默认值为 4。
+    #   summary_max_chars（int）：历史摘要的最大字符数；默认值为 2000。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(
         self,
         *,
@@ -35,11 +51,25 @@ class ConversationContextWindow:
     ) -> None:
         if token_budget <= response_token_reserve:
             raise ValueError("context token budget must exceed response reserve")
+        # 实例属性说明：token_budget
+        # 作用：上下文允许使用的 Token 预算。
         self.token_budget = token_budget
+        # 实例属性说明：response_token_reserve
+        # 作用：为最终回答预留的 Token 预算。
         self.response_token_reserve = response_token_reserve
+        # 实例属性说明：minimum_recent_messages
+        # 作用：摘要裁剪后至少保留的近期消息数。
         self.minimum_recent_messages = minimum_recent_messages
+        # 实例属性说明：summary_max_chars
+        # 作用：历史摘要的最大字符数。
         self.summary_max_chars = summary_max_chars
 
+    # 方法说明：prepare
+    # 作用：为当前请求准备上下文与运行依赖。
+    # 入参：
+    #   history（Sequence[dict[str, str]]）：已加载的近期对话上下文。
+    #   current_message（str）：本轮用户消息或问题文本。
+    # 出参：ConversationContextResult；历史对话上下文结果。
     def prepare(
         self,
         history: Sequence[dict[str, str]],
@@ -111,6 +141,11 @@ class ConversationContextWindow:
             summarized_messages=older_count,
         )
 
+    # 方法说明：_summarize
+    # 作用：在字符预算内压缩较早历史消息为对话摘要。
+    # 入参：
+    #   messages（Sequence[dict[str, str]]）：按顺序组织的历史对话消息。
+    # 出参：str；符合长度限制的摘要文本。
     def _summarize(self, messages: Sequence[dict[str, str]]) -> str:
         parts: list[str] = []
         for message in messages:

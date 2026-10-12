@@ -27,6 +27,11 @@ _RECIPE_TOOLS = {
 }
 
 
+# 方法说明：check_final_safety
+# 作用：审核本轮最终答案与菜谱，阻止违反硬约束的内容发布。
+# 入参：
+#   state（WorkflowState）：聊天 Workflow 完整状态。
+# 出参：WorkflowState；聊天 Workflow 完整状态。
 async def check_final_safety(state: WorkflowState) -> WorkflowState:
     await emit_workflow_progress("final_safety", "正在分别复核过敏限制与偏好满足情况")
     result = state["result"].model_copy(deep=True)
@@ -89,6 +94,30 @@ async def check_final_safety(state: WorkflowState) -> WorkflowState:
             )
         else:
             result.recipe = None
+    # Merge the user-visible menu and recheck retained recipes with this turn's
+    # frozen constraints. Only full ingredient evidence from persisted candidates
+    # is eligible; main-ingredient summaries alone cannot prove safety.
+    active = result.metadata.get("active_menu")
+    if result.metadata.get("menu_modification") and isinstance(active, dict):
+        result.metadata["menu_execution_plan"] = active.get("plan", {})
+        result.metadata["menu_task_progress"] = active.get("progress", {})
+        progress = active.get("progress") or {}
+        retained = [
+            row for row in progress.get("candidate_pool", []) if isinstance(row, dict)
+        ]
+        if retained:
+            observations.append(
+                Observation(
+                    call_id="persisted_menu_evidence",
+                    tool_name="search_recipes",
+                    purpose="复核保留菜品",
+                    success_criteria="符合本轮饮食约束",
+                    ok=True,
+                    has_data=True,
+                    summary="persisted complete candidate evidence",
+                    data={"items": retained},
+                )
+            )
     requirements = state["requirements"]
     review = DietarySafetyService().review_recipes(requirements, observations)
     if result.intent is not None and result.intent.kind == "menu_planning":

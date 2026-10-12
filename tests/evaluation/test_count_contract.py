@@ -113,7 +113,7 @@ class RecommendationTool:
 
 
 @pytest.mark.asyncio
-async def test_planner_propagates_requested_count_and_oversamples_candidates():
+async def test_planner_propagates_only_user_requested_count():
     frame = RequestFrame(
         tasks=(RequestTask(kind="recipe_recommendation"),),
         recommendation_count=4,
@@ -130,8 +130,8 @@ async def test_planner_propagates_requested_count_and_oversamples_candidates():
 
     arguments = output["pending_calls"][0].arguments
     assert arguments["requested_count"] == 4
-    assert arguments["candidate_limit"] == 12
-    assert arguments["limit"] == 12
+    assert "candidate_limit" not in arguments
+    assert "limit" not in arguments
 
 
 @pytest.mark.asyncio
@@ -152,7 +152,6 @@ async def test_planner_scans_bounded_catalog_for_post_query_food_category():
     )
 
     arguments = output["pending_calls"][0].arguments
-    assert arguments["candidate_limit"] == 200
     assert arguments["food_categories"] == ["fish"]
 
 
@@ -161,8 +160,6 @@ def test_recipe_service_returns_exact_requested_count(requested: int):
     result = RecipeService(PagingRepository(10)).recommend(
         RecipeQuery(
             requested_count=requested,
-            candidate_limit=min(50, requested * 2 + 2),
-            limit=min(50, requested * 2 + 2),
         )
     )
 
@@ -174,7 +171,7 @@ def test_recipe_service_returns_exact_requested_count(requested: int):
 
 def test_recipe_service_reports_partial_instead_of_claiming_completion():
     result = RecipeService(PagingRepository(3)).recommend(
-        RecipeQuery(requested_count=4, candidate_limit=8, limit=8)
+        RecipeQuery(requested_count=4)
     )
 
     assert result.status == "PARTIAL"
@@ -208,8 +205,6 @@ def test_fish_category_excludes_shrimp_chicken_and_misleading_recipe_names():
         RecipeQuery(
             food_categories=("fish",),
             requested_count=4,
-            candidate_limit=10,
-            limit=10,
         )
     )
 
@@ -233,8 +228,6 @@ def test_seafood_category_can_include_fish_and_shrimp():
         RecipeQuery(
             food_categories=("seafood",),
             requested_count=2,
-            candidate_limit=6,
-            limit=6,
         )
     )
 
@@ -252,8 +245,6 @@ def test_vegetarian_category_uses_structured_ingredients():
         RecipeQuery(
             food_categories=("vegetarian",),
             requested_count=2,
-            candidate_limit=6,
-            limit=6,
         )
     )
 

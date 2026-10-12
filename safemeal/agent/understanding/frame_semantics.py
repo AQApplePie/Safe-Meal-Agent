@@ -5,14 +5,23 @@ from __future__ import annotations
 from safemeal.shared.contracts.request_frame import (
     ConstraintStatement,
     RequestFrame,
+    ConstraintScope,
     RequestTask,
 )
 from safemeal.modules.recipe.application.food_category import canonical_food_category
 
 
+# 类说明（业务或基础设施实现类）：RequestFrameSemanticValidator
+# 作用：不重新解析用户原文，只归一化字段之间的冲突。
 class RequestFrameSemanticValidator:
     """不重新解析用户原文，只归一化字段之间的冲突。"""
 
+    # 方法说明：normalize
+    # 作用：在请求语义框架业务校验器中归一化输入字段，统一后续处理格式。
+    # 入参：
+    #   frame（RequestFrame）：归一化请求语义框架。
+    #   deterministic（RequestFrame | None）：当前规则路径的确定性判定结果；默认值为 None。
+    # 出参：RequestFrame；归一化请求语义框架。
     def normalize(
         self,
         frame: RequestFrame,
@@ -91,7 +100,7 @@ class RequestFrameSemanticValidator:
 
         statements = list(frame.statements)
         if not statements:
-            scope = (
+            scope: ConstraintScope = (
                 "current_meal"
                 if frame.primary_task == "menu_planning"
                 else "current_turn"
@@ -111,25 +120,28 @@ class RequestFrameSemanticValidator:
                         scope=scope,
                     )
                 )
-            for item in preferences:
-                if item.kind == "other":
+            for preference in preferences:
+                if preference.kind == "other":
                     continue
                 statements.append(
                     ConstraintStatement(
-                        type={
-                            "avoid_ingredient": "avoid",
-                            "include_ingredient": "include",
-                        }.get(item.kind, item.kind),
+                        type=(
+                            "avoid"
+                            if preference.kind == "avoid_ingredient"
+                            else "include"
+                            if preference.kind == "include_ingredient"
+                            else preference.kind
+                        ),
                         value=(
                             "non_spicy"
-                            if item.kind == "taste" and item.value == "不辣"
-                            else item.value
+                            if preference.kind == "taste" and preference.value == "不辣"
+                            else preference.value
                         ),
                         strength=(
                             "strong_requirement"
-                            if item.required
+                            if preference.required
                             else "menu_goal"
-                            if item.kind == "include_ingredient"
+                            if preference.kind == "include_ingredient"
                             else "soft_preference"
                         ),
                         scope=scope,

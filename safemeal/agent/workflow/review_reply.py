@@ -5,10 +5,12 @@ from safemeal.modules.dietary.contracts.requirements import (
 )
 
 
-def render_review_reply(review: DietaryReviewResult) -> str:
-    return render_conversational_review_reply(review)
-
-
+# 方法说明：render_conversational_review_reply
+# 作用：将审核后的对话结果渲染为用户可读回复。
+# 入参：
+#   review（DietaryReviewResult）：确定性饮食安全审核结果。
+#   max_recommendations（int | None）：最多推荐的菜品数；默认值为 None。
+# 出参：str；供用户阅读的已组织回答文本。
 def render_conversational_review_reply(
     review: DietaryReviewResult, *, max_recommendations: int | None = None
 ) -> str:
@@ -53,6 +55,11 @@ def render_conversational_review_reply(
     return "\n".join(lines)
 
 
+# 方法说明：_human_confirmations
+# 作用：提取需要用户确认的约束或缺失信息。
+# 入参：
+#   assessments（由调用契约决定）：候选菜谱的偏好或安全评估集合。
+# 出参：list[str]；需要用户补充或明确确认的信息说明列表。
 def _human_confirmations(assessments) -> list[str]:
 
     confirmations: list[str] = []

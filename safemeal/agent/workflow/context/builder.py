@@ -2,22 +2,37 @@
 
 from __future__ import annotations
 
-from typing import Optional, Protocol, Sequence
+from typing import AbstractSet, Optional, Protocol, Sequence
 
 from safemeal.agent.contracts.context import AgentContext, AgentContextPatch
-from safemeal.modules.conversation.contracts.conversation.models import ConversationHistory
+from safemeal.modules.conversation.contracts.conversation.models import (
+    ConversationHistory,
+)
 from safemeal.shared.contracts.request_frame import RequestFrame
 from safemeal.agent.context.history import (
     ConversationHistoryService,
 )
 from safemeal.agent.context.relevance import MemoryRelevanceSelector
-from safemeal.modules.conversation.application.memory.user_memory_service import UserMemoryService
+from safemeal.modules.conversation.application.memory.user_memory_service import (
+    UserMemoryService,
+)
 from safemeal.shared.types import JsonObject, to_json_object, to_json_object_list
 from .conversation_context import ConversationContextWindow
 
 
+# 类说明（接口类）：AgentContextProvider
+# 作用：定义Agent 上下文提供接口的能力契约，供应用层与具体实现解耦。
 class AgentContextProvider(Protocol):
-
+    # 方法说明：collect
+    # 作用：收集Agent 上下文提供接口当前调用所需的上下文信息。
+    # 入参：
+    #   user_id（str）：经身份绑定后的持久化用户标识。
+    #   message（str）：本轮用户消息或问题文本。
+    #   session_id（str）：聊天会话或图检查点线程标识。
+    #   conversation_history（ConversationHistory）：按顺序组织的历史对话消息。
+    #   source_message_id（Optional[str]）：记忆或结果对应的来源消息标识；默认值为 None。
+    #   episodic_memories（Sequence[JsonObject]）：已加载的近期任务片段记忆；默认值为 ()。
+    # 出参：AgentContextPatch；Agent 上下文局部更新。
     def collect(
         self,
         *,
@@ -30,17 +45,38 @@ class AgentContextProvider(Protocol):
     ) -> AgentContextPatch: ...
 
 
+# 类说明（业务或基础设施实现类）：MemoryContextProvider
+# 作用：实现长期记忆上下文提供器，封装该组件的业务处理与依赖协作。
 class MemoryContextProvider:
-
+    # 方法说明：__init__
+    # 作用：初始化长期记忆上下文提供器，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   memory_service（UserMemoryService）：长期记忆业务服务。
+    #   selector（MemoryRelevanceSelector | None）：上下文记忆或分块策略的选择组件；默认值为 None。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(
         self,
         *,
         memory_service: UserMemoryService,
         selector: MemoryRelevanceSelector | None = None,
     ) -> None:
+        # 实例属性说明：_memory_service
+        # 作用：长期记忆业务服务。
         self._memory_service = memory_service
+        # 实例属性说明：_selector
+        # 作用：上下文记忆或分块策略的选择组件。
         self._selector = selector or MemoryRelevanceSelector()
 
+    # 方法说明：collect
+    # 作用：收集长期记忆上下文提供器当前调用所需的上下文信息。
+    # 入参：
+    #   user_id（str）：经身份绑定后的持久化用户标识。
+    #   message（str）：本轮用户消息或问题文本。
+    #   session_id（str）：聊天会话或图检查点线程标识。
+    #   conversation_history（ConversationHistory）：按顺序组织的历史对话消息。
+    #   source_message_id（Optional[str]）：记忆或结果对应的来源消息标识；默认值为 None。
+    #   episodic_memories（Sequence[JsonObject]）：已加载的近期任务片段记忆；默认值为 ()。
+    # 出参：AgentContextPatch；Agent 上下文局部更新。
     def collect(
         self,
         *,
@@ -67,6 +103,17 @@ class MemoryContextProvider:
             ),
         )
 
+    # 方法说明：collect_selected
+    # 作用：从工具结果中收集已选菜品，合并到菜单进度。
+    # 入参：
+    #   user_id（str）：经身份绑定后的持久化用户标识。
+    #   message（str）：本轮用户消息或问题文本。
+    #   session_id（str）：聊天会话或图检查点线程标识。
+    #   conversation_history（ConversationHistory）：按顺序组织的历史对话消息。
+    #   context_needs（AbstractSet[str]）：当前任务需要补充的上下文类型。
+    #   source_message_id（Optional[str]）：记忆或结果对应的来源消息标识；默认值为 None。
+    #   episodic_memories（Sequence[JsonObject]）：已加载的近期任务片段记忆；默认值为 ()。
+    # 出参：AgentContextPatch；Agent 上下文局部更新。
     def collect_selected(
         self,
         *,
@@ -74,7 +121,7 @@ class MemoryContextProvider:
         message: str,
         session_id: str,
         conversation_history: ConversationHistory,
-        context_needs: set[str],
+        context_needs: AbstractSet[str],
         source_message_id: Optional[str] = None,
         episodic_memories: Sequence[JsonObject] = (),
     ) -> AgentContextPatch:
@@ -115,8 +162,20 @@ class MemoryContextProvider:
         )
 
 
+# 类说明（业务或基础设施实现类）：AgentContextBuilder
+# 作用：实现Agent 上下文构建器，封装该组件的业务处理与依赖协作。
 class AgentContextBuilder:
-
+    # 方法说明：__init__
+    # 作用：初始化Agent 上下文构建器，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   providers（Sequence[AgentContextProvider] | None）：可选的外部模型供应商配置集合；默认值为
+    # None。
+    #   memory_service（UserMemoryService | None）：长期记忆业务服务；默认值为 None。
+    #   conversation_window（ConversationContextWindow | None）：历史消息裁剪与摘要组件；默认值为
+    # None。
+    #   history_service（ConversationHistoryService | None）：历史消息及活动菜单读取服务；默认值为
+    # None。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(
         self,
         *,
@@ -130,10 +189,29 @@ class AgentContextBuilder:
             context_providers.append(
                 MemoryContextProvider(memory_service=memory_service)
             )
+        # 实例属性说明：_providers
+        # 作用：可选的外部模型供应商配置集合。
         self._providers = context_providers
+        # 实例属性说明：_conversation_window
+        # 作用：历史消息裁剪与摘要组件。
         self._conversation_window = conversation_window
+        # 实例属性说明：_history_service
+        # 作用：历史消息及活动菜单读取服务。
         self._history_service = history_service
 
+    # 方法说明：build_chat_context
+    # 作用：读取历史与长期记忆，组装聊天执行上下文。
+    # 入参：
+    #   user_id（str）：经身份绑定后的持久化用户标识。
+    #   message（str）：本轮用户消息或问题文本。
+    #   session_id（str）：聊天会话或图检查点线程标识。
+    #   conversation_history（ConversationHistory）：按顺序组织的历史对话消息。
+    #   source_message_id（Optional[str]）：记忆或结果对应的来源消息标识；默认值为 None。
+    #   use_user_memory（bool）：是否为本轮加载并使用长期记忆；默认值为 True。
+    #   request_frame（RequestFrame | None）：已归一化的请求语义框架；默认值为 None。
+    #   preloaded_history（ConversationHistory | None）：已加载的近期对话上下文；默认值为 None。
+    #   preloaded_active_menu（JsonObject | None）：本轮已有的结构化活动菜单；默认值为 None。
+    # 出参：AgentContext；Agent 执行上下文。
     def build_chat_context(
         self,
         *,
@@ -179,7 +257,10 @@ class AgentContextBuilder:
             context.context_metadata["active_menu"] = preloaded_active_menu
         needs = set(request_frame.context_needs if request_frame else ())
         for provider in self._providers if use_user_memory else ():
-            if isinstance(provider, MemoryContextProvider) and request_frame is not None:
+            if (
+                isinstance(provider, MemoryContextProvider)
+                and request_frame is not None
+            ):
                 patch = provider.collect_selected(
                     user_id=user_id,
                     message=message,
@@ -193,15 +274,15 @@ class AgentContextBuilder:
                 )
             else:
                 patch = provider.collect(
-                user_id=user_id,
-                message=message,
-                session_id=session_id,
-                conversation_history=prepared_history,
-                source_message_id=source_message_id,
-                episodic_memories=(
-                    prepared.episodic_memories if prepared is not None else []
-                ),
-            )
+                    user_id=user_id,
+                    message=message,
+                    session_id=session_id,
+                    conversation_history=prepared_history,
+                    source_message_id=source_message_id,
+                    episodic_memories=(
+                        prepared.episodic_memories if prepared is not None else []
+                    ),
+                )
             self._apply_patch(context, patch)
         context.request_frame = request_frame
         loaded_context_types: list[str] = []
@@ -226,6 +307,15 @@ class AgentContextBuilder:
         context.context_metadata["loaded_context_types"] = loaded_context_types
         return context
 
+    # 方法说明：load_context_sources
+    # 作用：通过上下文层的唯一读取入口取得本轮可信输入快照。
+    # 入参：
+    #   user_id（str）：经身份绑定后的持久化用户标识。
+    #   session_id（str）：聊天会话或图检查点线程标识。
+    #   source_message_id（str | None）：记忆或结果对应的来源消息标识。
+    #   fallback（ConversationHistory）：当前值不可用时使用的回退值。
+    # 出参：tuple[ConversationHistory, JsonObject | None]；历史对话上下文、JSON
+    # 字段映射或None（未取得结果）组成的元组。
     def load_context_sources(
         self,
         *,
@@ -246,21 +336,17 @@ class AgentContextBuilder:
             source_message_id=source_message_id,
         )
 
-    @staticmethod
-    def _json_objects(values: Sequence[object]) -> list[JsonObject]:
-        return to_json_object_list(values)
-
+    # 方法说明：_apply_patch
+    # 作用：把上下文提供器返回的局部更新合并进 Agent 上下文。
+    # 入参：
+    #   context（AgentContext）：本轮执行上下文。
+    #   patch（AgentContextPatch）：待合并的局部状态更新。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     @staticmethod
     def _apply_patch(context: AgentContext, patch: AgentContextPatch) -> None:
-        context.user_memories.extend(
-            AgentContextBuilder._json_objects(patch.user_memories)
-        )
-        context.episodic_memories.extend(
-            AgentContextBuilder._json_objects(patch.episodic_memories)
-        )
-        context.observations.extend(
-            AgentContextBuilder._json_objects(patch.observations)
-        )
+        context.user_memories.extend(to_json_object_list(patch.user_memories))
+        context.episodic_memories.extend(to_json_object_list(patch.episodic_memories))
+        context.observations.extend(to_json_object_list(patch.observations))
         if patch.user_profile is not None:
             if context.user_profile is None:
                 context.user_profile = to_json_object(patch.user_profile)
@@ -269,6 +355,12 @@ class AgentContextBuilder:
         context.context_metadata.update(to_json_object(patch.context_metadata))
 
 
+# 方法说明：create_default_agent_context_providers
+# 作用：创建历史、记忆等默认上下文提供器。
+# 入参：
+#   memory_service（UserMemoryService）：长期记忆业务服务。
+#   memory_limit（int）：本轮最多加载的长期记忆条数；默认值为 20。
+# 出参：list[AgentContextProvider]；Agent 上下文提供接口的集合。
 def create_default_agent_context_providers(
     *,
     memory_service: UserMemoryService,

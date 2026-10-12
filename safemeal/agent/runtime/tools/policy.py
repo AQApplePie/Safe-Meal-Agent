@@ -8,6 +8,13 @@ from safemeal.agent.runtime.tools.contracts.base import ToolResult
 from safemeal.shared.types import JsonObject
 
 
+# 方法说明：review_tool_calls
+# 作用：返回已注入可信约束的调用，以及因参数非法而拒绝的结果。
+# 入参：
+#   calls（list[ToolCall]）：待执行或待审核的工具调用列表。
+#   constraint（JsonObject | None）：当前饮食硬约束。
+#   requirements（DietaryRequirements | None）：本轮冻结的饮食或菜单执行要求；默认值为 None。
+# 出参：tuple[list[ToolCall], list[ToolResult]]；待执行的结构化工具调用的集合、标准工具执行结果的集合组成的元组。
 def review_tool_calls(
     calls: list[ToolCall],
     constraint: JsonObject | None,

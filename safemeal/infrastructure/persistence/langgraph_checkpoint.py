@@ -22,12 +22,23 @@ from langgraph.checkpoint.base import (
 from langgraph.checkpoint.serde.types import TASKS
 
 
+# 类说明（SQL 类）：SqliteCheckpointSaver
+# 作用：实现SQLite LangGraph 检查点存储的查询、写入或运行状态持久化。
 class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
-
+    # 方法说明：__init__
+    # 作用：初始化SQLite LangGraph 检查点存储，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   path（str | Path）：本次读取或写入的路径。
+    #   serde（由调用契约决定）：检查点数据序列化组件；默认值为 None。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(self, path: str | Path, *, serde=None) -> None:
         super().__init__(serde=serde)
+        # 实例属性说明：path
+        # 作用：本次读取或写入的路径。
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        # 实例属性说明：_lock
+        # 作用：保护共享状态的互斥锁。
         self._lock = RLock()
         with self._connect() as connection:
             connection.executescript(
@@ -51,6 +62,11 @@ class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
                 """
             )
 
+    # 方法说明：_connect
+    # 作用：创建并配置底层连接，供当前适配器访问外部存储。
+    # 入参：
+    #   无显式入参。
+    # 出参：sqlite3.Connection；sqlite3.Connection。
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.path, timeout=30)
         connection.row_factory = sqlite3.Row
@@ -58,6 +74,11 @@ class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
         connection.execute("PRAGMA busy_timeout=30000")
         return connection
 
+    # 方法说明：_load_tuple
+    # 作用：读取检查点元组，供异步包装器返回恢复状态。
+    # 入参：
+    #   row（sqlite3.Row）：当前 SQL 查询结果行。
+    # 出参：CheckpointTuple；检查点状态、元数据及待处理写入。
     def _load_tuple(self, row: sqlite3.Row) -> CheckpointTuple:
         thread_id = str(row["thread_id"])
         namespace = str(row["checkpoint_ns"])
@@ -122,6 +143,11 @@ class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
             ],
         )
 
+    # 方法说明：get_tuple
+    # 作用：读取检查点、元数据与待处理写入，用于恢复图执行。
+    # 入参：
+    #   config（RunnableConfig）：图调用或检查点配置。
+    # 出参：CheckpointTuple | None；检查点状态、元数据及待处理写入或None（未取得结果）。
     def get_tuple(self, config: RunnableConfig) -> CheckpointTuple | None:
         configurable = config["configurable"]
         thread_id = str(configurable["thread_id"])
@@ -142,6 +168,14 @@ class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
             row = connection.execute(query, params).fetchone()
         return self._load_tuple(row) if row else None
 
+    # 方法说明：list
+    # 作用：通过SQLite LangGraph 检查点存储按过滤和分页条件列出记录。
+    # 入参：
+    #   config（RunnableConfig | None）：图调用或检查点配置。
+    #   filter（dict[str, Any] | None）：当前检索使用的过滤条件或表达式；默认值为 None。
+    #   before（RunnableConfig | None）：查询的上界或检查点游标；默认值为 None。
+    #   limit（int | None）：本次查询或处理的最大条目数；默认值为 None。
+    # 出参：Iterator[CheckpointTuple]；检查点状态、元数据及待处理写入的迭代器。
     def list(
         self,
         config: RunnableConfig | None,
@@ -178,6 +212,14 @@ class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
             if not filter or all(item.metadata.get(k) == v for k, v in filter.items()):
                 yield item
 
+    # 方法说明：put
+    # 作用：保存检查点及通道版本，返回新的检查点配置。
+    # 入参：
+    #   config（RunnableConfig）：图调用或检查点配置。
+    #   checkpoint（Checkpoint）：待保存的图检查点状态。
+    #   metadata（CheckpointMetadata）：文档、消息或证据的来源与辅助元数据。
+    #   new_versions（ChannelVersions）：本次检查点保存后的通道版本映射。
+    # 出参：RunnableConfig；图执行配置。
     def put(
         self,
         config: RunnableConfig,
@@ -216,6 +258,13 @@ class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
             }
         }
 
+    # 方法说明：put_writes
+    # 作用：保存图任务的待处理通道写入，供恢复执行使用。
+    # 入参：
+    #   config（RunnableConfig）：图调用或检查点配置。
+    #   writes（Sequence[tuple[str, Any]]）：待保存的检查点通道写入集合。
+    #   task_id（str）：图执行任务标识。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def put_writes(
         self, config: RunnableConfig, writes: Sequence[tuple[str, Any]], task_id: str
     ) -> None:
@@ -241,9 +290,22 @@ class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
                 rows,
             )
 
+    # 方法说明：aget_tuple
+    # 作用：读取检查点、元数据与待处理写入，用于恢复图执行。
+    # 入参：
+    #   config（RunnableConfig）：图调用或检查点配置。
+    # 出参：CheckpointTuple | None；检查点状态、元数据及待处理写入或None（未取得结果）。
     async def aget_tuple(self, config: RunnableConfig) -> CheckpointTuple | None:
         return await asyncio.to_thread(self.get_tuple, config)
 
+    # 方法说明：alist
+    # 作用：通过SQLite LangGraph 检查点存储异步迭代查询记录。
+    # 入参：
+    #   config（RunnableConfig | None）：图调用或检查点配置。
+    #   filter（dict[str, Any] | None）：当前检索使用的过滤条件或表达式；默认值为 None。
+    #   before（RunnableConfig | None）：查询的上界或检查点游标；默认值为 None。
+    #   limit（int | None）：本次查询或处理的最大条目数；默认值为 None。
+    # 出参：AsyncIterator[CheckpointTuple]；检查点状态、元数据及待处理写入的异步迭代器。
     async def alist(
         self,
         config: RunnableConfig | None,
@@ -258,6 +320,14 @@ class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
         for item in items:
             yield item
 
+    # 方法说明：aput
+    # 作用：保存检查点及通道版本，返回新的检查点配置。
+    # 入参：
+    #   config（RunnableConfig）：图调用或检查点配置。
+    #   checkpoint（Checkpoint）：待保存的图检查点状态。
+    #   metadata（CheckpointMetadata）：文档、消息或证据的来源与辅助元数据。
+    #   new_versions（ChannelVersions）：本次检查点保存后的通道版本映射。
+    # 出参：RunnableConfig；图执行配置。
     async def aput(
         self,
         config: RunnableConfig,
@@ -269,11 +339,24 @@ class SqliteCheckpointSaver(BaseCheckpointSaver[str]):
             self.put, config, checkpoint, metadata, new_versions
         )
 
+    # 方法说明：aput_writes
+    # 作用：保存图任务的待处理通道写入，供恢复执行使用。
+    # 入参：
+    #   config（RunnableConfig）：图调用或检查点配置。
+    #   writes（Sequence[tuple[str, Any]]）：待保存的检查点通道写入集合。
+    #   task_id（str）：图执行任务标识。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     async def aput_writes(
         self, config: RunnableConfig, writes: Sequence[tuple[str, Any]], task_id: str
     ) -> None:
         await asyncio.to_thread(self.put_writes, config, writes, task_id)
 
+    # 方法说明：get_next_version
+    # 作用：为检查点通道计算下一版本标识。
+    # 入参：
+    #   current（str | None）：当前待处理状态或条目。
+    #   channel（Any）：检查点通道名称。
+    # 出参：str；当前通道的下一检查点版本标识。
     def get_next_version(self, current: str | None, channel: Any) -> str:
         del channel
         number = int(current.split(".", 1)[0]) if current else 0

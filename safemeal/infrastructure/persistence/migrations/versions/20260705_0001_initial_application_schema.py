@@ -69,6 +69,11 @@ _LEGACY_INDEXES = {
 }
 
 
+# 方法说明：_is_reviewed_legacy_schema
+# 作用：识别唯一允许在保留数据前提下接管的未标记旧结构。
+# 入参：
+#   无显式入参。
+# 出参：bool；现有数据库是否属于允许接管的已审核旧结构。
 def _is_reviewed_legacy_schema() -> bool:
     """识别唯一允许在保留数据前提下接管的未标记旧结构。
 
@@ -125,6 +130,11 @@ def _is_reviewed_legacy_schema() -> bool:
     return True
 
 
+# 方法说明：_create_legacy_application_tables
+# 作用：创建旧版应用表结构，作为后续迁移链的起点。
+# 入参：
+#   无显式入参。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 def _create_legacy_application_tables() -> None:
     op.create_table(
         "chat_sessions",
@@ -269,6 +279,11 @@ def _create_legacy_application_tables() -> None:
     )
 
 
+# 方法说明：_create_user_memories_table
+# 作用：创建用户长期记忆表及其索引。
+# 入参：
+#   无显式入参。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 def _create_user_memories_table() -> None:
     op.create_table(
         "user_memories",
@@ -382,33 +397,29 @@ def _create_user_memories_table() -> None:
     )
 
 
+# 方法说明：upgrade
+# 作用：应用本版本数据库结构变更，推进 Alembic 迁移版本。
+# 入参：
+#   无显式入参。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 def upgrade() -> None:
     if not _is_reviewed_legacy_schema():
         _create_legacy_application_tables()
     _create_user_memories_table()
 
 
+# 方法说明：downgrade
+# 作用：撤销本版本数据库结构变更，恢复上一迁移版本。
+# 入参：
+#   无显式入参。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 def downgrade() -> None:
-    op.drop_index("ix_user_memories_user_type_status", table_name="user_memories")
-    op.drop_index("ix_user_memories_user_id", table_name="user_memories")
-    op.drop_index("ix_user_memories_status", table_name="user_memories")
-    op.drop_index("ix_user_memories_source_session_id", table_name="user_memories")
-    op.drop_index("ix_user_memories_memory_type", table_name="user_memories")
-    op.drop_index("ix_user_memories_memory_key", table_name="user_memories")
-    op.drop_index("ix_user_memories_id", table_name="user_memories")
-    op.drop_table("user_memories")
-
-    op.drop_index(
-        "ix_chat_history_snapshots_session_id", table_name="chat_history_snapshots"
-    )
-    op.drop_index("ix_chat_history_snapshots_id", table_name="chat_history_snapshots")
-    op.drop_table("chat_history_snapshots")
-
-    op.drop_index("ix_chat_messages_session_id", table_name="chat_messages")
-    op.drop_index("ix_chat_messages_message_type", table_name="chat_messages")
-    op.drop_index("ix_chat_messages_id", table_name="chat_messages")
-    op.drop_table("chat_messages")
-
-    op.drop_index("ix_chat_sessions_user_id", table_name="chat_sessions")
-    op.drop_index("ix_chat_sessions_id", table_name="chat_sessions")
-    op.drop_table("chat_sessions")
+    # DROP TABLE removes its indexes and foreign keys together. Dropping a
+    # foreign-key support index first is rejected by MySQL (error 1553).
+    for table in (
+        "user_memories",
+        "chat_history_snapshots",
+        "chat_messages",
+        "chat_sessions",
+    ):
+        op.drop_table(table)

@@ -38,6 +38,11 @@ _STRUCTURED_DATA_MARKERS = (
 )
 
 
+# 方法说明：knowledge_retrieval_tools
+# 作用：列出可用于知识检索的工具名称。
+# 入参：
+#   question（str）：本轮用户消息或问题文本。
+# 出参：tuple[str, ...]；可以执行知识检索的工具名称元组。
 def knowledge_retrieval_tools(question: str) -> tuple[str, ...]:
 
     text = " ".join(question.strip().split())
@@ -68,6 +73,11 @@ def knowledge_retrieval_tools(question: str) -> tuple[str, ...]:
     return tuple(dict.fromkeys(tools))
 
 
+# 方法说明：is_pure_knowledge_request
+# 作用：判断请求是否仅询问知识而不需要菜谱操作。
+# 入参：
+#   question（str）：本轮用户消息或问题文本。
+# 出参：bool；本轮是否只需知识回答而无菜谱操作。
 def is_pure_knowledge_request(question: str) -> bool:
 
     if not knowledge_retrieval_tools(question):

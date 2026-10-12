@@ -13,17 +13,37 @@ from safemeal.agent.contracts.workflow.stream import WorkflowProgress
 from safemeal.agent.workflow.streaming import use_progress_stream
 
 
+# 类说明（接口类）：AnswerMessage
+# 作用：定义助手答案消息的能力契约，供应用层与具体实现解耦。
 class AnswerMessage(Protocol):
+    # 字段说明：message
+    # 作用：本轮用户消息或问题文本。
+    # 类型：str。
     message: str
 
 
 ResponseT = TypeVar("ResponseT", bound=AnswerMessage)
 
 
+# 方法说明：_event
+# 作用：将事件名称和 JSON 载荷编码为 SSE 协议文本。
+# 入参：
+#   name（str）：当前对象或字段的名称。
+#   payload（JsonObject）：当前协议或持久化操作的数据载荷。
+# 出参：str；符合 SSE 协议的事件文本。
 def _event(name: str, payload: JsonObject) -> str:
     return f"event: {name}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n"
 
 
+# 方法说明：stream_answer_events
+# 作用：将答案片段、阶段信息与结束状态编码为流事件。
+# 入参：
+#   operation_factory（Callable[[], Coroutine[Any, Any,
+# ResponseT]]）：为每次事务尝试创建业务操作的工厂。
+#   completed_payload（Callable[[ResponseT, bool], JsonObject]）：已完成轮次保存的响应载荷。
+#   timeout_seconds（float）：操作超时上限，单位秒。
+#   chunk_chars（int）：文档分块的目标字符数。
+# 出参：AsyncIterator[str]；可逐条发送的 SSE 事件异步迭代器。
 async def stream_answer_events(
     operation_factory: Callable[[], Coroutine[Any, Any, ResponseT]],
     *,

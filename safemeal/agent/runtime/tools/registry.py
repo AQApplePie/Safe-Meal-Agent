@@ -10,7 +10,9 @@ from safemeal.modules.knowledge.application.knowledge.document_knowledge_service
     DocumentKnowledgeService,
 )
 from safemeal.modules.recipe.application import RecipeService
-from safemeal.agent.runtime.tools.adapters.dietary_search import DietarySafeRecipeQueryTool
+from safemeal.agent.runtime.tools.adapters.dietary_search import (
+    DietarySafeRecipeQueryTool,
+)
 from safemeal.agent.runtime.tools.adapters.recipe_tools import (
     GenerateRecipeTool,
     GetRecipeTool,
@@ -25,6 +27,15 @@ from safemeal.agent.runtime.tools.adapters.constraint_verification import (
 DocumentKnowledgeProvider = Callable[[], Awaitable[DocumentKnowledgeService]]
 
 
+# 方法说明：build_tool_executor
+# 作用：注册工具适配器及其依赖，创建本地工具执行器。
+# 入参：
+#   document_knowledge_provider（DocumentKnowledgeProvider）：取得知识检索服务的提供函数。
+#   recipe_service（RecipeService）：菜谱查询推荐与生成业务服务。
+#   enabled_tools（Iterable[str] | None）：本轮可用工具集合；默认值为 None。
+#   timeout_seconds（float）：操作超时上限，单位秒；默认值为 60.0。
+#   dietary_search（DietarySearch | None）：食谱安全检索能力；默认值为 None。
+# 出参：LocalToolExecutor；本地工具注册与执行器。
 def build_tool_executor(
     *,
     document_knowledge_provider: DocumentKnowledgeProvider,

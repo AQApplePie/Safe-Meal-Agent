@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import Literal
 import re
 from pathlib import Path
 
@@ -20,17 +21,43 @@ from safemeal.modules.dietary.application.recipe_safety import (
 )
 
 
+# 方法说明：_normalize
+# 作用：在local_recipe_catalog内部清理并统一输入格式。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+# 出参：str；文本字符串。
 def _normalize(value: str) -> str:
     return re.sub(r"[^0-9a-z\u3400-\u9fff]", "", value.casefold())
 
 
+# 类说明（业务或基础设施实现类）：LocalRecipeDocumentCatalog
+# 作用：实现本地食谱文档目录，封装该组件的业务处理与依赖协作。
 class LocalRecipeDocumentCatalog:
+    # 字段说明：name
+    # 作用：当前对象或字段的名称。
+    # 初始值：'local_json'。
     name = "local_json"
 
+    # 方法说明：__init__
+    # 作用：初始化本地食谱文档目录，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   path（str | Path）：本次读取或写入的路径。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(self, path: str | Path) -> None:
+        # 实例属性说明：_path
+        # 作用：本次读取或写入的路径。
         self._path = Path(path)
+        # 实例属性说明：_documents
+        # 作用：待处理的文档或文档片段集合。
+        # 类型：dict[str, dict] | None。
+        # 初始值：None。
         self._documents: dict[str, dict] | None = None
 
+    # 方法说明：_load
+    # 作用：从配置的本地目录载入食谱文档数据。
+    # 入参：
+    #   无显式入参。
+    # 出参：dict[str, dict]；按名称组织的本地食谱数据映射。
     def _load(self) -> dict[str, dict]:
         if self._documents is None:
             with self._path.open("r", encoding="utf-8") as handle:
@@ -40,11 +67,17 @@ class LocalRecipeDocumentCatalog:
             self._documents = payload
         return self._documents
 
+    # 方法说明：lookup
+    # 作用：从配置的菜谱来源查找目标菜品及其食材证据。
+    # 入参：
+    #   recipe_name（str）：目标菜谱名称。
+    # 出参：RecipeLookupResult；外部或本地菜谱查找结果。
     def lookup(self, recipe_name: str) -> RecipeLookupResult:
         query = recipe_name.strip()
         try:
             documents = self._load()
             normalized = _normalize(query)
+            match_type: Literal["exact", "normalized", "lexical", "none"]
             if query in documents:
                 name, match_type = query, "exact"
             else:
@@ -100,6 +133,14 @@ class LocalRecipeDocumentCatalog:
                 error=f"{type(exc).__name__}: {exc}",
             )
 
+    # 方法说明：search_candidates
+    # 作用：按菜单类别和排除条件查询轻量食谱候选。
+    # 入参：
+    #   category（MenuCategory）：目标食材或菜品分类。
+    #   exclude_names（frozenset[str]）：必须排除的菜品或名称集合。
+    #   limit（int）：本次查询或处理的最大条目数。
+    #   exclude_ingredients（tuple[str, ...]）：必须排除的食材集合；默认值为 ()。
+    # 出参：tuple[MenuRecipeCandidate, ...]；轻量菜单候选菜品组成的元组。
     def search_candidates(
         self,
         *,
@@ -119,7 +160,6 @@ class LocalRecipeDocumentCatalog:
                 for item in row.get(section, []) or []
                 if isinstance(item, list) and item
             ]
-
 
             if exclude_ingredients and not ingredients:
                 continue

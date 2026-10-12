@@ -10,7 +10,7 @@ Every Graph invocation uses `session_id` as its LangGraph `thread_id`. SQLite is
 the durable local checkpointer and PostgreSQL is required by production validation
 for shared HA state. `generate_recipe` is protected by a human approval
 interrupt; `POST /api/v1/chat/resume` resumes the exact saved execution with an
-approve/reject decision. In a multi-replica cluster, point the checkpointer and
+approve/reject decision bound to `message_id` and `approval_id`. SQL atomically claims the approval and stores its decision before graph execution; the reviewed response replaces the pending message. Interrupted claims are blocked from replay until their outcome has been checked. See [approval verification](optimization/07_agent_approval_resume.md). In a multi-replica cluster, point the checkpointer and
 BM25 files at a shared RWX volume or replace them with shared PostgreSQL/search
 adapters before scaling. The manifests use a shared RWX volume for BM25/uploads and
 expect `AGENT_CHECKPOINT_DATABASE_URL` in `safemeal-secrets` for PostgreSQL.
@@ -41,3 +41,5 @@ make test
 kubectl kustomize deploy/k8s/base >/dev/null
 docker compose config --quiet
 ```
+
+Embedding 与 rerank 必须配置各自适用的服务和凭据。默认 `text-embedding-v4` 使用 DashScope 兼容地址；缺失凭据只允许从同主机 LLM 服务继承，不能把 DeepSeek 凭据自动发送到 DashScope。显式 EMBEDDING/RERANK 配置需要运维自行确认匹配。`EMBEDDING_API_KEY` 缺失时嵌入客户端拒绝启动，不退回读取全局聊天凭据。生产效果需按 [检索消融报告](optimization/08_agent_retrieval_quality_ablation.md) 的 opt-in 命令验证；本地 TF-IDF 结果不代表生产向量模型或 Milvus 效果。

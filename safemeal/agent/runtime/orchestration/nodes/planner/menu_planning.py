@@ -14,6 +14,12 @@ MENU_CANDIDATE_OVERSAMPLE = 2
 MENU_MIN_CANDIDATES_PER_CATEGORY = 5
 
 
+# 方法说明：build_menu_search_plan
+# 作用：根据菜单分类配额生成候选检索调用计划。
+# 入参：
+#   plan_payload（dict）：已保存菜单计划的结构化载荷。
+#   progress_payload（dict）：已保存菜单选择进度的结构化载荷。
+# 出参：list[ToolCall]；待执行的结构化工具调用的集合。
 def build_menu_search_plan(
     plan_payload: dict,
     progress_payload: dict,
@@ -22,7 +28,9 @@ def build_menu_search_plan(
     plan = MenuExecutionPlan.model_validate(plan_payload)
     progress = MenuTaskProgress.model_validate(progress_payload)
     selected_ids = [
-        item.recipe_id for item in progress.selected_recipes if item.recipe_id is not None
+        item.recipe_id
+        for item in progress.selected_recipes
+        if item.recipe_id is not None
     ]
     selected_ids.extend(progress.excluded_recipe_ids)
     selected_names = [item.name for item in progress.selected_recipes]
@@ -33,7 +41,6 @@ def build_menu_search_plan(
         if progress.remaining.get(category, required) > 0
         and category not in progress.exhausted_categories
     ]
-
 
     unfinished.sort(key=lambda item: -item[1])
     calls: list[ToolCall] = []

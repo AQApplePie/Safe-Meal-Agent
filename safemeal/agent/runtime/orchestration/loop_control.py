@@ -14,6 +14,11 @@ from safemeal.agent.runtime.budget import (
 from safemeal.agent.contracts.decisions import ToolCall
 
 
+# 方法说明：tool_call_signature
+# 作用：把工具名称和归一化参数编码为稳定签名。
+# 入参：
+#   call（ToolCall）：单个结构化工具调用。
+# 出参：str；用于识别重复工具调用的稳定签名。
 def tool_call_signature(call: ToolCall) -> str:
     payload = json.dumps(
         call.arguments,
@@ -25,6 +30,14 @@ def tool_call_signature(call: ToolCall) -> str:
     return sha256(f"{call.tool_name}:{payload}".encode("utf-8")).hexdigest()
 
 
+# 方法说明：filter_new_tool_calls
+# 作用：去除已执行签名对应的工具调用，防止无效重复循环。
+# 入参：
+#   calls（Sequence[ToolCall]）：待执行或待审核的工具调用列表。
+#   executed_signatures（Iterable[str]）：已执行工具调用的稳定签名集合。
+#   remaining_calls（int）：剩余允许执行的工具调用数。
+#   tool_trace（Sequence[Mapping[str, object]]）：本轮已收集的工具调用轨迹；默认值为 ()。
+# 出参：tuple[list[ToolCall], int]；待执行的结构化工具调用的集合、整数组成的元组。
 def filter_new_tool_calls(
     calls: Sequence[ToolCall],
     *,

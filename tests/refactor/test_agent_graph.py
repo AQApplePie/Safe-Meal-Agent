@@ -111,6 +111,7 @@ def test_explicit_menu_quotas_use_menu_intent_even_after_nlu_fallback():
     assert intent is not None
     assert intent.kind == "menu_planning"
 
+
 def test_menu_planner_batches_remaining_quotas_and_excludes_selected_recipes():
     plan = MenuExecutionPlan(
         scenario="农村宴席",
@@ -336,9 +337,7 @@ def test_menu_progress_cross_counts_only_when_request_explicitly_allows_it():
 
 
 def test_menu_answer_is_grouped_and_reports_exact_quota_coverage():
-    plan = MenuExecutionPlan(
-        scenario="农村宴席", required={"cold_dish": 1, "soup": 1}
-    )
+    plan = MenuExecutionPlan(scenario="农村宴席", required={"cold_dish": 1, "soup": 1})
     progress = MenuTaskProgress(
         fulfilled={"cold_dish": 1, "soup": 0},
         remaining={"cold_dish": 0, "soup": 1},
@@ -421,6 +420,7 @@ async def test_menu_reflector_stops_with_partial_result_when_source_is_exhausted
     assert output["evidence_sufficient"] is False
     assert output["loop_stop_reason"] == "menu_sources_exhausted"
     assert output["missing_information"] == ["soup 仍缺 1 道"]
+
 
 @pytest.mark.asyncio
 async def test_agent_runs_without_workflow_and_enforces_constraints():

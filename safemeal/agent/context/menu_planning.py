@@ -55,6 +55,12 @@ _ORDINAL_MENU_REFERENCE_PATTERN = re.compile(
 )
 
 
+# 方法说明：extract_menu_modification
+# 作用：提取需要替换的菜单分类及可选的新配额。
+# 入参：
+#   message（str）：本轮用户消息或问题文本。
+# 出参：tuple[MenuCategory | None, int |
+# None]；菜单分类或None（未取得结果）、整数或None（未取得结果）组成的元组。
 def extract_menu_modification(
     message: str,
 ) -> tuple[MenuCategory | None, int | None]:
@@ -104,6 +110,12 @@ def extract_menu_modification(
     return category, count
 
 
+# 方法说明：resolve_active_menu_recipe_reference
+# 作用：根据持久化活动菜单解析分类内部的顺序引用。
+# 入参：
+#   message（str）：本轮用户消息或问题文本。
+#   active_menu（dict[str, object]）：本轮已有的结构化活动菜单。
+# 出参：str | None；解析到的菜谱名称；无法确定目标时为 None。
 def resolve_active_menu_recipe_reference(
     message: str, active_menu: dict[str, object]
 ) -> str | None:
@@ -131,10 +143,21 @@ def resolve_active_menu_recipe_reference(
     return name if isinstance(name, str) and name else None
 
 
+# 方法说明：_number
+# 作用：将菜单数量表达解析为整数。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+# 出参：int；数量表达对应的整数。
 def _number(value: str) -> int:
     return _NUMBER_VALUES.get(value, int(value) if value.isdigit() else 0)
 
 
+# 方法说明：extract_menu_planning_requirements
+# 作用：存在至少两个显式分类配额时返回复杂菜单规划要求。
+# 入参：
+#   message（str）：本轮用户消息或问题文本。
+# 出参：tuple[str | None, MenuPlanningRequirements |
+# None]；文本字符串或None（未取得结果）、复杂菜单规划要求或None（未取得结果）组成的元组。
 def extract_menu_planning_requirements(
     message: str,
 ) -> tuple[str | None, MenuPlanningRequirements | None]:
@@ -168,6 +191,11 @@ def extract_menu_planning_requirements(
     return scenario, requirements
 
 
+# 方法说明：is_menu_planning_request
+# 作用：判断用户是否要求安排一餐，允许没有显式分类配额。
+# 入参：
+#   message（str）：本轮用户消息或问题文本。
+# 出参：bool；用户是否正在请求安排多菜品菜单。
 def is_menu_planning_request(message: str) -> bool:
     """判断用户是否要求安排一餐，允许没有显式分类配额。"""
 

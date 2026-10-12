@@ -23,6 +23,11 @@ _NEGATIVE_PATTERN = re.compile(
 _STRONG_CUES = {"不想吃", "不能吃", "不要", "不吃", "别"}
 
 
+# 方法说明：_terms
+# 作用：拆分否定表达中的食材词项并去重。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+# 出参：tuple[str, ...]；否定修饰范围内提取的食材词项。
 def _terms(value: str) -> tuple[str, ...]:
 
     value = re.split(r"推荐|安排|帮|给|做|来|有没有", value)[0]
@@ -34,6 +39,12 @@ def _terms(value: str) -> tuple[str, ...]:
     return tuple(dict.fromkeys(values))
 
 
+# 方法说明：normalize_negation_scope
+# 作用：识别否定修饰范围，避免将肯定食材误当成排除条件。
+# 入参：
+#   message（str）：本轮用户消息或问题文本。
+#   frame（RequestFrame）：归一化请求语义框架。
+# 出参：RequestFrame；归一化请求语义框架。
 def normalize_negation_scope(message: str, frame: RequestFrame) -> RequestFrame:
 
     negative: list[tuple[str, bool]] = []
@@ -47,9 +58,7 @@ def normalize_negation_scope(message: str, frame: RequestFrame) -> RequestFrame:
     preferences = [
         item
         for item in frame.turn_preferences
-        if not (
-            item.kind == "include_ingredient" and item.value in negative_values
-        )
+        if not (item.kind == "include_ingredient" and item.value in negative_values)
     ]
     constraints = list(frame.current_constraints)
     for value, strong in negative:
@@ -76,9 +85,13 @@ def normalize_negation_scope(message: str, frame: RequestFrame) -> RequestFrame:
         )
         if preference not in preferences:
             preferences.append(preference)
-        if strong and category is None and not any(
-            item.kind == "restriction" and item.value == normalized_value
-            for item in constraints
+        if (
+            strong
+            and category is None
+            and not any(
+                item.kind == "restriction" and item.value == normalized_value
+                for item in constraints
+            )
         ):
             constraints.append(
                 CurrentConstraint(kind="restriction", value=normalized_value)

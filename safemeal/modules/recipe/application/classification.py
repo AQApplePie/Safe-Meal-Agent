@@ -10,13 +10,46 @@ from safemeal.shared.contracts.request_frame import MenuCategory
 
 _COLD_MARKERS = ("凉拌", "冷盘", "冷菜", "沙拉", "拍黄瓜", "凉菜")
 _SOUP_MARKERS = ("汤", "羹")
-_STAPLE_MARKERS = ("饭", "面", "馒头", "包子", "饺", "馄饨", "饼", "粥", "粉", "花卷", "窝头")
+_STAPLE_MARKERS = (
+    "饭",
+    "面",
+    "馒头",
+    "包子",
+    "饺",
+    "馄饨",
+    "饼",
+    "粥",
+    "粉",
+    "花卷",
+    "窝头",
+)
 _ANIMAL_CATEGORY_PREFIXES = ("肉类", "水产", "蛋类")
 _ANIMAL_NAME_MARKERS = (
-    "肉", "鸡", "鸭", "鹅", "鱼", "虾", "蟹", "牛", "羊", "猪", "排骨", "蛋", "火腿", "腊肠",
+    "肉",
+    "鸡",
+    "鸭",
+    "鹅",
+    "鱼",
+    "虾",
+    "蟹",
+    "牛",
+    "羊",
+    "猪",
+    "排骨",
+    "蛋",
+    "火腿",
+    "腊肠",
 )
 
 
+# 方法说明：classify_menu_categories
+# 作用：识别用户请求中的菜单分类及其数量要求。
+# 入参：
+#   name（str）：当前对象或字段的名称。
+#   ingredient_names（Iterable[str]）：待校验食材名称集合。
+#   ingredient_categories（Iterable[str]）：食材类别集合；默认值为 ()。
+#   description（str）：当前对象的说明文本；默认值为 ''。
+# 出参：tuple[MenuCategory, ...]；菜单分类组成的元组。
 def classify_menu_categories(
     *,
     name: str,
@@ -35,7 +68,9 @@ def classify_menu_categories(
     has_animal = any(
         category.startswith(_ANIMAL_CATEGORY_PREFIXES) for category in categories
     ) or any(
-        marker in ingredient for ingredient in ingredients for marker in _ANIMAL_NAME_MARKERS
+        marker in ingredient
+        for ingredient in ingredients
+        for marker in _ANIMAL_NAME_MARKERS
     )
     if is_cold:
         result.append("cold_dish")
@@ -52,6 +87,11 @@ def classify_menu_categories(
     return tuple(dict.fromkeys(result))
 
 
+# 方法说明：classify_recipe
+# 作用：根据食材和菜谱信息判断菜品分类。
+# 入参：
+#   recipe（Recipe）：当前菜谱或菜谱记录。
+# 出参：tuple[MenuCategory, ...]；菜单分类组成的元组。
 def classify_recipe(recipe: Recipe) -> tuple[MenuCategory, ...]:
     return classify_menu_categories(
         name=recipe.name,

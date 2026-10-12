@@ -12,3 +12,10 @@ __all__ = [
     "User",
     "RefreshToken",
 ]
+
+# Register interaction metadata for Alembic discovery.
+from safemeal.infrastructure.persistence.reaction_repository import reactions as reactions
+
+from safemeal.infrastructure.persistence.history_repository import history as history
+
+from safemeal.infrastructure.persistence.behavior_outbox import outbox as outbox

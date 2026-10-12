@@ -6,12 +6,14 @@ import json
 import re
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
-from safemeal.modules.conversation.contracts.conversation.models import ConversationHistory
+from safemeal.modules.conversation.contracts.conversation.models import (
+    ConversationHistory,
+)
 from safemeal.modules.dietary.contracts.requirements import (
     DietaryPreference,
 )
@@ -45,18 +47,59 @@ SYSTEM_PROMPT = (
 )
 
 
+# 类说明（数据契约类）：_ModelTarget
+# 作用：描述本地理解模型的请求目标输出的结构、类型及可校验字段。
 class _ModelTarget(BaseModel):
+    # 字段说明：model_config
+    # 作用：模型构造与校验配置，控制可变性、额外字段及环境变量读取方式。
+    # 配置：额外字段策略（forbid 禁止，ignore 忽略）='forbid'。
     model_config = ConfigDict(extra="forbid")
+    # 字段说明：raw_mention
+    # 作用：用户原话中的提及内容，保留归一化依据。
+    # 类型：str | None。
+    # 初始值：None。
     raw_mention: str | None = None
+    # 字段说明：canonical_name
+    # 作用：词项或菜名归一化后的标准名称。
+    # 类型：str | None。
+    # 初始值：None。
     canonical_name: str | None = None
+    # 字段说明：recipe_id
+    # 作用：目标食谱的整数标识。
+    # 类型：int | None。
+    # 初始值：None。
     recipe_id: int | None = None
+    # 字段说明：resolution
+    # 作用：经过冲突处理后的有效约束或解析结果。
+    # 类型：Literal['exact', 'corrected_user_input', 'conversation_reference', 'unresolved']。
+    # 取值说明：
+    #   exact：精确匹配。
+    #   corrected_user_input：用户明确修正过的输入。
+    #   conversation_reference：对历史对话内容的引用。
+    #   unresolved：尚未完成解析或冲突消解。
     resolution: Literal[
         "exact", "corrected_user_input", "conversation_reference", "unresolved"
     ]
 
 
+# 类说明（数据契约类）：_ModelConstraint
+# 作用：描述本地理解模型的约束输出的结构、类型及可校验字段。
 class _ModelConstraint(BaseModel):
+    # 字段说明：model_config
+    # 作用：模型构造与校验配置，控制可变性、额外字段及环境变量读取方式。
+    # 配置：额外字段策略（forbid 禁止，ignore 忽略）='forbid'。
     model_config = ConfigDict(extra="forbid")
+    # 字段说明：kind
+    # 作用：当前业务记录或操作的类型。
+    # 类型：Literal['include_ingredient', 'avoid_ingredient', 'allergy', 'restriction', 'max_minutes', 'dietary_type', 'equipment']。
+    # 取值说明：
+    #   include_ingredient：要求包含的具体食材。
+    #   avoid_ingredient：要求避开的具体食材。
+    #   allergy：过敏约束。
+    #   restriction：饮食限制。
+    #   max_minutes：可接受的制作时长上限，单位为分钟。
+    #   dietary_type：饮食类型要求。
+    #   equipment：厨具要求。
     kind: Literal[
         "include_ingredient",
         "avoid_ingredient",
@@ -66,18 +109,63 @@ class _ModelConstraint(BaseModel):
         "dietary_type",
         "equipment",
     ]
+    # 字段说明：value
+    # 作用：本地理解模型提取的约束具体内容。
+    # 类型：str。
+    # 配置：最小长度=1；最大长度=100。
     value: str = Field(min_length=1, max_length=100)
+    # 字段说明：required
+    # 作用：当前约束必须满足的数量或条件。
+    # 类型：bool。
+    # 初始值：True。
     required: bool = True
 
 
+# 类说明（数据契约类）：_ModelMemoryUpdate
+# 作用：描述本地理解模型的记忆更新输出的结构、类型及可校验字段。
 class _ModelMemoryUpdate(BaseModel):
+    # 字段说明：model_config
+    # 作用：模型构造与校验配置，控制可变性、额外字段及环境变量读取方式。
+    # 配置：额外字段策略（forbid 禁止，ignore 忽略）='forbid'。
     model_config = ConfigDict(extra="forbid")
+    # 字段说明：kind
+    # 作用：当前业务记录或操作的类型。
+    # 类型：Literal['preference', 'dislike', 'allergy', 'restriction']。
+    # 取值说明：
+    #   preference：喜好偏好。
+    #   dislike：明确不喜欢的食物或口味。
+    #   allergy：过敏约束。
+    #   restriction：饮食限制。
     kind: Literal["preference", "dislike", "allergy", "restriction"]
+    # 字段说明：value
+    # 作用：本地理解模型提取的记忆变更内容。
+    # 类型：str。
+    # 配置：最小长度=1；最大长度=100。
     value: str = Field(min_length=1, max_length=100)
 
 
+# 类说明（数据契约类）：_ModelOutput
+# 作用：描述本地理解模型的完整结构化输出的结构、类型及可校验字段。
 class _ModelOutput(BaseModel):
+    # 字段说明：model_config
+    # 作用：模型构造与校验配置，控制可变性、额外字段及环境变量读取方式。
+    # 配置：额外字段策略（forbid 禁止，ignore 忽略）='forbid'。
     model_config = ConfigDict(extra="forbid")
+    # 字段说明：intent
+    # 作用：已识别的本轮请求意图。
+    # 类型：Literal['recipe_detail', 'recipe_recommendation', 'menu_planning', 'recipe_generation', 'food_safety', 'nutrition_query', 'knowledge', 'replace', 'memory', 'clarify', 'out_of_scope']。
+    # 取值说明：
+    #   recipe_detail：查看指定菜谱详情。
+    #   recipe_recommendation：推荐符合要求的菜谱。
+    #   menu_planning：规划满足数量与分类要求的菜单。
+    #   recipe_generation：生成符合要求的新菜谱。
+    #   food_safety：判断饮食或食材安全性。
+    #   nutrition_query：查询营养信息。
+    #   knowledge：查询饮食知识。
+    #   replace：替换既有菜品或任务对象。
+    #   memory：更新用户长期记忆。
+    #   clarify：请求用户澄清信息。
+    #   out_of_scope：请求超出当前业务支持范围。
     intent: Literal[
         "recipe_detail",
         "recipe_recommendation",
@@ -91,29 +179,89 @@ class _ModelOutput(BaseModel):
         "clarify",
         "out_of_scope",
     ]
+    # 字段说明：target
+    # 作用：本轮要查询、替换或审核的目标菜品。
+    # 类型：_ModelTarget。
     target: _ModelTarget
+    # 字段说明：requested_fields
+    # 作用：当前请求要求读取的字段集合。
+    # 类型：list[Literal['ingredients', 'steps', 'time', 'nutrition']]。
+    # 配置：默认值工厂（每次创建独立对象）=list。
+    # 取值说明：
+    #   ingredients：食材清单。
+    #   steps：制作步骤。
+    #   time：制作时间。
+    #   nutrition：营养信息。
     requested_fields: list[Literal["ingredients", "steps", "time", "nutrition"]] = (
         Field(default_factory=list)
     )
+    # 字段说明：constraints
+    # 作用：待合并或待执行的约束集合。
+    # 类型：list[_ModelConstraint]。
+    # 配置：默认值工厂（每次创建独立对象）=list。
     constraints: list[_ModelConstraint] = Field(default_factory=list)
+    # 字段说明：memory_updates
+    # 作用：本轮明确提取的记忆变更，内部由 MemoryUpdate 定义。
+    # 类型：list[_ModelMemoryUpdate]。
+    # 配置：默认值工厂（每次创建独立对象）=list。
     memory_updates: list[_ModelMemoryUpdate] = Field(default_factory=list)
+    # 字段说明：recommendation_count
+    # 作用：用户要求返回的菜谱数量。
+    # 类型：int | None。
+    # 配置：默认值=None；最小值（含）=1；最大值（含）=10。
     recommendation_count: int | None = Field(default=None, ge=1, le=10)
+    # 字段说明：servings
+    # 作用：菜谱或菜单计划的用餐人数。
+    # 类型：int | None。
+    # 配置：默认值=None；最小值（含）=1；最大值（含）=1000。
     servings: int | None = Field(default=None, ge=1, le=1000)
+    # 字段说明：confidence
+    # 作用：当前抽取结果的置信度。
+    # 类型：float。
+    # 配置：最小值（含）=0；最大值（含）=1。
     confidence: float = Field(ge=0, le=1)
+    # 字段说明：clarification_required
+    # 作用：是否需要用户补充信息后才能可靠继续执行。
+    # 类型：bool。
+    # 初始值：False。
     clarification_required: bool = False
+    # 字段说明：clarification_question
+    # 作用：缺少关键信息或语义不确定时向用户提出的澄清问题。
+    # 类型：str | None。
+    # 初始值：None。
     clarification_question: str | None = None
 
 
+# 方法说明：_normalize
+# 作用：仅为候选召回归一化文本，不用该结果直接作业务决策。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+# 出参：str；文本字符串。
 def _normalize(value: str) -> str:
     """仅为候选召回归一化文本，不用该结果直接作业务决策。"""
     return re.sub(r"[^0-9a-z\u3400-\u9fff]", "", value.casefold())
 
 
+# 类说明（业务或基础设施实现类）：LocalModelRequestUnderstandingGateway
+# 作用：调用 MLX 服务，并把通过校验的 JSON 转换成请求契约。
 class LocalModelRequestUnderstandingGateway:
     """调用 MLX 服务，并把通过校验的 JSON 转换成请求契约。"""
 
+    # 字段说明：backend_name
+    # 作用：实际承担请求理解或服务实现的后端标识。
+    # 初始值：'local_model'。
     backend_name = "local_model"
 
+    # 方法说明：__init__
+    # 作用：初始化本地模型请求理解适配器，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   endpoint（str | None）：外部 API 的接口路径。
+    #   catalog_path（str | Path）：规范菜名或本地菜谱目录路径；默认值为
+    # 'training/nlu/recipe_catalog.json'。
+    #   timeout（float）：操作超时上限，单位秒；默认值为 15.0。
+    #   model_name（str）：当前调用使用的模型名称；默认值为 'default_model'。
+    #   client（httpx.AsyncClient | None）：底层外部服务客户端；默认值为 None。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(
         self,
         endpoint: str | None,
@@ -123,13 +271,32 @@ class LocalModelRequestUnderstandingGateway:
         model_name: str = "default_model",
         client: httpx.AsyncClient | None = None,
     ) -> None:
+        # 实例属性说明：_endpoint
+        # 作用：外部 API 的接口路径。
         self._endpoint = endpoint.rstrip("/") if endpoint else None
+        # 实例属性说明：_catalog_path
+        # 作用：规范菜名或本地菜谱目录路径。
         self._catalog_path = Path(catalog_path)
+        # 实例属性说明：_timeout
+        # 作用：操作超时上限，单位秒。
         self._timeout = timeout
+        # 实例属性说明：_model_name
+        # 作用：当前调用使用的模型名称。
         self._model_name = model_name
+        # 实例属性说明：_client
+        # 作用：底层外部服务客户端。
         self._client = client
+        # 实例属性说明：_catalog
+        # 作用：延迟加载的菜谱名称与别名目录，用于归一化请求目标。
+        # 类型：list[dict[str, Any]] | None。
+        # 初始值：None。
         self._catalog: list[dict[str, Any]] | None = None
 
+    # 方法说明：_load_catalog
+    # 作用：加载规范菜名，只用于限制模型可以选择的实体。
+    # 入参：
+    #   无显式入参。
+    # 出参：list[dict[str, Any]]；文本字符串、由调用约定决定的数据对象组成的映射的集合。
     def _load_catalog(self) -> list[dict[str, Any]]:
         """加载规范菜名，只用于限制模型可以选择的实体。"""
         if self._catalog is None:
@@ -150,6 +317,13 @@ class LocalModelRequestUnderstandingGateway:
                 raise ValueError("recipe candidate catalog must be an object or list")
         return self._catalog
 
+    # 方法说明：_candidate_payload
+    # 作用：召回可能的菜名和近期实体，但不在这里决定任务类型。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    #   recent_context（ConversationHistory）：已加载的近期对话上下文。
+    # 出参：tuple[list[dict[str, Any]], list[dict[str,
+    # Any]]]；文本字符串、由调用约定决定的数据对象组成的映射的集合、文本字符串、由调用约定决定的数据对象组成的映射的集合组成的元组。
     def _candidate_payload(
         self, message: str, recent_context: ConversationHistory
     ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -200,6 +374,13 @@ class LocalModelRequestUnderstandingGateway:
                 candidates.append(item)
         return candidates[:10], recent_entities[:10]
 
+    # 方法说明：_to_request_frame
+    # 作用：把模型输出转换成稳定的应用层请求契约。
+    # 入参：
+    #   output（_ModelOutput）：当前模型或业务处理的输出。
+    #   scenario（str | None）：当前模型调用场景；默认值为 None。
+    #   menu_planning（MenuPlanningRequirements | None）：本轮复杂菜单规划要求；默认值为 None。
+    # 出参：RequestFrame；归一化请求语义框架。
     @staticmethod
     def _to_request_frame(
         output: _ModelOutput,
@@ -222,20 +403,26 @@ class LocalModelRequestUnderstandingGateway:
             for item in output.memory_updates
         ]
         for item in output.constraints:
-            inferred_kind = {
+            inferred_by_kind: dict[
+                str, Literal["dislike", "allergy", "restriction"]
+            ] = {
                 "avoid_ingredient": "dislike",
                 "allergy": "allergy",
                 "restriction": "restriction",
-            }.get(item.kind)
+            }
+            inferred_kind = inferred_by_kind.get(item.kind)
             if inferred_kind and not any(
                 update.kind == inferred_kind and update.value == item.value
                 for update in updates
             ):
                 updates.append(MemoryUpdate(kind=inferred_kind, value=item.value))
         current = tuple(
-            CurrentConstraint(kind=item.kind, value=item.value)
+            CurrentConstraint(
+                kind=cast(Literal["allergy", "restriction"], item.kind),
+                value=item.value,
+            )
             for item in output.constraints
-            if item.kind in {"allergy", "restriction"}
+            if item.kind in ("allergy", "restriction")
         )
         selection_categories = tuple(
             CurrentConstraint(kind="food_category", value=category)
@@ -262,39 +449,60 @@ class LocalModelRequestUnderstandingGateway:
         )
         turn_preferences = [
             DietaryPreference(
-                kind=item.kind,
+                kind=cast(
+                    Literal[
+                        "include_ingredient",
+                        "avoid_ingredient",
+                        "max_minutes",
+                        "dietary_type",
+                        "equipment",
+                    ],
+                    item.kind,
+                ),
                 value=item.value,
                 required=item.required,
                 source="input",
             )
             for item in output.constraints
             if item.kind
-            in {
+            in (
                 "include_ingredient",
                 "avoid_ingredient",
                 "max_minutes",
                 "dietary_type",
                 "equipment",
-            }
+            )
         ]
-        for item in output.memory_updates:
-            kind = {
+        for update_item in output.memory_updates:
+            preference_kind: dict[
+                str, Literal["include_ingredient", "avoid_ingredient"]
+            ] = {
                 "preference": "include_ingredient",
                 "dislike": "avoid_ingredient",
-            }.get(item.kind)
+            }
+            kind = preference_kind.get(update_item.kind)
             if kind and not any(
-                preference.kind == kind and preference.value == item.value
+                preference.kind == kind and preference.value == update_item.value
                 for preference in turn_preferences
             ):
                 turn_preferences.append(
                     DietaryPreference(
                         kind=kind,
-                        value=item.value,
+                        value=update_item.value,
                         required=False,
                         source="input",
                     )
                 )
-        context_needs: list[str] = []
+        context_needs: list[
+            Literal[
+                "recent_conversation",
+                "allergies",
+                "dietary_restrictions",
+                "food_preferences",
+                "episodic_memory",
+                "user_profile",
+            ]
+        ] = []
         if intent in {
             "recipe_recommendation",
             "menu_planning",
@@ -334,6 +542,12 @@ class LocalModelRequestUnderstandingGateway:
             fallback_used=False,
         )
 
+    # 方法说明：understand
+    # 作用：从本轮文本与近期上下文形成校验后的请求语义框架。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    #   recent_context（ConversationHistory）：已加载的近期对话上下文。
+    # 出参：RequestFrame；归一化请求语义框架。
     async def understand(
         self, message: str, recent_context: ConversationHistory
     ) -> RequestFrame:

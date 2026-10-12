@@ -14,6 +14,14 @@ DEFAULT_FORMAT = (
 )
 
 
+# 方法说明：configure_logging
+# 作用：按格式和级别初始化应用日志。
+# 入参：
+#   level（Optional[str]）：日志记录级别；默认值为 None。
+#   debug（bool）：是否启用调试模式；默认值为 False。
+#   log_format（Optional[str]）：日志输出格式；默认值为 None。
+#   serialize（bool）：是否序列化当前输出；默认值为 False。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 def configure_logging(
     *,
     level: Optional[str] = None,

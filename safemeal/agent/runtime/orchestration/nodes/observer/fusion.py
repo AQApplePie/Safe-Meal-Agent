@@ -34,6 +34,11 @@ _SOURCE_WEIGHTS = {
 }
 
 
+# 方法说明：_items
+# 作用：从标准观察中提取可参与融合的候选数据项。
+# 入参：
+#   observation（Observation）：单次标准化工具观察。
+# 出参：list[JsonObject]；JSON 字段映射的集合。
 def _items(observation: Observation) -> list[JsonObject]:
     data = observation.data
     if not isinstance(data, dict):
@@ -51,6 +56,11 @@ def _items(observation: Observation) -> list[JsonObject]:
     return [to_json_object(value) for value in values if value is not None]
 
 
+# 方法说明：_content
+# 作用：从候选条目中提取用于去重和展示的正文。
+# 入参：
+#   item（JsonObject）：当前遍历或处理条目。
+# 出参：str；候选证据的正文文本。
 def _content(item: JsonObject) -> str:
     for key in ("content", "text", "summary", "name", "title"):
         value = item.get(key)
@@ -59,6 +69,12 @@ def _content(item: JsonObject) -> str:
     return json.dumps(item, ensure_ascii=False, default=str)[:6000]
 
 
+# 方法说明：_identity
+# 作用：依据记录标识或正文生成候选证据的去重标识。
+# 入参：
+#   item（JsonObject）：当前遍历或处理条目。
+#   content（str）：当前文件、消息或证据的正文内容。
+# 出参：str；用于合并重复证据的稳定标识。
 def _identity(item: JsonObject, content: str) -> str:
     metadata_value = item.get("metadata")
     metadata: dict = metadata_value if isinstance(metadata_value, dict) else {}
@@ -70,6 +86,13 @@ def _identity(item: JsonObject, content: str) -> str:
     return "content:" + sha256(normalized.encode("utf-8")).hexdigest()
 
 
+# 方法说明：fuse_retrieval_observations
+# 作用：为 Observer 节点构建加权 RRF 融合后的 Observation。
+# 入参：
+#   observations（Iterable[Observation]）：本轮已获得的工具观察集合。
+#   top_k（int）：检索返回的最大候选数；默认值为 12。
+#   rrf_k（int）：RRF 排名融合的平滑常数；默认值为 60。
+# 出参：Observation | None；标准化工具观察或None（未取得结果）。
 def fuse_retrieval_observations(
     observations: Iterable[Observation],
     *,

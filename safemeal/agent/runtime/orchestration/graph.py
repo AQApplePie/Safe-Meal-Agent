@@ -26,13 +26,25 @@ from safemeal.agent.runtime.tools.ports.tool_executor import ToolExecutor
 from .routing import _after_plan, _after_approval, _after_reflection
 
 
+# 方法说明：build_agent_graph
+# 作用：装配规划、审批、执行、观察、反思和回复节点，编译 Agent 图。
+# 入参：
+#   model_gateway（AgentModelGateway）：语言模型调用能力。
+#   tool_executor（ToolExecutor）：已装配的工具注册与执行组件。
+#   checkpointer（BaseCheckpointSaver[Any] | Literal[False] |
+# None）：图检查点读写适配器；默认值为 None。
+#   max_iterations（int）：Agent 循环最多执行次数；默认值为 4。
+#   max_tool_calls（int）：当前请求允许执行的工具调用总数；默认值为 12。
+#   max_model_tokens（int）：当前请求模型调用的 Token 总量上限；默认值为 20000。
+#   max_model_cost（float）：当前请求模型调用的成本上限；默认值为 0.0。
+#   approval_tool_names（frozenset[str]）：执行前必须人工审批的工具名称集合；默认值为 frozenset()。
+# 出参：按实现返回；已编译的 LangGraph 可执行图。
 def build_agent_graph(
     *,
     model_gateway: AgentModelGateway,
     tool_executor: ToolExecutor,
     checkpointer: BaseCheckpointSaver[Any] | Literal[False] | None = None,
     max_iterations: int = 4,
-    history_messages: int = 12,
     max_tool_calls: int = 12,
     max_model_tokens: int = 20_000,
     max_model_cost: float = 0.0,
@@ -44,7 +56,6 @@ def build_agent_graph(
         "initialize",
         create_initializer_node(
             max_iterations=max_iterations,
-            history_messages=history_messages,
             max_tool_calls=max_tool_calls,
             max_model_tokens=max_model_tokens,
             max_model_cost=max_model_cost,

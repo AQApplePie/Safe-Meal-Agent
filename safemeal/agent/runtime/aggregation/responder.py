@@ -10,6 +10,9 @@ from safemeal.agent.safety.answer import (
     dietary_constraint_is_active,
     render_dietary_safety_answer,
 )
+from safemeal.agent.runtime.orchestration.nodes.reflector.assessment import (
+    recommendation_completion,
+)
 from .sources import collect_answer_sources
 from .recipe_detail import render_exact_recipe_detail
 from .recommendation import render_recipe_recommendations
@@ -21,7 +24,17 @@ from safemeal.agent.contracts.state import AgentState, AgentStateUpdate
 from safemeal.agent.runtime.menu_output import render_menu_plan
 
 
+# 方法说明：create_responder_node
+# 作用：构造基于当前证据渲染最终答案的回复节点。
+# 入参：
+#   model_gateway（AgentModelGateway）：语言模型调用能力。
+# 出参：按实现返回；绑定当前依赖的图节点函数，接收图状态并返回局部状态更新。
 def create_responder_node(model_gateway: AgentModelGateway):
+    # 方法说明：respond
+    # 作用：根据已获得的证据与安全结果形成最终答案。
+    # 入参：
+    #   state（AgentState）：Agent 完整图状态。
+    # 出参：AgentStateUpdate；Agent 图节点局部状态更新。
     async def respond(state: AgentState) -> AgentStateUpdate:
         observations = state.get("observations", [])
         intent = state.get("intent")
@@ -44,7 +57,10 @@ def create_responder_node(model_gateway: AgentModelGateway):
             query = exact.data.get("query") or "该食谱"
             answer = f"未在可用食谱来源中找到“{query}”，因此不能用其他菜替代回答。"
             await emit_answer_chunk(answer)
-        elif exact is not None and exact.data.get("status") in {"FOUND", "FIELD_MISSING"}:
+        elif exact is not None and exact.data.get("status") in {
+            "FOUND",
+            "FIELD_MISSING",
+        }:
             recipe = (exact.data.get("items") or [{}])[0]
             requested_fields = (
                 frame.get("requested_fields", []) if isinstance(frame, dict) else []
@@ -68,8 +84,6 @@ def create_responder_node(model_gateway: AgentModelGateway):
             answer = state["direct_answer"]
             await emit_answer_chunk(answer)
         elif intent is not None and intent.kind == "menu_planning":
-
-
             answer = render_menu_plan(
                 state.get("menu_execution_plan") or {},
                 state.get("menu_task_progress") or {},
@@ -84,11 +98,11 @@ def create_responder_node(model_gateway: AgentModelGateway):
             recommendation_count = (
                 frame.get("recommendation_count") if isinstance(frame, dict) else None
             )
-            answer = render_recipe_recommendations(
+            recommendation_answer = render_recipe_recommendations(
                 observations,
                 limit=recommendation_count or 3,
             )
-            if answer is None:
+            if recommendation_answer is None:
                 answer = await model_gateway.answer(
                     question=state["question"],
                     conversation_history=state.get("conversation_history", []),
@@ -98,6 +112,7 @@ def create_responder_node(model_gateway: AgentModelGateway):
                     missing_information=state.get("missing_information", []),
                 )
             else:
+                answer = recommendation_answer
                 await emit_answer_chunk(answer)
         elif state.get("direct_answer") and not observations:
             answer = state["direct_answer"]
@@ -132,22 +147,9 @@ def create_responder_node(model_gateway: AgentModelGateway):
             await emit_answer_chunk(
                 f"\n\n说明：本轮已达到执行预算（{reason}），以上为当前证据范围内的部分结果。"
             )
-        counted = next(
-            (
-                (
-                    int(item.data["requested_count"]),
-                    int(item.data.get("fulfilled_count") or 0),
-                )
-                for item in reversed(observations)
-                if item.tool_name == "recommend_recipes"
-                and item.ok
-                and isinstance(item.data, dict)
-                and item.data.get("requested_count") is not None
-            ),
-            None,
-        )
-        if counted is not None and counted[1] < counted[0]:
-            requested, fulfilled = counted
+        counted = recommendation_completion(observations)
+        if counted is not None and not counted[2]:
+            requested, fulfilled, _ = counted
             partial_note = (
                 f"\n\n说明：你请求了 {requested} 道，目前可核验的结果只有 "
                 f"{fulfilled} 道，因此这是部分结果。"

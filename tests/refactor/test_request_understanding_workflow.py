@@ -103,9 +103,7 @@ def test_recipe_detail_removes_conversational_prefix_from_exact_name(message):
 
 
 def test_memory_update_and_business_task_are_independent_dimensions():
-    frame = RequestUnderstandingService().understand(
-        "我爱吃鱼，水煮鱼的材料是什么？"
-    )
+    frame = RequestUnderstandingService().understand("我爱吃鱼，水煮鱼的材料是什么？")
     assert frame.primary_task == "recipe_detail"
     assert frame.target.recipe_name == "水煮鱼"
     assert [(item.kind, item.value) for item in frame.memory_updates] == [

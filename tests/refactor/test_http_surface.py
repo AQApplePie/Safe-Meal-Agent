@@ -7,7 +7,9 @@ def test_identity_chat_and_file_knowledge_routes_remain(monkeypatch):
     app.include_router(api_router, prefix="/api/v1")
     paths = app.openapi()["paths"]
     assert all(
-        path.startswith(("/api/v1/auth/", "/api/v1/chat/", "/api/v1/knowledge/"))
+        path.startswith(
+            ("/api/v1/auth/", "/api/v1/chat/", "/api/v1/knowledge/", "/api/v1/recipes")
+        )
         for path in paths
     )
     assert "/api/v1/auth/register" in paths
@@ -24,7 +26,14 @@ def test_identity_chat_and_file_knowledge_routes_remain(monkeypatch):
     assert "get" in paths["/api/v1/knowledge/files"]
     assert "/api/v1/knowledge/files/async" in paths
     assert "/api/v1/knowledge/ingestion-jobs/{job_id}" in paths
-    assert not any("/recipes" in path or "/clear" in path for path in paths)
+    assert not any("/clear" in path for path in paths)
+    assert set(paths["/api/v1/recipes"]) == {"get"}
+    assert set(paths["/api/v1/recipes/{recipe_id}"]) == {"get"}
+    assert set(paths["/api/v1/recipes/history"]) == {"get"}
+    assert set(paths["/api/v1/recipes/favorites"]) == {"get"}
+    assert set(paths["/api/v1/recipes/interactions/query"]) == {"post"}
+    assert set(paths["/api/v1/recipes/rankings"]) == {"get"}
+    assert set(paths["/api/v1/recipes/{recipe_id}/view"]) == {"put"}
 
 
 def test_file_http_api_scopes_metadata_and_download(monkeypatch, tmp_path):

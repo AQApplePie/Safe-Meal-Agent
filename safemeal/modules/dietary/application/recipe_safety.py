@@ -20,15 +20,31 @@ from safemeal.modules.dietary.application.ingredient_terms import (
 )
 
 
+# 方法说明：_unique
+# 作用：保持输入顺序去重并清理空值。
+# 入参：
+#   items（Iterable[str]）：当前处理的条目集合。
+# 出参：tuple[str, ...]；保持原输入顺序的非空去重条目集合。
 def _unique(items: Iterable[str]) -> tuple[str, ...]:
     return tuple(dict.fromkeys(item.strip() for item in items if item.strip()))
 
 
+# 方法说明：normalize_ingredient_name
+# 作用：归一化食材名称或词项，统一安全匹配依据。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+# 出参：str；文本字符串。
 def normalize_ingredient_name(value: str) -> str:
 
     return NORMALISE_REMOVE_PATTERN.sub("", str(value).strip().casefold())
 
 
+# 方法说明：ingredient_matches_forbidden_term
+# 作用：判断食材是否命中禁止词、别名或食材类别。
+# 入参：
+#   ingredient（str）：当前食材条目。
+#   term（str）：待规范化或匹配的食材词项。
+# 出参：bool；目标食材或菜谱是否满足当前分类或禁止词匹配规则。
 def ingredient_matches_forbidden_term(ingredient: str, term: str) -> bool:
 
     ingredient_name = normalize_ingredient_name(ingredient)
@@ -48,6 +64,12 @@ def ingredient_matches_forbidden_term(ingredient: str, term: str) -> bool:
     return False
 
 
+# 方法说明：match_forbidden_ingredients
+# 作用：找出候选食材中命中的禁止食材及匹配依据。
+# 入参：
+#   ingredients（Iterable[str]）：菜谱使用的完整食材集合。
+#   forbidden_terms（Iterable[str]）：禁止词项及其规范化集合。
+# 出参：tuple[str, ...]；实际命中的禁止食材名称元组。
 def match_forbidden_ingredients(
     ingredients: Iterable[str], forbidden_terms: Iterable[str]
 ) -> tuple[str, ...]:
@@ -60,6 +82,11 @@ def match_forbidden_ingredients(
     )
 
 
+# 方法说明：has_sufficient_evidence
+# 作用：判断现有观察是否足以支撑当前任务回答。
+# 入参：
+#   bundle（EvidenceBundle）：本次使用的提示词或证据集合。
+# 出参：bool；当前证据是否已经足以完成任务。
 def has_sufficient_evidence(bundle: EvidenceBundle) -> bool:
 
     return (
@@ -69,13 +96,24 @@ def has_sufficient_evidence(bundle: EvidenceBundle) -> bool:
     )
 
 
+# 方法说明：has_conflicting_evidence
+# 作用：判断当前证据是否相互冲突而不能直接形成答案。
+# 入参：
+#   bundle（EvidenceBundle）：本次使用的提示词或证据集合。
+# 出参：bool；现有证据是否存在冲突。
 def has_conflicting_evidence(bundle: EvidenceBundle) -> bool:
 
     return bool(bundle.conflicting_sources)
 
 
+# 类说明（业务或基础设施实现类）：RecipeSafetyEvaluator
+# 作用：实现食谱确定性安全审核器，封装该组件的业务处理与依赖协作。
 class RecipeSafetyEvaluator:
-
+    # 方法说明：evaluate
+    # 作用：根据可信约束审核菜谱的食材、安全性与适配程度。
+    # 入参：
+    #   safety_input（RecipeSafetyInput）：包含菜谱证据与硬约束的安全审核输入。
+    # 出参：SafetyDecision；本轮饮食安全决策。
     def evaluate(self, safety_input: RecipeSafetyInput) -> SafetyDecision:
         matched = match_forbidden_ingredients(
             (item.name for item in safety_input.ingredients),

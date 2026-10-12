@@ -5,10 +5,20 @@ from __future__ import annotations
 from safemeal.agent.contracts.decisions import Observation
 
 
+# 方法说明：dietary_constraint_is_active
+# 作用：判断饮食约束是否包含有效的硬限制。
+# 入参：
+#   constraint（object）：当前饮食硬约束。
+# 出参：bool；当前约束是否有效。
 def dietary_constraint_is_active(constraint: object) -> bool:
     return bool(isinstance(constraint, dict) and constraint.get("active"))
 
 
+# 方法说明：render_dietary_safety_answer
+# 作用：根据确定性安全结果渲染可发布答案。
+# 入参：
+#   observations（list[Observation]）：本轮已获得的工具观察集合。
+# 出参：str；供用户阅读的已组织回答文本。
 def render_dietary_safety_answer(observations: list[Observation]) -> str:
 
     safety = next(

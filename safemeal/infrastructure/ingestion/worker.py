@@ -10,6 +10,11 @@ from safemeal.bootstrap.composition.application_container import ApplicationCont
 from safemeal.config.settings import settings
 
 
+# 方法说明：run_worker
+# 作用：循环消费文档摄取任务，执行解析、分块与索引更新。
+# 入参：
+#   无显式入参。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 async def run_worker() -> None:
     if not settings.INGESTION_QUEUE_URL:
         raise RuntimeError("INGESTION_QUEUE_URL is required for the worker")

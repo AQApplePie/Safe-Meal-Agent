@@ -1,6 +1,7 @@
 """实现知识与菜谱检索基础设施适配。"""
 
 import httpx
+from math import isfinite
 from time import perf_counter
 from typing import List
 
@@ -9,8 +10,21 @@ from loguru import logger
 from safemeal.shared.types import JsonObject
 
 
+# 类说明（业务或基础设施实现类）：HttpDocumentReranker
+# 作用：实现HTTP 文档重排适配器，封装该组件的业务处理与依赖协作。
 class HttpDocumentReranker:
-
+    # 方法说明：__init__
+    # 作用：初始化HTTP 文档重排适配器，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   enabled（bool）：目标行为或功能是否启用。
+    #   provider（str | None）：当前选中的外部模型供应商。
+    #   base_url（str | None）：外部服务的基础地址。
+    #   endpoint（str | None）：外部 API 的接口路径。
+    #   model（str | None）：当前调用使用的模型名称。
+    #   api_key（str | None）：调用外部供应商所需的 API 凭据。
+    #   top_n（int）：重排保留的最大候选数。
+    #   timeout（float）：操作超时上限，单位秒。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(
         self,
         *,
@@ -23,13 +37,29 @@ class HttpDocumentReranker:
         top_n: int,
         timeout: float,
     ) -> None:
+        # 实例属性说明：enabled
+        # 作用：目标行为或功能是否启用。
         self.enabled = enabled
+        # 实例属性说明：provider
+        # 作用：当前选中的外部模型供应商。
         self.provider = provider.lower() if provider else None
+        # 实例属性说明：base_url
+        # 作用：外部服务的基础地址。
         self.base_url = base_url
+        # 实例属性说明：endpoint
+        # 作用：外部 API 的接口路径。
         self.endpoint = endpoint
+        # 实例属性说明：model
+        # 作用：当前调用使用的模型名称。
         self.model = model
+        # 实例属性说明：api_key
+        # 作用：调用外部供应商所需的 API 凭据。
         self.api_key = api_key
+        # 实例属性说明：top_n
+        # 作用：重排保留的最大候选数。
         self.top_n = top_n
+        # 实例属性说明：timeout
+        # 作用：操作超时上限，单位秒。
         self.timeout = timeout
 
         if not self.enabled:
@@ -38,9 +68,19 @@ class HttpDocumentReranker:
 
         if not self.provider or not self.api_key:
             logger.warning("DocumentReranker provider or API key not configured")
+            # 实例属性说明：enabled
+            # 作用：目标行为或功能是否启用。
+            # 初始值：False。
             self.enabled = False
             return
 
+    # 方法说明：rerank
+    # 作用：在已召回片段范围内调用重排策略并返回排序结果。
+    # 入参：
+    #   query（str）：结构化查询条件或检索问题。
+    #   documents（List[JsonObject]）：待处理的文档或文档片段集合。
+    #   top_k（int）：检索返回的最大候选数。
+    # 出参：List[JsonObject]；JSON 字段映射的集合。
     async def rerank(
         self,
         query: str,
@@ -92,6 +132,13 @@ class HttpDocumentReranker:
             )
         return documents[:top_k]
 
+    # 方法说明：_custom_rerank
+    # 作用：调用对应供应商的重排接口并校验候选映射。
+    # 入参：
+    #   query（str）：结构化查询条件或检索问题。
+    #   documents（List[JsonObject]）：待处理的文档或文档片段集合。
+    #   top_k（int）：检索返回的最大候选数。
+    # 出参：List[JsonObject]；JSON 字段映射的集合。
     async def _custom_rerank(
         self, query: str, documents: List[JsonObject], top_k: int
     ) -> List[JsonObject]:
@@ -133,27 +180,15 @@ class HttpDocumentReranker:
             logger.warning("Custom reranker returned no results")
             return documents[:top_k]
 
-        # 重新排序文档
-        reranked = []
-        for item in results:
-            idx = item.get("index")
-            score = item.get("relevance_score") or item.get("score")
+        return self._process_rerank_results(results, documents, top_k)
 
-            if idx is not None and 0 <= idx < len(documents):
-                doc: JsonObject = dict(documents[idx])
-                if score is not None:
-                    doc["rerank_score"] = float(score)
-                reranked.append(doc)
-
-        # 添加未被重排的文档
-        seen_ids = {doc.get("chunk_id") or doc.get("id") for doc in reranked}
-        for doc in documents:
-            doc_id = doc.get("chunk_id") or doc.get("id")
-            if doc_id not in seen_ids:
-                reranked.append(doc)
-
-        return reranked[:top_k]
-
+    # 方法说明：_jina_rerank
+    # 作用：调用对应供应商的重排接口并校验候选映射。
+    # 入参：
+    #   query（str）：结构化查询条件或检索问题。
+    #   documents（List[JsonObject]）：待处理的文档或文档片段集合。
+    #   top_k（int）：检索返回的最大候选数。
+    # 出参：List[JsonObject]；JSON 字段映射的集合。
     async def _jina_rerank(
         self,
         query: str,
@@ -183,6 +218,13 @@ class HttpDocumentReranker:
         results = data.get("results", [])
         return self._process_rerank_results(results, documents, top_k)
 
+    # 方法说明：_voyage_rerank
+    # 作用：调用对应供应商的重排接口并校验候选映射。
+    # 入参：
+    #   query（str）：结构化查询条件或检索问题。
+    #   documents（List[JsonObject]）：待处理的文档或文档片段集合。
+    #   top_k（int）：检索返回的最大候选数。
+    # 出参：List[JsonObject]；JSON 字段映射的集合。
     async def _voyage_rerank(
         self,
         query: str,
@@ -212,29 +254,37 @@ class HttpDocumentReranker:
         results = data.get("data", [])
         return self._process_rerank_results(results, documents, top_k)
 
+    # 方法说明：_process_rerank_results
+    # 作用：校验重排索引与分数，将合法结果映射回原始候选片段。
+    # 入参：
+    #   results（List[JsonObject]）：多个操作或工具返回的结果集合。
+    #   documents（List[JsonObject]）：待处理的文档或文档片段集合。
+    #   top_k（int）：检索返回的最大候选数。
+    # 出参：List[JsonObject]；JSON 字段映射的集合。
     def _process_rerank_results(
         self,
         results: List[JsonObject],
         documents: List[JsonObject],
         top_k: int,
     ) -> List[JsonObject]:
-        reranked = []
-
+        reranked: list[JsonObject] = []
+        seen: set[int] = set()
         for item in results:
             idx = item.get("index")
-            score = item.get("relevance_score") or item.get("score")
-
-            if idx is not None and 0 <= idx < len(documents):
-                doc: JsonObject = dict(documents[idx])
-                if score is not None:
-                    doc["rerank_score"] = float(score)
-                reranked.append(doc)
-
-        # 添加未被重排的文档
-        seen_ids = {doc.get("chunk_id") or doc.get("id") for doc in reranked}
-        for doc in documents:
-            doc_id = doc.get("chunk_id") or doc.get("id")
-            if doc_id not in seen_ids:
-                reranked.append(doc)
-
+            score = item.get("relevance_score")
+            if score is None:
+                score = item.get("score")
+            if type(idx) is not int or not 0 <= idx < len(documents) or idx in seen:
+                continue
+            if (
+                not isinstance(score, (int, float))
+                or isinstance(score, bool)
+                or not isfinite(score)
+            ):
+                continue
+            doc = dict(documents[idx])
+            doc["rerank_score"] = float(score)
+            reranked.append(doc)
+            seen.add(idx)
+        reranked.extend(doc for index, doc in enumerate(documents) if index not in seen)
         return reranked[:top_k]

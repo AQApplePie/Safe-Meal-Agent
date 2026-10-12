@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from typing import Literal
 
 from safemeal.modules.dietary.contracts.control_plane import (
     ResolvedConstraints,
@@ -12,8 +13,16 @@ from safemeal.shared.contracts.semantic import ConstraintStatement
 from safemeal.shared.types import JsonObject
 
 
+# 类说明（业务或基础设施实现类）：ConstraintResolver
+# 作用：实现饮食约束解析器，封装该组件的业务处理与依赖协作。
 class ConstraintResolver:
-
+    # 方法说明：resolve
+    # 作用：在饮食约束解析器中合并并解析当前输入的业务要求。
+    # 入参：
+    #   frame（RequestFrame）：归一化请求语义框架。
+    #   memories（Iterable[JsonObject]）：已经加载的用户长期记忆。
+    #   previous（ResolvedConstraints | None）：此前状态或已有活动记录；默认值为 None。
+    # 出参：ResolvedConstraints；合并后的饮食约束。
     def resolve(
         self,
         frame: RequestFrame,
@@ -22,6 +31,8 @@ class ConstraintResolver:
         previous: ResolvedConstraints | None = None,
     ) -> ResolvedConstraints:
         statements: list[ConstraintStatement] = []
+        kind: Literal["allergy", "restriction", "avoid", "include"]
+        strength: Literal["hard_safety", "soft_preference", "menu_goal"]
         for memory in memories:
             memory_type = str(memory.get("memory_type") or "")
             value = str(memory.get("memory_key") or "").strip()
@@ -54,7 +65,6 @@ class ConstraintResolver:
                 if item.scope in {"current_turn", "current_meal", "conversation"}
             )
         statements.extend(frame.statements)
-
 
         selected: dict[tuple[str, str], ConstraintStatement] = {}
         for item in statements:

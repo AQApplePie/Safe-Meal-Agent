@@ -1,11 +1,9 @@
 """在解析本轮约束前统一准备历史、记忆和活动菜单上下文。"""
 
 import asyncio
+import re
 
 from safemeal.agent.contracts.workflow.models import WorkflowState
-from safemeal.agent.understanding.request_understanding import (
-    RequestUnderstandingService,
-)
 from safemeal.agent.context.menu_planning import (
     resolve_active_menu_recipe_reference,
 )
@@ -18,19 +16,30 @@ from safemeal.shared.contracts.request_frame import (
 )
 
 
+# 类说明（业务或基础设施实现类）：PrepareContextNode
+# 作用：实现Workflow 上下文准备节点，封装该组件的业务处理与依赖协作。
 class PrepareContextNode:
+    # 方法说明：__init__
+    # 作用：初始化Workflow 上下文准备节点，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   builder（AgentContextBuilder）：Agent 上下文构建器。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(self, builder: AgentContextBuilder):
+        # 实例属性说明：builder
+        # 作用：Agent 上下文构建器。
         self.builder = builder
 
+    # 方法说明：__call__
+    # 作用：执行Workflow 上下文准备节点，按当前图状态返回节点更新。
+    # 入参：
+    #   state（WorkflowState）：聊天 Workflow 完整状态。
+    # 出参：WorkflowState；聊天 Workflow 完整状态。
     async def __call__(self, state: WorkflowState) -> WorkflowState:
         await emit_workflow_progress(
             "prepare_context", "正在加载历史与饮食记忆并整理上下文"
         )
         request = state["request"]
-        frame = state.get("request_frame")
-        if frame is None:
-            # 仅为节点独立测试保留；正式 Workflow 一定由上游提供 RequestFrame。
-            frame = RequestUnderstandingService().understand(request.message)
+        frame = state["request_frame"]
         safety_tasks = {
             "recipe_recommendation",
             "recipe_generation",
@@ -46,21 +55,6 @@ class PrepareContextNode:
         frame = frame.model_copy(update={"context_needs": tuple(sorted(needs))})
         preloaded_history = state.get("recent_history")
         preloaded_active_menu = state.get("active_menu")
-        if preloaded_history is None:
-            fallback_history = request.history or (
-                request.context.conversation_history if request.context else []
-            )
-            if hasattr(self.builder, "load_context_sources"):
-                preloaded_history, loaded_active_menu = self.builder.load_context_sources(
-                    user_id=request.user_id,
-                    session_id=request.session_id,
-                    source_message_id=request.source_message_id,
-                    fallback=fallback_history,
-                )
-                if preloaded_active_menu is None:
-                    preloaded_active_menu = loaded_active_menu
-            else:
-                preloaded_history = list(fallback_history)
         context = await asyncio.to_thread(
             self.builder.build_chat_context,
             user_id=request.user_id,
@@ -113,6 +107,10 @@ class PrepareContextNode:
                         if isinstance(item, dict)
                         and item.get("assigned_category") == category
                     ]
+                    partial = bool(
+                        re.search(r"其中|其他.{0,8}(?:保留|保持|不变)", request.message)
+                    )
+                    replaced = previous[:count] if partial else previous
                     # 替换分类时同时排除保留分类中的菜，防止合并后破坏全菜单去重约束。
                     preserved = [
                         item
@@ -138,6 +136,7 @@ class PrepareContextNode:
                         "operation": "replace",
                         "target_category": category,
                         "requested_count": count,
+                        "partial": partial,
                         "exclude_recipe_ids": [
                             item["recipe_id"]
                             for item in excluded
@@ -150,12 +149,12 @@ class PrepareContextNode:
                         ],
                         "replaced_recipe_ids": [
                             item["recipe_id"]
-                            for item in previous
+                            for item in replaced
                             if item.get("recipe_id") is not None
                         ],
                         "replaced_recipe_names": [
                             item["name"]
-                            for item in previous
+                            for item in replaced
                             if isinstance(item.get("name"), str)
                         ],
                     }

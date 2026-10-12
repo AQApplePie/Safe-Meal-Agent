@@ -1,3 +1,1 @@
-from .settings import settings
-
-__all__ = ["settings"]
+"""配置命名空间；导入子模块不隐式实例化 Agent 配置。"""

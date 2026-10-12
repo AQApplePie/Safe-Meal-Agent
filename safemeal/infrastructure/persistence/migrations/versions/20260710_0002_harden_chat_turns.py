@@ -17,6 +17,11 @@ branch_labels: str | None = None
 depends_on: str | None = None
 
 
+# 方法说明：upgrade
+# 作用：应用本版本数据库结构变更，推进 Alembic 迁移版本。
+# 入参：
+#   无显式入参。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 def upgrade() -> None:
     bind = op.get_bind()
 
@@ -141,27 +146,21 @@ def upgrade() -> None:
     )
 
 
+# 方法说明：downgrade
+# 作用：撤销本版本数据库结构变更，恢复上一迁移版本。
+# 入参：
+#   无显式入参。
+# 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
 def downgrade() -> None:
     op.drop_index("ix_chat_messages_turn_status", table_name="chat_messages")
+    op.drop_constraint("ck_chat_messages_turn_status", "chat_messages", type_="check")
+    # MySQL uses the reply-to unique index to support this foreign key.
     op.drop_constraint(
-        "ck_chat_messages_turn_status",
-        "chat_messages",
-        type_="check",
+        "fk_chat_messages_reply_to_message", "chat_messages", type_="foreignkey"
     )
+    op.drop_constraint("uq_chat_messages_reply_to", "chat_messages", type_="unique")
     op.drop_constraint(
-        "uq_chat_messages_reply_to",
-        "chat_messages",
-        type_="unique",
-    )
-    op.drop_constraint(
-        "uq_chat_messages_session_request",
-        "chat_messages",
-        type_="unique",
-    )
-    op.drop_constraint(
-        "fk_chat_messages_reply_to_message",
-        "chat_messages",
-        type_="foreignkey",
+        "uq_chat_messages_session_request", "chat_messages", type_="unique"
     )
     op.drop_column("chat_messages", "updated_at")
     op.drop_column("chat_messages", "turn_status")

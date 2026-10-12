@@ -18,6 +18,11 @@ from safemeal.modules.dietary.contracts.control_plane import ToolEvidence
 from safemeal.shared.contracts.semantic import ConstraintStatement
 
 
+# 方法说明：preference_from_memory
+# 作用：使用类型化记忆的事实键转换饮食偏好，避免重新解析展示句。
+# 入参：
+#   memory（Mapping[str, Any]）：当前处理的长期记忆记录。
+# 出参：DietaryPreference | None；饮食软偏好或None（未取得结果）。
 def preference_from_memory(
     memory: Mapping[str, Any],
 ) -> DietaryPreference | None:
@@ -34,20 +39,18 @@ def preference_from_memory(
     if not key:
         return None
 
-
-
     if memory_type == "taste_preference":
         if key in {"清淡", "辣", "不辣"}:
             return DietaryPreference(kind="taste", value=key, source="memory")
-        kind = "include_ingredient" if key in INGREDIENT_ALIASES else "other"
+        kind: Literal["include_ingredient", "other"] = (
+            "include_ingredient" if key in INGREDIENT_ALIASES else "other"
+        )
         return DietaryPreference(kind=kind, value=key, source="memory")
 
     if memory_type == "taste_dislike":
         if key == "辣":
             return DietaryPreference(kind="taste", value="不辣", source="memory")
-        return DietaryPreference(
-            kind="avoid_ingredient", value=key, source="memory"
-        )
+        return DietaryPreference(kind="avoid_ingredient", value=key, source="memory")
 
     # Cooking time is stored as e.g. ``30分钟`` but the requirement contract
 
@@ -62,19 +65,30 @@ def preference_from_memory(
     if memory_type == "cooking_equipment":
         return DietaryPreference(kind="equipment", value=key, source="memory")
 
-
-
     if memory_type in {"health_goal", "cooking_constraint"}:
         return DietaryPreference(kind="other", value=key, source="memory")
 
     return None
 
 
+# 方法说明：preferences_from_text
+# 作用：从用户文本提取可用于推荐排序的软偏好。
+# 入参：
+#   text（str）：待解析、检索、切分或渲染的文本。
+#   source（Literal['input', 'history', 'memory', 'provided']）：数据来源标识或提供该数据的对象。
+# 出参：list[DietaryPreference]；饮食软偏好的集合。
 def preferences_from_text(
     text: str, source: Literal["input", "history", "memory", "provided"]
 ) -> list[DietaryPreference]:
     values: list[DietaryPreference] = []
 
+    # 方法说明：add
+    # 作用：在当前事务中创建并保存新的业务记录。
+    # 入参：
+    #   kind（由调用契约决定）：当前业务记录或操作的类型。
+    #   value（由调用契约决定）：当前待转换或校验的值。
+    #   required（由调用契约决定）：当前约束必须满足的数量或条件；默认值为 False。
+    # 出参：None；无返回值，结果通过状态更新或外部操作体现。
     def add(kind, value, required=False):
         values.append(
             DietaryPreference(
@@ -82,6 +96,11 @@ def preferences_from_text(
             )
         )
 
+    # 方法说明：clean_food_term
+    # 作用：清理食材名称中的修饰词和格式噪声。
+    # 入参：
+    #   value（str）：当前待转换或校验的值。
+    # 出参：str；文本字符串。
     def clean_food_term(value: str) -> str:
 
         term = re.split(
@@ -89,7 +108,6 @@ def preferences_from_text(
             value,
         )[0]
         return re.sub(r"^(?:我|本人|一份|一道|几个|几道)", "", term).strip()
-
 
     for clause in re.split(r"[，。；;！？!?\n]|但是|但", text):
         if re.search(r"假如|假设|例如|比如|如果", clause):
@@ -106,9 +124,7 @@ def preferences_from_text(
                     re.search(r"不能吃辣|不吃辣|不要辣|不放辣|不加辣|不辣", clause)
                 ),
             )
-        elif re.search(
-            r"(?<!不)喜欢.*辣|(?<!不)想吃.*辣|(?<!不)要辣", clause
-        ):
+        elif re.search(r"(?<!不)喜欢.*辣|(?<!不)想吃.*辣|(?<!不)要辣", clause):
             add("taste", "辣", required)
         for match in re.finditer(r"(\d{1,3})\s*分钟(?:内|以内|左右)?", clause):
             if 1 <= int(match[1]) <= 10080:
@@ -124,8 +140,6 @@ def preferences_from_text(
         ):
             if label in clause and not re.search(r"不(?:要|吃|是).*" + label, clause):
                 add("dietary_type", kind, required or "只吃" in clause)
-
-
 
         for match in re.finditer(
             r"(?<!不)(?:喜欢|爱吃|偏好)([^，。；;]{1,12})", clause
@@ -153,7 +167,6 @@ def preferences_from_text(
                 add("taste", "不辣")
 
         # “不含 X 的 Y” carries two independent hard requirements: exclude X
-
 
         if source == "input":
             for match in re.finditer(
@@ -185,6 +198,12 @@ def preferences_from_text(
     return values
 
 
+# 方法说明：assess_preference
+# 作用：评估候选菜品与用户软偏好的匹配程度。
+# 入参：
+#   preference（DietaryPreference）：用户的单条软偏好。
+#   record（RecipeSafetyRecord）：候选菜谱忌口审核记录。
+# 出参：PreferenceAssessment；菜谱软偏好评分结果。
 def assess_preference(
     preference: DietaryPreference, record: RecipeSafetyRecord
 ) -> PreferenceAssessment:
@@ -242,11 +261,13 @@ def assess_preference(
                     source_complete=record.safety_status != "unknown",
                 ),
             )
-            status = {
-                "satisfied": "satisfied",
-                "violated": "not_satisfied",
-                "unknown": "unknown",
-            }[decision.status]
+            status = (
+                "satisfied"
+                if decision.status == "satisfied"
+                else "not_satisfied"
+                if decision.status == "violated"
+                else "unknown"
+            )
             reason = decision.reason
         elif value == "清淡" and spicy:
             status, reason = "not_satisfied", "食材包含辣味配料。"
@@ -294,6 +315,5 @@ def assess_preference(
             if verified and all(item is True for item in verified):
                 status, reason = "satisfied", "完整食材及类别通过饮食类型检查。"
             elif any(item is False for item in verified):
-
                 reason = "食材类别不完整或不符合饮食类型，无法确认满足要求。"
     return PreferenceAssessment(preference=preference, status=status, reason=reason)

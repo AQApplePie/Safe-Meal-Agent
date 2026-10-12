@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import re
+from typing import Literal
+from safemeal.shared.contracts.semantic import ContextRelation
 
 from safemeal.shared.contracts.request_frame import (
     CurrentConstraint,
@@ -12,7 +14,9 @@ from safemeal.shared.contracts.request_frame import (
     RequestTarget,
     RequestTask,
 )
-from safemeal.modules.conversation.application.memory.memory_extraction import UserMemoryExtractor
+from safemeal.modules.conversation.application.memory.memory_extraction import (
+    UserMemoryExtractor,
+)
 from safemeal.agent.context.menu_planning import (
     extract_menu_modification,
     extract_menu_planning_requirements,
@@ -42,9 +46,20 @@ _DETAIL_PREFIX_PATTERN = re.compile(
 )
 
 
+# 类说明（业务或基础设施实现类）：RequestUnderstandingService
+# 作用：实现请求理解与语义校验服务，封装该组件的业务处理与依赖协作。
 class RequestUnderstandingService:
+    # 字段说明：backend_name
+    # 作用：实际承担请求理解或服务实现的后端标识。
+    # 初始值：'rules'。
     backend_name = "rules"
 
+    # 方法说明：understand
+    # 作用：从本轮文本与近期上下文形成校验后的请求语义框架。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    #   recent_context（由调用契约决定）：已加载的近期对话上下文；默认值为 ()。
+    # 出参：RequestFrame；归一化请求语义框架。
     def understand(self, message: str, recent_context=()) -> RequestFrame:
         text = message.strip()
         number_values = {
@@ -79,7 +94,7 @@ class RequestUnderstandingService:
         scenario, menu_planning = extract_menu_planning_requirements(text)
         modification_category, modification_count = extract_menu_modification(text)
         adaptive_menu = is_menu_planning_request(text) and menu_planning is None
-        meal_type = (
+        meal_type: Literal["breakfast", "lunch", "dinner"] | None = (
             "breakfast"
             if "早餐" in text or "早饭" in text
             else "lunch"
@@ -95,12 +110,15 @@ class RequestUnderstandingService:
         updates: list[MemoryUpdate] = []
         constraints: list[CurrentConstraint] = []
         for candidate in extraction.candidates:
-            kind = {
+            kind_by_memory: dict[
+                str, Literal["preference", "dislike", "allergy", "restriction"]
+            ] = {
                 "taste_preference": "preference",
                 "taste_dislike": "dislike",
                 "dietary_allergy": "allergy",
                 "dietary_restriction": "restriction",
-            }.get(candidate.memory_type)
+            }
+            kind = kind_by_memory.get(candidate.memory_type)
             if kind is None:
                 continue
             if temporary_scope and kind in {"preference", "dislike"}:
@@ -113,10 +131,10 @@ class RequestUnderstandingService:
             )
             if persist:
                 updates.append(MemoryUpdate(kind=kind, value=candidate.key))
-            if kind in {"allergy", "restriction"}:
+            if kind == "allergy" or kind == "restriction":
                 constraints.append(CurrentConstraint(kind=kind, value=candidate.key))
 
-        fields: list[str] = []
+        fields: list[Literal["ingredients", "steps", "time", "nutrition"]] = []
         if any(term in text for term in ("材料", "食材", "配料")):
             fields.append("ingredients")
         if any(term in text for term in ("做法", "步骤", "怎么做")):
@@ -146,6 +164,7 @@ class RequestUnderstandingService:
         category_match = re.search(
             r"(?:推荐|来|给我|想吃|想要吃|今天(?:就)?想吃)"
             r"(?:[一二两三四五六七八九十\d]+(?:份|道|个)?)?"
+            r"(?:不含[^，。；;,.！？!?]{1,24}的)?"
             r"(鱼类|海鲜|素菜|素食|鱼)(?:菜|食谱)?",
             text,
         )
@@ -230,29 +249,25 @@ class RequestUnderstandingService:
                 text,
             )
             if count_match:
-                chinese_counts = {
-                    "一": 1,
-                    "二": 2,
-                    "两": 2,
-                    "三": 3,
-                    "四": 4,
-                    "五": 5,
-                    "六": 6,
-                    "七": 7,
-                    "八": 8,
-                    "九": 9,
-                    "十": 10,
-                }
                 raw_count = count_match.group(1)
                 recommendation_count = min(
                     10,
-                    chinese_counts.get(
+                    number_values.get(
                         raw_count, int(raw_count) if raw_count.isdigit() else 3
                     ),
                 )
             elif re.search(r"几(?:份|道|个)", text):
                 recommendation_count = 3
-        context_needs: list[str] = []
+        context_needs: list[
+            Literal[
+                "recent_conversation",
+                "allergies",
+                "dietary_restrictions",
+                "food_preferences",
+                "episodic_memory",
+                "user_profile",
+            ]
+        ] = []
         primary = tasks[0].kind if tasks else "out_of_scope"
         if primary in {
             "recipe_recommendation",
@@ -283,7 +298,7 @@ class RequestUnderstandingService:
                 if token in text
             )
         )
-        context_relation = (
+        context_relation: ContextRelation = (
             "reference"
             if fields and (target_name is None or is_reference_only_target(target_name))
             else "modification"
@@ -338,13 +353,31 @@ class RequestUnderstandingService:
         return canonical.model_copy(update={"statements": tuple(owned)})
 
 
+# 类说明（业务或基础设施实现类）：RuleBasedRequestUnderstandingGateway
+# 作用：无外部依赖的规则实现，也作为本地模型不可用时的降级路径。
 class RuleBasedRequestUnderstandingGateway:
     """无外部依赖的规则实现，也作为本地模型不可用时的降级路径。"""
 
+    # 字段说明：backend_name
+    # 作用：实际承担请求理解或服务实现的后端标识。
+    # 初始值：'rules'。
     backend_name = "rules"
 
+    # 方法说明：__init__
+    # 作用：初始化规则请求理解适配器，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   service（RequestUnderstandingService | None）：当前路由注入的业务服务；默认值为 None。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(self, service: RequestUnderstandingService | None = None) -> None:
+        # 实例属性说明：_service
+        # 作用：当前路由注入的业务服务。
         self._service = service or RequestUnderstandingService()
 
+    # 方法说明：understand
+    # 作用：从本轮文本与近期上下文形成校验后的请求语义框架。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    #   recent_context（由调用契约决定）：已加载的近期对话上下文；默认值为 ()。
+    # 出参：RequestFrame；归一化请求语义框架。
     async def understand(self, message: str, recent_context=()) -> RequestFrame:
         return self._service.understand(message, recent_context)

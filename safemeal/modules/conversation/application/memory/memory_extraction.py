@@ -36,6 +36,11 @@ _EQUIPMENT_TERMS = (
 _HEALTH_GOALS = ("减脂", "控糖", "低盐", "低脂", "高蛋白", "增肌", "少油")
 
 
+# 方法说明：_unique
+# 作用：保持输入顺序去重并清理空值。
+# 入参：
+#   values（Iterable[str]）：当前待处理的值集合。
+# 出参：list[str]；保持原输入顺序的非空去重条目集合。
 def _unique(values: Iterable[str]) -> list[str]:
     seen = set()
     result = []
@@ -47,6 +52,11 @@ def _unique(values: Iterable[str]) -> list[str]:
     return result
 
 
+# 方法说明：_clean_memory_key
+# 作用：清理长期记忆键的噪声字符，形成可去重的事实标识。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+# 出参：str；文本字符串。
 def _clean_memory_key(value: str) -> str:
     cleaned = value.strip().strip("：:").strip()
 
@@ -54,6 +64,11 @@ def _clean_memory_key(value: str) -> str:
     return re.sub(r"(?:类|等|一点|一些|食物|口味|风格|偏好)$", "", cleaned).strip()
 
 
+# 方法说明：_split_memory_keys
+# 作用：把组合记忆键拆分为可独立处理的事实键。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+# 出参：list[str]；拆分并清理后的非空文本列表。
 def _split_memory_keys(value: str) -> list[str]:
     return _unique(
         key
@@ -62,9 +77,16 @@ def _split_memory_keys(value: str) -> list[str]:
     )
 
 
+# 类说明（业务或基础设施实现类）：UserMemoryExtractor
+# 作用：把用户消息抽取为候选长期记忆。
 class UserMemoryExtractor:
     """把用户消息抽取为候选长期记忆。"""
 
+    # 方法说明：extract
+    # 作用：通过长期记忆抽取器从用户文本抽取结构化事实。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    # 出参：MemoryExtractionResult；长期记忆抽取结果。
     def extract(self, message: str) -> MemoryExtractionResult:
         candidates: list[MemoryCandidate] = []
         candidates.extend(self._extract_dietary_memories(message))
@@ -80,6 +102,11 @@ class UserMemoryExtractor:
             retracted_dietary_keys=tuple(self.extract_dietary_retractions(message)),
         )
 
+    # 方法说明：extract_dietary_retractions
+    # 作用：识别用户撤回既有过敏或忌口条件的表达。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    # 出参：list[str]；文本字符串的集合。
     def extract_dietary_retractions(self, message: str) -> list[str]:
 
         retracted: list[str] = []
@@ -95,6 +122,15 @@ class UserMemoryExtractor:
                 retracted.append(ingredient)
         return _unique(retracted)
 
+    # 方法说明：_memory
+    # 作用：把抽取字段组装为带类型、置信度与元数据的记忆候选。
+    # 入参：
+    #   memory_type（ExtractedMemoryType）：长期记忆类型。
+    #   memory_key（str）：机器可读的长期记忆事实键。
+    #   memory_value（str）：长期记忆的人类可读内容。
+    #   confidence（float）：当前抽取结果的置信度。
+    #   memory_metadata（JsonObject | None）：记忆的来源及辅助元数据；默认值为 None。
+    # 出参：MemoryCandidate；待确认的长期记忆候选。
     def _memory(
         self,
         *,
@@ -112,6 +148,11 @@ class UserMemoryExtractor:
             metadata=memory_metadata,
         )
 
+    # 方法说明：_extract_dietary_memories
+    # 作用：从用户文本抽取过敏、忌口及饮食类型记忆。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    # 出参：list[MemoryCandidate]；待确认的长期记忆候选的集合。
     def _extract_dietary_memories(self, message: str) -> list[MemoryCandidate]:
         constraint = extract_dietary_constraint(message)
         if not constraint.active:
@@ -142,6 +183,11 @@ class UserMemoryExtractor:
             )
         return memories
 
+    # 方法说明：_extract_preference_memories
+    # 作用：从用户文本抽取口味、食材等软偏好记忆。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    # 出参：list[MemoryCandidate]；待确认的长期记忆候选的集合。
     def _extract_preference_memories(self, message: str) -> list[MemoryCandidate]:
         memories: list[MemoryCandidate] = []
         patterns: tuple[tuple[str, ExtractedMemoryType, str, float], ...] = (
@@ -171,6 +217,11 @@ class UserMemoryExtractor:
                     )
         return memories
 
+    # 方法说明：_extract_cooking_memories
+    # 作用：从用户文本抽取烹饪方式与制作习惯记忆。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    # 出参：list[MemoryCandidate]；待确认的长期记忆候选的集合。
     def _extract_cooking_memories(self, message: str) -> list[MemoryCandidate]:
         memories: list[MemoryCandidate] = []
         for equipment in _EQUIPMENT_TERMS:
@@ -206,6 +257,11 @@ class UserMemoryExtractor:
                 )
         return memories
 
+    # 方法说明：_extract_health_memories
+    # 作用：从用户文本抽取健康相关的饮食需求记忆。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    # 出参：list[MemoryCandidate]；待确认的长期记忆候选的集合。
     def _extract_health_memories(self, message: str) -> list[MemoryCandidate]:
         return [
             self._memory(

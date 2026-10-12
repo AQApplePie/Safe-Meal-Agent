@@ -13,7 +13,17 @@ from safemeal.agent.runtime.orchestration.loop_control import tool_call_signatur
 from safemeal.shared.types import to_json_object
 
 
+# 方法说明：create_executor_node
+# 作用：构造按工具计划调用执行器的图节点。
+# 入参：
+#   tool_executor（ToolExecutor）：已装配的工具注册与执行组件。
+# 出参：按实现返回；绑定当前依赖的图节点函数，接收图状态并返回局部状态更新。
 def create_executor_node(tool_executor: ToolExecutor):
+    # 方法说明：execute_tools
+    # 作用：执行当前图状态中待处理的工具调用并保存结果。
+    # 入参：
+    #   state（AgentState）：Agent 完整图状态。
+    # 出参：AgentStateUpdate；Agent 图节点局部状态更新。
     async def execute_tools(state: AgentState) -> AgentStateUpdate:
         proposed_calls = list(state.get("pending_calls", []))
         proposed_by_id = {call.id: call for call in proposed_calls}
@@ -30,16 +40,26 @@ def create_executor_node(tool_executor: ToolExecutor):
         for call in calls:
             result = results_by_id.get(call.id)
             proposed = proposed_by_id.get(call.id, call)
-            data = result.data if result is not None and isinstance(result.data, dict) else {}
+            data = (
+                result.data
+                if result is not None and isinstance(result.data, dict)
+                else {}
+            )
             items = data.get("items", []) if isinstance(data, dict) else []
-            item_rows = [item for item in items if isinstance(item, dict)] if isinstance(items, list) else []
+            item_rows = (
+                [item for item in items if isinstance(item, dict)]
+                if isinstance(items, list)
+                else []
+            )
             trace.append(
                 to_json_object(
                     {
                         "tool": call.tool_name,
                         "args": proposed.arguments,
                         "effective_args": call.arguments,
-                        "status": data.get("status") if data else getattr(result, "status", "error"),
+                        "status": data.get("status")
+                        if data
+                        else getattr(result, "status", "error"),
                         "result_count": len(items) if isinstance(items, list) else 0,
                         "result_names": [
                             str(item.get("name"))

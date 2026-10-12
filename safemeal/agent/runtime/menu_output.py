@@ -22,6 +22,13 @@ CATEGORY_LABELS: dict[MenuCategory, str] = {
 }
 
 
+# 方法说明：render_menu_plan
+# 作用：按菜单计划和已选菜品渲染完整菜单及未满足配额。
+# 入参：
+#   plan_payload（JsonObject）：已保存菜单计划的结构化载荷。
+#   progress_payload（JsonObject）：已保存菜单选择进度的结构化载荷。
+#   allowed_names（Collection[str] | None）：允许使用的名称集合；默认值为 None。
+# 出参：str；供用户阅读的已组织回答文本。
 def render_menu_plan(
     plan_payload: JsonObject,
     progress_payload: JsonObject,
@@ -37,9 +44,7 @@ def render_menu_plan(
         for item in progress.selected_recipes
         if allowed is None or item.name in allowed
     ]
-    lines = [
-        f"按你的{plan.scenario or '用餐'}需求，我整理了下面这份菜单："
-    ]
+    lines = [f"按你的{plan.scenario or '用餐'}需求，我整理了下面这份菜单："]
     missing: list[str] = []
     total_selected_names: set[str] = set()
     for category, required in plan.required.items():

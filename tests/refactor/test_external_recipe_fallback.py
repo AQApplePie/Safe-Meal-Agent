@@ -232,7 +232,7 @@ async def test_external_error_does_not_crash_or_retry():
 
 def _review(candidate, constraint_message):
     requirements = DietarySafetyService().resolve_constraints(
-        constraint_message, [], AgentContext()
+        constraint_message, AgentContext()
     )
     observation = Observation(
         call_id="external",

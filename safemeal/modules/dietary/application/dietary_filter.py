@@ -17,8 +17,14 @@ _ANIMAL_PRODUCT_TERMS = frozenset(
 )
 
 
+# 类说明（业务或基础设施实现类）：DietaryRecipeFilter
+# 作用：实现菜谱饮食条件过滤器，封装该组件的业务处理与依赖协作。
 class DietaryRecipeFilter:
-
+    # 方法说明：excluded_terms_for
+    # 作用：取得指定饮食类型对应的禁止食材词项。
+    # 入参：
+    #   dietary_types（Iterable[DietaryType]）：本轮要求满足的饮食类型集合。
+    # 出参：tuple[str, ...]；目标饮食类型对应的禁止食材词项元组。
     @staticmethod
     def excluded_terms_for(dietary_types: Iterable[DietaryType]) -> tuple[str, ...]:
         forbidden: set[str] = set()
@@ -33,6 +39,13 @@ class DietaryRecipeFilter:
                 forbidden.update(_LAND_MEAT_TERMS)
         return tuple(sorted(forbidden))
 
+    # 方法说明：is_recipe_allowed
+    # 作用：依据饮食约束和食材证据判断菜谱是否可推荐。
+    # 入参：
+    #   recipe（Recipe）：当前菜谱或菜谱记录。
+    #   excluded_ingredients（Iterable[str]）：必须排除的食材集合；默认值为 ()。
+    #   dietary_types（Iterable[DietaryType]）：本轮要求满足的饮食类型集合；默认值为 ()。
+    # 出参：bool；菜谱是否通过当前饮食硬约束审核。
     def is_recipe_allowed(
         self,
         recipe: Recipe,
@@ -70,6 +83,13 @@ class DietaryRecipeFilter:
                 return False
         return True
 
+    # 方法说明：filter_recipes
+    # 作用：依据饮食硬约束和完整食材证据过滤候选菜谱。
+    # 入参：
+    #   recipes（Iterable[Recipe]）：待筛选、审核或渲染的菜谱集合。
+    #   excluded_ingredients（Iterable[str]）：必须排除的食材集合；默认值为 ()。
+    #   dietary_types（Iterable[DietaryType]）：本轮要求满足的饮食类型集合；默认值为 ()。
+    # 出参：tuple[Recipe, ...]；完整食谱业务模型组成的元组。
     def filter_recipes(
         self,
         recipes: Iterable[Recipe],

@@ -38,12 +38,30 @@ FOREACH (item IN dish.aux_ingredients |
 """
 
 
+# 类说明（业务或基础设施实现类）：RecipeGraphImporter
+# 作用：实现Neo4j 食谱与食材导入器，封装该组件的业务处理与依赖协作。
 class RecipeGraphImporter:
-
+    # 方法说明：__init__
+    # 作用：初始化Neo4j 食谱与食材导入器，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   database（RecipeGraphDatabase）：数据库名称或数据库配置。
+    #   batch_size（int）：单批次处理的最大记录数；默认值为 200。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(self, database: RecipeGraphDatabase, batch_size: int = 200) -> None:
+        # 实例属性说明：_database
+        # 作用：数据库名称或数据库配置。
         self._database = database
+        # 实例属性说明：_batch_size
+        # 作用：单批次处理的最大记录数。
         self._batch_size = max(50, batch_size)
 
+    # 方法说明：bootstrap_from_json
+    # 作用：从配置的 JSON 菜谱数据初始化图数据库。
+    # 入参：
+    #   recipe_json（Path）：菜谱 JSON 数据路径。
+    #   ingredient_json（Optional[Path]）：食材营养与分类 JSON 数据路径；默认值为 None。
+    #   force（bool）：是否强制执行当前初始化或覆盖操作；默认值为 False。
+    # 出参：bool；本次是否实际完成了图数据初始化。
     def bootstrap_from_json(
         self,
         recipe_json: Path,
@@ -89,6 +107,11 @@ class RecipeGraphImporter:
         )
         return True
 
+    # 方法说明：sync_dietary_safety_from_json
+    # 作用：从菜谱和食材 JSON 同步安全检索所需的图节点与关系。
+    # 入参：
+    #   recipe_json（Path）：菜谱 JSON 数据路径。
+    # 出参：JsonObject；JSON 字段映射。
     def sync_dietary_safety_from_json(self, recipe_json: Path) -> JsonObject:
 
         recipes, _ = load_recipe_records(recipe_json)
@@ -122,6 +145,11 @@ class RecipeGraphImporter:
         report["duplicate_source_names"] = len(recipes) - unique_dishes
         return report
 
+    # 方法说明：_serialise_dietary_ingredients
+    # 作用：将饮食食材排除条件转换为图检索参数。
+    # 入参：
+    #   items（list）：当前处理的条目集合。
+    # 出参：list[JsonObject]；JSON 字段映射的集合。
     @staticmethod
     def _serialise_dietary_ingredients(items: list) -> list[JsonObject]:
         return [
@@ -135,6 +163,11 @@ class RecipeGraphImporter:
             if normalize_ingredient_name(item.name)
         ]
 
+    # 方法说明：dietary_safety_report
+    # 作用：检查图中的菜谱数、食材分类及安全关系完整性。
+    # 入参：
+    #   expected_dishes（int）：图数据验收预期的菜谱数量。
+    # 出参：JsonObject；JSON 字段映射。
     def dietary_safety_report(self, *, expected_dishes: int) -> JsonObject:
         rows = self._database.fetch(
             """
@@ -168,12 +201,22 @@ class RecipeGraphImporter:
             "closure_passed": complete >= expected_dishes,
         }
 
+    # 方法说明：_is_graph_empty
+    # 作用：查询图中是否已经存在菜谱数据。
+    # 入参：
+    #   无显式入参。
+    # 出参：bool；图中是否没有已导入菜谱。
     def _is_graph_empty(self) -> bool:
         query = "MATCH (n:Dish) RETURN COUNT(n) AS count"
         result = self._database.fetch(query)
         count = result[0]["count"] if result else 0
         return count == 0
 
+    # 方法说明：_chunked
+    # 作用：按指定批次大小切分输入序列，控制批量操作规模。
+    # 入参：
+    #   data（Iterable[JsonObject]）：当前操作的结构化数据载荷。
+    # 出参：Iterable[List[JsonObject]]；JSON 字段映射的集合的集合。
     def _chunked(self, data: Iterable[JsonObject]) -> Iterable[List[JsonObject]]:
         batch: List[JsonObject] = []
         for record in data:
@@ -184,6 +227,11 @@ class RecipeGraphImporter:
         if batch:
             yield batch
 
+    # 方法说明：_create_constraints
+    # 作用：为迁移中的业务表补充唯一约束、外键和检查约束。
+    # 入参：
+    #   无显式入参。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def _create_constraints(self) -> None:
 
         statements = (
@@ -197,6 +245,11 @@ class RecipeGraphImporter:
         for statement in statements:
             self._database.execute(statement)
 
+    # 方法说明：_create_recipe_nodes
+    # 作用：批量创建或更新菜谱图节点及其属性。
+    # 入参：
+    #   recipes（List[RecipeRecord]）：待筛选、审核或渲染的菜谱集合。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def _create_recipe_nodes(self, recipes: List[RecipeRecord]) -> None:
         query = """
         UNWIND $batch AS dish
@@ -242,6 +295,11 @@ class RecipeGraphImporter:
         for batch in self._chunked(serialised):
             self._database.execute(query, {"batch": batch})
 
+    # 方法说明：_create_relationships
+    # 作用：根据菜谱与食材记录创建图中的关联关系。
+    # 入参：
+    #   recipes（List[RecipeRecord]）：待筛选、审核或渲染的菜谱集合。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def _create_relationships(self, recipes: List[RecipeRecord]) -> None:
         step_query = """
         UNWIND $batch AS dish
@@ -315,6 +373,11 @@ class RecipeGraphImporter:
         for batch in self._chunked(ingredients_data):
             self._database.execute(ingredient_query, {"batch": batch})
 
+    # 方法说明：_attach_ingredient_metadata
+    # 作用：为解析出的食材补充营养、类别等结构化元数据。
+    # 入参：
+    #   profiles（List[IngredientProfile]）：按食材名称组织的营养资料集合。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def _attach_ingredient_metadata(self, profiles: List[IngredientProfile]) -> None:
         query = """
         UNWIND $profiles AS profile

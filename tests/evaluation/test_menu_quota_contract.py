@@ -43,9 +43,7 @@ def test_coordinated_menu_structure_produces_exact_quotas(message, expected):
 
 
 def test_people_count_is_servings_while_menu_slots_come_from_quotas():
-    frame = RequestUnderstandingService().understand(
-        "给四个人安排两荤两素一汤"
-    )
+    frame = RequestUnderstandingService().understand("给四个人安排两荤两素一汤")
 
     assert frame.servings == 4
     assert frame.recommendation_count == 5

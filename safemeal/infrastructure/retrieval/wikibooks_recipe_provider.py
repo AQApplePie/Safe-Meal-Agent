@@ -23,6 +23,12 @@ _INGREDIENT_HEADINGS = {"材料", "食材", "原料", "配料", "ingredients"}
 _STEP_HEADINGS = {"做法", "步骤", "制作", "烹饪", "procedure", "directions"}
 
 
+# 方法说明：_clean_wikitext
+# 作用：去除 Wiki 标记和无关模板，保留可解析的菜谱正文。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+#   limit（int）：本次查询或处理的最大条目数；默认值为 300。
+# 出参：str；文本字符串。
 def _clean_wikitext(value: str, *, limit: int = 300) -> str:
     text = re.sub(r"<!--.*?-->", "", value, flags=re.S)
     text = re.sub(r"\{\{[^{}]{0,500}\}\}", "", text)
@@ -35,6 +41,12 @@ def _clean_wikitext(value: str, *, limit: int = 300) -> str:
     return text[:limit]
 
 
+# 方法说明：_section_rows
+# 作用：从外部页面章节中提取可解析的条目行。
+# 入参：
+#   wikitext（str）：外部 Wiki 页面原始正文。
+#   accepted（set[str]）：已接受的候选或数量。
+# 出参：list[str]；菜谱章节中可解析的文本条目列表。
 def _section_rows(wikitext: str, accepted: set[str]) -> list[str]:
     active = False
     rows: list[str] = []
@@ -53,6 +65,11 @@ def _section_rows(wikitext: str, accepted: set[str]) -> list[str]:
     return rows
 
 
+# 方法说明：_ingredient
+# 作用：把 Wiki 食材条目拆解为名称及用量字段。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+# 出参：dict[str, str]；包含食材名称及原始用量的字段映射。
 def _ingredient(value: str) -> dict[str, str]:
     parts = re.split(r"\s*[：:]\s*|\s{2,}", value, maxsplit=1)
     return {
@@ -62,17 +79,36 @@ def _ingredient(value: str) -> dict[str, str]:
     }
 
 
+# 方法说明：_title_leaf
+# 作用：去除标题路径前缀，取得实际菜谱标题。
+# 入参：
+#   value（str）：当前待转换或校验的值。
+# 出参：str；文本字符串。
 def _title_leaf(value: str) -> str:
     return value.split(":")[-1].split("/")[-1].strip()
 
 
+# 类说明（业务或基础设施实现类）：WikibooksRecipeProvider
+# 作用：实现Wikibooks 菜谱来源适配器，封装该组件的业务处理与依赖协作。
 class WikibooksRecipeProvider:
+    # 字段说明：name
+    # 作用：当前对象或字段的名称。
+    # 初始值：'wikibooks'。
     name = "wikibooks"
+    # 字段说明：_HEADERS
+    # 作用：HEADERS，供该组件初始化及运行控制使用。
     _HEADERS = {
         "User-Agent": "SafeMealAgent/0.1.2 (read-only recipe lookup)",
         "Accept": "application/json",
     }
 
+    # 方法说明：__init__
+    # 作用：初始化Wikibooks 菜谱来源适配器，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   endpoint（str）：外部 API 的接口路径；默认值为 'https://zh.wikibooks.org/w/api.php'。
+    #   timeout_seconds（float）：操作超时上限，单位秒；默认值为 8.0。
+    #   client（httpx.Client | None）：底层外部服务客户端；默认值为 None。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(
         self,
         *,
@@ -80,10 +116,21 @@ class WikibooksRecipeProvider:
         timeout_seconds: float = 8.0,
         client: httpx.Client | None = None,
     ) -> None:
+        # 实例属性说明：_endpoint
+        # 作用：外部 API 的接口路径。
         self._endpoint = endpoint
+        # 实例属性说明：_timeout
+        # 作用：操作超时上限，单位秒。
         self._timeout = timeout_seconds
+        # 实例属性说明：_client
+        # 作用：底层外部服务客户端。
         self._client = client
 
+    # 方法说明：_request
+    # 作用：向 Wiki API 发送查询并解析响应对象。
+    # 入参：
+    #   params（dict[str, str | int]）：底层接口使用的参数映射。
+    # 出参：dict；外部 Wiki API 返回的解析对象。
     def _request(self, params: dict[str, str | int]) -> dict:
         if self._client is not None:
             response = self._client.get(
@@ -102,6 +149,11 @@ class WikibooksRecipeProvider:
             raise ValueError("Wikibooks returned a non-object response")
         return payload
 
+    # 方法说明：lookup
+    # 作用：从配置的菜谱来源查找目标菜品及其食材证据。
+    # 入参：
+    #   recipe_name（str）：目标菜谱名称。
+    # 出参：RecipeLookupResult；外部或本地菜谱查找结果。
     def lookup(self, recipe_name: str) -> RecipeLookupResult:
         query = recipe_name.strip()
         try:

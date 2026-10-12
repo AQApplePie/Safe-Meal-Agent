@@ -10,13 +10,20 @@ from safemeal.agent.contracts.api import AgentProcessResponse
 from safemeal.agent.contracts.context import AgentContext
 from safemeal.agent.contracts.intent import IntentDecision
 from safemeal.agent.contracts.workflow.models import WorkflowRequest
-from safemeal.modules.conversation.application.turn_persistence import ChatTurnPersistence
+from safemeal.modules.conversation.application.turn_persistence import (
+    ChatTurnPersistence,
+)
 from safemeal.agent.context.history import (
     ConversationHistoryService,
 )
-from safemeal.modules.conversation.application.chat_exceptions import ChatTurnConflictError
+from safemeal.modules.conversation.application.chat_exceptions import (
+    ChatTurnConflictError,
+)
 from safemeal.agent.workflow.context.builder import AgentContextBuilder
 from safemeal.agent.workflow.nodes.prepare_context import PrepareContextNode
+from safemeal.agent.understanding.request_understanding import (
+    RequestUnderstandingService,
+)
 from safemeal.infrastructure.persistence.database import Base
 from safemeal.infrastructure.persistence.chat_repository import SqlAlchemyChatUnitOfWork
 from test_agent_graph import Model, Tools
@@ -119,7 +126,14 @@ def stored_turns(tmp_path):
         response_order_index=current.response_order_index,
         response="本轮回复",
     )
-    persistence.start_turn(first.session_id, "owner", "后续消息")
+    later = persistence.start_turn(first.session_id, "owner", "后续消息")
+    persistence.save_agent_response(
+        session_id=later.session_id,
+        user_id="owner",
+        user_message_id=later.user_message_id,
+        response_order_index=later.response_order_index,
+        response="后续回复",
+    )
     yield uow, current
     engine.dispose()
 
@@ -141,6 +155,12 @@ async def test_prepare_context_reads_only_prior_history_and_loads_memory_once(
     builder = AgentContextBuilder(
         memory_service=memory, history_service=ConversationHistoryService(uow)
     )
+    history, active_menu = builder.load_context_sources(
+        user_id="owner",
+        session_id=turn.session_id,
+        source_message_id=str(turn.user_message_id),
+        fallback=[],
+    )
     update = await PrepareContextNode(builder)(
         {
             "request": WorkflowRequest(
@@ -149,7 +169,10 @@ async def test_prepare_context_reads_only_prior_history_and_loads_memory_once(
                 session_id=turn.session_id,
                 source_message_id=str(turn.user_message_id),
                 history=[{"role": "user", "content": "不应覆盖持久化历史"}],
-            )
+            ),
+            "request_frame": RequestUnderstandingService().understand("推荐晚餐"),
+            "recent_history": history,
+            "active_menu": active_menu,
         }
     )
     assert [m["content"] for m in update["context"].conversation_history] == [
@@ -167,7 +190,7 @@ def test_history_anchor_must_belong_to_requested_user_and_session(
 ):
     uow, turn = stored_turns
     with pytest.raises(ChatTurnConflictError):
-        ConversationHistoryService(uow).load_before_turn(
+        ConversationHistoryService(uow).load_context_before_turn(
             user_id="other" if wrong_user else "owner",
             session_id="other" if wrong_session else turn.session_id,
             source_message_id=str(turn.user_message_id),
@@ -178,12 +201,17 @@ def test_history_anchor_must_belong_to_requested_user_and_session(
 async def test_disabling_long_term_memory_still_prepares_history(stored_turns):
     uow, turn = stored_turns
     memory = Memory()
-    update = await PrepareContextNode(
-        AgentContextBuilder(
-            memory_service=memory,
-            history_service=ConversationHistoryService(uow),
-        )
-    )(
+    builder = AgentContextBuilder(
+        memory_service=memory,
+        history_service=ConversationHistoryService(uow),
+    )
+    history, active_menu = builder.load_context_sources(
+        user_id="owner",
+        session_id=turn.session_id,
+        source_message_id=str(turn.user_message_id),
+        fallback=[],
+    )
+    update = await PrepareContextNode(builder)(
         {
             "request": WorkflowRequest(
                 message="推荐晚餐",
@@ -192,7 +220,10 @@ async def test_disabling_long_term_memory_still_prepares_history(stored_turns):
                 source_message_id=str(turn.user_message_id),
                 use_user_memory=False,
                 context=AgentContext(user_profile={"taste": "清淡"}),
-            )
+            ),
+            "request_frame": RequestUnderstandingService().understand("推荐晚餐"),
+            "recent_history": history,
+            "active_menu": active_menu,
         }
     )
     assert len(update["context"].conversation_history) == 2

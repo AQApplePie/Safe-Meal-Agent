@@ -115,7 +115,7 @@ Agent 的草稿流在 Workflow 内被抑制；前端可以接收 `progress` 状�
 
 - `bootstrap/application_container.py` → `application/service/composition/application_container.py`
 - `application/agent/context` → `application/workflow/context`
-- `AgentRequestService`、内部 process HTTP 入口及其 request_mapping 已删除；公共聊天通过 ChatTurnService 调用 Workflow，审批恢复通过 chat/resume 进入 Workflow
+- `AgentRequestService`、内部 process HTTP 入口及其 request_mapping 已删除；公共聊天通过 ChatTurnService 调用 Workflow，审批恢复通过 chat/resume 进入 ChatTurnService，先原子认领审批，再进入 Workflow，结果与决策持久化回原消息
 - `shared/contracts` → `application/contracts`
 - `application/agent/utils/state.py` → `application/contracts/agent/state.py`
 - `infrastructure/tools` 中的具体工具、注册表和执行器 → application 对应目录
@@ -201,3 +201,5 @@ Agent 的 task_context 将要求传入模型，独立提示消息避免被证据
 ## HTTP 业务范围
 
 业务 router 保留 `auth.py`、`chat.py` 与 `knowledge.py`。身份路由提供注册、登录、令牌轮换、退出和当前账号查询；聊天包含会话管理、历史、明确的饮食记忆纠正和审批恢复；知识库只提供文件入库与文件管理。接口清单和旧接口迁移见 [http-api.md](http-api.md)。Agent、记忆、知识检索仍作为内部应用能力存在，不以独立 router 暴露。基本存活和就绪探针保留。
+
+检索质量边界：DocumentKnowledgeService 在向量通道应用相似度阈值，再与 BM25 经 RRF 融合；两种分数不共用阈值。SQLite FTS 在 LIMIT 前按租户过滤；用例层再次检查归属。HTTP 认证入口以 ContextVar 绑定请求范围的知识租户，跨异步任务传递且请求结束复位；工具 schema 不接受租户参数。重排只能对已检索的原片段排序，不能替换正文或引入新来源。离线检索评测复用现有用例和端口，以本地适配器提供参考存储，不引入新的业务层。详见 [第9份优化报告](optimization/08_agent_retrieval_quality_ablation.md)。

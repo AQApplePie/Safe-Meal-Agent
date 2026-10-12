@@ -66,9 +66,9 @@ def test_resolve_separates_allergy_and_preferences_with_current_turn_precedence(
             },
         ]
     )
+    context.conversation_history = [{"role": "user", "content": "我喜欢辣，40分钟内"}]
     result = DietarySafetyService().resolve_constraints(
         "我喜欢清淡，必须包含鸡蛋，30分钟内做好",
-        [{"role": "user", "content": "我喜欢辣，40分钟内"}],
         context,
     )
     assert "花生" in result.allergies.excluded_ingredients
@@ -96,7 +96,7 @@ def test_typed_memory_uses_key_without_reparsing_display_value():
         ]
     )
 
-    result = DietarySafetyService().resolve_constraints("请推荐家常菜", [], context)
+    result = DietarySafetyService().resolve_constraints("请推荐家常菜", context)
 
     assert result.preferences == [
         DietaryPreference(kind="include_ingredient", value="鱼", source="memory")
@@ -115,7 +115,7 @@ def test_memory_display_copy_cannot_change_structured_preference():
         ]
     )
 
-    result = DietarySafetyService().resolve_constraints("请推荐家常菜", [], context)
+    result = DietarySafetyService().resolve_constraints("请推荐家常菜", context)
 
     assert [(item.kind, item.value, item.source) for item in result.preferences] == [
         ("include_ingredient", "鱼", "memory")
@@ -133,7 +133,7 @@ def test_current_turn_deduplicates_same_structured_memory_preference():
         ]
     )
 
-    result = DietarySafetyService().resolve_constraints("我爱吃鱼", [], context)
+    result = DietarySafetyService().resolve_constraints("我爱吃鱼", context)
 
     fish = [
         item
@@ -147,20 +147,15 @@ def test_current_turn_deduplicates_same_structured_memory_preference():
 def test_transactional_food_request_and_exclusion_become_required_constraints():
     result = DietarySafetyService().resolve_constraints(
         "我想吃鱼，但是我不喜欢辣椒，请给我推荐一份没有辣椒的鱼",
-        [],
         AgentContext(),
     )
 
     assert any(
-        item.kind == "include_ingredient"
-        and item.value == "鱼"
-        and item.required
+        item.kind == "include_ingredient" and item.value == "鱼" and item.required
         for item in result.preferences
     )
     assert any(
-        item.kind == "avoid_ingredient"
-        and item.value == "辣椒"
-        and item.required
+        item.kind == "avoid_ingredient" and item.value == "辣椒" and item.required
         for item in result.preferences
     )
     assert not any(
@@ -186,9 +181,9 @@ def test_accepted_model_frame_replaces_duplicate_text_semantic_extraction():
         )
     )
 
+    context.conversation_history = [{"role": "user", "content": "我想吃不相关的辣椒"}]
     result = DietarySafetyService().resolve_constraints(
         "我对花生过敏，有没有什么没有花生的菜",
-        [{"role": "user", "content": "我想吃不相关的辣椒"}],
         context,
     )
 
@@ -202,20 +197,15 @@ def test_accepted_model_frame_replaces_duplicate_text_semantic_extraction():
 def test_generic_without_ingredient_pattern_is_not_food_specific():
     result = DietarySafetyService().resolve_constraints(
         "请推荐一道不含洋葱的鸡肉",
-        [],
         AgentContext(),
     )
 
     assert any(
-        item.kind == "avoid_ingredient"
-        and item.value == "洋葱"
-        and item.required
+        item.kind == "avoid_ingredient" and item.value == "洋葱" and item.required
         for item in result.preferences
     )
     assert any(
-        item.kind == "include_ingredient"
-        and item.value == "鸡肉"
-        and item.required
+        item.kind == "include_ingredient" and item.value == "鸡肉" and item.required
         for item in result.preferences
     )
 
@@ -223,8 +213,9 @@ def test_generic_without_ingredient_pattern_is_not_food_specific():
 def test_historical_transactional_request_does_not_become_current_constraint():
     result = DietarySafetyService().resolve_constraints(
         "请推荐家常菜",
-        [{"role": "user", "content": "昨天我想吃鱼"}],
-        AgentContext(),
+        AgentContext(
+            conversation_history=[{"role": "user", "content": "昨天我想吃鱼"}]
+        ),
     )
 
     assert not any(item.value == "鱼" for item in result.preferences)
@@ -324,7 +315,7 @@ async def test_agent_cannot_weaken_workflow_review_snapshot():
 
 def test_tool_policy_injects_required_parameters_and_generation_context():
     requirements = DietarySafetyService().resolve_constraints(
-        "必须包含鸡蛋，30分钟内", [], AgentContext()
+        "必须包含鸡蛋，30分钟内", AgentContext()
     )
     call = ToolCall(
         id="a",
@@ -342,7 +333,7 @@ def test_tool_policy_injects_required_parameters_and_generation_context():
 
 def test_tool_policy_injects_generic_transactional_food_filters():
     requirements = DietarySafetyService().resolve_constraints(
-        "请推荐一道不含洋葱的鸡肉", [], AgentContext()
+        "请推荐一道不含洋葱的鸡肉", AgentContext()
     )
     call = ToolCall(
         id="a",
@@ -352,9 +343,7 @@ def test_tool_policy_injects_generic_transactional_food_filters():
         success_criteria="matching recipe",
     )
 
-    accepted, rejected = review_tool_calls(
-        [call], None, requirements=requirements
-    )
+    accepted, rejected = review_tool_calls([call], None, requirements=requirements)
 
     assert not rejected
     assert accepted[0].arguments["include_ingredients"] == ["鸡肉"]
@@ -381,7 +370,7 @@ def test_menu_candidate_search_cannot_drop_a_hard_allergy_filter():
 
 def test_final_review_checks_menu_candidate_full_ingredients_not_only_main_ones():
     requirements = DietarySafetyService().resolve_constraints(
-        "我对花生过敏", [], AgentContext()
+        "我对花生过敏", AgentContext()
     )
     candidate_observation = Observation(
         call_id="menu-meat",
@@ -415,7 +404,7 @@ def test_final_review_checks_menu_candidate_full_ingredients_not_only_main_ones(
 
 def test_review_excludes_recipes_that_miss_required_food_target():
     requirements = DietarySafetyService().resolve_constraints(
-        "请推荐一份没有辣椒的鱼", [], AgentContext()
+        "请推荐一份没有辣椒的鱼", AgentContext()
     )
 
     review = DietarySafetyService().review_recipes(
@@ -450,9 +439,7 @@ def test_review_excludes_recipes_that_miss_required_food_target():
 
 def test_chat_renderer_hides_unknown_soft_assessment_and_limits_results():
     requirements = DietaryRequirements(
-        preferences=[
-            DietaryPreference(kind="taste", value="清淡", source="memory")
-        ]
+        preferences=[DietaryPreference(kind="taste", value="清淡", source="memory")]
     )
     review = DietarySafetyService().review_recipes(
         requirements,
@@ -657,9 +644,7 @@ async def test_knowledge_answer_without_recipe_does_not_become_recipe_recommenda
     "message", ["我对花生过敏，我喜欢鸡蛋，推荐晚餐", "我对花生过敏但喜欢鸡蛋"]
 )
 def test_liked_ingredient_is_not_accidentally_extracted_as_an_allergen(message):
-    requirements = DietarySafetyService().resolve_constraints(
-        message, [], AgentContext()
-    )
+    requirements = DietarySafetyService().resolve_constraints(message, AgentContext())
     assert "花生" in requirements.allergies.excluded_ingredients
     assert "鸡蛋" not in requirements.allergies.excluded_ingredients
     assert any(

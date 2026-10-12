@@ -12,7 +12,9 @@ from safemeal.agent.runtime.budget import (
     parse_model_pricing,
     use_model_budget,
 )
-from safemeal.agent.runtime.orchestration.nodes.planner.constraints import build_planning_update
+from safemeal.agent.runtime.orchestration.nodes.planner.constraints import (
+    build_planning_update,
+)
 from safemeal.agent.contracts.decisions import (
     ModelBudgetUsage,
     PlanDecision,

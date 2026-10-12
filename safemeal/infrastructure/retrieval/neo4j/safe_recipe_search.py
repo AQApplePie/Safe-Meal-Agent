@@ -20,6 +20,11 @@ from safemeal.shared.types import to_json_object
 from safemeal.agent.runtime.tools.contracts.payloads import DietarySafeRecipeQueryResult
 
 
+# 方法说明：expand_excluded_ingredients
+# 作用：将禁止食材扩展为规范名、别名及类别成员。
+# 入参：
+#   ingredients（list[str]）：菜谱使用的完整食材集合。
+# 出参：list[str]；归一化并扩展后的食材排除词项集合。
 def expand_excluded_ingredients(ingredients: list[str]) -> list[str]:
 
     seen: set[str] = set()
@@ -36,6 +41,11 @@ def expand_excluded_ingredients(ingredients: list[str]) -> list[str]:
     return expanded
 
 
+# 方法说明：_forbidden_normalized_names
+# 作用：将禁止食材归一化为用于安全匹配的名称集合。
+# 入参：
+#   excluded_terms（list[str]）：禁止词项及其规范化集合。
+# 出参：list[str]；归一化并扩展后的食材排除词项集合。
 def _forbidden_normalized_names(excluded_terms: list[str]) -> list[str]:
 
     values: set[str] = set()
@@ -55,12 +65,31 @@ def _forbidden_normalized_names(excluded_terms: list[str]) -> list[str]:
     return sorted(value for value in values if value)
 
 
+# 类说明（业务或基础设施实现类）：SafeRecipeGraphSearch
+# 作用：实现Neo4j 安全食谱图查询器，封装该组件的业务处理与依赖协作。
 class SafeRecipeGraphSearch:
-
+    # 方法说明：__init__
+    # 作用：初始化Neo4j 安全食谱图查询器，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   driver_factory（由调用契约决定）：创建 Neo4j 驱动的工厂。
+    #   database（str | None）：数据库名称或数据库配置；默认值为 None。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(self, driver_factory, database: str | None = None):
+        # 实例属性说明：_driver_factory
+        # 作用：创建 Neo4j 驱动的工厂。
         self._driver_factory = driver_factory
+        # 实例属性说明：_database
+        # 作用：数据库名称或数据库配置。
         self._database = database
 
+    # 方法说明：search
+    # 作用：通过Neo4j 安全食谱图查询器按查询条件检索候选及其证据。
+    # 入参：
+    #   excluded_ingredients（list[str]）：必须排除的食材集合。
+    #   target_dish（Optional[str]）：本轮要查询、替换或审核的目标菜品。
+    #   recommend_limit（int）：最多推荐的菜品数。
+    #   excluded_limit（int）：最多读取的排除记录数。
+    # 出参：DietarySafeRecipeQueryResult；图安全食谱查询工具结果。
     def search(
         self,
         *,
@@ -138,6 +167,12 @@ class SafeRecipeGraphSearch:
         finally:
             driver.close()
 
+    # 方法说明：_prepend_unique
+    # 作用：将新条目前置并去重，保留近期内容的优先级。
+    # 入参：
+    #   target（RecipeSafetyRecord）：本轮要查询、替换或审核的目标菜品。
+    #   rows（list[RecipeSafetyRecord]）：当前 SQL 查询结果行集合。
+    # 出参：list[RecipeSafetyRecord]；候选菜谱忌口审核记录的集合。
     @staticmethod
     def _prepend_unique(
         target: RecipeSafetyRecord,
@@ -145,6 +180,13 @@ class SafeRecipeGraphSearch:
     ) -> list[RecipeSafetyRecord]:
         return [target] + [row for row in rows if row.name != target.name]
 
+    # 方法说明：_query_target_dish
+    # 作用：在图中查询目标菜品及其食材证据。
+    # 入参：
+    #   session（Session）：当前 SQL 会话或聊天会话对象。
+    #   target_dish（str）：本轮要查询、替换或审核的目标菜品。
+    #   excluded_terms（list[str]）：禁止词项及其规范化集合。
+    # 出参：Optional[RecipeSafetyRecord]；候选菜谱忌口审核记录或 None。
     def _query_target_dish(
         self,
         session: Session,
@@ -190,6 +232,14 @@ class SafeRecipeGraphSearch:
             )
         return self._record_from_row(first, "target_dish", excluded_terms)
 
+    # 方法说明：_query_safe_recipes
+    # 作用：按允许的食材及菜谱条件查询安全候选。
+    # 入参：
+    #   session（Session）：当前 SQL 会话或聊天会话对象。
+    #   excluded_terms（list[str]）：禁止词项及其规范化集合。
+    #   forbidden_names（list[str]）：必须排除的菜品或名称集合。
+    #   limit（int）：本次查询或处理的最大条目数。
+    # 出参：list[RecipeSafetyRecord]；候选菜谱忌口审核记录的集合。
     def _query_safe_recipes(
         self,
         session: Session,
@@ -229,6 +279,14 @@ class SafeRecipeGraphSearch:
         ]
         return [record for record in records if record.safety_status == "safe"]
 
+    # 方法说明：_query_excluded_recipes
+    # 作用：查询包含禁止食材的菜谱标识，用于图检索排除。
+    # 入参：
+    #   session（Session）：当前 SQL 会话或聊天会话对象。
+    #   excluded_terms（list[str]）：禁止词项及其规范化集合。
+    #   forbidden_names（list[str]）：必须排除的菜品或名称集合。
+    #   limit（int）：本次查询或处理的最大条目数。
+    # 出参：list[RecipeSafetyRecord]；候选菜谱忌口审核记录的集合。
     def _query_excluded_recipes(
         self,
         session: Session,
@@ -264,6 +322,13 @@ class SafeRecipeGraphSearch:
         ]
         return [record for record in records if record.safety_status == "excluded"]
 
+    # 方法说明：_record_from_row
+    # 作用：将 SQL 结果行转换为应用层记录对象。
+    # 入参：
+    #   row（Record）：当前 SQL 查询结果行。
+    #   evidence_type（str）：证据来源或证据类别。
+    #   excluded_terms（list[str]）：禁止词项及其规范化集合。
+    # 出参：RecipeSafetyRecord；候选菜谱忌口审核记录。
     def _record_from_row(
         self,
         row: Record,

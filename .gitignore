@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.platform.example
 .venv/
 .venv-*/
 venv/
@@ -17,6 +18,13 @@ dist/
 .ruff_cache/
 .coverage
 htmlcov/
+*.log
+
+# Temporary document renders and generated check reports
+tmp/
+evaluation_results/*_ruff_*.txt
+evaluation_results/*_formatcheck_*.txt
+evaluation_results/*_typecheck*.txt
 
 # IDE and OS
 .DS_Store

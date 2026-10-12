@@ -106,11 +106,24 @@ recipe_steps = Table(
 )
 
 
+# 类说明（SQL 类）：SqlAlchemyRecipeRepository
+# 作用：实现结构化食谱 SQL 仓储的查询、写入或运行状态持久化。
 class SqlAlchemyRecipeRepository:
-
+    # 方法说明：__init__
+    # 作用：初始化结构化食谱 SQL 仓储，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   engine（Engine | None）：SQLAlchemy 数据库引擎；默认值为 None。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(self, engine: Engine | None = None) -> None:
+        # 实例属性说明：_engine
+        # 作用：SQLAlchemy 数据库引擎。
         self._engine = engine or get_engine()
 
+    # 方法说明：search
+    # 作用：通过结构化食谱 SQL 仓储按查询条件检索候选及其证据。
+    # 入参：
+    #   query（RecipeQuery）：食谱筛选与推荐查询。
+    # 出参：RecipeSearchResult；食谱查询与推荐结果。
     def search(self, query: RecipeQuery) -> RecipeSearchResult:
         try:
             predicate = self._search_predicate(query)
@@ -119,7 +132,9 @@ class SqlAlchemyRecipeRepository:
             )
             count_statement = (
                 select(func.count(recipes.c.id))
-                .select_from(recipe_source)
+                # Only cuisine filters need the join in COUNT. Keep the join
+                # in the page query to return canonical cuisine names.
+                .select_from(recipe_source if query.cuisine else recipes)
                 .where(predicate)
             )
             order_column = {
@@ -157,6 +172,11 @@ class SqlAlchemyRecipeRepository:
         except (InvalidOperation, ValidationError, ValueError) as exc:
             raise StoredDataIntegrityError() from exc
 
+    # 方法说明：get
+    # 作用：通过结构化食谱 SQL 仓储读取指定标识对应的业务对象。
+    # 入参：
+    #   recipe_id（int）：目标食谱的整数标识。
+    # 出参：Recipe | None；完整食谱业务模型或None（未取得结果）。
     def get(self, recipe_id: int) -> Recipe | None:
         if recipe_id <= 0:
             return None
@@ -180,6 +200,11 @@ class SqlAlchemyRecipeRepository:
         except (InvalidOperation, ValidationError, ValueError) as exc:
             raise StoredDataIntegrityError() from exc
 
+    # 方法说明：_raise_database_error
+    # 作用：把底层数据库异常转换为应用层可处理的数据库错误。
+    # 入参：
+    #   exc（OperationalError）：当前捕获或退出上下文时传入的异常对象。
+    # 出参：NoReturn；不正常返回，将底层失败转换为应用异常并抛出。
     @staticmethod
     def _raise_database_error(exc: OperationalError) -> NoReturn:
         original_args = getattr(exc.orig, "args", ())
@@ -188,11 +213,18 @@ class SqlAlchemyRecipeRepository:
             raise DatabaseUnavailableError() from exc
         raise DatabaseOperationError() from exc
 
+    # 方法说明：_search_predicate
+    # 作用：根据结构化食谱查询构造 SQL 过滤条件。
+    # 入参：
+    #   query（RecipeQuery）：食谱筛选与推荐查询。
+    # 出参：按实现返回；SQLAlchemy 布尔条件表达式；合并当前食谱查询的筛选条件。
     @staticmethod
     def _search_predicate(query: RecipeQuery):
         predicates = []
         if query.name_contains:
-            predicates.append(recipes.c.name.contains(query.name_contains))
+            predicates.append(
+                recipes.c.name.contains(query.name_contains, autoescape=True)
+            )
         if query.exclude_recipe_ids:
             predicates.append(recipes.c.id.not_in(query.exclude_recipe_ids))
         if query.exclude_recipe_names:
@@ -218,7 +250,7 @@ class SqlAlchemyRecipeRepository:
                 )
                 .where(
                     recipe_ingredients.c.recipe_id == recipes.c.id,
-                    ingredients.c.name.contains(term),
+                    ingredients.c.name.contains(term, autoescape=True),
                 )
             )
             predicates.append(exists(included))
@@ -233,12 +265,18 @@ class SqlAlchemyRecipeRepository:
                 )
                 .where(
                     recipe_ingredients.c.recipe_id == recipes.c.id,
-                    ingredients.c.name.contains(term),
+                    ingredients.c.name.contains(term, autoescape=True),
                 )
             )
             predicates.append(not_(exists(excluded)))
         return and_(*predicates) if predicates else and_(True)
 
+    # 方法说明：_map_aggregates
+    # 作用：把聚合查询行转换成应用层统计结果。
+    # 入参：
+    #   connection（Connection）：当前 SQL 事务使用的连接。
+    #   recipe_rows（list[RowMapping]）：待导入或归一化的原始菜谱行。
+    # 出参：tuple[Recipe, ...]；完整食谱业务模型组成的元组。
     @staticmethod
     def _map_aggregates(
         connection: Connection,

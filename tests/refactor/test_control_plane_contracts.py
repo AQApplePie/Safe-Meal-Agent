@@ -75,13 +75,17 @@ def test_rule_output_is_canonical_after_shared_normalizer():
 
 
 def test_raw_history_cannot_reactivate_a_previous_constraint():
-    frame = RequestUnderstandingService().understand(
-        "我现在要办农村宴席，要求三道凉菜、两道热菜"
-    ).model_copy(update={"understanding_status": "fallback"})
+    frame = (
+        RequestUnderstandingService()
+        .understand("我现在要办农村宴席，要求三道凉菜、两道热菜")
+        .model_copy(update={"understanding_status": "fallback"})
+    )
     requirements = DietarySafetyService().resolve_constraints(
         "我现在要办农村宴席，要求三道凉菜、两道热菜",
-        [{"role": "user", "content": "我媳妇不吃辣"}],
-        AgentContext(request_frame=frame),
+        AgentContext(
+            request_frame=frame,
+            conversation_history=[{"role": "user", "content": "我媳妇不吃辣"}],
+        ),
     )
     assert requirements.restrictions.active is False
     assert all(item.source != "history" for item in requirements.preferences)

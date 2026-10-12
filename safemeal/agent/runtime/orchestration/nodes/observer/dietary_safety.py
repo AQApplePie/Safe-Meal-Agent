@@ -16,6 +16,12 @@ from safemeal.modules.dietary.application.constraints import (
 from safemeal.shared.types import JsonObject
 
 
+# 方法说明：build_dietary_safety_observation
+# 作用：把 Observer 已收集的候选证据转换为确定性饮食安全视图。
+# 入参：
+#   constraint_payload（DietaryConstraint | JsonObject | None）：约束的结构化载荷。
+#   observations（list[Observation]）：本轮已获得的工具观察集合。
+# 出参：Observation | None；标准化工具观察或None（未取得结果）。
 def build_dietary_safety_observation(
     *,
     constraint_payload: DietaryConstraint | JsonObject | None,

@@ -163,7 +163,6 @@ def test_fish_preference_ranks_fish_and_peanut_is_hard_excluded():
         allergies=DietarySafetyService()
         .resolve_constraints(
             "",
-            [],
             AgentContext(
                 user_memories=[
                     {

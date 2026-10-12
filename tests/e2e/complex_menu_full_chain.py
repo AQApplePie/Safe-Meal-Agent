@@ -136,8 +136,7 @@ def main() -> int:
     smaller_metadata = smaller.get("metadata") or {}
     smaller_progress = smaller_metadata.get("menu_task_progress") or {}
     require(
-        smaller_progress.get("fulfilled")
-        == {"cold_dish": 2, "hot_dish": 2, "soup": 1},
+        smaller_progress.get("fulfilled") == {"cold_dish": 2, "hot_dish": 2, "soup": 1},
         f"small composite menu was not completed: {smaller_progress}",
     )
     require(
@@ -146,14 +145,11 @@ def main() -> int:
     )
 
     chat("请记住，我对花生过敏。", "remember-allergy")
-    allergy_menu = chat(
-        "请给我两道凉菜、两道热菜和一道汤。", "allergy-menu"
-    )
+    allergy_menu = chat("请给我两道凉菜、两道热菜和一道汤。", "allergy-menu")
     allergy_metadata = allergy_menu.get("metadata") or {}
     allergy_progress = allergy_metadata.get("menu_task_progress") or {}
     allergy_names = {
-        str(item.get("name"))
-        for item in allergy_progress.get("selected_recipes") or []
+        str(item.get("name")) for item in allergy_progress.get("selected_recipes") or []
     }
     require(allergy_names, "allergy-aware composite menu selected no recipes")
     require(

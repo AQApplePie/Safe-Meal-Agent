@@ -34,8 +34,13 @@ _MODULES = {
 }
 
 
+# 方法说明：_rewrite_extension
+# 作用：改写 MessagePack 扩展中的旧模块路径，兼容历史检查点。
+# 入参：
+#   code（由调用契约决定）：MessagePack 扩展类型标识。
+#   payload（由调用契约决定）：当前协议或持久化操作的数据载荷。
+# 出参：msgpack.ExtType；完成旧模块路径改写的 MessagePack 扩展。
 def _rewrite_extension(code, payload):
-
 
     value = msgpack.unpackb(payload, ext_hook=_rewrite_extension, strict_map_key=False)
     if isinstance(value, list) and len(value) >= 2 and isinstance(value[0], str):
@@ -43,6 +48,11 @@ def _rewrite_extension(code, payload):
     return msgpack.ExtType(code, msgpack.packb(value, use_bin_type=True))
 
 
+# 方法说明：_rewrite_json
+# 作用：递归改写 JSON 序列化对象中的旧契约模块路径。
+# 入参：
+#   value（由调用契约决定）：当前待转换或校验的值。
+# 出参：JSON 兼容值；递归替换旧模块路径后的数据结构。
 def _rewrite_json(value):
     if isinstance(value, dict):
         if value.get("lc") == 2 and value.get("type") == "constructor":
@@ -57,7 +67,14 @@ def _rewrite_json(value):
     return value
 
 
+# 类说明（业务或基础设施实现类）：ContractCheckpointSerializer
+# 作用：实现兼容历史契约路径的检查点序列化器，封装该组件的业务处理与依赖协作。
 class ContractCheckpointSerializer(JsonPlusSerializer):
+    # 方法说明：loads_typed
+    # 作用：兼容旧模块路径后反序列化带类型标记的检查点数据。
+    # 入参：
+    #   data（由调用契约决定）：当前操作的结构化数据载荷。
+    # 出参：object；由类型标记恢复的检查点对象。
     def loads_typed(self, data):
         kind, payload = data
         if kind == "msgpack":

@@ -10,6 +10,11 @@ from safemeal.agent.contracts.decisions import Observation
 from safemeal.modules.conversation.contracts.conversation.models import AnswerSource
 
 
+# 方法说明：collect_answer_sources
+# 作用：为 Responder 节点构建去重后的来源记录。
+# 入参：
+#   observations（list[Observation]）：本轮已获得的工具观察集合。
+# 出参：list[AnswerSource]；答案来源与引用片段的集合。
 def collect_answer_sources(observations: list[Observation]) -> list[AnswerSource]:
     """为 Responder 节点构建去重后的来源记录。"""
 
@@ -21,7 +26,8 @@ def collect_answer_sources(observations: list[Observation]) -> list[AnswerSource
         for document in data.get("documents", []) or []:
             if not isinstance(document, dict):
                 continue
-            metadata = document.get("metadata") or {}
+            metadata_value = document.get("metadata")
+            metadata = metadata_value if isinstance(metadata_value, dict) else {}
             source = document.get("source") or metadata.get("source")
             if source:
                 sources.append(
@@ -29,6 +35,16 @@ def collect_answer_sources(observations: list[Observation]) -> list[AnswerSource
                         source=str(source),
                         tool=observation.tool_name,
                         call_id=observation.call_id,
+                        document_id=str(
+                            document.get("document_id")
+                            or metadata.get("document_id")
+                            or ""
+                        )
+                        or None,
+                        chunk_id=str(
+                            document.get("id") or metadata.get("chunk_id") or ""
+                        )
+                        or None,
                     )
                 )
         if observation.tool_name == "dietary_safe_recipe_query":
@@ -93,9 +109,15 @@ def collect_answer_sources(observations: list[Observation]) -> list[AnswerSource
             )
 
     unique: list[AnswerSource] = []
-    seen: set[tuple[str, str | None, str | None]] = set()
+    seen: set[tuple[str, str, str, str | None, str | None]] = set()
     for source in sources:
-        key = (source.source, source.tool, source.query)
+        key = (
+            source.source,
+            source.tool,
+            source.call_id,
+            source.document_id,
+            source.chunk_id,
+        )
         if key not in seen:
             seen.add(key)
             unique.append(source)

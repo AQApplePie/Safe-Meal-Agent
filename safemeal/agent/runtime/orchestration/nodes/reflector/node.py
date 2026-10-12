@@ -20,10 +20,21 @@ from safemeal.agent.contracts.decisions import ModelBudgetUsage
 from safemeal.agent.contracts.menu_planning import MenuTaskProgress
 
 
+# 方法说明：create_reflector_node
+# 作用：构造判断证据充分性与下一步动作的反思节点。
+# 入参：
+#   model_gateway（AgentModelGateway）：语言模型调用能力。
+#   tool_executor（ToolExecutor）：已装配的工具注册与执行组件。
+# 出参：按实现返回；绑定当前依赖的图节点函数，接收图状态并返回局部状态更新。
 def create_reflector_node(
     model_gateway: AgentModelGateway,
     tool_executor: ToolExecutor,
 ):
+    # 方法说明：reflect
+    # 作用：评估当前证据、菜单配额与剩余预算，决定继续或结束。
+    # 入参：
+    #   state（AgentState）：Agent 完整图状态。
+    # 出参：AgentStateUpdate；Agent 图节点局部状态更新。
     async def reflect(state: AgentState) -> AgentStateUpdate:
         iteration = state.get("iteration", 0)
         max_iterations = state.get("max_iterations", 4)
@@ -72,9 +83,7 @@ def create_reflector_node(
                 "route": "finish",
                 "pending_calls": [],
                 "loop_stop_reason": (
-                    "menu_sources_exhausted"
-                    if not searchable
-                    else "max_iterations"
+                    "menu_sources_exhausted" if not searchable else "max_iterations"
                 ),
             }
         counted = recommendation_completion(state.get("observations", []))
@@ -86,7 +95,9 @@ def create_reflector_node(
                 ),
                 "evidence_sufficient": complete,
                 "missing_information": (
-                    [] if complete else [f"请求 {requested} 道，当前仅找到 {fulfilled} 道"]
+                    []
+                    if complete
+                    else [f"请求 {requested} 道，当前仅找到 {fulfilled} 道"]
                 ),
                 "route": "finish",
                 "pending_calls": [],
@@ -194,9 +205,7 @@ def create_reflector_node(
             ],
             "route": "finish" if repeated_only else decision.decision,
             "pending_calls": (next_calls if decision.decision == "continue" else []),
-            "loop_stop_reason": (
-                action_policy.stop_reason if repeated_only else ""
-            ),
+            "loop_stop_reason": (action_policy.stop_reason if repeated_only else ""),
         }
         return output
 

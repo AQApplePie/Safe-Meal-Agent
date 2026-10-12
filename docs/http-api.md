@@ -53,3 +53,17 @@
 原 `/upload`、`/knowledge/recipes`、`/knowledge/search`、`/knowledge/stats`、`/knowledge/clear`、`/integrations/status` 删除。Agent 的内部知识检索能力保留，食谱 JSON 直接入库和通用文件上传接口删除。
 
 基本 `/health`、`/livez`、`/readyz` 探针继续保留，不属于业务 router。
+
+### 人工审批恢复
+
+`POST /api/v1/chat/resume` 必须携带 `Content-Type: application/json` 与登录令牌：
+
+```json
+{"session_id":"当前会话ID","message_id":2,"approval_id":"待审批消息metadata中的approval_id","approved":true}
+```
+
+`approved` 必须为 JSON 布尔值，客户端不能修改操作参数或提交 user_id。会话归属错误返回 404，旧审批或已提交的审批返回 409，缺少字段返回 422。返回 `AgentProcessResponse`，恢复后的文本、来源、食谱卡片和审批审计会替换原待确认消息；`metadata.message_id` 指向同一消息。执行失败可能返回 HTTP 200 且 `status=error`，前端必须检查该字段。工作流仍会执行最终安全复核。
+
+待审批或恢复处理中不得在同一会话创建新轮次或清空消息。客户端刷新后从历史接口读取 metadata 与 turn_status，不能根据本地按钮状态重试操作。详见 [审批与恢复验收](optimization/07_agent_approval_resume.md)。
+
+知识检索来源保留 `source/tool/call_id`，并新增可空的 `document_id/chunk_id`，可定位检索返回的文档片段。来源集合表示已返回的证据，不能单独证明回答的每句话都有依据。聊天、SSE 与审批恢复均从认证 Principal 注入租户范围；模型参数不能指定租户。显式 `filter_expr` 仅交由向量适配器执行，该请求不合并 BM25 结果，避免过滤条件被词法通道绕过。

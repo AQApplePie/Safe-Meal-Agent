@@ -5,9 +5,16 @@ import re
 from safemeal.agent.contracts.intent import IntentDecision
 from safemeal.agent.contracts.context import AgentContext
 from safemeal.agent.runtime.model import IntentClassifier
-from safemeal.modules.conversation.application.memory.memory_extraction import UserMemoryExtractor
+from safemeal.modules.conversation.application.memory.memory_extraction import (
+    UserMemoryExtractor,
+)
 
 
+# 方法说明：intent_from_request_frame
+# 作用：优先使用 Workflow 已确认的请求事实，不在 Agent 内重复理解原文。
+# 入参：
+#   context（AgentContext）：本轮执行上下文。
+# 出参：IntentDecision | None；Agent 意图决策或None（未取得结果）。
 def intent_from_request_frame(context: AgentContext) -> IntentDecision | None:
     """优先使用 Workflow 已确认的请求事实，不在 Agent 内重复理解原文。"""
 
@@ -44,12 +51,21 @@ def intent_from_request_frame(context: AgentContext) -> IntentDecision | None:
         "nutrition_query": "knowledge",
         "food_safety": "knowledge",
     }
-    return IntentDecision(
-        kind=mapping.get(frame.primary_task, frame.primary_task),
-        clarification=frame.clarification_question or "",
+    return IntentDecision.model_validate(
+        {
+            "kind": mapping.get(frame.primary_task, frame.primary_task),
+            "clarification": frame.clarification_question or "",
+        }
     )
 
 
+# 方法说明：resolve_agent_intent
+# 作用：解析 Agent 任务；原文规则仅服务于没有 RequestFrame 的兼容调用。
+# 入参：
+#   message（str）：本轮用户消息或问题文本。
+#   context（AgentContext）：本轮执行上下文。
+#   classifier（IntentClassifier | None）：请求意图分类能力；默认值为 None。
+# 出参：IntentDecision；Agent 意图决策。
 async def resolve_agent_intent(
     message: str, context: AgentContext, classifier: IntentClassifier | None = None
 ) -> IntentDecision:

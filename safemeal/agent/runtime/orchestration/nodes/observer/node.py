@@ -15,6 +15,11 @@ from .fusion import fuse_retrieval_observations
 from .menu_progress import update_menu_task_progress
 
 
+# 方法说明：_has_data
+# 作用：判断工具结果中是否含有可用于回答的有效业务数据。
+# 入参：
+#   data（JsonValue）：当前操作的结构化数据载荷。
+# 出参：bool；工具结果是否包含非空有效数据。
 def _has_data(data: JsonValue) -> bool:
     if data is None:
         return False
@@ -36,6 +41,12 @@ def _has_data(data: JsonValue) -> bool:
     return True
 
 
+# 方法说明：_summary
+# 作用：为工具数据或错误生成简短观察摘要。
+# 入参：
+#   data（JsonValue）：当前操作的结构化数据载荷。
+#   error（str | None）：当前操作的错误信息。
+# 出参：str；符合长度限制的摘要文本。
 def _summary(data: JsonValue, error: str | None) -> str:
     if error:
         return f"工具执行失败：{error}"
@@ -43,10 +54,15 @@ def _summary(data: JsonValue, error: str | None) -> str:
     return text if len(text) <= 800 else text[:800] + "..."
 
 
+# 方法说明：_compact_data
+# 作用：限制状态体积，同时保留Recipe固定聚合中的食材和营养字段。
+# 入参：
+#   data（JsonValue）：当前操作的结构化数据载荷。
+#   depth（int）：递归遍历的深度或深度上限；默认值为 0。
+#   parent_key（str）：嵌套结构遍历中的父级字段键；默认值为 ''。
+# 出参：JsonValue；JSON 兼容数据。
 def _compact_data(data: JsonValue, depth: int = 0, parent_key: str = "") -> JsonValue:
     """限制状态体积，同时保留Recipe固定聚合中的食材和营养字段。"""
-
-
 
     if depth >= 8:
         return str(data)[:500]
@@ -72,6 +88,11 @@ def _compact_data(data: JsonValue, depth: int = 0, parent_key: str = "") -> Json
     return to_json_value(data)
 
 
+# 方法说明：observe
+# 作用：将工具结果转换为标准观察，并更新证据与菜单进度。
+# 入参：
+#   state（AgentState）：Agent 完整图状态。
+# 出参：AgentStateUpdate；Agent 图节点局部状态更新。
 async def observe(state: AgentState) -> AgentStateUpdate:
     calls = {call.id: call for call in state.get("pending_calls", [])}
     observations = []

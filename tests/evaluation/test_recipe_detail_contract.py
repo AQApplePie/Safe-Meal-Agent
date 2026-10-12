@@ -65,7 +65,9 @@ class MissingStepsProvider:
             items=(
                 RecipeCandidate(
                     name=recipe_name,
-                    ingredients=({"name": "三文鱼", "amount": "200g", "section": "主料"},),
+                    ingredients=(
+                        {"name": "三文鱼", "amount": "200g", "section": "主料"},
+                    ),
                     steps="",
                     source_type="local_json",
                     source_title="fixture",

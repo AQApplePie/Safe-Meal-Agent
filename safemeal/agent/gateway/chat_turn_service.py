@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from safemeal.agent.contracts.api import AgentResumeRequest, AgentProcessResponse
 from safemeal.agent.workflow.runner import ChatWorkflow
 from safemeal.agent.contracts.workflow.models import WorkflowRequest
 from safemeal.modules.conversation.application.turn_persistence import (
@@ -14,6 +15,8 @@ from safemeal.modules.conversation.application.chat_exceptions import (
 from safemeal.modules.conversation.contracts.chat.turn import ChatRequest, ChatResponse
 
 
+# 类说明（业务或基础设施实现类）：ChatTurnService
+# 作用：编排一次用户聊天请求的应用服务。
 class ChatTurnService:
     """编排一次用户聊天请求的应用服务。
 
@@ -22,15 +25,99 @@ class ChatTurnService:
         workflow: 独立聊天 Workflow 入口。
     """
 
+    # 方法说明：__init__
+    # 作用：初始化单轮聊天编排服务，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   persistence（ChatTurnPersistence）：聊天轮次与审批持久化业务组件。
+    #   workflow（ChatWorkflow）：统一聊天 Workflow 执行入口。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(
         self,
         *,
         persistence: ChatTurnPersistence,
         workflow: ChatWorkflow,
     ) -> None:
+        # 实例属性说明：_persistence
+        # 作用：聊天轮次与审批持久化业务组件。
         self._persistence = persistence
+        # 实例属性说明：_workflow
+        # 作用：统一聊天 Workflow 执行入口。
         self._workflow = workflow
 
+    # 方法说明：resume
+    # 作用：从持久化中断状态恢复当前审批任务并整理执行结果。
+    # 入参：
+    #   request（AgentResumeRequest）：Agent 审批恢复请求。
+    #   user_id（str）：经身份绑定后的持久化用户标识。
+    # 出参：AgentProcessResponse；Agent 内部处理响应。
+    async def resume(
+        self, request: AgentResumeRequest, *, user_id: str
+    ) -> AgentProcessResponse:
+        previous = await asyncio.to_thread(
+            self._persistence.claim_approval,
+            session_id=request.session_id,
+            user_id=user_id,
+            message_id=request.message_id,
+            approval_id=request.approval_id,
+            approved=request.approved,
+        )
+        try:
+            result = await self._workflow.resume(
+                request.session_id, approved=request.approved
+            )
+        except Exception:
+            await asyncio.to_thread(
+                self._persistence.finish_approval,
+                session_id=request.session_id,
+                user_id=user_id,
+                message_id=request.message_id,
+                content="恢复中断，执行结果尚未确认。请勿重复执行此操作。",
+                metadata={**previous, "approval_state": "failed"},
+                failed=True,
+            )
+            raise
+        result.metadata.update(
+            {
+                "session_id": request.session_id,
+                "message_id": str(request.message_id),
+                "approval_state": "failed"
+                if result.status == "error"
+                else (
+                    "pending"
+                    if result.metadata.get("approval_required")
+                    else ("approved" if request.approved else "rejected")
+                ),
+                "previous_approval_id": request.approval_id,
+            }
+        )
+        result.metadata["approval_history"] = previous.get("approval_history", [])
+        if not result.metadata.get("approval_required"):
+            result.metadata["approval_id"] = request.approval_id
+            result.metadata["approval_required"] = False
+        await asyncio.to_thread(
+            self._persistence.finish_approval,
+            session_id=request.session_id,
+            user_id=user_id,
+            message_id=request.message_id,
+            content=result.message,
+            metadata={
+                **result.metadata,
+                "route": result.route,
+                "route_logic": result.route_logic,
+                "sources": [s.model_dump(mode="json") for s in result.sources],
+                "recipe": result.recipe.model_dump(mode="json")
+                if result.recipe
+                else None,
+            },
+            failed=result.status == "error",
+        )
+        return result
+
+    # 方法说明：handle
+    # 作用：处理一轮 Chat 请求。
+    # 入参：
+    #   request（ChatRequest）：用户聊天请求。
+    # 出参：ChatResponse；用户聊天响应。
     async def handle(self, request: ChatRequest) -> ChatResponse:
         """处理一轮 Chat 请求。
 
@@ -97,9 +184,6 @@ class ChatTurnService:
         except ChatAgentUnavailableError:
             raise
         except Exception:
-
-
-
             try:
                 await asyncio.to_thread(
                     self._persistence.mark_turn_failed,
@@ -108,8 +192,6 @@ class ChatTurnService:
                     user_message_id=turn.user_message_id,
                 )
             except Exception:
-
-
                 pass
             raise
 

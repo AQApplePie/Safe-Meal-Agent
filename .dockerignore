@@ -1,11 +1,13 @@
 .git
 .github
 .env
+.env.*
 .venv
 .venv-*
 .mypy_cache
 .pytest_cache
 .ruff_cache
+.idea
 .vscode
 .DS_Store
 __pycache__
@@ -21,4 +23,6 @@ uploads/*
 !uploads/.gitkeep
 models
 artifacts
+tmp
+evaluation_results
 training/external

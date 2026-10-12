@@ -48,7 +48,9 @@ def test_business_modules_do_not_import_framework_or_composition():
     """业务模块不得依赖 LangGraph、装配根或运行时配置。"""
     forbidden = ("langgraph", "safemeal.bootstrap", "safemeal.config")
     for path in MODULES.rglob("*.py"):
-        assert not any(module.startswith(forbidden) for module in imports(path)), str(path)
+        assert not any(module.startswith(forbidden) for module in imports(path)), str(
+            path
+        )
 
 
 def test_outer_and_inner_graphs_remain_distinct():
@@ -119,7 +121,14 @@ def test_legacy_application_implementations_are_removed():
 
 def test_agent_exposes_physical_boundaries():
     """Agent 的理解、上下文、外层流程与内层运行时均为真实目录。"""
-    expected = {"contracts", "understanding", "context", "workflow", "runtime", "gateway"}
+    expected = {
+        "contracts",
+        "understanding",
+        "context",
+        "workflow",
+        "runtime",
+        "gateway",
+    }
     assert expected <= {path.name for path in AGENT.iterdir() if path.is_dir()}
     for layer in expected:
         assert (AGENT / layer / "__init__.py").is_file()
@@ -139,9 +148,15 @@ def test_production_composition_uses_public_agent_layers():
 
 def test_production_tools_publish_complete_usage_boundaries():
     """每个生产 Tool 都必须声明用途、使用与禁用边界。"""
-    from safemeal.agent.runtime.tools.adapters.constraint_verification import VerifyRecipeConstraintsTool
-    from safemeal.agent.runtime.tools.adapters.dietary_search import DietarySafeRecipeQueryTool
-    from safemeal.agent.runtime.tools.adapters.knowledge_search import KnowledgeSearchTool
+    from safemeal.agent.runtime.tools.adapters.constraint_verification import (
+        VerifyRecipeConstraintsTool,
+    )
+    from safemeal.agent.runtime.tools.adapters.dietary_search import (
+        DietarySafeRecipeQueryTool,
+    )
+    from safemeal.agent.runtime.tools.adapters.knowledge_search import (
+        KnowledgeSearchTool,
+    )
     from safemeal.agent.runtime.tools.adapters.recipe_tools import (
         GenerateRecipeTool,
         GetRecipeTool,

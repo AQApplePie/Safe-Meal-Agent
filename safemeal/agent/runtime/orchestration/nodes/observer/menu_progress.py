@@ -20,12 +20,25 @@ from safemeal.shared.types import JsonObject, to_json_object
 MAX_MENU_CATEGORY_ATTEMPTS = 2
 
 
+# 方法说明：_normalized_name
+# 作用：生成跨数据源稳定一致的菜名去重标识。
+# 入参：
+#   value（object）：当前待转换或校验的值。
+# 出参：str；文本字符串。
 def _normalized_name(value: object) -> str:
     """生成跨数据源稳定一致的菜名去重标识。"""
 
     return str(value or "").strip().casefold()
 
 
+# 方法说明：update_menu_task_progress
+# 作用：把安全候选分配给配额，并使用统一规则重算完成度。
+# 入参：
+#   plan_payload（JsonObject）：已保存菜单计划的结构化载荷。
+#   progress_payload（JsonObject）：已保存菜单选择进度的结构化载荷。
+#   calls（Sequence[ToolCall]）：待执行或待审核的工具调用列表。
+#   observations（Sequence[Observation]）：本轮已获得的工具观察集合。
+# 出参：MenuTaskProgress；菜单选择进度与配额缺口。
 def update_menu_task_progress(
     *,
     plan_payload: JsonObject,

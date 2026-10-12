@@ -8,6 +8,11 @@ from typing import Any
 from safemeal.agent.contracts.decisions import Observation
 
 
+# 方法说明：_ingredient_names
+# 作用：从推荐菜谱记录中提取食材名称列表。
+# 入参：
+#   recipe（Mapping[str, Any]）：当前菜谱或菜谱记录。
+# 出参：list[str]；菜谱的食材名称列表。
 def _ingredient_names(recipe: Mapping[str, Any]) -> list[str]:
 
     names: list[str] = []
@@ -21,7 +26,6 @@ def _ingredient_names(recipe: Mapping[str, Any]) -> list[str]:
         elif isinstance(item, str):
             name = item
 
-
         if name and not isinstance(name, bool):
             text = str(name).strip()
             if text and text not in names:
@@ -29,6 +33,12 @@ def _ingredient_names(recipe: Mapping[str, Any]) -> list[str]:
     return names
 
 
+# 方法说明：render_recipe_recommendations
+# 作用：将候选食谱与推荐说明渲染为最终回答。
+# 入参：
+#   observations（Sequence[Observation]）：本轮已获得的工具观察集合。
+#   limit（int）：本次查询或处理的最大条目数；默认值为 3。
+# 出参：str | None；推荐菜谱回答文本；没有可渲染结果时为 None。
 def render_recipe_recommendations(
     observations: Sequence[Observation], *, limit: int = 3
 ) -> str | None:
@@ -41,7 +51,9 @@ def render_recipe_recommendations(
             continue
         if data.get("exact_name") is True:
             continue
-        items = [item for item in data.get("items", []) or [] if isinstance(item, Mapping)]
+        items = [
+            item for item in data.get("items", []) or [] if isinstance(item, Mapping)
+        ]
         if not items:
             continue
         selected = items[: max(1, min(limit, 10))]

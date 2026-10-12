@@ -115,7 +115,11 @@ async def test_gateway_preserves_constraints_memory_and_clarification(tmp_path):
             200,
             json={
                 "choices": [
-                    {"message": {"content": json.dumps(next(outputs), ensure_ascii=False)}}
+                    {
+                        "message": {
+                            "content": json.dumps(next(outputs), ensure_ascii=False)
+                        }
+                    }
                 ]
             },
         )
@@ -267,9 +271,7 @@ async def test_gateway_overlays_explicit_menu_quotas_without_llm_arithmetic(tmp_
         model_name="test-model",
         client=client,
     )
-    frame = await gateway.understand(
-        "农村宴席要三道凉菜、三道热菜、三道汤", []
-    )
+    frame = await gateway.understand("农村宴席要三道凉菜、三道热菜、三道汤", [])
     await client.aclose()
 
     assert frame.primary_task == "menu_planning"

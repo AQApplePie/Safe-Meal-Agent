@@ -119,14 +119,33 @@ def main() -> int:
     require(allergy_meta["safety_review"] == "passed", "current safety failed")
     status, memories = request_json("GET", "/chat/memories", token=token)
     require(status == 200, f"memory lookup failed: {memories}")
-    require(any(item.get("memory_key") == "花生" for item in memories), "memory not saved")
+    require(
+        any(item.get("memory_key") == "花生" for item in memories), "memory not saved"
+    )
 
     report = {
-        "E2E1": {"request_frame": fish_frame, "planner_tool": fish_trace, "reflect": fish_meta["reflect"], "final_response": fish["message"], "all_fish": True},
-        "E2E2": {"request_frame": menu_frame, "coverage": menu_progress["fulfilled"], "selected": menu_names, "final_response": menu["message"]},
+        "E2E1": {
+            "request_frame": fish_frame,
+            "planner_tool": fish_trace,
+            "reflect": fish_meta["reflect"],
+            "final_response": fish["message"],
+            "all_fish": True,
+        },
+        "E2E2": {
+            "request_frame": menu_frame,
+            "coverage": menu_progress["fulfilled"],
+            "selected": menu_names,
+            "final_response": menu["message"],
+        },
         "E2E3": {"request_frame": detail_frame, "final_response": detail["message"]},
         "E2E4": {"request_frame": follow_frame, "final_response": follow["message"]},
-        "E2E5": {"request_frame": allergy_frame, "resolved_constraints": allergy_meta["resolved_constraints"], "final_safety": allergy_meta["safety_review"], "memory_saved": True, "final_response": allergy["message"]},
+        "E2E5": {
+            "request_frame": allergy_frame,
+            "resolved_constraints": allergy_meta["resolved_constraints"],
+            "final_safety": allergy_meta["safety_review"],
+            "memory_saved": True,
+            "final_response": allergy["message"],
+        },
     }
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0

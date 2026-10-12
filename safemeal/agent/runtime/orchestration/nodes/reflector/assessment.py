@@ -9,13 +9,11 @@ from __future__ import annotations
 from safemeal.agent.contracts.decisions import Observation
 
 
-_CONTEXT_OBSERVATION_TOOLS = {
-    "dietary_context",
-    "dietary_safety_filter",
-    "user_memory_context",
-}
-
-
+# 方法说明：_target_dish_is_classified
+# 作用：判断目标菜品是否已经关联到食材分类。
+# 入参：
+#   observations（list[Observation]）：本轮已获得的工具观察集合。
+# 出参：bool；目标菜品是否已经具有食材分类证据。
 def _target_dish_is_classified(observations: list[Observation]) -> bool:
     for observation in reversed(observations):
         if (
@@ -41,6 +39,11 @@ def _target_dish_is_classified(observations: list[Observation]) -> bool:
     return False
 
 
+# 方法说明：deterministic_evidence_is_sufficient
+# 作用：判断 Reflector 是否已获得充分的确定性证据。
+# 入参：
+#   observations（list[Observation]）：本轮已获得的工具观察集合。
+# 出参：bool；当前证据是否已经足以完成任务。
 def deterministic_evidence_is_sufficient(
     observations: list[Observation],
 ) -> bool:
@@ -57,19 +60,19 @@ def deterministic_evidence_is_sufficient(
         return True
     if _target_dish_is_classified(observations):
         return True
-    external_observations = [
-        observation
-        for observation in observations
-        if observation.tool_name not in _CONTEXT_OBSERVATION_TOOLS
-    ]
     return any(
         observation.tool_name in {"generate_recipe", "multi_route_retrieval"}
         and observation.ok
         and observation.has_data
-        for observation in external_observations
+        for observation in observations
     )
 
 
+# 方法说明：recommendation_completion
+# 作用：返回普通数量推荐的请求数、满足数和完成状态。
+# 入参：
+#   observations（list[Observation]）：本轮已获得的工具观察集合。
+# 出参：tuple[int, int, bool] | None；整数、整数、布尔判定值组成的元组或None（未取得结果）。
 def recommendation_completion(
     observations: list[Observation],
 ) -> tuple[int, int, bool] | None:

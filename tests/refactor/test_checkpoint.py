@@ -78,7 +78,9 @@ def test_legacy_domain_values_survive_modules_removal(kind, encoding):
         SafetyStatus,
     )
     from safemeal.modules.recipe.contracts.generated import GeneratedIngredient
-    from safemeal.modules.conversation.contracts.memory.extraction import MemoryCandidate
+    from safemeal.modules.conversation.contracts.memory.extraction import (
+        MemoryCandidate,
+    )
 
     values = {
         "constraint": (

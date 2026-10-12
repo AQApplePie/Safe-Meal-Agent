@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from safemeal.modules.dietary.application.dietary_filter import DietaryRecipeFilter
 from safemeal.modules.recipe.contracts.catalog import (
     RecipeQuery,
@@ -33,9 +35,22 @@ from safemeal.modules.recipe.application.classification import classify_recipe
 from safemeal.modules.recipe.application.food_category import recipe_matches_category
 
 
+# 类说明（业务或基础设施实现类）：RecipeService
+# 作用：实现食谱查询推荐与生成业务服务，封装该组件的业务处理与依赖协作。
 class RecipeService:
+    # 字段说明：_MAX_RECOMMENDATION_CANDIDATES
+    # 作用：最大RECOMMENDATION候选数，供该组件初始化及运行控制使用。
+    # 初始值：1000。
     _MAX_RECOMMENDATION_CANDIDATES = 1000
 
+    # 方法说明：__init__
+    # 作用：初始化食谱查询推荐与生成业务服务，保存注入依赖并建立初始配置或运行状态。
+    # 入参：
+    #   repository（RecipeRepository）：当前业务依赖的仓储实现。
+    #   model_gateway（RecipeGenerator | None）：语言模型调用能力；默认值为 None。
+    #   recipe_filter（DietaryRecipeFilter | None）：菜谱饮食硬约束过滤器；默认值为 None。
+    #   lookup_providers（tuple[RecipeProvider, ...]）：可用于菜谱补充查询的来源集合；默认值为 ()。
+    # 出参：None；无返回值，结果通过本方法的状态更新或外部操作体现。
     def __init__(
         self,
         repository: RecipeRepository,
@@ -43,17 +58,35 @@ class RecipeService:
         recipe_filter: DietaryRecipeFilter | None = None,
         lookup_providers: tuple[RecipeProvider, ...] = (),
     ) -> None:
+        # 实例属性说明：_model_gateway
+        # 作用：语言模型调用能力。
         self._model_gateway = model_gateway
+        # 实例属性说明：_repository
+        # 作用：当前业务依赖的仓储实现。
         self._repository = repository
+        # 实例属性说明：_recipe_filter
+        # 作用：菜谱饮食硬约束过滤器。
         self._recipe_filter = recipe_filter or DietaryRecipeFilter()
+        # 实例属性说明：_lookup_providers
+        # 作用：可用于菜谱补充查询的来源集合。
         self._lookup_providers = lookup_providers
 
+    # 方法说明：_normalize_name
+    # 作用：清理并归一化名称，统一名称比较与去重。
+    # 入参：
+    #   value（str）：当前待转换或校验的值。
+    # 出参：str；文本字符串。
     @staticmethod
     def _normalize_name(value: str) -> str:
         return "".join(
             character for character in value.casefold() if character.isalnum()
         )
 
+    # 方法说明：_canonical_candidate
+    # 作用：把候选菜品归一化为菜单规划所需的统一结构。
+    # 入参：
+    #   recipe（Recipe）：当前菜谱或菜谱记录。
+    # 出参：RecipeCandidate；推荐候选食谱。
     @staticmethod
     def _canonical_candidate(recipe: Recipe) -> RecipeCandidate:
         return RecipeCandidate(
@@ -77,11 +110,22 @@ class RecipeService:
             ingredients_complete=bool(recipe.ingredients),
         )
 
+    # 方法说明：_missing_fields
+    # 作用：列出集合实际结构中缺失的必需字段。
+    # 入参：
+    #   candidate（RecipeCandidate）：当前待筛选候选。
+    #   required_fields（tuple[Literal['ingredients', 'steps', 'time',
+    # 'nutrition'], ...]）：必须存在的字段集合。
+    # 出参：tuple[Literal['ingredients', 'steps', 'time', 'nutrition'], ...]；允许值为
+    # ('ingredients', 'steps', 'time', 'nutrition')组成的元组。
     @staticmethod
     def _missing_fields(
-        candidate: RecipeCandidate, required_fields: tuple[str, ...]
-    ) -> tuple[str, ...]:
-        missing: list[str] = []
+        candidate: RecipeCandidate,
+        required_fields: tuple[
+            Literal["ingredients", "steps", "time", "nutrition"], ...
+        ],
+    ) -> tuple[Literal["ingredients", "steps", "time", "nutrition"], ...]:
+        missing: list[Literal["ingredients", "steps", "time", "nutrition"]] = []
         for field in required_fields:
             available = {
                 "ingredients": bool(candidate.ingredients),
@@ -93,6 +137,11 @@ class RecipeService:
                 missing.append(field)
         return tuple(missing)
 
+    # 方法说明：search
+    # 作用：通过食谱查询推荐与生成业务服务按查询条件检索候选及其证据。
+    # 入参：
+    #   query（RecipeQuery）：食谱筛选与推荐查询。
+    # 出参：RecipeSearchResult；食谱查询与推荐结果。
     def search(self, query: RecipeQuery) -> RecipeSearchResult:
         if query.category is not None:
             return self._search_menu_candidates(query)
@@ -161,13 +210,16 @@ class RecipeService:
             errors=tuple(errors),
         )
 
+    # 方法说明：_menu_candidate
+    # 作用：将完整菜谱转换为菜单规划使用的轻量候选。
+    # 入参：
+    #   recipe（Recipe）：当前菜谱或菜谱记录。
+    # 出参：MenuRecipeCandidate；轻量菜单候选菜品。
     @staticmethod
     def _menu_candidate(recipe: Recipe) -> MenuRecipeCandidate:
         ingredients = tuple(item.ingredient.name for item in recipe.ingredients)
         main = tuple(
-            item.ingredient.name
-            for item in recipe.ingredients
-            if item.is_main
+            item.ingredient.name for item in recipe.ingredients if item.is_main
         ) or tuple(item.ingredient.name for item in recipe.ingredients[:3])
         return MenuRecipeCandidate(
             id=recipe.id,
@@ -180,13 +232,21 @@ class RecipeService:
             source_title=f"recipe:{recipe.id}",
         )
 
+    # 方法说明：_search_menu_candidates
+    # 作用：按菜单分类及排除条件召回候选菜品。
+    # 入参：
+    #   query（RecipeQuery）：食谱筛选与推荐查询。
+    # 出参：RecipeSearchResult；食谱查询与推荐结果。
     def _search_menu_candidates(self, query: RecipeQuery) -> RecipeSearchResult:
 
         selected: list[MenuRecipeCandidate] = []
         seen_names = set(query.exclude_recipe_names)
         scanned = 0
         page_size = 50
-        while len(selected) < query.limit and scanned < self._MAX_RECOMMENDATION_CANDIDATES:
+        while (
+            len(selected) < query.limit
+            and scanned < self._MAX_RECOMMENDATION_CANDIDATES
+        ):
             page = self._repository.search(
                 query.model_copy(
                     update={
@@ -240,16 +300,32 @@ class RecipeService:
             ),
         )
 
+    # 方法说明：get
+    # 作用：通过食谱查询推荐与生成业务服务读取指定标识对应的业务对象。
+    # 入参：
+    #   recipe_id（int）：目标食谱的整数标识。
+    # 出参：Recipe；完整食谱业务模型。
     def get(self, recipe_id: int) -> Recipe:
         recipe = self._repository.get(recipe_id)
         if recipe is None:
             raise ResourceNotFoundError("Recipe not found")
         return recipe
 
+    # 方法说明：recommend
+    # 作用：按安全要求筛选并排序已有食谱，返回推荐候选。
+    # 入参：
+    #   query（RecipeQuery）：食谱筛选与推荐查询。
+    # 出参：RecipeSearchResult；食谱查询与推荐结果。
     def recommend(self, query: RecipeQuery) -> RecipeSearchResult:
         page_size = 50
         requested_count = query.requested_count or query.limit
-        candidate_limit = query.candidate_limit or query.limit
+        # 召回规模属于检索策略，不由 Planner 或用户目标决定。带有后置品类
+        # 过滤时扩大扫描范围；普通推荐保持有上限的三倍过采样。
+        candidate_limit = (
+            200
+            if query.food_categories or query.exclude_food_categories
+            else min(50, max(requested_count * 3, requested_count + 6))
+        )
         candidate_items: list[Recipe] = []
         scanned = 0
         total = None
@@ -275,10 +351,12 @@ class RecipeService:
             scanned += len(page.items)
             if not page.items:
                 break
-        allowed = self._recipe_filter.filter_recipes(
-            candidate_items,
-            excluded_ingredients=query.exclude_ingredients,
-            dietary_types=query.dietary_types,
+        allowed = list(
+            self._recipe_filter.filter_recipes(
+                candidate_items,
+                excluded_ingredients=query.exclude_ingredients,
+                dietary_types=query.dietary_types,
+            )
         )
         if query.food_categories:
             allowed = [
@@ -301,7 +379,7 @@ class RecipeService:
         selected = allowed[query.offset : query.offset + requested_count]
         fulfilled_count = len(selected)
         return RecipeSearchResult(
-            items=selected,
+            items=tuple(selected),
             total=len(allowed),
             offset=query.offset,
             limit=candidate_limit,
@@ -316,6 +394,11 @@ class RecipeService:
             ),
         )
 
+    # 方法说明：generate
+    # 作用：根据生成请求创建结构化菜谱并校验输出。
+    # 入参：
+    #   request（RecipeGenerationRequest）：结构化食谱生成请求。
+    # 出参：GeneratedRecipe；模型生成菜谱。
     async def generate(self, request: RecipeGenerationRequest) -> GeneratedRecipe:
         if self._model_gateway is None:
             raise FeatureUnavailableError("Recipe generation requires an enabled model")

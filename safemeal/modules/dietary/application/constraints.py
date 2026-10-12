@@ -38,6 +38,11 @@ from safemeal.modules.dietary.application.recipe_safety import (
 )
 
 
+# 方法说明：_unique
+# 作用：保持输入顺序去重，同时过滤空字符串。
+# 入参：
+#   items（Iterable[str]）：当前处理的条目集合。
+# 出参：List[str]；保持原输入顺序的非空去重条目集合。
 def _unique(items: Iterable[str]) -> List[str]:
     """保持输入顺序去重，同时过滤空字符串。"""
 
@@ -51,6 +56,11 @@ def _unique(items: Iterable[str]) -> List[str]:
     return result
 
 
+# 方法说明：extract_dietary_constraint
+# 作用：从用户问题中抽取忌口/过敏约束。
+# 入参：
+#   question（str）：本轮用户消息或问题文本。
+# 出参：DietaryConstraint；饮食安全硬约束。
 def extract_dietary_constraint(question: str) -> DietaryConstraint:
     """从用户问题中抽取忌口/过敏约束。
 
@@ -58,10 +68,15 @@ def extract_dietary_constraint(question: str) -> DietaryConstraint:
     表达，但它稳定、可测试，并且足以触发后续确定性安全过滤。
     """
 
-
     # statement such as "花生不是过敏原，但我对鸡蛋过敏" must retain the positive
 
     working_question = question
+    # In “不含花生的鱼”, only 花生 is excluded; 鱼 is the requested dish.
+    working_question = re.sub(
+        r"(不含[^，。；;,.！？!?]{1,24}?)的(?:鱼类|海鲜|素菜|素食|鱼)",
+        r"\1",
+        working_question,
+    )
     negated_clause_found = False
     explicitly_negated_ingredients = {
         name
@@ -128,6 +143,13 @@ def extract_dietary_constraint(question: str) -> DietaryConstraint:
     )
 
 
+# 方法说明：dietary_constraint_from_values
+# 作用：把已经结构化的禁忌食材直接转换成安全约束。
+# 入参：
+#   ingredients（Iterable[str]）：菜谱使用的完整食材集合。
+#   trigger_term（str）：触发安全限制的用户词项。
+#   strictness（str）：饮食约束严格度标记；默认值为 'hard_exclusion'。
+# 出参：DietaryConstraint；饮食安全硬约束。
 def dietary_constraint_from_values(
     ingredients: Iterable[str],
     *,
@@ -151,6 +173,12 @@ def dietary_constraint_from_values(
     )
 
 
+# 方法说明：merge_dietary_constraints
+# 作用：合并多轮对话中识别到的忌口/过敏约束。
+# 入参：
+#   constraints（Iterable[DietaryConstraint]）：待合并或待执行的约束集合。
+#   strictness（str）：饮食约束严格度标记；默认值为 'hard_exclusion_contextual'。
+# 出参：DietaryConstraint；饮食安全硬约束。
 def merge_dietary_constraints(
     constraints: Iterable[DietaryConstraint],
     *,
@@ -202,6 +230,11 @@ def merge_dietary_constraints(
     )
 
 
+# 方法说明：dietary_constraint_from_user_memories
+# 作用：把长期用户记忆中的饮食硬约束转换为本轮可执行的安全过滤约束。
+# 入参：
+#   user_memories（Iterable[JsonObject]）：已经加载的用户长期记忆。
+# 出参：DietaryConstraint；饮食安全硬约束。
 def dietary_constraint_from_user_memories(
     user_memories: Iterable[JsonObject],
 ) -> DietaryConstraint:
@@ -249,6 +282,11 @@ def dietary_constraint_from_user_memories(
     )
 
 
+# 方法说明：_nested_values
+# 作用：递归遍历字典/列表中的全部值。
+# 入参：
+#   value（object）：当前待转换或校验的值。
+# 出参：Iterable[object]；由调用约定决定的数据对象的集合。
 def _nested_values(value: object) -> Iterable[object]:
     """递归遍历字典/列表中的全部值。"""
 
@@ -262,6 +300,11 @@ def _nested_values(value: object) -> Iterable[object]:
         yield value
 
 
+# 方法说明：_find_recipe_name
+# 作用：从工具返回的一行记录里尽量找出菜名。
+# 入参：
+#   payload（object）：当前协议或持久化操作的数据载荷。
+# 出参：Optional[str]；文本字符串或 None。
 def _find_recipe_name(payload: object) -> Optional[str]:
     """从工具返回的一行记录里尽量找出菜名。"""
 
@@ -276,6 +319,11 @@ def _find_recipe_name(payload: object) -> Optional[str]:
     return None
 
 
+# 方法说明：_ingredient_values
+# 作用：从记录中只抽取结构化食材字段，避免用菜名/描述做误伤匹配。
+# 入参：
+#   payload（object）：当前协议或持久化操作的数据载荷。
+# 出参：List[str]；从结构化食材字段抽出的名称文本列表。
 def _ingredient_values(payload: object) -> List[str]:
     """从记录中只抽取结构化食材字段，避免用菜名/描述做误伤匹配。"""
 
@@ -316,6 +364,11 @@ def _ingredient_values(payload: object) -> List[str]:
     return _unique(values)
 
 
+# 方法说明：_has_ingredient_evidence
+# 作用：判断一条记录是否包含食材字段或食材关系证据。
+# 入参：
+#   payload（object）：当前协议或持久化操作的数据载荷。
+# 出参：bool；记录是否包含食材字段或食材关系证据。
 def _has_ingredient_evidence(payload: object) -> bool:
     """判断一条记录是否包含食材字段或食材关系证据。"""
 
@@ -331,6 +384,11 @@ def _has_ingredient_evidence(payload: object) -> bool:
     return False
 
 
+# 方法说明：_candidate_rows
+# 作用：从不同 Tool 的返回结构中抽取候选记录。
+# 入参：
+#   data（object）：当前操作的结构化数据载荷。
+# 出参：List[object]；由调用约定决定的数据对象的集合。
 def _candidate_rows(data: object) -> List[object]:
     """从不同 Tool 的返回结构中抽取候选记录。"""
 
@@ -355,6 +413,13 @@ def _candidate_rows(data: object) -> List[object]:
     return []
 
 
+# 方法说明：build_dietary_safety_result
+# 作用：基于已有候选证据进行忌口安全过滤。
+# 入参：
+#   constraint（DietaryConstraint）：当前饮食硬约束。
+#   observations（Sequence[DietaryEvidenceObservation]）：本轮已获得的工具观察集合。
+#   require_evidence（bool）：是否要求完整食材等证据才能通过审核；默认值为 False。
+# 出参：DietarySafetyResult；候选菜谱安全过滤结果。
 def build_dietary_safety_result(
     *,
     constraint: DietaryConstraint,
@@ -434,7 +499,6 @@ def build_dietary_safety_result(
                 except (ValueError, TypeError):
                     complete = False
         ingredients = _unique(ingredients)
-
 
         decision = safety_evaluator.evaluate(
             RecipeSafetyInput(

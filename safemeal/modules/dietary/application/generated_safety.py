@@ -8,6 +8,12 @@ from safemeal.modules.dietary.application.recipe_safety import (
 )
 
 
+# 方法说明：generated_recipe_violations
+# 作用：检查生成菜谱是否违反数量、食材或安全约束。
+# 入参：
+#   recipe（GeneratedRecipe）：当前菜谱或菜谱记录。
+#   forbidden（Iterable[str]）：本轮禁止食材或名称。
+# 出参：list[str]；生成菜谱违反约束的原因列表。
 def generated_recipe_violations(
     recipe: GeneratedRecipe, forbidden: Iterable[str]
 ) -> list[str]:

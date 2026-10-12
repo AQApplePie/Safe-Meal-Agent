@@ -12,9 +12,9 @@ from safemeal.modules.dietary.contracts.requirements import (
     DietaryReviewResult,
     RecipeReview,
 )
-from safemeal.modules.conversation.contracts.conversation.models import ConversationHistory
 from safemeal.modules.dietary.application.constraints import (
     dietary_constraint_from_user_memories,
+    dietary_constraint_from_values,
     extract_dietary_constraint,
     merge_dietary_constraints,
     build_dietary_safety_result,
@@ -27,6 +27,11 @@ from safemeal.modules.dietary.application.preference_rules import (
 from safemeal.modules.dietary.application.constraint_resolver import ConstraintResolver
 
 
+# 方法说明：hard_constraints
+# 作用：取得影响安全过滤的硬饮食要求。
+# 入参：
+#   requirements（DietaryRequirements）：本轮冻结的饮食或菜单执行要求。
+# 出参：DietaryConstraint；饮食安全硬约束。
 def hard_constraints(requirements: DietaryRequirements) -> DietaryConstraint:
     return merge_dietary_constraints(
         [requirements.allergies, requirements.restrictions],
@@ -34,9 +39,17 @@ def hard_constraints(requirements: DietaryRequirements) -> DietaryConstraint:
     )
 
 
+# 类说明（业务或基础设施实现类）：DietarySafetyService
+# 作用：实现Agent 饮食安全复核服务，封装该组件的业务处理与依赖协作。
 class DietarySafetyService:
+    # 方法说明：resolve_constraints
+    # 作用：将本轮输入、历史与记忆合并为冻结的饮食执行要求。
+    # 入参：
+    #   message（str）：本轮用户消息或问题文本。
+    #   context（AgentContext）：本轮执行上下文。
+    # 出参：DietaryRequirements；本轮冻结的饮食执行要求。
     def resolve_constraints(
-        self, message: str, history: ConversationHistory, context: AgentContext
+        self, message: str, context: AgentContext
     ) -> DietaryRequirements:
         allergies = [
             dietary_constraint_from_user_memories(
@@ -61,7 +74,6 @@ class DietarySafetyService:
             if memory.get("memory_type") in {"dietary_allergy", "dietary_restriction"}:
                 continue
 
-
             preference = preference_from_memory(memory)
             if preference is not None:
                 preferences.append(preference)
@@ -81,15 +93,8 @@ class DietarySafetyService:
             )
         frame = context.request_frame
         if frame is not None:
-
-
-
             preferences.extend(frame.turn_preferences)
         else:
-
-
-
-
             texts: list[tuple[str, Literal["input"]]] = [(message, "input")]
             for text, source in texts:
                 clauses = re.split(
@@ -97,10 +102,19 @@ class DietarySafetyService:
                 )
                 for clause in clauses:
                     constraint = extract_dietary_constraint(clause)
-                    (allergies if "过敏" in clause else restrictions).append(
-                        constraint
-                    )
+                    (allergies if "过敏" in clause else restrictions).append(constraint)
                 preferences.extend(preferences_from_text(text, source))
+
+        if frame is not None:
+            for item in frame.current_constraints:
+                if item.kind in {"food_category", "avoid_food_category"}:
+                    continue
+                parsed = dietary_constraint_from_values(
+                    [item.value],
+                    trigger_term="过敏" if item.kind == "allergy" else "不能吃",
+                    strictness="request_frame_hard_exclusion",
+                )
+                (allergies if item.kind == "allergy" else restrictions).append(parsed)
 
         selected: dict[tuple[str, str], DietaryPreference] = {}
         for preference in preferences:
@@ -134,6 +148,12 @@ class DietarySafetyService:
             **({"resolved": resolved} if resolved is not None else {}),
         )
 
+    # 方法说明：review_recipes
+    # 作用：按本轮冻结的饮食要求重新审核候选食谱。
+    # 入参：
+    #   requirements（DietaryRequirements）：本轮冻结的饮食或菜单执行要求。
+    #   observations（list[Observation]）：本轮已获得的工具观察集合。
+    # 出参：DietaryReviewResult；饮食安全复核结果。
     def review_recipes(
         self, requirements: DietaryRequirements, observations: list[Observation]
     ) -> DietaryReviewResult:

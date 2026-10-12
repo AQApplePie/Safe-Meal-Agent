@@ -25,7 +25,7 @@ def test_current_allergy_is_injected_before_tool_execution():
     call = ToolCall(
         id="recommend",
         tool_name="recommend_recipes",
-        arguments={"requested_count": 4, "candidate_limit": 12, "limit": 12},
+        arguments={"requested_count": 4},
         purpose="recommend",
         success_criteria="four safe recipes",
     )
@@ -48,9 +48,7 @@ def test_temporary_dislike_is_current_scope_not_persistent_memory():
 
 
 def test_explicit_future_allergy_is_current_and_persistent():
-    frame = RequestUnderstandingService().understand(
-        "以后都不要给我推荐花生，我过敏"
-    )
+    frame = RequestUnderstandingService().understand("以后都不要给我推荐花生，我过敏")
 
     assert ("allergy", "花生") in [
         (item.kind, item.value) for item in frame.memory_updates

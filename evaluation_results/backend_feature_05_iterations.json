@@ -1,0 +1,85 @@
+{
+  "feature": "05_identity_and_behavior",
+  "date": "2026-10-08",
+  "baseline": {
+    "passed": 343,
+    "skipped": 1,
+    "source": "feature_04 delivery"
+  },
+  "iterations": [
+    {
+      "check": "initial identity/behavior tests",
+      "passed": 31,
+      "failed": 0
+    },
+    {
+      "check": "initial static checks",
+      "mypy": "pass (293 files)",
+      "ruff": "1 unused test import removed"
+    },
+    {
+      "check": "production composition and error mapping coverage",
+      "added_tests": 1
+    },
+    {
+      "check": "first full regression",
+      "passed": 375,
+      "skipped": 1,
+      "failed": 0
+    },
+    {
+      "check": "post-test review: HTTP contracts and explicit JWKS TTL",
+      "targeted_passed": 46,
+      "full_passed": 375,
+      "full_skipped": 1
+    },
+    {
+      "check": "further identity-boundary review",
+      "issue": "Legacy tenant:subject conversation identity can collide for delimiters or insensitive comparisons and exceed 255 characters",
+      "fix": "Preserve safe lowercase ASCII ordinary legacy keys, hash JSON identity tuple for special/long identities; no automatic legacy data rewrite",
+      "added_tests": 2
+    },
+    {
+      "check": "identity/behavior + architecture + HTTP contracts after key fix",
+      "passed": 48
+    },
+    {
+      "check": "final full regression",
+      "passed": 377,
+      "skipped": 1,
+      "failed": 0
+    }
+  ],
+  "checks": {
+    "ruff": "pass: safemeal/tests",
+    "mypy": "pass: 293 source files",
+    "new_python_format": "pass: 4 files",
+    "git_diff_check": "pass",
+    "business_sql_query_budget": {
+      "favorites": 1,
+      "batch_up_to_100": 1
+    },
+    "local_auth_sql": "additional current-user lookup; preserves status/token-version enforcement",
+    "sqlite_favorites_query_plan": "ix_recipe_reactions_favorites used; no temporary sort",
+    "oidc": "real RSA signatures; JWKS HTTP intercepted locally; cache and key rotation verified",
+    "mysql_live": "not executed: Docker daemon unavailable",
+    "live_oidc": "not executed",
+    "user_database_migration": "not executed"
+  },
+  "behavior": {
+    "new_endpoints": [
+      "GET /recipes/favorites",
+      "POST /recipes/interactions/query"
+    ],
+    "scope": "authenticated tenant/subject, private flags and tenant-scoped counts",
+    "batch": "strict 1–100 JSON integer IDs, unique first-occurrence order, explicit missing IDs",
+    "favorites": "creation time DESC/id DESC, limit+1, offset pagination",
+    "jwks": "8 URL-scoped clients, 300s key-set cache",
+    "oidc_identity": "nonblank string sub/tenant required, exact identity preserved",
+    "conversation_identity": "ordinary safe local keys remain; special/long keys use collision-resistant encoding",
+    "historic_special_identity_data": "ownership-checked migration may be required; no automatic fallback/deletion/rewrite",
+    "logout": "existing refresh-only revocation policy retained; short-lived access remains until expiry",
+    "frontend": "backend only"
+  },
+  "next_feature": "06_behavior_events requires user confirmation"
+}

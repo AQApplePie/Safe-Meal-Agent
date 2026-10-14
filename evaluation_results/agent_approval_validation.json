@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-10",
+  "phase": "Agent approval UI and resume",
+  "pytest": {
+    "passed": 486,
+    "skipped": 25,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 11.757
+  },
+  "focused_tests": 27,
+  "new_backend_tests": 15,
+  "frontend_tests": {
+    "passed": 10,
+    "failed": 0
+  },
+  "vite_build": "passed",
+  "ruff": "passed",
+  "mypy": {
+    "passed": true,
+    "source_files": 306
+  },
+  "diff_check": "passed",
+  "authenticated_http_report": "agent_approval_authenticated.json",
+  "browser": {
+    "actual_react_frontend": true,
+    "actual_registration_and_jwt": true,
+    "sse_pending_approval": true,
+    "parameter_preview": true,
+    "reload_same_account_session": true,
+    "approve": true,
+    "reject": true,
+    "model_tools": "deterministic fixtures; no provider calls",
+    "temporary_servers_stopped": true
+  },
+  "architecture_review": {
+    "reviewer": "Codex primary agent",
+    "http": "protocol and identity binding only",
+    "application": "SQL claim and decision commit before workflow resume; final answer persisted to same message",
+    "concurrency": "conditional SQL update; old tokens and new turns blocked",
+    "safety": "resume crosses final safety gate",
+    "boundary": "uncertain processing/failed claims cannot automatically replay; no external exactly-once guarantee"
+  },
+  "source_sha256": {
+    "safemeal/agent/contracts/api.py": "a173da666a70e7a444d89e7aba49c259f66b6d07728974ebf90c623db13c8146",
+    "safemeal/agent/gateway/service.py": "b6f7db16d73aad47ccf00a94c6bda3b5c60f1d9c9e4ba97739dcb39f49a66da2",
+    "safemeal/agent/gateway/chat_turn_service.py": "b78b0a71e5553f9bacabe27cc3ebe1a8c635df465cef8b7e7375148a6ae21011",
+    "safemeal/agent/runtime/orchestration/nodes/approval.py": "321595d128105462e667a88069a17ff5983b0109b78c41808ec634a95834a4a3",
+    "safemeal/modules/conversation/application/turn_persistence.py": "7e97426d5f4c6bd4813f0ddf46d82cfd4279de878167bebb67cc301eed64896f",
+    "safemeal/modules/conversation/application/chat_session_service.py": "938eb38d4fc2280a9646c9c4386f260a7a54d9caefbb7f006631f36748293207",
+    "safemeal/modules/conversation/ports/chat_repository.py": "fa2f5a113b86495c87047a3b3514497f32e0b52f5f17293b4ff1368c29792c5a",
+    "safemeal/infrastructure/persistence/chat_repository.py": "becc28c6f5175dc78cafe3c2c6404309ecc9d41e8ce342d01b66072348353ba5",
+    "safemeal/interfaces/http/routers/chat.py": "fe5c42d2fc9647dafd3251a0f3e91686562f4f356fba8b45eb0e6bfc9f325e9d",
+    "web/src/App.jsx": "b4c1197fcac2e9430c27ba2aa7b934f901c1fc9e9890d3995aaff31c6c7e840b",
+    "web/src/approval.js": "d9c803e0d007e07cd809299ad652a21f616f43bd712227a8fbf9e1f5cc30a83b",
+    "web/src/components/ApprovalCard.jsx": "3ca9b614377f71dee6d0a7ac29ccea30081d477c9f9f14b2dd230fd061204233",
+    "web/src/styles.css": "d344fc932559a25daf1d3f380b5e11a11d62037e8000a900a2ff6772cd2dadc2",
+    "scripts/evaluate_agent_approval.py": "6b2844e0685fe8eb377de89aba833ed3a07ad2159c37761a3587540d48235495",
+    "tests/refactor/test_approval_flow.py": "8ea21aaff768c88f49f62d71e038fb51e58a5381a19449179f50e112737325ef",
+    "tests/refactor/test_context_and_agent_intent.py": "a2b8b13b458c542a7c14d5de39d60adafa151758bedca98ea8fd2e9129eb10d1",
+    "web/tests/approval.test.js": "b966556008c8109955f4584c81b8b914f162d3862ef1c6194e563fb2df4222ad"
+  }
+}

@@ -1,0 +1,89 @@
+name: safemeal-platform
+
+x-platform: &platform
+  build:
+    context: .
+    dockerfile: Dockerfile.platform
+  image: safemeal-platform:${SAFEMEAL_IMAGE_TAG:-local}
+
+x-config: &config
+  APP_ENV: development
+  DATABASE_URL: mysql+pymysql://recipe_user:safemeal-local@mysql:3306/recipe_db
+  AUTH_JWT_SECRET: ${AUTH_JWT_SECRET:-development-only-change-me}
+  CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+  DB_CONNECT_TIMEOUT: 3
+  DB_LOCK_WAIT_TIMEOUT_SECONDS: ${DB_LOCK_WAIT_TIMEOUT_SECONDS:-2}
+  DB_TRANSACTION_MAX_ATTEMPTS: ${DB_TRANSACTION_MAX_ATTEMPTS:-3}
+  METRICS_ENABLED: ${METRICS_ENABLED:-false}
+  METRICS_TOKEN: ${METRICS_TOKEN:-}
+  METRICS_OUTBOX_SCRAPE_SECONDS: ${METRICS_OUTBOX_SCRAPE_SECONDS:-5}
+
+services:
+  api:
+    <<: *platform
+    init: true
+    environment:
+      <<: *config
+      REDIS_RATE_LIMIT_URL: redis://redis:6379/0
+      RECIPE_CACHE_URL: redis://redis:6379/1
+      RECIPE_RANKING_REDIS_URL: redis://redis:6379/2
+      BEHAVIOR_EVENT_REDIS_URL: redis://redis:6379/3
+    ports:
+      - "${PLATFORM_API_PORT:-8100}:8000"
+    depends_on:
+      db-migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db-migrate:
+    <<: *platform
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      <<: *config
+    healthcheck:
+      disable: true
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: "no"
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: safemeal-platform-local-root
+      MYSQL_DATABASE: recipe_db
+      MYSQL_USER: recipe_user
+      MYSQL_PASSWORD: safemeal-local
+      TZ: Asia/Shanghai
+    ports:
+      - "127.0.0.1:${PLATFORM_MYSQL_PORT:-23306}:3306"
+    volumes:
+      - platform_mysql_data:/var/lib/mysql
+      - ./data/mysql/init_mysql.sql:/docker-entrypoint-initdb.d/00_recipe_schema.sql:ro
+      - ./data/mysql/insert_sample_data.sql:/docker-entrypoint-initdb.d/10_recipe_seed.sql:ro
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:${PLATFORM_REDIS_PORT:-26379}:6379"
+    volumes:
+      - platform_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  platform_mysql_data:
+  platform_redis_data:

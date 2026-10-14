@@ -1,0 +1,414 @@
+# SafeMeal 减法重构迭代记录
+
+## Iteration 0 — Baseline
+
+- Timestamp: 2026-10-08T12:37:00+0800
+- Git HEAD: `74ae66b4f6e23f5c99855c639bd735a304599333`
+- Target: 建立当前工作区行为基线。
+- Expected simplification: 无。
+- Files changed/deleted: 无。
+- Tests executed: Ruff；完整 pytest。
+- Tests passed/failed: Ruff PASS；245 passed，1 skipped，0 failed。
+- Result: PASS。
+
+## Iteration 1 — 权威输入与死状态删除
+
+- Timestamp: 2026-10-08T12:48:00+0800
+- Git HEAD: `74ae66b4f6e23f5c99855c639bd735a304599333`
+- Target: Initializer 只装配 Outer Context；删除无消费者字段。
+- Expected simplification: 删除历史二次恢复、6 个无独立消费者的状态字段。
+- Files changed: Initializer、Approval、Constraint Resolver、Agent/Workflow contracts、配置和组合根。
+- Files deleted: 无。
+- Functions removed: `_conversation_from_messages`。
+- Parameters removed: 两层 `history_messages`。
+- Reason: 生产链已由 Context Builder 提供历史；审批由 interrupt/pending calls 控制；resolved constraints 已存在于 requirements。
+- Tests: 60 个审批、恢复、workflow、dietary、control-boundary 定向测试。
+- Tests passed/failed: 60/0。
+- Regression: 无。
+- Result: PASS。
+
+## Iteration 2 — 删除 PrepareContext 语义兼容入口
+
+- Timestamp: 2026-10-08T12:50:00+0800
+- Git HEAD: `74ae66b4f6e23f5c99855c639bd735a304599333`
+- Target: Request Understanding 只在正式上游节点运行。
+- Expected simplification: 删除第二次规则理解和第二次上下文源加载。
+- Files changed: `prepare_context.py` 及节点级测试。
+- Functions/parameters removed: 无公开函数；删除两个兼容分支。
+- Tests: 39 个 understanding/menu reference 测试。
+- Tests passed/failed: 首次 38/1。
+- Regression detected: 独立节点测试未提供 `request_frame`。
+- Root cause: 测试绕过正式图的上游契约。
+- Resolution: 测试显式生成 Frame；后续另两个相同测试在全量回归中暴露并按真实 `Understand → Prepare` 数据流提供预加载历史。
+- Result: FAIL → 修复后 PASS。
+
+## Iteration 3 — 召回策略归属 RecipeService
+
+- Timestamp: 2026-10-08T12:51:00+0800
+- Git HEAD: `74ae66b4f6e23f5c99855c639bd735a304599333`
+- Target: Planner 只传用户目标，不传内部扫描预算。
+- Expected simplification: 删除 `RecipeQuery.candidate_limit` 及 Planner 参数计算。
+- Files changed: Planner strategy、RecipeQuery、RecipeService、数量/类别测试。
+- Parameters removed: `candidate_limit`。
+- Reason: 调用扫描证明该参数只有 Planner、RecipeService 和测试使用；它属于检索策略。
+- Tests: 第一次 41 个相关测试，38 passed/3 failed；修复后全量测试。
+- Regression detected: 三个类别测试仍构造旧参数。
+- Root cause: 测试夹具仍表达已删除的内部策略。
+- Resolution: 只保留 requested_count 和类别；RecipeService 使用原公式。
+- Result: FAIL → 修复后 PASS。
+
+## Iteration 4 — 全面验证与启动验证
+
+- Timestamp: 2026-10-08T12:54:00+0800
+- Git HEAD: `74ae66b4f6e23f5c99855c639bd735a304599333`
+- Target: 静态、行为和应用装配验收。
+- Tests executed: 全库 Ruff、完整 pytest、`import safemeal.main`、`git diff --check`。
+- Tests passed: Ruff PASS；245 passed，1 skipped；diff check PASS。
+- Tests failed: 第一次启动导入失败。
+- Regression detected: `DATABASE_URL` 缺失。
+- Root cause: 当前本地 `.env` 没有 Settings 必填项，失败发生在应用装配前。
+- Resolution: 使用 Docker 等价的临时 `DATABASE_URL` 重试；`startup_import_ok`。
+- Result: PASS（首次失败分类为 ENVIRONMENT_UNAVAILABLE）。
+
+
+## Iteration 5 — 本次环境检查：NLU venv、默认 Python、默认 Ruff
+
+- iteration: 5
+- timestamp: "2026-10-08T13:02:17.152091+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "本次环境检查：NLU venv、默认 Python、默认 Ruff"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: []
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: [".venv-nlu/bin/python -m pytest tests/refactor tests/evaluation -q", "python -m pytest -q", "python -m ruff check safemeal tests"]
+- tests_passed: 0
+- tests_failed: 0
+- regression_detected: false
+- root_cause: "NLU 环境没有 pytest；默认 Python 3.13 缺 LangGraph 和 pytest-asyncio；默认 Python 缺 Ruff"
+- resolution: "使用现有 agent_env Python 3.12；不安装依赖、不更改环境"
+- result: "FAIL"
+- classification: "ENVIRONMENT_UNAVAILABLE"
+
+## Iteration 6 — 本次工作区基线
+
+- iteration: 6
+- timestamp: "2026-10-08T13:02:17.162378+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "本次工作区基线"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: []
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["agent_env/bin/python -m pytest -q", "agent_env/bin/python -m ruff check safemeal tests"]
+- tests_passed: 245
+- tests_failed: 0
+- regression_detected: false
+- root_cause: ""
+- resolution: ""
+- result: "PASS"
+- skipped: 1
+- baseline_metrics: {"python_source_lines": 23496, "initializer_lines": 147, "planner_lines": 661, "planner_if_branches": 29, "AgentState_fields": 29, "AgentContext_fields": 10, "WorkflowState_fields": 7}
+- workspace_status: " M safemeal/agent/contracts/context.py\n M safemeal/agent/contracts/state.py\n M safemeal/agent/contracts/workflow/models.py\n M safemeal/agent/runtime/orchestration/graph.py\n M safemeal/agent/runtime/orchestration/nodes/approval.py\n M safemeal/agent/runtime/orchestration/nodes/initializer/node.py\n M safemeal/agent/runtime/orchestration/nodes/planner/constraints.py\n M safemeal/agent/workflow/nodes/constraints.py\n M safemeal/agent/workflow/nodes/prepare_context.py\n M safemeal/bootstrap/composition/application_container.py\n M safemeal/config/settings.py\n M safemeal/modules/recipe/application/recipe_service.py\n M safemeal/modules/recipe/contracts/catalog.py\n M tests/evaluation/test_count_contract.py\n M tests/evaluation/test_safety_memory_scope.py\n M tests/refactor/test_context_and_agent_intent.py\n?? Safe-Meal-Agent.txt\n?? docs/architecture/\n?? docs/refactor/\n?? evaluation_results/architecture_refactor_final_report.md\n?? evaluation_results/architecture_refactor_log.json\n?? evaluation_results/architecture_refactor_log.md\n?? evaluation_results/context_menu_modification_e2e_result.json\n?? evaluation_results/context_menu_modification_final_report.md\n?? evaluation_results/context_menu_modification_fix_log.json\n?? evaluation_results/context_menu_modification_fix_log.md\n?? evaluation_results/simplification_final_report.md\n?? evaluation_results/simplification_iterations.json\n?? evaluation_results/simplification_iterations.md\n?? evaluation_results/water_boiled_fish_breakpoint_trace.md\n?? safemeal/agent/README.md\n?? safemeal/agent/__init__.py\n?? safemeal/agent/context/__init__.py\n?? safemeal/agent/context/active_menu.py\n?? safemeal/agent/context/relevance.py\n?? safemeal/agent/runtime/menu_coverage.py\n?? safemeal/agent/runtime/orchestration/action_policy.py\n?? safemeal/agent/runtime/orchestration/nodes/planner/strategy.py\n?? safemeal/agent/runtime/tools/adapters/constraint_verification.py\n?? safemeal/agent/runtime/tools/adapters/knowledge_search.py\n?? safemeal/agent/safety/__init__.py\n?? safemeal/agent/understanding/__init__.py\n?? safemeal/bootstrap/__init__.py\n?? safemeal/modules/__init__.py\n?? safemeal/modules/conversation/__init__.py\n?? safemeal/modules/conversation/contracts/__init__.py\n?? safemeal/modules/conversation/ports/__init__.py\n?? safemeal/modules/dietary/README.md\n?? safemeal/modules/dietary/__init__.py\n?? safemeal/modules/identity/__init__.py\n?? safemeal/modules/identity/ports/__init__.py\n?? safemeal/modules/interaction/\n?? safemeal/modules/knowledge/__init__.py\n?? safemeal/modules/knowledge/application/__init__.py\n?? safemeal/modules/knowledge/ports/__init__.py\n?? safemeal/modules/recipe/README.md\n?? safemeal/modules/recipe/__init__.py\n?? safemeal/modules/recipe/ports/__init__.py\n?? safemeal/modules/recipe/ports/recipe_generator.py\n?? safemeal/safemeal.txt\n?? safemeal/shared/contracts/__init__.py\n?? tests/e2e/context_menu_modification_full_chain.py\n?? tests/evaluation/test_constraint_verification_tool.py\n?? tests/evaluation/test_menu_context_modification.py\n?? tests/refactor/test_agent_control_boundaries.py\n"
+
+## Iteration 7 — 统一 process/resume 输出；集中 Frame 约束合并；删除 history 参数：首次验证
+
+- iteration: 7
+- timestamp: "2026-10-08T13:02:17.171239+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "统一 process/resume 输出；集中 Frame 约束合并；删除 history 参数：首次验证"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: ["safemeal/agent/gateway/service.py", "safemeal/agent/safety/dietary_safety_service.py", "safemeal/agent/workflow/nodes/constraints.py", "tests/refactor/test_dietary_requirements.py", "tests/refactor/test_control_plane_contracts.py", "tests/refactor/test_external_recipe_fallback.py", "tests/refactor/test_request_frame_regressions.py"]
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: ["DietarySafetyService.resolve_constraints.history"]
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["agent_env/bin/python -m pytest -q"]
+- tests_passed: 0
+- tests_failed: 1
+- regression_detected: true
+- root_cause: "AST col_offset 是 UTF-8 字节位置；编辑脚本按字符切片破坏中文所在行，测试收集语法失败"
+- resolution: "只恢复本轮开始时干净的 test_dietary_requirements.py，再按 UTF-8 坐标删除实参；全部行为断言保留"
+- result: "FAIL"
+
+## Iteration 8 — 修复参数删除后的完整回归
+
+- iteration: 8
+- timestamp: "2026-10-08T13:02:47.879223+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "修复参数删除后的完整回归"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: []
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["agent_env/bin/python -m pytest -q"]
+- tests_passed: 245
+- tests_failed: 0
+- regression_detected: false
+- root_cause: ""
+- resolution: "UTF-8 位置修复后全部基线行为保持"
+- result: "PASS"
+- skipped: 1
+
+## Iteration 9 — 缩减 Initializer 单调用包装和 Planner 重复更新
+
+- iteration: 9
+- timestamp: "2026-10-08T13:04:06.814176+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "缩减 Initializer 单调用包装和 Planner 重复更新"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: ["safemeal/agent/runtime/orchestration/nodes/initializer/node.py", "safemeal/agent/runtime/orchestration/nodes/planner/node.py"]
+- files_deleted: []
+- functions_removed: ["_context_observations"]
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["agent_env/bin/python -m pytest -q", "agent_env/bin/python -m ruff check safemeal tests"]
+- tests_passed: 245
+- tests_failed: 0
+- regression_detected: false
+- root_cause: ""
+- resolution: ""
+- result: "PASS"
+- skipped: 1
+
+## Iteration 10 — 新增输入安全与 Resume 边界回归
+
+- iteration: 10
+- timestamp: "2026-10-08T13:04:06.824970+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "新增输入安全与 Resume 边界回归"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: ["tests/refactor/test_simplification_boundaries.py"]
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["agent_env/bin/python -m pytest tests/refactor/test_simplification_boundaries.py -q"]
+- tests_passed: 4
+- tests_failed: 1
+- regression_detected: false
+- root_cause: "resume 超时一律分类为 agent_execution_failed，与 process 不一致；其超时还不覆盖等待信号量"
+- resolution: "统一两条路径的并发/超时调用和异常分类，不削弱断言"
+- result: "FAIL"
+- classification: "PRE_EXISTING_FAILURE"
+
+## Iteration 11 — 统一调用超时及错误分类；完整回归
+
+- iteration: 11
+- timestamp: "2026-10-08T13:04:41.196382+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "统一调用超时及错误分类；完整回归"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: ["safemeal/agent/gateway/service.py", "tests/refactor/test_simplification_boundaries.py"]
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["agent_env/bin/python -m pytest -q", "agent_env/bin/python -m ruff check safemeal tests"]
+- tests_passed: 250
+- tests_failed: 0
+- regression_detected: false
+- root_cause: ""
+- resolution: ""
+- result: "PASS"
+- skipped: 1
+
+## Iteration 12 — 删除无独立消费者的回答、历史读取和 JSON 包装
+
+- iteration: 12
+- timestamp: "2026-10-08T13:10:28.814386+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "删除无独立消费者的回答、历史读取和 JSON 包装"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: ["safemeal/agent/workflow/review_reply.py", "safemeal/agent/context/history.py", "safemeal/agent/workflow/context/builder.py", "tests/refactor/test_context_and_agent_intent.py"]
+- files_deleted: []
+- functions_removed: ["render_review_reply", "ConversationHistoryService.load_before_turn", "ConversationHistoryService.load_active_menu_before_turn", "AgentContextBuilder._json_objects"]
+- parameters_removed: []
+- reason_for_deletion: "回答 wrapper 无引用；活动菜单 wrapper 无引用；历史 wrapper 仅测试调用，正式调用用同事务 load_context_before_turn；JSON wrapper 无独立逻辑，直接调用既有转换"
+- tests_executed: ["agent_env/bin/python -m pytest -q", "agent_env/bin/python -m ruff check safemeal tests"]
+- tests_passed: 252
+- tests_failed: 0
+- regression_detected: false
+- root_cause: ""
+- resolution: ""
+- result: "PASS"
+- skipped: 1
+
+## Iteration 13 — 统一推荐完成度、删除重复数字映射及无效 Observation 预过滤
+
+- iteration: 13
+- timestamp: "2026-10-08T13:14:27.318983+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "统一推荐完成度、删除重复数字映射及无效 Observation 预过滤"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: ["safemeal/agent/runtime/aggregation/responder.py", "safemeal/agent/runtime/orchestration/nodes/reflector/assessment.py", "safemeal/agent/understanding/request_understanding.py"]
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "Responder 与 Reflector 扫描同一推荐数；预过滤的工具名不在生成/融合白名单中，删除不影响结果；中文数量映射与同函数 servings 映射相同"
+- tests_executed: ["agent_env/bin/python -m pytest -q", "agent_env/bin/python -m ruff check safemeal tests"]
+- tests_passed: 252
+- tests_failed: 0
+- regression_detected: false
+- root_cause: ""
+- resolution: ""
+- result: "PASS"
+- skipped: 1
+
+## Iteration 14 — Initializer 明确拒绝缺失约束；保留 Gateway 独立调用 fallback
+
+- iteration: 14
+- timestamp: "2026-10-08T13:14:27.329397+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "Initializer 明确拒绝缺失约束；保留 Gateway 独立调用 fallback"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: ["safemeal/agent/runtime/orchestration/nodes/initializer/node.py", "tests/refactor/test_agent_control_boundaries.py"]
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "正式唯一图消费者是 Gateway；独立入口已有共享约束解析。Initializer 不再生成静默空事实；节点测试明确传入已解析契约，另加缺失输入拒绝测试"
+- tests_executed: ["agent_env/bin/python -m pytest -q", "agent_env/bin/python -m ruff check safemeal tests"]
+- tests_passed: 253
+- tests_failed: 0
+- regression_detected: false
+- root_cause: ""
+- resolution: ""
+- result: "PASS"
+- skipped: 1
+
+## Iteration 15 — 扩展静态检查与应用启动验证
+
+- iteration: 15
+- timestamp: "2026-10-08T13:14:27.338969+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "扩展静态检查与应用启动验证"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: []
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["agent_env/bin/python -m mypy safemeal --no-error-summary", "agent_env/bin/python -m ruff format --check safemeal tests", "FastAPI TestClient lifespan; GET /health /livez /api /openapi.json"]
+- tests_passed: 0
+- tests_failed: 31
+- regression_detected: false
+- root_cause: "全项目 31 个既有 mypy 错误；格式检查 122 文件需要格式化（含当时新增测试，随后已格式化）"
+- resolution: "临时源码副本恢复本轮开始时干净的文件并恢复旧约束签名调用，用错误内容比对确认没有新增类型错误；启动使用临时配置和 checkpoint 路径，不连接用户 DB；保留全量格式/类型债务，不虚报 COMPLETE"
+- result: "FAIL"
+- classification: "PRE_EXISTING_FAILURE"
+- startup: "PASS; 4 endpoints 200, lifespan entry and exit"
+
+## Iteration 16 — 有限类型修复脚本首次启动
+
+- iteration: 16
+- timestamp: "2026-10-08T13:18:12.397874+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "有限类型修复脚本首次启动"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: []
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["python /tmp/safemeal-simplification/types.py", "mypy safemeal", "pytest -q"]
+- tests_passed: 253
+- tests_failed: 0
+- regression_detected: false
+- root_cause: "临时脚本名 types.py 遮蔽标准库 types，脚本未修改项目；随后检查仍有31个原错误"
+- resolution: "将临时脚本改名 fix_annotations.py 后执行"
+- result: "FAIL"
+- skipped: 1
+
+## Iteration 17 — Literal/容器注解修复第一轮
+
+- iteration: 17
+- timestamp: "2026-10-08T13:18:12.409862+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "Literal/容器注解修复第一轮"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: []
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["mypy safemeal --no-error-summary", "pytest -q"]
+- tests_passed: 253
+- tests_failed: 7
+- regression_detected: false
+- root_cause: "mypy 对 comprehension/set 检查未收窄 Literal；lookup 分支变量先使用后重复注解；推荐结果需明确 tuple；内部 intent enum 映射的边界需校验"
+- resolution: "保留 schema 校验，显式注解和已检查 enum 的 cast；处理容器类型和模型映射验证；不添加 ignore/Any"
+- result: "FAIL"
+- skipped: 1
+
+## Iteration 18 — 静态验收修复与回归
+
+- iteration: 18
+- timestamp: "2026-10-08T13:18:12.418940+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "静态验收修复与回归"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: ["safemeal/modules/dietary/application/preference_rules.py", "safemeal/modules/dietary/application/constraint_resolver.py", "safemeal/modules/recipe/application/recipe_service.py", "safemeal/infrastructure/retrieval/local_recipe_catalog.py", "safemeal/agent/understanding/frame_semantics.py", "safemeal/agent/understanding/request_understanding.py", "safemeal/infrastructure/nlu/local_request_understanding.py", "safemeal/agent/runtime/tools/adapters/constraint_verification.py", "safemeal/agent/runtime/orchestration/nodes/planner/intent.py", "safemeal/agent/runtime/aggregation/responder.py", "safemeal/bootstrap/composition/application_container.py", "safemeal/agent/workflow/context/builder.py"]
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "清理阻挡静态验收的既有 Literal 推断和循环变量复用问题，不更改约束强度、scope、NLU 模型或 prompt"
+- tests_executed: ["mypy safemeal", "ruff check safemeal tests", "pytest -q"]
+- tests_passed: 253
+- tests_failed: 0
+- regression_detected: false
+- root_cause: ""
+- resolution: ""
+- result: "PASS"
+- skipped: 1
+- static_check: "mypy: 267 source files PASS; Ruff PASS"
+
+## Iteration 19 — 最终验收与证据落盘
+
+- iteration: 19
+- timestamp: "2026-10-08T13:19:56.953921+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "最终验收与证据落盘"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: []
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "所有实质删除均有源码证据与完整回归；本次未删除状态字段或安全防线"
+- tests_executed: ["pytest -q --junitxml=evaluation_results/simplification_pytest.xml", "mypy safemeal", "ruff check safemeal tests", "git diff --check", "TestClient startup/shutdown + four HTTP endpoints"]
+- tests_passed: 253
+- tests_failed: 0
+- regression_detected: false
+- root_cause: ""
+- resolution: ""
+- result: "PASS"
+- skipped: 1
+- static_check: "mypy PASS:267 source files; Ruff PASS; diff whitespace PASS"
+- startup: "PASS"
+- metrics: {"before": {"python_source_lines": 23496, "initializer_lines": 147, "planner_lines": 661, "planner_if_branches": 29, "AgentState_fields": 29, "AgentContext_fields": 10, "WorkflowState_fields": 7}, "after": {"python_source_lines": 23420, "initializer_lines": 140, "planner_lines": 658, "planner_if_branches": 30, "AgentState_fields": 29, "AgentContext_fields": 10, "WorkflowState_fields": 7}, "method": "AST annotated class fields / ast.If count; source splitlines; scope safemeal/**/*.py, planner/*.py"}
+
+## Iteration 20 — 保留既有全库格式差异，修复新增差异
+
+- iteration: 20
+- timestamp: "2026-10-08T13:19:56.964007+08:00"
+- git_head: "74ae66b4f6e23f5c99855c639bd735a304599333"
+- target: "保留既有全库格式差异，修复新增差异"
+- expected_simplification: "统一现有权威逻辑，删除无消费者参数和恢复路径重复实现"
+- files_changed: []
+- files_deleted: []
+- functions_removed: []
+- parameters_removed: []
+- reason_for_deletion: "参见本轮源码审计补充"
+- tests_executed: ["ruff format --check safemeal tests", "ruff format frame_semantics.py test_agent_control_boundaries.py"]
+- tests_passed: 0
+- tests_failed: 0
+- regression_detected: false
+- root_cause: "121 个既有文件格式与 formatter 不同；新增格式差异两个文件已单独修复"
+- resolution: "不扩大为全库格式重写；FULL_ACCEPTANCE_PENDING，未标记 COMPLETE"
+- result: "FAIL"
+- classification: "PRE_EXISTING_FAILURE"

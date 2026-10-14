@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "checks": [
+    "GET /livez: 200",
+    "GET /readyz: 200",
+    "GET /openapi.json: 200",
+    "GET /api/v1/recipes: 200",
+    "GET /api/v1/recipes/41: 200",
+    "PUT /api/v1/recipes/41/like: 401",
+    "POST /api/v1/auth/register: 201",
+    "GET /api/v1/auth/me: 200",
+    "PUT /api/v1/recipes/41/like: 200",
+    "PUT /api/v1/recipes/41/like: 200",
+    "PUT /api/v1/recipes/41/favorite: 200",
+    "GET /api/v1/recipes/favorites: 200",
+    "POST /api/v1/recipes/interactions/query: 200",
+    "PUT /api/v1/recipes/41/view: 200",
+    "GET /api/v1/recipes/history: 200",
+    "GET /api/v1/recipes/rankings: 200",
+    "DELETE /api/v1/recipes/41/like: 200",
+    "DELETE /api/v1/recipes/41/favorite: 200",
+    "POST /api/v1/auth/refresh: 200",
+    "POST /api/v1/auth/logout: 204",
+    "POST /api/v1/auth/login: 200"
+  ],
+  "account": "smoke-3d37bfad341944b680e570f9af53ab25@example.test",
+  "recipe_id": 41
+}

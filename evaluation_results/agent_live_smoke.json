@@ -1,0 +1,309 @@
+{
+  "dataset_sha256": "524a963a608fbabce39c8d1b9b941ea7680267255b0c0b7de2b257861759518e",
+  "model": "deepseek-chat",
+  "baseline_temperature": 0,
+  "agent_answer_temperature": 0.2,
+  "isolated_sqlite": true,
+  "transport": "ASGI TestClient, real provider network",
+  "retrieval": "owned nine-recipe SQL fixture; external retrieval disabled",
+  "prompt_sha256": "edef6d3bb309c55e48b637afcff6631517236fba9a63990fd4038b10bebf6fe9",
+  "rows": [
+    {
+      "case_id": "L01",
+      "group": "recommend",
+      "repeat": 0,
+      "system": "single_prompt",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "answer": "根据现有来源，推荐两道鱼：清蒸鲈鱼和清蒸鳕鱼。",
+          "recipes": [
+            "清蒸鲈鱼",
+            "清蒸鳕鱼"
+          ],
+          "usage": {
+            "input_tokens": 478,
+            "output_tokens": 41,
+            "total_tokens": 519,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "seconds": 0.9085759999999254
+        }
+      ]
+    },
+    {
+      "case_id": "L01",
+      "group": "recommend",
+      "repeat": 0,
+      "system": "retrieval_once",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "answer": "根据现有来源，推荐两道鱼：清蒸鲈鱼和清蒸鳕鱼。",
+          "recipes": [
+            "清蒸鲈鱼",
+            "清蒸鳕鱼"
+          ],
+          "usage": {
+            "input_tokens": 478,
+            "output_tokens": 41,
+            "total_tokens": 519,
+            "input_token_details": {
+              "cache_read": 256
+            },
+            "output_token_details": {}
+          },
+          "seconds": 0.7428859999999986
+        }
+      ]
+    },
+    {
+      "case_id": "L01",
+      "group": "recommend",
+      "repeat": 0,
+      "system": "production_agent",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "message": "可以优先考虑下面这 2 道菜：\n- 「清蒸鲈鱼」：主要食材有鲈鱼、姜、盐。\n- 「清蒸鳕鱼」：主要食材有鳕鱼、姜、盐。\n这些结果已经按你本轮提出的必要条件完成筛选。",
+          "session_id": "9cc26302-7aae-40a2-a467-dae89f74a019",
+          "message_id": "2",
+          "route": "agent-tools-loop",
+          "route_logic": "agent-tools-loop",
+          "sources": [],
+          "metadata": {
+            "session_id": "9cc26302-7aae-40a2-a467-dae89f74a019",
+            "iteration": 1,
+            "tool_call_count": 1,
+            "budget_exhausted": false,
+            "loop_stop_reason": "",
+            "evidence_sufficient": true,
+            "missing_information": [],
+            "user_memory_count": 0,
+            "episodic_memory_count": 0,
+            "has_user_profile": false,
+            "observations": [
+              {
+                "tools": "task_context",
+                "ok": true,
+                "status": "ok",
+                "error_code": null,
+                "has_data": true
+              },
+              {
+                "tools": "recommend_recipes",
+                "ok": true,
+                "status": "ok",
+                "error_code": null,
+                "has_data": true
+              }
+            ],
+            "agent_status": "ok",
+            "tool_trace": [
+              {
+                "tool": "recommend_recipes",
+                "args": {
+                  "requested_count": 2,
+                  "food_categories": [
+                    "fish"
+                  ],
+                  "exclude_food_categories": []
+                },
+                "effective_args": {
+                  "requested_count": 2,
+                  "food_categories": [
+                    "fish"
+                  ],
+                  "exclude_food_categories": []
+                },
+                "status": "FOUND",
+                "result_count": 2,
+                "result_names": [
+                  "清蒸鲈鱼",
+                  "清蒸鳕鱼"
+                ],
+                "result_categories": []
+              }
+            ],
+            "request_frame": {
+              "tasks": [
+                {
+                  "kind": "recipe_recommendation"
+                }
+              ],
+              "memory_updates": [],
+              "current_constraints": [
+                {
+                  "kind": "food_category",
+                  "value": "fish"
+                }
+              ],
+              "turn_preferences": [],
+              "statements": [
+                {
+                  "type": "food_category",
+                  "value": "fish",
+                  "owner": "self",
+                  "strength": "menu_goal",
+                  "source": "current_input",
+                  "scope": "current_turn"
+                }
+              ],
+              "participants": [],
+              "context_relation": "new_task",
+              "operation": null,
+              "canonical": true,
+              "target": {
+                "recipe_name": null,
+                "ingredient": null,
+                "menu_category": null
+              },
+              "requested_fields": [],
+              "exact_match_required": false,
+              "recommendation_count": 2,
+              "servings": null,
+              "meal_type": null,
+              "scenario": null,
+              "menu_planning": null,
+              "context_needs": [
+                "allergies",
+                "dietary_restrictions",
+                "food_preferences"
+              ],
+              "confidence": 0.9,
+              "understanding_status": "accepted",
+              "backend": "rules",
+              "fallback_used": false,
+              "clarification_question": null,
+              "validation_errors": []
+            },
+            "resolved_constraints": {
+              "allergies": {
+                "active": false,
+                "trigger_terms": [],
+                "raw_ingredients": [],
+                "excluded_ingredients": [],
+                "strictness": "hard_exclusion_contextual"
+              },
+              "restrictions": {
+                "active": false,
+                "trigger_terms": [],
+                "raw_ingredients": [],
+                "excluded_ingredients": [],
+                "strictness": "hard_exclusion_contextual"
+              },
+              "preferences": [],
+              "resolved": {
+                "hard_safety": [],
+                "strong_requirements": [],
+                "soft_preferences": [],
+                "menu_goals": [
+                  {
+                    "type": "food_category",
+                    "value": "fish",
+                    "owner": "self",
+                    "strength": "menu_goal",
+                    "source": "current_input",
+                    "scope": "current_turn"
+                  }
+                ]
+              }
+            },
+            "reflect": {
+              "rationale": "普通推荐完成度由代码验证：2/2。",
+              "evidence_sufficient": true,
+              "missing_information": []
+            },
+            "rendered_recipe_refs": [
+              {
+                "position": 1,
+                "name": "清蒸鲈鱼"
+              },
+              {
+                "position": 2,
+                "name": "清蒸鳕鱼"
+              }
+            ],
+            "request_understanding_confidence": 0.9,
+            "understanding_status": "accepted",
+            "fallback_used": false,
+            "request_tasks": [
+              "recipe_recommendation"
+            ],
+            "context_needs": [
+              "allergies",
+              "dietary_restrictions",
+              "food_preferences"
+            ],
+            "loaded_context_types": [],
+            "request_understanding_backend": "rules",
+            "menu_execution_plan": {},
+            "menu_task_progress": {},
+            "recommendation_completion": {
+              "requested": 2,
+              "fulfilled": 2,
+              "complete": true
+            },
+            "safety_review": "passed",
+            "safe_recipe_names": [
+              "清蒸鲈鱼",
+              "清蒸鳕鱼"
+            ],
+            "recipe_reviews": [
+              {
+                "name": "清蒸鲈鱼",
+                "decision": "passed",
+                "allergy_status": "safe",
+                "preference_status": "not_applicable",
+                "preferences": []
+              },
+              {
+                "name": "清蒸鳕鱼",
+                "decision": "passed",
+                "allergy_status": "safe",
+                "preference_status": "not_applicable",
+                "preferences": []
+              }
+            ]
+          },
+          "recipe": null,
+          "timestamp": "2026-10-10T06:26:02.854310Z",
+          "http_status": 200,
+          "seconds": 0.02858508300005269,
+          "cross_user_status": 404
+        }
+      ]
+    },
+    {
+      "case_id": "L02",
+      "group": "detail",
+      "repeat": 0,
+      "system": "single_prompt",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "answer": "清蒸鲈鱼的材料有：鲈鱼、姜、盐。",
+          "recipes": [],
+          "usage": {
+            "input_tokens": 482,
+            "output_tokens": 24,
+            "total_tokens": 506,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "seconds": 0.8716687080000156
+        }
+      ]
+    }
+  ],
+  "summary": {}
+}

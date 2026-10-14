@@ -1,0 +1,22 @@
+{
+  "files": 321,
+  "classes": 315,
+  "methods_and_functions": 975,
+  "sql_classes": 20,
+  "fields": 1176,
+  "instance_attributes": 271,
+  "documented_choices": 390,
+  "issues": [],
+  "ast_unchanged_files": 321,
+  "checker_negative_and_positive_cases": "passed",
+  "date": "2026-10-11",
+  "pytest": {
+    "passed": 533,
+    "skipped": 2,
+    "duration_seconds": 38.68,
+    "mysql_integration_enabled": true
+  },
+  "ruff_check": "passed",
+  "ruff_format": "passed",
+  "runtime_changes": false
+}

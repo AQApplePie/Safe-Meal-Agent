@@ -1,0 +1,37 @@
+{
+  "source": "isolated live benchmark",
+  "groups": {
+    "L01": {
+      "requests": 3,
+      "workflow_p50_ms": 19.652,
+      "workflow_p95_ms": 62.457,
+      "http_p50_ms": 28.64033300011215,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cached_input_tokens": 0,
+      "usage_complete": true,
+      "cost_complete": true,
+      "estimated_cost": 0
+    },
+    "L08": {
+      "requests": 3,
+      "workflow_p50_ms": 6597.419,
+      "workflow_p95_ms": 7096.13,
+      "http_p50_ms": 6606.180458000381,
+      "model_calls": 9,
+      "input_tokens": 21558,
+      "output_tokens": 2709,
+      "cached_input_tokens": 19968,
+      "usage_complete": true,
+      "cost_complete": false,
+      "estimated_cost": null
+    }
+  },
+  "limits": [
+    "3 samples per case; p95 equals sample maximum",
+    "Workflow duration excludes HTTP authentication and persistence",
+    "SDK internal retries are included in duration, not individually counted",
+    "Configured prices are estimates, not provider billing records"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "timestamp": "2026-10-04T14:00:00+08:00",
+  "result": "PASS",
+  "session_id": "f6a454b0-aeed-495d-9c7d-6233f8fa1e69",
+  "conversation_id": "f6a454b0-aeed-495d-9c7d-6233f8fa1e69",
+  "turn_1_message_id": "512",
+  "turn_2_message_id": "514",
+  "turn_1_coverage": {
+    "cold_dish": 3,
+    "hot_dish": 2,
+    "vegetarian": 4,
+    "meat": 5,
+    "soup": 1,
+    "staple": 1
+  },
+  "turn_1_total": 16,
+  "turn_2": {
+    "context_relation": "modification",
+    "operation": "replace",
+    "target_category": "meat",
+    "requested": 5,
+    "returned": 5,
+    "old_meat_ids": [1, 21, 22, 37, 41],
+    "new_meat_ids": [17, 19, 29, 52, 60],
+    "overlap": [],
+    "all_category_meat": true,
+    "untouched_categories_preserved": true
+  },
+  "sse_events": [
+    "accepted",
+    "progress",
+    "progress",
+    "progress",
+    "progress",
+    "progress",
+    "progress",
+    "answer",
+    "answer",
+    "answer",
+    "done"
+  ],
+  "context_matrix": {
+    "CM02": "PASS",
+    "CM03": "PASS",
+    "CM04": "PASS",
+    "CM05": "PASS",
+    "CM06": "PASS",
+    "REFERENCE": "PASS",
+    "NEW_TASK": "PASS"
+  },
+  "regressions": {
+    "four_fish": "PASS",
+    "recipe_detail": "PASS",
+    "two_meat_two_vegetarian_one_soup": "PASS",
+    "banquet_16": "PASS",
+    "banquet_then_recipe_detail": "PASS",
+    "three_fish_then_second_detail": "PASS"
+  }
+}

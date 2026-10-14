@@ -1,0 +1,88 @@
+{
+  "reviewer": "assistant, directed source-based review; not independent human review",
+  "reference": "https://www.fda.gov/food/hfp-constituent-updates/fda-issues-final-compliance-policy-guide-scombrotoxin-histamine-forming-fish-and-fishery-products",
+  "review_scope": "core claim about already-formed histamine and actual chunk attribution only",
+  "full_agent_core_fact_pass": 3,
+  "supplied_evidence_core_fact_and_chunk_pass": 6,
+  "does_not_establish_full_RAG_quality": true,
+  "rows": [
+    {
+      "scope": "full_http_agent_L08",
+      "repeat": 0,
+      "core_histamine_fact_correct": true,
+      "retrieved_document_evidence": false,
+      "citation_claim": "none fabricated; states no retrieved evidence",
+      "answer": "目前没有检索到相关文档片段，因此无法给出有来源依据的解释。\n\n不过可以明确一个关键安全点：**烹饪加热不能消除已经形成的鱼类组胺**。组胺是某些不新鲜鱼类（如鲭鱼、金枪鱼等）在细菌作用下产生的，加热虽能杀菌，却不能去除已产生的组胺，所以预防组胺中毒的关键是保持鱼的新鲜和低温储存，而不是靠彻底加热。\n\n至于“为什么做鱼要彻底加热”的其他原因（如杀灭寄生虫、致病菌等），需要相关文档依据才能展开说明；当前 Observation 中没有这类资料，故不进一步断言。"
+    },
+    {
+      "scope": "full_http_agent_L08",
+      "repeat": 1,
+      "core_histamine_fact_correct": true,
+      "retrieved_document_evidence": false,
+      "citation_claim": "none fabricated; states no retrieved evidence",
+      "answer": "目前没有检索到相关文档片段，因此无法给出有依据的知识性回答。\n\n就你问的“为什么做鱼要彻底加热”，缺少可引用的文档依据，我不能凭记忆编造来源或结论。需要补充的是：**鱼类相关的食品安全知识文档**（例如关于寄生虫、细菌或组胺的说明）。\n\n另外提醒一点：即使彻底加热能杀灭细菌和寄生虫，**也不能消除已经形成的鱼类组胺**，所以“彻底加热”并不能解决所有鱼类食品安全问题——但这一点的具体依据同样需要文档支持，当前未检索到。\n\n如果你能提供相关文档或允许我重新检索，我可以基于实际片段（含 chunk id）来回答。"
+    },
+    {
+      "scope": "full_http_agent_L08",
+      "repeat": 2,
+      "core_histamine_fact_correct": true,
+      "retrieved_document_evidence": false,
+      "citation_claim": "none fabricated; states no retrieved evidence",
+      "answer": "目前没有检索到相关文档片段，因此无法给出有依据的知识性回答。\n\n就你问的“为什么做鱼要彻底加热”，缺少可引用的文档依据，我不能凭记忆补充具体原因或数据。需要说明的是：**彻底加热可以杀灭细菌、病毒和寄生虫等，但不能消除已经形成的鱼类组胺**——组胺耐热，加热无法去除，所以对组胺中毒风险而言，关键在于鱼的新鲜度和冷链保存，而不是靠加热补救。\n\n如果你希望得到有来源支撑的完整解释，需要提供或检索到相关烹饪安全/食品安全文档片段。"
+    },
+    {
+      "scope": "answer_gateway_with_supplied_FDA_chunk",
+      "case_id": "Q01",
+      "repeat": 0,
+      "core_histamine_fact_correct": true,
+      "chunk_attribution_correct": true,
+      "all_claims_grounded": "not established; supplementary microbiological statements exceed this short FDA summary",
+      "answer": "不能。根据 FDA 的相关说明（文档片段 D01_0）：鱼类组胺一旦形成，清洗、冷冻或加热都不能将其去除；预防的关键在于及时冷却并做好时间与温度控制，避免组胺积累。\n\n需要区分的是：烹饪加热可以杀灭部分微生物或寄生虫，但这与去除已经形成的组胺是两回事，不能等同。"
+    },
+    {
+      "scope": "answer_gateway_with_supplied_FDA_chunk",
+      "case_id": "Q02",
+      "repeat": 0,
+      "core_histamine_fact_correct": true,
+      "chunk_attribution_correct": true,
+      "all_claims_grounded": "not established; supplementary microbiological statements exceed this short FDA summary",
+      "answer": "不能。根据 FDA 相关文档（chunk id：D01_0）：鱼类组胺一旦形成，**清洗、冷冻或加热都不能去除**。预防的关键是及时冷却，并保持适当的时间和温度控制，避免组胺积累。\n\n补充说明：烹饪加热可以杀菌或杀灭寄生虫，但这与去除组胺是两回事，不能等同。"
+    },
+    {
+      "scope": "answer_gateway_with_supplied_FDA_chunk",
+      "case_id": "Q01",
+      "repeat": 1,
+      "core_histamine_fact_correct": true,
+      "chunk_attribution_correct": true,
+      "all_claims_grounded": "not established; supplementary microbiological statements exceed this short FDA summary",
+      "answer": "不能。根据 FDA 的相关说明（文档片段 D01_0）：鱼类组胺一旦形成，清洗、冷冻或加热都不能将其去除。因此，把鱼煮熟并不能消除已经产生的组胺。\n\n需要区分的是：加热可以杀灭部分微生物或寄生虫，但这与去除组胺是两回事，不能等同。预防组胺问题的关键在于及时冷却，并在适当时间和温度条件下加以控制，防止组胺积累。\n\n依据来源：FDA 关于鲭鱼毒素/组胺形成鱼类及渔业产品的合规政策指南（片段 D01_0）。"
+    },
+    {
+      "scope": "answer_gateway_with_supplied_FDA_chunk",
+      "case_id": "Q02",
+      "repeat": 1,
+      "core_histamine_fact_correct": true,
+      "chunk_attribution_correct": true,
+      "all_claims_grounded": "not established; supplementary microbiological statements exceed this short FDA summary",
+      "answer": "**不能。** 根据 FDA 相关资料（文档片段 D01_0）：\n\n> 鱼类组胺一旦形成，清洗、冷冻或加热都不能去除。及时冷却并保持适当时间和温度控制可预防组胺积累。\n\n也就是说：\n\n- **冷冻**：只能抑制/延缓组胺继续生成，不能去除已经形成的组胺。\n- **清洗**：同样无法洗掉已形成的组胺。\n- **加热烹饪**：也不能消除组胺——杀菌或杀寄生虫不等于去除组胺。\n\n**关键点**：预防胜于补救。应在捕捞/加工后尽快冷却，并全程保持适当的时间和温度控制，防止组胺积累。\n\n依据来源：FDA 关于鲭鱼毒素/组胺形成鱼类的合规政策指南（片段 D01_0）。"
+    },
+    {
+      "scope": "answer_gateway_with_supplied_FDA_chunk",
+      "case_id": "Q01",
+      "repeat": 2,
+      "core_histamine_fact_correct": true,
+      "chunk_attribution_correct": true,
+      "all_claims_grounded": "not established; supplementary microbiological statements exceed this short FDA summary",
+      "answer": "不能。根据 FDA 的相关说明（文档片段 D01_0）：鱼类组胺一旦形成，清洗、冷冻或加热都不能将其去除；预防的关键在于及时冷却并做好时间和温度控制，避免组胺积累。\n\n需要说明的是，这里说的是“已经产生的组胺”无法靠煮熟消除，与加热能杀灭细菌或寄生虫是两回事，不能混为一谈。"
+    },
+    {
+      "scope": "answer_gateway_with_supplied_FDA_chunk",
+      "case_id": "Q02",
+      "repeat": 2,
+      "core_histamine_fact_correct": true,
+      "chunk_attribution_correct": true,
+      "all_claims_grounded": "not established; supplementary microbiological statements exceed this short FDA summary",
+      "answer": "**不能。** 根据 FDA 相关资料（文档片段 D01_0）：\n\n> 鱼类组胺一旦形成，清洗、冷冻或加热都不能去除。及时冷却并保持适当时间和温度控制可预防组胺积累。\n\n也就是说：\n\n- **冷冻**：只能抑制/延缓组胺继续生成，不能去除已经形成的组胺；\n- **清洗**：同样无法洗掉已形成的组胺；\n- **加热/烹饪**：也不能消除组胺——杀菌或杀寄生虫不等于去除组胺。\n\n**关键点**：预防胜于补救。应在捕捞后尽快冷却，并全程保持适当的时间和温度控制，防止组胺积累。\n\n依据来源：FDA 关于鲭鱼毒素/组胺形成鱼类的合规政策指南（chunk id: D01_0）。"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "container_names": [
+    "sm-mysql-it-9095b4e9e1cb",
+    "sm-redis-it-9095b4e9e1cb"
+  ],
+  "cases": {},
+  "mysql_version": "8.0.46",
+  "isolation": "REPEATABLE-READ",
+  "lock_wait_seconds": 1,
+  "migration_head": "20261009_0014",
+  "recipe_count": 70,
+  "redis_version": "7.4.11",
+  "cleanup_removed": {
+    "sm-mysql-it-9095b4e9e1cb": true,
+    "sm-redis-it-9095b4e9e1cb": true
+  },
+  "cleanup_attempted": true
+}

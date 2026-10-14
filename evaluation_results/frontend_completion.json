@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-09",
+  "scope": "Complete frontend surfaces for existing recipe and personal behavior APIs",
+  "implementation": ["recipe filters and offset paging", "canonical ingredient and nutrition rendering", "detail dialog and explicit history reporting", "like/favorite state mutations", "favorites and cursor history", "today/popular rankings", "shared token refresh and authentication epoch guards", "responsive navigation and request states"],
+  "validation": {
+    "unit_tests": {"passed": 6, "failed": 0},
+    "production_build": "passed",
+    "backend_regression": {"passed": 402, "skipped": 1, "failed": 0},
+    "browser": {
+      "data": "isolated synthetic API fixture",
+      "verified": ["login", "list paging", "name search", "detail and nested ingredients", "nutrition", "like", "favorite", "unfavorite and empty list", "recent history", "today ranking", "popular ranking", "no search results", "503 and retry", "Escape closes dialog", "mobile navigation", "single shared refresh request"],
+      "desktop_viewport": [1440, 1000],
+      "mobile_viewport": [390, 844],
+      "mobile_client_width": 390,
+      "mobile_scroll_width": 390,
+      "refresh_requests_in_expired_login_scenario": 1
+    },
+    "diff_whitespace": "passed"
+  },
+  "architecture_review": "UI components use existing HTTP contracts and authenticated request adapter; no backend/Agent dependency changes or new production dependencies",
+  "limitations": ["Browser API fixture is synthetic; not production integration", "No real MySQL migration or deployment", "No live external model call", "Frontend local login remains the existing local-auth UI; no OIDC redirect login added"],
+  "screenshots": ["evaluation_results/frontend_screenshots/desktop_catalog.png", "evaluation_results/frontend_screenshots/mobile_detail.png"]
+}

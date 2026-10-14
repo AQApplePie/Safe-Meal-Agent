@@ -1,0 +1,3308 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="14" failures="1" skipped="0" tests="15" time="7.051" timestamp="2026-10-09T12:54:13.609736" hostname="aqapplepiedeMacBook-Air.local"><testcase classname="tests.integration.test_mysql_backend" name="test_full_migration_roundtrip_preserves_catalog" time="4.614"><failure message="sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1553, &quot;Cannot drop index 'uq_chat_messages_reply_to': needed in a foreign key constraint&quot;)&#10;[SQL: ALTER TABLE chat_messages DROP INDEX uq_chat_messages_reply_to]&#10;(Background on this error at: https://sqlalche.me/e/20/e3q8)">self = &lt;sqlalchemy.engine.base.Connection object at 0x1137d1d60&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x114372210&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x1143b82c0&gt;
+statement = &lt;sqlalchemy.dialects.mysql.base.MySQLDDLCompiler object at 0x1143b8350&gt;
+parameters = [immutabledict({})]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xff\x11\x06#HY000Cannot drop index 'uq_chat_messages_reply_to': needed in a foreign key constraint"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.OperationalError: (1553, "Cannot drop index 'uq_chat_messages_reply_to': needed in a foreign key constraint")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: OperationalError
+
+The above exception was the direct cause of the following exception:
+
+db = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    def test_full_migration_roundtrip_preserves_catalog(db):
+        config = Config(str(ROOT / "alembic.ini"))
+&gt;       command.downgrade(config, "base")
+
+tests/integration/test_mysql_backend.py:274: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/command.py:449: in downgrade
+    script.run_env()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/script/base.py:583: in run_env
+    util.load_python_file(self.dir, "env.py")
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/util/pyfiles.py:95: in load_python_file
+    module = load_module_py(module_id, path)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/util/pyfiles.py:113: in load_module_py
+    spec.loader.exec_module(module)  # type: ignore
+&lt;frozen importlib._bootstrap_external&gt;:999: in exec_module
+    ???
+&lt;frozen importlib._bootstrap&gt;:488: in _call_with_frames_removed
+    ???
+safemeal/infrastructure/persistence/migrations/env.py:75: in &lt;module&gt;
+    run_migrations_online()
+safemeal/infrastructure/persistence/migrations/env.py:69: in run_migrations_online
+    context.run_migrations()
+&lt;string&gt;:8: in run_migrations
+    ???
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/runtime/environment.py:948: in run_migrations
+    self.get_context().run_migrations(**kw)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/runtime/migration.py:627: in run_migrations
+    step.migration_fn(**kw)
+safemeal/infrastructure/persistence/migrations/versions/20260710_0002_harden_chat_turns.py:151: in downgrade
+    op.drop_constraint(
+&lt;string&gt;:8: in drop_constraint
+    ???
+&lt;string&gt;:3: in drop_constraint
+    ???
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/operations/ops.py:222: in drop_constraint
+    return operations.invoke(op)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/operations/base.py:445: in invoke
+    return fn(self, operation)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/operations/toimpl.py:201: in drop_constraint
+    operations.impl.drop_constraint(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/ddl/mysql.py:157: in drop_constraint
+    super().drop_constraint(const)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/ddl/impl.py:350: in drop_constraint
+    self._exec(schema.DropConstraint(const))
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/alembic/ddl/impl.py:207: in _exec
+    return conn.execute(construct, multiparams)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/ddl.py:181: in _execute_on_connection
+    return connection._execute_ddl(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1528: in _execute_ddl
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xff\x11\x06#HY000Cannot drop index 'uq_chat_messages_reply_to': needed in a foreign key constraint"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1553, "Cannot drop index 'uq_chat_messages_reply_to': needed in a foreign key constraint")
+E       [SQL: ALTER TABLE chat_messages DROP INDEX uq_chat_messages_reply_to]
+E       (Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: OperationalError</failure></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_same_user_concurrent_enable_and_cancel[like]" time="0.002"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x11439f920&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x114373e60&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_same_user_concurrent_enable_and_cancel[favorite]" time="0.003"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x1200b5e50&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x1200b6450&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_different_users_counts_are_serialized_under_repeatable_read" time="0.006"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x1200b7b90&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x1200b7650&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_binary_identity_unique_constraint_and_foreign_key" time="0.004"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x11798bd10&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x11798bf50&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_behavior_and_outbox_rollback_together[like]" time="0.002"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x117989dc0&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x11798aba0&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_behavior_and_outbox_rollback_together[favorite]" time="0.006"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x1200b67b0&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x1200b7230&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_behavior_and_outbox_rollback_together[view]" time="0.003"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x114361fd0&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x114361040&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_history_concurrent_dedup_and_microsecond_order" time="0.003"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x114362690&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x114362ab0&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_real_lock_timeout_retries_then_succeeds_without_duplicate_event" time="0.003"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x114351430&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x114350800&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_exhausted_lock_retries_return_http_503_and_rollback" time="0.004"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x1137d39b0&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x1137d2960&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_real_deadlock_retries_entire_transaction" time="0.004"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x117988f80&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x117989580&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_sql_claim_two_instances_and_expired_token_fencing" time="0.003"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x11790e750&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x11790d970&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_two_consumers_deduplicate_real_mysql_redis_and_reclaim_crash" time="0.005"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x1179c8b90&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x1179ca2d0&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase><testcase classname="tests.integration.test_mysql_backend" name="test_retry_dead_letter_and_explicit_recovery_on_real_services" time="0.484"><error message="failed on setup with &quot;sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, &quot;Table 'recipe_db.behavior_outbox' doesn't exist&quot;)&#10;[SQL: DELETE FROM behavior_outbox]&#10;(Background on this error at: https://sqlalche.me/e/20/f405)&quot;">self = &lt;sqlalchemy.engine.base.Connection object at 0x1179c8f50&gt;
+dialect = &lt;sqlalchemy.dialects.mysql.pymysql.MySQLDialect_pymysql object at 0x113261040&gt;
+context = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLExecutionContext_mysqldb object at 0x1179cb260&gt;
+statement = &lt;sqlalchemy.dialects.mysql.mysqldb.MySQLCompiler_mysqldb object at 0x114350410&gt;
+parameters = [{}]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -&gt; CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+&gt;                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       pymysql.err.ProgrammingError: (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError
+
+The above exception was the direct cause of the following exception:
+
+services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:59462/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261008_0012', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    @pytest.fixture
+    def db(services):
+        # Only the fixture-created database and Redis above; never a configured server.
+        with services.engine.begin() as conn:
+            for table in (outbox, reactions, history):
+&gt;               conn.execute(table.delete())
+
+tests/integration/test_mysql_backend.py:238: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1416: in execute
+    return meth(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/sql/elements.py:517: in _execute_on_connection
+    return connection._execute_clauseelement(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1639: in _execute_clauseelement
+    ret = self._execute_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:2344: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/default.py:922: in do_execute
+    cursor.execute(statement, parameters)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:153: in execute
+    result = self._query(query)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/cursors.py:322: in _query
+    conn.query(q)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:558: in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:822: in _read_query_result
+    result.read()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:1200: in read
+    first_packet = self.connection._read_packet()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/connections.py:772: in _read_packet
+    packet.raise_for_error()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/protocol.py:221: in raise_for_error
+    err.raise_mysql_exception(self._data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+data = b"\xffz\x04#42S02Table 'recipe_db.behavior_outbox' doesn't exist"
+
+    def raise_mysql_exception(data):
+        errno = struct.unpack("&lt;h", data[1:3])[0]
+        errval = data[9:].decode("utf-8", "replace")
+        errorclass = error_map.get(errno)
+        if errorclass is None:
+            errorclass = InternalError if errno &lt; 1000 else OperationalError
+&gt;       raise errorclass(errno, errval)
+E       sqlalchemy.exc.ProgrammingError: (pymysql.err.ProgrammingError) (1146, "Table 'recipe_db.behavior_outbox' doesn't exist")
+E       [SQL: DELETE FROM behavior_outbox]
+E       (Background on this error at: https://sqlalche.me/e/20/f405)
+
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/pymysql/err.py:143: ProgrammingError</error></testcase></testsuite></testsuites>

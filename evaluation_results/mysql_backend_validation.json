@@ -1,0 +1,28 @@
+{
+  "passed": 432,
+  "skipped": [
+    "test_register_login_and_three_memory_aware_turns"
+  ],
+  "real_mysql_cases": 20,
+  "checks": {
+    "ruff": "passed",
+    "mypy_files": 302,
+    "format_checked_files": 11,
+    "compose_validation": "both passed",
+    "architecture": "existing boundary tests passed",
+    "diff_check": "passed"
+  },
+  "source_sha256": {
+    "safemeal/infrastructure/persistence/transaction_retry.py": "e4a09815532ee5d79497dee3e4faadb7535e0286c2b1f48afd16c864ba0d5ab3",
+    "safemeal/infrastructure/persistence/reaction_repository.py": "3be64e57279a9e1ce8b5d6fd24fab09ee026ad818f33cbbe9efd203ad66765e0",
+    "safemeal/infrastructure/persistence/history_repository.py": "ef8d9aa5d2e9b7cf4f9333911e0358d841ec22ad2806824e82fed2cd9d7fd2f6",
+    "safemeal/infrastructure/persistence/behavior_outbox.py": "62aeb54494dfd06f770e3243762e8d65f5e68c765aab3237017b5f27dc86103a",
+    "safemeal/infrastructure/persistence/database.py": "4dc151fc7966b0db625e1df68699cefbd2d3eda926325afba0906a294f4685bc",
+    "safemeal/infrastructure/persistence/migrations/versions/20260705_0001_initial_application_schema.py": "a6ac02e637d17f6045f651969de9608aaaddba74de9fd8f16184aadf4e94cfd2",
+    "safemeal/infrastructure/persistence/migrations/versions/20260710_0002_harden_chat_turns.py": "1340421c1ad59d99a3a368799b0fbab5b49914f91a6e24dfb53c7cb19f8b09b0",
+    "safemeal/infrastructure/persistence/migrations/versions/20261009_0013_outbox_timestamp_precision.py": "8d6dcb8d6f979fdb4c2d95302bcb84fe6c3f5f9965d8e97e3b0b203dc950646c",
+    "safemeal/config/platform.py": "8649e52e6766a917cdb8105c4ed977a3f6760717cec16efcfece9bceed6e1045",
+    "safemeal/bootstrap/composition/platform_container.py": "a643c711788a66764960415f3cff222809f141e48bb90a97b94461213f3a73fc",
+    "tests/integration/test_mysql_backend.py": "e3f76e73809fe6aa9f9ae3d9d819fe0d71270c0d1772ecfce2b7b3e7b0312139"
+  }
+}

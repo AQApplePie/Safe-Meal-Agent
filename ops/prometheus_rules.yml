@@ -1,0 +1,31 @@
+groups:
+  - name: safemeal-backend
+    rules:
+      - alert: SafeMealHttpErrors
+        expr: sum by (instance) (rate(safemeal_http_requests_total{status=~"5.."}[5m])) / sum by (instance) (rate(safemeal_http_requests_total[5m])) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: HTTP 5xx ratio exceeded 5 percent
+      - alert: SafeMealOutboxCollectorUnavailable
+        expr: safemeal_outbox_collector_up == 0 and on (instance) safemeal_outbox_enabled == 1
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: Cannot read SQL outbox state; backlog is unknown
+      - alert: SafeMealOutboxOldestPending
+        expr: safemeal_outbox_oldest_pending_age_seconds > 60
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Oldest pending behavior event exceeds 60 seconds
+      - alert: SafeMealOutboxDeadLetters
+        expr: safemeal_outbox_dead > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: SQL dead letters require diagnosis and explicit requeue

@@ -1,0 +1,108 @@
+{
+  "refactor": "physical_architecture",
+  "baseline_head": "26cc05c463d30f3fecbc6224e3ffd642fbe77e1e",
+  "behavior_changes": [],
+  "new_business_features": [],
+  "phases": [
+    {
+      "phase": 0,
+      "status": "PASS",
+      "timestamp": "2026-10-06T00:00:00+08:00",
+      "goal": "记录迁移前状态和测试基线",
+      "files_moved": [],
+      "imports_changed": [],
+      "compatibility_exports": [],
+      "tests_before": "PYTHONPATH=. conda run -n agent_env python -m pytest -q",
+      "tests_after": {"passed": 243, "failed": 0, "skipped": 1},
+      "remaining_risks": ["大量内部 import 仍依赖旧 application 路径"]
+    },
+    {
+      "phase": 1,
+      "status": "PASS",
+      "timestamp": "2026-10-06T14:57:55+08:00",
+      "goal": "完成职责清单与目标架构设计",
+      "files_moved": [],
+      "imports_changed": [],
+      "compatibility_exports": [],
+      "tests_after": null,
+      "remaining_risks": ["移动将暴露隐含反向依赖"]
+    },
+    {
+      "phase": 2,
+      "status": "PASS",
+      "timestamp": "2026-10-06T14:57:55+08:00",
+      "goal": "建立 Agent 边界并保留 Outer Workflow 与 Inner Runtime",
+      "files_moved": ["application/agent -> agent/runtime", "application/workflow -> agent/workflow", "Agent chat semantics -> agent/understanding|context|safety"],
+      "imports_changed": ["safemeal.application.agent|workflow|service.chat -> safemeal.agent"],
+      "compatibility_exports": [],
+      "tests_after": {"passed": 166, "failed": 0, "scope": "tests/refactor"},
+      "remaining_risks": []
+    },
+    {
+      "phase": 3,
+      "status": "PASS",
+      "timestamp": "2026-10-06T14:57:55+08:00",
+      "goal": "建立 Recipe 模块",
+      "files_moved": ["recipe contracts|services|ports -> modules/recipe", "menu coverage|output -> agent/runtime"],
+      "imports_changed": ["Recipe imports -> safemeal.modules.recipe"],
+      "compatibility_exports": [],
+      "tests_after": {"status": "covered_by_refactor_suite"},
+      "remaining_risks": []
+    },
+    {
+      "phase": 4,
+      "status": "PASS",
+      "timestamp": "2026-10-06T14:57:55+08:00",
+      "goal": "分离 Dietary 共享规则与 Agent 安全适配",
+      "files_moved": ["shared dietary -> modules/dietary", "Agent-bound safety -> agent/safety"],
+      "imports_changed": ["Dietary imports -> module or Agent safety owner"],
+      "compatibility_exports": [],
+      "tests_after": {"passed": 74, "failed": 0, "scope": "tests/evaluation"},
+      "remaining_risks": []
+    },
+    {
+      "phase": 5,
+      "status": "PASS",
+      "timestamp": "2026-10-06T14:57:55+08:00",
+      "goal": "整理 Identity、Knowledge 与 Conversation",
+      "files_moved": ["auth -> modules/identity", "knowledge|upload -> modules/knowledge", "chat persistence|memory -> modules/conversation"],
+      "imports_changed": ["HTTP and infrastructure imports -> new module paths"],
+      "compatibility_exports": [],
+      "tests_after": {"status": "covered_by_full_suite"},
+      "remaining_risks": ["外部服务集成取决于本地依赖健康状态"]
+    },
+    {
+      "phase": 6,
+      "status": "PASS",
+      "timestamp": "2026-10-06T14:57:55+08:00",
+      "goal": "Tool 体系物理收敛",
+      "files_moved": ["all Tool runtime|contracts|ports|adapters -> agent/runtime/tools"],
+      "imports_changed": ["Tool adapters -> module application services"],
+      "compatibility_exports": [],
+      "tests_after": {"status": "tool tests passed"},
+      "remaining_risks": []
+    },
+    {
+      "phase": 7,
+      "status": "PASS",
+      "timestamp": "2026-10-06T14:57:55+08:00",
+      "goal": "建立 bootstrap Composition Root",
+      "files_moved": ["application/service/composition -> bootstrap/composition"],
+      "imports_changed": ["main|HTTP|factory imports -> bootstrap"],
+      "compatibility_exports": [],
+      "tests_after": {"startup": "PASS", "routes": 34},
+      "remaining_risks": ["真实容器依赖未在本阶段启动"]
+    },
+    {
+      "phase": 8,
+      "status": "PASS",
+      "timestamp": "2026-10-06T14:57:55+08:00",
+      "goal": "全量回归与清理",
+      "files_moved": [],
+      "imports_changed": ["executable old application imports removed"],
+      "compatibility_exports": [],
+      "tests_after": {"passed": 240, "failed": 0, "skipped": 1, "ruff": "PASS", "startup": "PASS"},
+      "remaining_risks": ["checkpoint serializer 保留历史模块名字符串"]
+    }
+  ]
+}

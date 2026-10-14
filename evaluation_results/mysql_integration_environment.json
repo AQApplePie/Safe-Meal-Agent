@@ -1,0 +1,81 @@
+{
+  "container_names": [
+    "sm-mysql-it-aa41960d6b05",
+    "sm-redis-it-aa41960d6b05"
+  ],
+  "cases": {
+    "migration_roundtrip": "head -> base -> head; 70 catalog rows preserved",
+    "same_user_like": "24 concurrent enable + 24 cancel; one fact then zero; 48 committed notifications",
+    "same_user_favorite": "24 concurrent enable + 24 cancel; one fact then zero; 48 committed notifications",
+    "different_users": "24 concurrent users; returned counts 1..24 under REPEATABLE-READ; cancel to zero",
+    "constraints": "case-sensitive identity, unique PK, FK violations rejected by MySQL",
+    "rollback_like": "exception after behavior + outbox INSERT; both rolled back",
+    "rollback_favorite": "exception after behavior + outbox INSERT; both rolled back",
+    "rollback_view": "exception after behavior + outbox INSERT; both rolled back",
+    "history": "24 concurrent views -> one history fact; newer recipe first",
+    "lock_retry_success": {
+      "mysql_codes": [
+        1205
+      ],
+      "committed_events": 1
+    },
+    "lock_retry_exhausted": {
+      "mysql_codes": [
+        1205,
+        1205
+      ],
+      "http_status": 503,
+      "client_retry_after_release": "passed"
+    },
+    "deadlock": {
+      "mysql_codes": [
+        1213
+      ],
+      "attempts": [
+        1,
+        2
+      ],
+      "committed_events": 2
+    },
+    "sql_lease": "16 concurrent claims -> one winner; expired lease recovered; old token rejected",
+    "consumers": {
+      "processes": [
+        {
+          "status": "passed",
+          "pid": 5829,
+          "consumer": "f4327d56-1b82-4241-a8ad-c5b725c7dd2f"
+        },
+        {
+          "status": "passed",
+          "pid": 5830,
+          "consumer": "7bdb8967-5f96-405c-8dba-fb15b3ee500a"
+        }
+      ],
+      "result": "two independent processes; 12 duplicate envelopes; one score; crashed PEL reclaimed; score rebuilt to 2"
+    },
+    "dead_letter": "real ranking lease contention; backoff not bypassed by duplicates; 2 failures -> SQL dead letter; requeue completes",
+    "connection_loss": {
+      "mysql_code": 2013,
+      "attempts": 1,
+      "committed_events": 0
+    },
+    "timestamp_precision": {
+      "written": "2026-10-09T12:00:00.900000",
+      "stored": "2026-10-09T12:00:00.900000"
+    },
+    "existing_event_upgrade": "0012 -> 0013; all six DATETIME(6); existing event fields unchanged",
+    "composition": "real session lock_wait=2; one-attempt contention fails; released lock succeeds",
+    "rr_history_snapshot": "old RR snapshot + concurrent insert + no-op UPSERT; current read returns committed history; one outbox event"
+  },
+  "mysql_version": "8.0.46",
+  "isolation": "REPEATABLE-READ",
+  "lock_wait_seconds": 1,
+  "migration_head": "20261009_0014",
+  "recipe_count": 70,
+  "redis_version": "7.4.11",
+  "cleanup_removed": {
+    "sm-mysql-it-aa41960d6b05": true,
+    "sm-redis-it-aa41960d6b05": true
+  },
+  "cleanup_attempted": true
+}

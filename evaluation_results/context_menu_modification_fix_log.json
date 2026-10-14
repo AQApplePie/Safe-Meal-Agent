@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "append_only": true,
+  "iterations": [
+    {
+      "iteration": 0,
+      "timestamp": "2026-10-04T12:55:00+08:00",
+      "git_head": "d982a3402e1cc153238a07806d201ea34ac543fe",
+      "kind": "baseline_diagnosis",
+      "session_id": "39b55837-5d94-4c1c-a826-ee43f62b69f3",
+      "turn_1_id": "414",
+      "turn_2_id": "416",
+      "result": "FAIL",
+      "root_cause": "active menu exists in assistant message metadata but ConversationHistoryService discards metadata; modification/count are absent from canonical Turn 2 state",
+      "artifacts": ["/tmp/menu_mod_baseline.json"]
+    },
+    {
+      "iteration": 1,
+      "timestamp": "2026-10-04T13:05:00+08:00",
+      "git_head": "d982a3402e1cc153238a07806d201ea34ac543fe",
+      "observed_failure": "explicit count in category-before-count modification syntax was missing",
+      "layer": "request_understanding",
+      "tests": {"passed": 2, "failed": 1},
+      "result": "FAIL",
+      "next_hypothesis": "support generic 改成/换成 + number syntax before HTTP E2E"
+    },
+    {
+      "iteration": 2,
+      "timestamp": "2026-10-04T13:30:00+08:00",
+      "git_head": "d982a3402e1cc153238a07806d201ea34ac543fe",
+      "observed_failure": "CM05 chicken alias gap; CM06 replacement-clause binding error; REFERENCE ordinal unresolved",
+      "layer": "request_understanding_and_context_resolution",
+      "real_matrix": {
+        "core": "PASS",
+        "CM02": "PASS",
+        "CM03": "PASS",
+        "CM04": "PASS",
+        "CM05": "FAIL",
+        "CM06": "FAIL",
+        "NEW_TASK": "PASS",
+        "REFERENCE": "FAIL"
+      },
+      "verification_after_change": {
+        "focused_tests": "5 passed",
+        "ruff": "passed"
+      },
+      "result": "IN_PROGRESS",
+      "next_hypothesis": "rerun real HTTP/SSE matrix after rebuilding API"
+    },
+    {
+      "iteration": 3,
+      "timestamp": "2026-10-04T14:00:00+08:00",
+      "git_head": "d982a3402e1cc153238a07806d201ea34ac543fe",
+      "observed_failure": "CM05 replacement clause omitted the category and failed to inherit the nearest preceding category",
+      "layer": "request_understanding_clause_binding",
+      "files_changed": [
+        "safemeal/application/service/chat/menu_planning.py",
+        "tests/evaluation/test_menu_context_modification.py",
+        "tests/e2e/context_menu_modification_full_chain.py"
+      ],
+      "tests": {
+        "component": "6 passed",
+        "focused_suite": "239 passed",
+        "ruff": "passed",
+        "real_http_sse_e2e": "passed",
+        "CM02_CM06": "all passed",
+        "new_task": "passed",
+        "reference": "passed",
+        "required_regressions": "all passed"
+      },
+      "core_e2e": {
+        "session_id": "f6a454b0-aeed-495d-9c7d-6233f8fa1e69",
+        "conversation_id": "f6a454b0-aeed-495d-9c7d-6233f8fa1e69",
+        "turn_1_message_id": "512",
+        "turn_2_message_id": "514",
+        "turn_1_total": 16,
+        "turn_2_requested": 5,
+        "turn_2_returned": 5,
+        "old_meat_ids": [1, 21, 22, 37, 41],
+        "new_meat_ids": [17, 19, 29, 52, 60],
+        "overlap": [],
+        "all_meat": true,
+        "untouched_categories_preserved": true
+      },
+      "result": "PASS",
+      "regression_observed": false
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "prometheus_text_parser": true,
+  "real_fault_recovery_snapshots": 2,
+  "epoch_timestamp_precision_regression": true,
+  "alert_rules_yaml_syntax": true,
+  "promql_not_checked_by_promtool": true,
+  "alert_delivery_configured": false
+}

@@ -1,0 +1,75 @@
+{
+  "feature": "03_browsing_history",
+  "date": "2026-10-08",
+  "baseline": {
+    "passed": 297,
+    "skipped": 1,
+    "source": "feature_02 delivery"
+  },
+  "iterations": [
+    {
+      "check": "initial targeted history tests",
+      "passed": 17,
+      "failed": 1,
+      "issue": "SQLite millisecond stored strings differ from six-digit DateTime cursor binds; keyset boundary duplicated"
+    },
+    {
+      "check": "precision repair collection and typing",
+      "errors": 1,
+      "issue": "Editing mistake added literal function to Column arguments; removed immediately"
+    },
+    {
+      "check": "history + previous feature + HTTP contracts after precision fix",
+      "passed": 38,
+      "mypy": "pass (284 files)"
+    },
+    {
+      "check": "history after authenticated-token and production lifecycle coverage",
+      "passed": 21
+    },
+    {
+      "check": "first full regression",
+      "passed": 318,
+      "skipped": 1,
+      "failed": 0
+    },
+    {
+      "check": "post-test architecture review",
+      "change": "Move common get_interaction_actor dependency to authentication; enforce static history GET/view PUT HTTP surface"
+    },
+    {
+      "check": "history + reactions + architecture + HTTP surface after review",
+      "passed": 52
+    },
+    {
+      "check": "final full regression after review",
+      "passed": 318,
+      "skipped": 1,
+      "failed": 0
+    }
+  ],
+  "checks": {
+    "ruff": "pass: safemeal/tests",
+    "mypy": "pass: 284 source files",
+    "new_python_format": "pass: 7 files",
+    "git_diff_check": "pass",
+    "sql_query_budget": {
+      "read": 1,
+      "record": 3
+    },
+    "sqlite_query_plan": "recent covering index; no temporary sort",
+    "mysql_ddl_compile": "pass; not a live test",
+    "mysql_live": "not executed: docker info cannot connect to Docker daemon",
+    "user_database_migration": "not executed"
+  },
+  "behavior": {
+    "write": "explicit authenticated PUT /recipes/{id}/view",
+    "read": "authenticated GET /recipes/history",
+    "dedup": "one row per tenant/subject/recipe",
+    "ordering": "last_viewed_at DESC, recipe_id DESC",
+    "pagination": "position cursor, not cross-request snapshot",
+    "retention": "distinct recipes retained; no TTL pruning in this feature",
+    "frontend": "backend only; existing chat UI not changed"
+  },
+  "next_feature": "04_popular_recipes requires user confirmation"
+}

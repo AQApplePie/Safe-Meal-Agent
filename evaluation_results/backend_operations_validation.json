@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-09",
+  "scope": "backend optimization 4 / document 5 of 9",
+  "specialized_tests": {
+    "passed": 12,
+    "failed": 0
+  },
+  "full_regression": {
+    "passed": 464,
+    "skipped": 2,
+    "failed": 0,
+    "errors": 0
+  },
+  "checks": {
+    "ruff": "passed",
+    "format_python_files": 15,
+    "mypy_source_files": 305,
+    "compose_platform": "passed",
+    "compose_agent": "passed",
+    "diff_check": "passed"
+  },
+  "fault_drill": {
+    "real_redis_stop_start": true,
+    "real_jwt": true,
+    "http_driver": "ASGI TestClient",
+    "rate_limiter_enabled": false,
+    "pending_during_fault": 3,
+    "completed_after_recovery": 3,
+    "ranking_score": 2,
+    "workers_closed": true,
+    "real_mysql_stop": true,
+    "dead_letter_cli_requeue": true,
+    "completed_replay_refused": true
+  },
+  "minimal_image": {
+    "image": "safemeal-platform:ops-verify",
+    "image_id": "sha256:580f4ed258275718f71ebd7b9a114bee2ea96538c599e7c289d7b3fadc3acddc",
+    "metrics_present": true,
+    "no_agent_imports": true,
+    "uid": 10001,
+    "cli_in_image": true,
+    "invalid_uuid_rejected_before_database_access": true,
+    "timestamp_precision_verified": true,
+    "temporary_containers_auto_removed": true
+  },
+  "exposition": {
+    "prometheus_text_parser": true,
+    "real_fault_recovery_snapshots": 2,
+    "epoch_timestamp_precision_regression": true,
+    "alert_rules_yaml_syntax": true,
+    "promql_not_checked_by_promtool": true,
+    "alert_delivery_configured": false
+  },
+  "migration_head": "20261009_0014",
+  "owned_services_removed": {
+    "sm-mysql-it-968b1e1713ec": true,
+    "sm-redis-it-968b1e1713ec": true
+  },
+  "architecture": {
+    "domain_application_unchanged": true,
+    "interface_uses_shared_sink_and_bootstrap_factory": true,
+    "observer_opt_in": true,
+    "sql_telemetry_in_persistence": true,
+    "new_runtime_dependencies": [],
+    "identity_metric_labels": false
+  },
+  "source_sha256": {
+    "safemeal/infrastructure/operations/metrics.py": "36c6e06188e65f47a56d55b4f974d8376140d9f5c1a8bc95b05169d6c772ad17",
+    "safemeal/interfaces/http/metrics.py": "bae2e09fec5e77cd700de8e40e3f7ff1f1371a94916dc8017f6028f029711ade",
+    "safemeal/shared/contracts/observability.py": "b7cc147cae580e50a0a9ddf75632dbd92fad2430eb6a3b6643fcefc382c2e846",
+    "safemeal/bootstrap/composition/operations.py": "95a17698d99f80c8d6f751192ab42aa2e98971d56fcbc759ddb2495a8b1d74d1",
+    "safemeal/bootstrap/composition/platform_container.py": "a9a06b3860c64101bc0ea0254bb4604bed54a3757a9a89afde7da81a7beae919",
+    "safemeal/config/platform.py": "7d50f1b2ff33839267c1e21eb8b488cdb18db9900f9d44b95abd7ec76896288d",
+    "safemeal/interfaces/http/application.py": "1ecbe8565225b6a2ce3ebd6a6f3dffce2c1c383046ad8f501ead059133c6c9e4",
+    "safemeal/interfaces/http/request_middleware.py": "e90f942a6156602626033908c1ef372fe97538ee79e788803041b034a57097e2",
+    "safemeal/infrastructure/cache/recipe_repository.py": "8a4af1ff0bb503852105b3766fcecd4ecaf6825c2f1bb8c917b7f36d9c7475d2",
+    "safemeal/infrastructure/messaging/behavior_worker.py": "ad5172fee0a4342f30f3f593a4659b75b6da282c3bd0298a69ce5dc075e67b85",
+    "safemeal/infrastructure/persistence/behavior_outbox.py": "b5ec46449a4bc36885e1a38dcdc4a0790a7c86ac915a6bf8a990b09f71ae719e",
+    "tests/backend/test_operations_metrics.py": "8f2730e9734f0c01b1794a9eaa79105825a34db1ca48705b0ba874e9c3dec8f9",
+    "tests/integration/test_backend_operations.py": "b1c7384f7e3940aa4efe0c13fefcb9a7b5c60404d77b33d57e4316ea31970b70",
+    "tests/integration/test_mysql_backend.py": "f90366616621b4b15cf8bf66fd18f5bcfa20cd09b628b053729bcb2afff232de",
+    "scripts/outbox_admin.py": "af52b5b43afb51fb1d14eb52c9e36b4ee8184b21eac0500d574a6d20568dc9e8",
+    "Dockerfile.platform": "ddca421f8c8b68e539a14c846b933e0722c16e4af07291e06e6a1e2035ac328d",
+    "docker-compose.platform.yml": "c6fa4fa69133fb004924fe88ae322220154b5f8e04e9e11d9e8313f95d6ae8b1",
+    "docker-compose.yml": "5271193ff4cf5e459a6170358ec8cdb265e8b9e5acea70f5649f07603ae1e1e2",
+    ".env.platform.example": "8c0d5bca2f8e193500d0c1bfe50571b769117c8e6c31c3930e54bdd2a798e565",
+    ".env.example": "75154edcc8fc66e9eba94474b93facc2ae8667abbe8bfdeb42cb22c0ab520b8a",
+    "Makefile": "300dfa50f23760c47fe643ba794ab74af6f48d25e5426c800708dbe652a9ed9c",
+    "ops/prometheus_rules.yml": "d291e3db032ed40411cd18bbb8b2c69ce843fe4be428759d8f501976dfe2c1ac",
+    "README.md": "a79d715776c66fadd657c874dcda48931a959f35a34125d32c03560872917e7c"
+  }
+}

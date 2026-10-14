@@ -1,0 +1,238 @@
+{
+  "version": 1,
+  "description": "D01 是已核对 FDA 的简短中文摘要，其余为合成公开测试制度/菜谱；无真实用户数据、无凭据、无私有文档。每主题两问分 dev/test，存在主题重叠。",
+  "documents": [
+    {
+      "id": "D01",
+      "title": "鱼类组胺",
+      "content": "鱼类组胺一旦形成，清洗、冷冻或加热都不能去除。及时冷却并保持适当时间和温度控制可预防组胺积累。",
+      "tenant_id": "public",
+      "source": "https://www.fda.gov/food/hfp-constituent-updates/fda-issues-final-compliance-policy-guide-scombrotoxin-histamine-forming-fish-and-fishery-products"
+    },
+    {
+      "id": "D02",
+      "title": "清蒸菜谱",
+      "content": "合成测试菜谱：清蒸鲈鱼使用鲈鱼、姜、葱，蒸制后加入少量酱油。",
+      "tenant_id": "public",
+      "source": "synthetic:D02"
+    },
+    {
+      "id": "D03",
+      "title": "豆腐菜谱",
+      "content": "合成测试菜谱：番茄豆腐汤使用番茄、豆腐和水；不添加鱼肉或花生。",
+      "tenant_id": "public",
+      "source": "synthetic:D03"
+    },
+    {
+      "id": "D04",
+      "title": "花生菜谱",
+      "content": "合成测试菜谱：花生酱拌面使用面条、花生酱和黄瓜。花生过敏用户不能选择此测试菜谱。",
+      "tenant_id": "public",
+      "source": "synthetic:D04"
+    },
+    {
+      "id": "D05",
+      "title": "库存策略",
+      "content": "合成测试厨房制度：生鲜库存按入库时间排序，先入先出；包装上贴入库日期。",
+      "tenant_id": "public",
+      "source": "synthetic:D05"
+    },
+    {
+      "id": "D06",
+      "title": "采购规则",
+      "content": "合成测试厨房制度：周一采购蔬菜，周三采购豆制品。采购须记录供应商和批次。",
+      "tenant_id": "public",
+      "source": "synthetic:D06"
+    },
+    {
+      "id": "D07",
+      "title": "会员制度",
+      "content": "合成测试会员制度：积分只能兑换测试食谱电子册，不可兑换现金。",
+      "tenant_id": "public",
+      "source": "synthetic:D07"
+    },
+    {
+      "id": "D08",
+      "title": "退货制度",
+      "content": "合成测试采购制度：包装破损时记录照片并联系供应商，保留批次信息。",
+      "tenant_id": "public",
+      "source": "synthetic:D08"
+    },
+    {
+      "id": "D09",
+      "title": "餐具制度",
+      "content": "合成测试厨房制度：蓝色筐放碗，绿色筐放勺子，红色筐放筷子。",
+      "tenant_id": "public",
+      "source": "synthetic:D09"
+    },
+    {
+      "id": "D10",
+      "title": "值班制度",
+      "content": "合成测试厨房制度：早班检查库存，晚班检查设备并关闭照明。",
+      "tenant_id": "public",
+      "source": "synthetic:D10"
+    }
+  ],
+  "queries": [
+    {
+      "id": "Q01",
+      "query": "鱼煮熟了能消除已经产生的组胺吗？",
+      "split": "dev",
+      "relevant_documents": [
+        "D01"
+      ]
+    },
+    {
+      "id": "Q02",
+      "query": "组胺可以靠冷冻清洗去除吗？",
+      "split": "test",
+      "relevant_documents": [
+        "D01"
+      ]
+    },
+    {
+      "id": "Q03",
+      "query": "清蒸鲈鱼用什么配料？",
+      "split": "dev",
+      "relevant_documents": [
+        "D02"
+      ]
+    },
+    {
+      "id": "Q04",
+      "query": "想做蒸鱼，有什么姜葱搭配？",
+      "split": "test",
+      "relevant_documents": [
+        "D02"
+      ]
+    },
+    {
+      "id": "Q05",
+      "query": "番茄豆腐汤有花生吗？",
+      "split": "dev",
+      "relevant_documents": [
+        "D03"
+      ]
+    },
+    {
+      "id": "Q06",
+      "query": "番茄配豆腐可以做什么汤？",
+      "split": "test",
+      "relevant_documents": [
+        "D03"
+      ]
+    },
+    {
+      "id": "Q07",
+      "query": "花生酱拌面有哪些原料？",
+      "split": "dev",
+      "relevant_documents": [
+        "D04"
+      ]
+    },
+    {
+      "id": "Q08",
+      "query": "花生过敏能吃花生酱拌面吗？",
+      "split": "test",
+      "relevant_documents": [
+        "D04"
+      ]
+    },
+    {
+      "id": "Q09",
+      "query": "测试厨房库存采用什么顺序？",
+      "split": "dev",
+      "relevant_documents": [
+        "D05"
+      ]
+    },
+    {
+      "id": "Q10",
+      "query": "仓库进来的材料应怎么标记？",
+      "split": "test",
+      "relevant_documents": [
+        "D05"
+      ]
+    },
+    {
+      "id": "Q11",
+      "query": "测试厨房哪天采购豆制品？",
+      "split": "dev",
+      "relevant_documents": [
+        "D06"
+      ]
+    },
+    {
+      "id": "Q12",
+      "query": "采购台账需要写供应商还是批次？",
+      "split": "test",
+      "relevant_documents": [
+        "D06"
+      ]
+    },
+    {
+      "id": "Q13",
+      "query": "测试会员积分可以换现金吗？",
+      "split": "dev",
+      "relevant_documents": [
+        "D07"
+      ]
+    },
+    {
+      "id": "Q14",
+      "query": "会员积分能换什么？",
+      "split": "test",
+      "relevant_documents": [
+        "D07"
+      ]
+    },
+    {
+      "id": "Q15",
+      "query": "测试采购遇到包装破损怎么办？",
+      "split": "dev",
+      "relevant_documents": [
+        "D08"
+      ]
+    },
+    {
+      "id": "Q16",
+      "query": "退货时应该保留什么批次证据？",
+      "split": "test",
+      "relevant_documents": [
+        "D08"
+      ]
+    },
+    {
+      "id": "Q17",
+      "query": "测试厨房勺子放什么颜色的筐？",
+      "split": "dev",
+      "relevant_documents": [
+        "D09"
+      ]
+    },
+    {
+      "id": "Q18",
+      "query": "蓝色筐用于存放什么餐具？",
+      "split": "test",
+      "relevant_documents": [
+        "D09"
+      ]
+    },
+    {
+      "id": "Q19",
+      "query": "测试厨房晚班需要检查什么？",
+      "split": "dev",
+      "relevant_documents": [
+        "D10"
+      ]
+    },
+    {
+      "id": "Q20",
+      "query": "早班负责库存还是照明？",
+      "split": "test",
+      "relevant_documents": [
+        "D10"
+      ]
+    }
+  ]
+}

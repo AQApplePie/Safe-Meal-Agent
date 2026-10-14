@@ -1,0 +1,259 @@
+{
+  "dataset_sha256": "b175ce1d2506ada3e6fc8219af420af3a660da7469886534414eeebc99fb75bb",
+  "rows": [
+    {
+      "case_id": "Q01",
+      "repeat": 0,
+      "answer": "不能。根据 FDA 的相关说明（文档片段 D01_0）：鱼类组胺一旦形成，清洗、冷冻或加热都不能将其去除；预防的关键在于及时冷却并做好时间与温度控制，避免组胺积累。\n\n需要区分的是：烹饪加热可以杀灭部分微生物或寄生虫，但这与去除已经形成的组胺是两回事，不能等同。",
+      "sources": [
+        {
+          "source": "https://www.fda.gov/food/hfp-constituent-updates/fda-issues-final-compliance-policy-guide-scombrotoxin-histamine-forming-fish-and-fishery-products",
+          "tool": "search_knowledge",
+          "call_id": "public-fda-probe",
+          "document_id": "D01",
+          "chunk_id": "D01_0",
+          "query": null,
+          "evidence_call_ids": []
+        }
+      ],
+      "observability": {
+        "duration_ms": 1306.529,
+        "model_call_count": 1,
+        "input_tokens": 665,
+        "output_tokens": 75,
+        "cached_input_tokens": 128,
+        "total_tokens": 740,
+        "usage_complete": true,
+        "cost_complete": false,
+        "estimated_cost": null,
+        "cost_unit": "configured_price_unit",
+        "model_calls": [
+          {
+            "model": "deepseek-chat",
+            "stage": "answer",
+            "duration_ms": 1306.219,
+            "outcome": "success",
+            "input_tokens": 665,
+            "output_tokens": 75,
+            "total_tokens": 740,
+            "cached_input_tokens": 128,
+            "usage_complete": true,
+            "estimated_cost": null
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "Q02",
+      "repeat": 0,
+      "answer": "不能。根据 FDA 相关文档（chunk id：D01_0）：鱼类组胺一旦形成，**清洗、冷冻或加热都不能去除**。预防的关键是及时冷却，并保持适当的时间和温度控制，避免组胺积累。\n\n补充说明：烹饪加热可以杀菌或杀灭寄生虫，但这与去除组胺是两回事，不能等同。",
+      "sources": [
+        {
+          "source": "https://www.fda.gov/food/hfp-constituent-updates/fda-issues-final-compliance-policy-guide-scombrotoxin-histamine-forming-fish-and-fishery-products",
+          "tool": "search_knowledge",
+          "call_id": "public-fda-probe",
+          "document_id": "D01",
+          "chunk_id": "D01_0",
+          "query": null,
+          "evidence_call_ids": []
+        }
+      ],
+      "observability": {
+        "duration_ms": 1191.376,
+        "model_call_count": 1,
+        "input_tokens": 663,
+        "output_tokens": 75,
+        "cached_input_tokens": 256,
+        "total_tokens": 738,
+        "usage_complete": true,
+        "cost_complete": false,
+        "estimated_cost": null,
+        "cost_unit": "configured_price_unit",
+        "model_calls": [
+          {
+            "model": "deepseek-chat",
+            "stage": "answer",
+            "duration_ms": 1191.067,
+            "outcome": "success",
+            "input_tokens": 663,
+            "output_tokens": 75,
+            "total_tokens": 738,
+            "cached_input_tokens": 256,
+            "usage_complete": true,
+            "estimated_cost": null
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "Q01",
+      "repeat": 1,
+      "answer": "不能。根据 FDA 的相关说明（文档片段 D01_0）：鱼类组胺一旦形成，清洗、冷冻或加热都不能将其去除。因此，把鱼煮熟并不能消除已经产生的组胺。\n\n需要区分的是：加热可以杀灭部分微生物或寄生虫，但这与去除组胺是两回事，不能等同。预防组胺问题的关键在于及时冷却，并在适当时间和温度条件下加以控制，防止组胺积累。\n\n依据来源：FDA 关于鲭鱼毒素/组胺形成鱼类及渔业产品的合规政策指南（片段 D01_0）。",
+      "sources": [
+        {
+          "source": "https://www.fda.gov/food/hfp-constituent-updates/fda-issues-final-compliance-policy-guide-scombrotoxin-histamine-forming-fish-and-fishery-products",
+          "tool": "search_knowledge",
+          "call_id": "public-fda-probe",
+          "document_id": "D01",
+          "chunk_id": "D01_0",
+          "query": null,
+          "evidence_call_ids": []
+        }
+      ],
+      "observability": {
+        "duration_ms": 1273.977,
+        "model_call_count": 1,
+        "input_tokens": 665,
+        "output_tokens": 116,
+        "cached_input_tokens": 512,
+        "total_tokens": 781,
+        "usage_complete": true,
+        "cost_complete": false,
+        "estimated_cost": null,
+        "cost_unit": "configured_price_unit",
+        "model_calls": [
+          {
+            "model": "deepseek-chat",
+            "stage": "answer",
+            "duration_ms": 1273.718,
+            "outcome": "success",
+            "input_tokens": 665,
+            "output_tokens": 116,
+            "total_tokens": 781,
+            "cached_input_tokens": 512,
+            "usage_complete": true,
+            "estimated_cost": null
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "Q02",
+      "repeat": 1,
+      "answer": "**不能。** 根据 FDA 相关资料（文档片段 D01_0）：\n\n> 鱼类组胺一旦形成，清洗、冷冻或加热都不能去除。及时冷却并保持适当时间和温度控制可预防组胺积累。\n\n也就是说：\n\n- **冷冻**：只能抑制/延缓组胺继续生成，不能去除已经形成的组胺。\n- **清洗**：同样无法洗掉已形成的组胺。\n- **加热烹饪**：也不能消除组胺——杀菌或杀寄生虫不等于去除组胺。\n\n**关键点**：预防胜于补救。应在捕捞/加工后尽快冷却，并全程保持适当的时间和温度控制，防止组胺积累。\n\n依据来源：FDA 关于鲭鱼毒素/组胺形成鱼类的合规政策指南（片段 D01_0）。",
+      "sources": [
+        {
+          "source": "https://www.fda.gov/food/hfp-constituent-updates/fda-issues-final-compliance-policy-guide-scombrotoxin-histamine-forming-fish-and-fishery-products",
+          "tool": "search_knowledge",
+          "call_id": "public-fda-probe",
+          "document_id": "D01",
+          "chunk_id": "D01_0",
+          "query": null,
+          "evidence_call_ids": []
+        }
+      ],
+      "observability": {
+        "duration_ms": 1746.439,
+        "model_call_count": 1,
+        "input_tokens": 663,
+        "output_tokens": 161,
+        "cached_input_tokens": 512,
+        "total_tokens": 824,
+        "usage_complete": true,
+        "cost_complete": false,
+        "estimated_cost": null,
+        "cost_unit": "configured_price_unit",
+        "model_calls": [
+          {
+            "model": "deepseek-chat",
+            "stage": "answer",
+            "duration_ms": 1746.114,
+            "outcome": "success",
+            "input_tokens": 663,
+            "output_tokens": 161,
+            "total_tokens": 824,
+            "cached_input_tokens": 512,
+            "usage_complete": true,
+            "estimated_cost": null
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "Q01",
+      "repeat": 2,
+      "answer": "不能。根据 FDA 的相关说明（文档片段 D01_0）：鱼类组胺一旦形成，清洗、冷冻或加热都不能将其去除；预防的关键在于及时冷却并做好时间和温度控制，避免组胺积累。\n\n需要说明的是，这里说的是“已经产生的组胺”无法靠煮熟消除，与加热能杀灭细菌或寄生虫是两回事，不能混为一谈。",
+      "sources": [
+        {
+          "source": "https://www.fda.gov/food/hfp-constituent-updates/fda-issues-final-compliance-policy-guide-scombrotoxin-histamine-forming-fish-and-fishery-products",
+          "tool": "search_knowledge",
+          "call_id": "public-fda-probe",
+          "document_id": "D01",
+          "chunk_id": "D01_0",
+          "query": null,
+          "evidence_call_ids": []
+        }
+      ],
+      "observability": {
+        "duration_ms": 985.936,
+        "model_call_count": 1,
+        "input_tokens": 665,
+        "output_tokens": 80,
+        "cached_input_tokens": 512,
+        "total_tokens": 745,
+        "usage_complete": true,
+        "cost_complete": false,
+        "estimated_cost": null,
+        "cost_unit": "configured_price_unit",
+        "model_calls": [
+          {
+            "model": "deepseek-chat",
+            "stage": "answer",
+            "duration_ms": 985.366,
+            "outcome": "success",
+            "input_tokens": 665,
+            "output_tokens": 80,
+            "total_tokens": 745,
+            "cached_input_tokens": 512,
+            "usage_complete": true,
+            "estimated_cost": null
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "Q02",
+      "repeat": 2,
+      "answer": "**不能。** 根据 FDA 相关资料（文档片段 D01_0）：\n\n> 鱼类组胺一旦形成，清洗、冷冻或加热都不能去除。及时冷却并保持适当时间和温度控制可预防组胺积累。\n\n也就是说：\n\n- **冷冻**：只能抑制/延缓组胺继续生成，不能去除已经形成的组胺；\n- **清洗**：同样无法洗掉已形成的组胺；\n- **加热/烹饪**：也不能消除组胺——杀菌或杀寄生虫不等于去除组胺。\n\n**关键点**：预防胜于补救。应在捕捞后尽快冷却，并全程保持适当的时间和温度控制，防止组胺积累。\n\n依据来源：FDA 关于鲭鱼毒素/组胺形成鱼类的合规政策指南（chunk id: D01_0）。",
+      "sources": [
+        {
+          "source": "https://www.fda.gov/food/hfp-constituent-updates/fda-issues-final-compliance-policy-guide-scombrotoxin-histamine-forming-fish-and-fishery-products",
+          "tool": "search_knowledge",
+          "call_id": "public-fda-probe",
+          "document_id": "D01",
+          "chunk_id": "D01_0",
+          "query": null,
+          "evidence_call_ids": []
+        }
+      ],
+      "observability": {
+        "duration_ms": 1363.299,
+        "model_call_count": 1,
+        "input_tokens": 663,
+        "output_tokens": 163,
+        "cached_input_tokens": 512,
+        "total_tokens": 826,
+        "usage_complete": true,
+        "cost_complete": false,
+        "estimated_cost": null,
+        "cost_unit": "configured_price_unit",
+        "model_calls": [
+          {
+            "model": "deepseek-chat",
+            "stage": "answer",
+            "duration_ms": 1362.993,
+            "outcome": "success",
+            "input_tokens": 663,
+            "output_tokens": 163,
+            "total_tokens": 826,
+            "cached_input_tokens": 512,
+            "usage_complete": true,
+            "estimated_cost": null
+          }
+        ]
+      }
+    }
+  ],
+  "complete": true,
+  "scope": "actual production answer gateway with manually supplied frozen FDA chunk; not full retrieval or HTTP graph"
+}

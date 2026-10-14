@@ -1,0 +1,20 @@
+{
+  "before_requeue": {
+    "pending": 0.0,
+    "dead": 1.0,
+    "completed": 0.0,
+    "leased": 0.0,
+    "failed_attempts": 1.0,
+    "oldest_pending_age_seconds": 0.0
+  },
+  "after_requeue": {
+    "pending": 0.0,
+    "dead": 0.0,
+    "completed": 1.0,
+    "leased": 0.0,
+    "failed_attempts": 0.0,
+    "oldest_pending_age_seconds": 0.0
+  },
+  "metrics": "# TYPE safemeal_http_requests_total counter\n# TYPE safemeal_http_request_duration_seconds histogram\n# TYPE safemeal_recipe_cache_requests_total counter\n# TYPE safemeal_recipe_cache_errors_total counter\n# TYPE safemeal_behavior_events_total counter\nsafemeal_behavior_events_total{outcome=\"completed\"} 1\nsafemeal_behavior_events_total{outcome=\"cycle_success\"} 2\nsafemeal_behavior_events_total{outcome=\"published\"} 2\nsafemeal_behavior_events_total{outcome=\"refresh_failed\"} 1\n# TYPE safemeal_behavior_last_success_unixtime gauge\nsafemeal_behavior_last_success_unixtime 1791705576.399085\n# TYPE safemeal_outbox_completed gauge\nsafemeal_outbox_completed 1\n# TYPE safemeal_outbox_dead gauge\nsafemeal_outbox_dead 0\n# TYPE safemeal_outbox_failed_attempts gauge\nsafemeal_outbox_failed_attempts 0\n# TYPE safemeal_outbox_leased gauge\nsafemeal_outbox_leased 0\n# TYPE safemeal_outbox_oldest_pending_age_seconds gauge\nsafemeal_outbox_oldest_pending_age_seconds 0\n# TYPE safemeal_outbox_pending gauge\nsafemeal_outbox_pending 0\n",
+  "completed_replay_refused": true
+}

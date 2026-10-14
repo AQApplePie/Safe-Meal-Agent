@@ -1,0 +1,38 @@
+{
+  "transport": "real FastAPI TestClient, registration and JWT authentication",
+  "storage": "owned temporary SQLite and persisted checkpoints",
+  "model_and_tools": "deterministic test doubles; no provider calls",
+  "cases": [
+    {
+      "approved": true,
+      "pause_http": 200,
+      "checkpoint_reconstructed": true,
+      "unauthenticated_http": 401,
+      "cross_user_http": 404,
+      "stale_http": 409,
+      "new_turn_while_pending_http": 409,
+      "resume_http": 200,
+      "duplicate_http": 409,
+      "tool_calls_added": 1,
+      "persisted_same_message": true,
+      "decision_audit_entries": 1,
+      "safety_review": "passed"
+    },
+    {
+      "approved": false,
+      "pause_http": 200,
+      "checkpoint_reconstructed": true,
+      "unauthenticated_http": 401,
+      "cross_user_http": 404,
+      "stale_http": 409,
+      "new_turn_while_pending_http": 409,
+      "resume_http": 200,
+      "duplicate_http": 409,
+      "tool_calls_added": 0,
+      "persisted_same_message": true,
+      "decision_audit_entries": 1,
+      "safety_review": "no_recommendation"
+    }
+  ],
+  "passed": true
+}

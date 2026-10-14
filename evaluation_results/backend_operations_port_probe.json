@@ -1,0 +1,6 @@
+{
+  "method": "own disposable Docker Redis -p 127.0.0.1::6379 stop/start",
+  "before_port": "58778",
+  "after_port": "58780",
+  "changed": true
+}

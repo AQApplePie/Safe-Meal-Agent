@@ -1,0 +1,372 @@
+{
+  "method": "local real TCP HTTP; closed-loop, one uvicorn worker; auth dependency replaced by fixed/per-client actor; workers disabled; MySQL/Redis real",
+  "machine": {
+    "system": "Darwin",
+    "architecture": "arm64",
+    "python": "3.12.13",
+    "cpu_count": 10
+  },
+  "workloads": [
+    {
+      "workload": "list",
+      "cache_mode": "disabled",
+      "concurrency": 1,
+      "requests": 247,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.0056299580001,
+      "requests_per_second": 49.34443857665499,
+      "p50_ms": 20.187457999782055,
+      "p95_ms": 23.137270500046725,
+      "p99_ms": 24.080448360036822,
+      "sql_statements": 988,
+      "repository_loads": 247,
+      "recipe_cache_hit_ratio": 0.0
+    },
+    {
+      "workload": "list",
+      "cache_mode": "disabled",
+      "concurrency": 8,
+      "requests": 614,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.03426324999964,
+      "requests_per_second": 121.96422187497723,
+      "p50_ms": 63.858104499558976,
+      "p95_ms": 92.36044594990744,
+      "p99_ms": 119.12735249972685,
+      "sql_statements": 2456,
+      "repository_loads": 614,
+      "recipe_cache_hit_ratio": 0.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "disabled",
+      "concurrency": 1,
+      "requests": 594,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.005637666999974,
+      "requests_per_second": 118.66619989616662,
+      "p50_ms": 8.060687499892083,
+      "p95_ms": 13.30454200033273,
+      "p99_ms": 15.548708130454552,
+      "sql_statements": 1782,
+      "repository_loads": 594,
+      "recipe_cache_hit_ratio": 0.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "disabled",
+      "concurrency": 8,
+      "requests": 3277,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.008928082999773,
+      "requests_per_second": 654.2317928504681,
+      "p50_ms": 11.226958999941417,
+      "p95_ms": 20.145316399975844,
+      "p99_ms": 31.563246919504266,
+      "sql_statements": 9831,
+      "repository_loads": 3277,
+      "recipe_cache_hit_ratio": 0.0
+    },
+    {
+      "workload": "ranking",
+      "cache_mode": "disabled",
+      "concurrency": 1,
+      "requests": 7,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.266855666999618,
+      "requests_per_second": 1.3290662289949757,
+      "p50_ms": 742.4989170003755,
+      "p95_ms": 786.4991712003757,
+      "p99_ms": 797.0985014404505,
+      "sql_statements": 7,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "ranking",
+      "cache_mode": "disabled",
+      "concurrency": 8,
+      "requests": 24,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 6.133017541999834,
+      "requests_per_second": 3.913244962311678,
+      "p50_ms": 1949.3338960000983,
+      "p95_ms": 2211.3705983000273,
+      "p99_ms": 2230.125467159578,
+      "sql_statements": 24,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "write",
+      "cache_mode": "disabled",
+      "concurrency": 1,
+      "requests": 498,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.004401041000165,
+      "requests_per_second": 99.5124083621546,
+      "p50_ms": 9.960416000467376,
+      "p95_ms": 15.189774949840283,
+      "p99_ms": 16.855627480381354,
+      "sql_statements": 1494,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "write",
+      "cache_mode": "disabled",
+      "concurrency": 8,
+      "requests": 2823,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.010570875000667,
+      "requests_per_second": 563.4088550837282,
+      "p50_ms": 13.39004199962801,
+      "p95_ms": 19.78007890065783,
+      "p99_ms": 29.206067740215552,
+      "sql_statements": 8469,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "list",
+      "cache_mode": "redis_only",
+      "concurrency": 1,
+      "requests": 1192,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.00164762500026,
+      "requests_per_second": 238.3214671185354,
+      "p50_ms": 4.142437500377127,
+      "p95_ms": 5.759806249943722,
+      "p99_ms": 6.752614309953048,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "list",
+      "cache_mode": "redis_only",
+      "concurrency": 8,
+      "requests": 3546,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.007220292000056,
+      "requests_per_second": 708.1773505482431,
+      "p50_ms": 10.522312499688269,
+      "p95_ms": 17.15439599979618,
+      "p99_ms": 30.706368449955352,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "redis_only",
+      "concurrency": 1,
+      "requests": 1395,
+      "errors": 0,
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.004753291999805,
+      "requests_per_second": 278.735018213572,
+      "p50_ms": 3.306749999865133,
+      "p95_ms": 5.7875580004292715,
+      "p99_ms": 7.016705539535901,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "redis_only",
+      "concurrency": 8,
+      "requests": 15233,
+      "errors": 9186,
+      "error_rate": 0.6030328891223002,
+      "elapsed_seconds": 5.003427124999689,
+      "requests_per_second": 3044.51321453012,
+      "p50_ms": 2.0088749997739797,
+      "p95_ms": 4.803108400301426,
+      "p99_ms": 7.068778559951182,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    }
+  ],
+  "seed": {
+    "generated_recipes": 100000,
+    "original_recipes": 70,
+    "reaction_facts": 500000,
+    "view_facts": 500000,
+    "ingredients_per_generated_recipe": 1,
+    "steps_per_generated_recipe": 1
+  },
+  "warmup_seconds": 1,
+  "measurement_seconds": 5,
+  "concurrency": [
+    1,
+    8
+  ],
+  "cache_ttl_seconds": 60,
+  "local_cache_ttl_seconds": 1,
+  "seed_seconds": 9.28431720899971,
+  "ranking_sql": {
+    "before": {
+      "sql": "SELECT r.id,r.name,COUNT(*) AS score FROM recipes r JOIN recipe_reactions f ON f.recipe_id=r.id WHERE f.tenant_id=:tenant GROUP BY r.id,r.name ORDER BY score DESC,r.id DESC LIMIT 1001",
+      "explain_analyze": "-> Limit: 1001 row(s)  (actual time=826..826 rows=1001 loops=1)\n    -> Sort: score DESC, r.id DESC, limit input to 1001 row(s) per chunk  (actual time=826..826 rows=1001 loops=1)\n        -> Table scan on <temporary>  (actual time=812..821 rows=100000 loops=1)\n            -> Aggregate using temporary table  (actual time=812..812 rows=99999 loops=1)\n                -> Nested loop inner join  (cost=107738 rows=194745) (actual time=0.0205..277 rows=500000 loops=1)\n                    -> Covering index lookup on f using PRIMARY (tenant_id='benchmark')  (cost=39577 rows=194745) (actual time=0.0179..65.9 rows=500000 loops=1)\n                    -> Single-row index lookup on r using PRIMARY (id=f.recipe_id)  (cost=0.25 rows=1) (actual time=326e-6..342e-6 rows=1 loops=500000)\n",
+      "samples_ms": [
+        737.3448749995077,
+        724.1182079997088,
+        732.3394160002863,
+        758.4734590000153,
+        734.4170829992436,
+        720.2914169993164,
+        738.3182500007024,
+        735.1967499998864,
+        729.911749999701,
+        710.3953340001681
+      ],
+      "median_ms": 733.3782494997649
+    },
+    "after": {
+      "sql": "SELECT r.id,r.name,f.score FROM recipes r JOIN (SELECT recipe_id,COUNT(*) AS score FROM recipe_reactions WHERE tenant_id=:tenant GROUP BY recipe_id) f ON f.recipe_id=r.id ORDER BY f.score DESC,r.id DESC LIMIT 1001",
+      "explain_analyze": "-> Limit: 1001 row(s)  (actual time=166..166 rows=1001 loops=1)\n    -> Sort: f.score DESC, r.id DESC, limit input to 1001 row(s) per chunk  (actual time=166..166 rows=1001 loops=1)\n        -> Stream results  (cost=54766 rows=0) (actual time=108..161 rows=100000 loops=1)\n            -> Nested loop inner join  (cost=54766 rows=0) (actual time=108..153 rows=100000 loops=1)\n                -> Table scan on f  (cost=2.5..2.5 rows=0) (actual time=108..113 rows=100000 loops=1)\n                    -> Materialize  (cost=0..0 rows=0) (actual time=108..108 rows=100000 loops=1)\n                        -> Table scan on <temporary>  (actual time=100..105 rows=100000 loops=1)\n                            -> Aggregate using temporary table  (actual time=100..100 rows=100000 loops=1)\n                                -> Covering index lookup on recipe_reactions using PRIMARY (tenant_id='benchmark')  (cost=39426 rows=194745) (actual time=0.00983..52.1 rows=500000 loops=1)\n                -> Single-row index lookup on r using PRIMARY (id=f.recipe_id)  (cost=0.281 rows=1) (actual time=299e-6..315e-6 rows=1 loops=100000)\n",
+      "samples_ms": [
+        126.06454099932307,
+        127.59104099950491,
+        132.60845799959498,
+        151.49441700032185,
+        131.44850000026054,
+        127.49691599947255,
+        128.4219999997731,
+        126.22929199915234,
+        125.13237500024843,
+        125.56920799943327
+      ],
+      "median_ms": 127.54397849948873
+    }
+  },
+  "list_sql": {
+    "filter_and_sort": "-> Limit: 20 row(s)  (cost=2883 rows=20) (actual time=0.0252..0.0548 rows=20 loops=1)\n    -> Filter: (recipes.difficulty = 'easy')  (cost=2883 rows=23306) (actual time=0.025..0.0541 rows=20 loops=1)\n        -> Index range scan on recipes using ix_recipe_browse_time_id over (NULL < total_time <= 30), with index condition: (recipes.total_time <= 30)  (cost=2883 rows=46612) (actual time=0.024..0.0505 rows=58 loops=1)\n",
+    "deep_offset": "-> Limit/Offset: 20/90000 row(s)  (cost=8297 rows=20) (actual time=7.14..7.15 rows=20 loops=1)\n    -> Covering index scan on recipes using idx_recipe_name  (cost=8297 rows=90020) (actual time=0.013..5.63 rows=90020 loops=1)\n",
+    "count": "-> Aggregate: count(r.id)  (cost=129757 rows=1) (actual time=18.3..18.3 rows=1 loops=1)\n    -> Nested loop left join  (cost=119789 rows=99671) (actual time=0.0121..16.5 rows=100070 loops=1)\n        -> Covering index scan on r using idx_recipe_cuisine  (cost=10151 rows=99671) (actual time=0.00988..6.38 rows=100070 loops=1)\n        -> Single-row covering index lookup on c using PRIMARY (id=r.cuisine_id)  (cost=1 rows=1) (actual time=36.6e-6..36.6e-6 rows=700e-6 loops=100070)\n"
+  },
+  "storage": [
+    {
+      "TABLE_NAME": "alembic_version",
+      "TABLE_ROWS": 1,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 0
+    },
+    {
+      "TABLE_NAME": "behavior_outbox",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "benchmark_digits",
+      "TABLE_ROWS": 10,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 0
+    },
+    {
+      "TABLE_NAME": "benchmark_numbers",
+      "TABLE_ROWS": 1027818,
+      "DATA_LENGTH": 81379328,
+      "INDEX_LENGTH": 0
+    },
+    {
+      "TABLE_NAME": "chat_messages",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 98304
+    },
+    {
+      "TABLE_NAME": "chat_sessions",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 32768
+    },
+    {
+      "TABLE_NAME": "cooking_tools",
+      "TABLE_ROWS": 10,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "cuisines",
+      "TABLE_ROWS": 4,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "ingredients",
+      "TABLE_ROWS": 46,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 32768
+    },
+    {
+      "TABLE_NAME": "recipe_ingredients",
+      "TABLE_ROWS": 100616,
+      "DATA_LENGTH": 81920,
+      "INDEX_LENGTH": 65536
+    },
+    {
+      "TABLE_NAME": "recipe_reactions",
+      "TABLE_ROWS": 389491,
+      "DATA_LENGTH": 66830336,
+      "INDEX_LENGTH": 114262016
+    },
+    {
+      "TABLE_NAME": "recipe_steps",
+      "TABLE_ROWS": 100210,
+      "DATA_LENGTH": 81920,
+      "INDEX_LENGTH": 32768
+    },
+    {
+      "TABLE_NAME": "recipe_view_history",
+      "TABLE_ROWS": 553554,
+      "DATA_LENGTH": 64700416,
+      "INDEX_LENGTH": 109985792
+    },
+    {
+      "TABLE_NAME": "recipes",
+      "TABLE_ROWS": 99671,
+      "DATA_LENGTH": 12075008,
+      "INDEX_LENGTH": 14237696
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "step_tools",
+      "TABLE_ROWS": 416,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 49152
+    },
+    {
+      "TABLE_NAME": "user_memories",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "users",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    }
+  ],
+  "http_server_stopped": true
+}

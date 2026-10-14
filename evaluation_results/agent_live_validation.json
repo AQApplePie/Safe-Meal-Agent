@@ -1,0 +1,36 @@
+{
+  "full_suite": {
+    "passed": 459,
+    "skipped": 25,
+    "failed": 0
+  },
+  "evaluation_suite": {
+    "passed": 92
+  },
+  "ruff": "passed",
+  "mypy": "305 source files passed",
+  "actual_model_requests": 120,
+  "live_tasks": 12,
+  "repeats": 3,
+  "systems": 3,
+  "agent_structural_passed": 36,
+  "agent_targeted_factual_review_passed": 33,
+  "cross_user_404_checks": 36,
+  "credentials_absent_from_reports": true,
+  "code_hash_matches_live_production": true,
+  "architecture_review": "production layer responsibilities preserved",
+  "source_sha256": {
+    "scripts/evaluate_agent_live.py": "2873ec2718b65dd6c099607a3c79a2716c2c9337b9ec7a2b50a2617d8ed44631",
+    "tests/evaluation/test_live_benchmark_contract.py": "420a5ab7c2d476f270c06026f9331af0ddd8033d80e159cc5baa345f1b5cc779",
+    "tests/evaluation/test_live_findings.py": "1210c4718347677963041215cbef3afdb28907cc01f86f953fd1749d263f2ae6",
+    "tests/evaluation/datasets/live_tasks_v1.json": "524a963a608fbabce39c8d1b9b941ea7680267255b0c0b7de2b257861759518e",
+    "tests/evaluation/datasets/live_tasks_v1.sha256": "57baf5118b1e234fde24d39380f8de6014d8e19807192f309a5d4f552044aaf7",
+    "safemeal/agent/context/short_term_reference.py": "d5c7e209002fa1b0db1410c294daba2f652767f516ea943f5da2a0bca7af7638",
+    "safemeal/agent/context/active_menu.py": "6e4c1f8e345cf8509ea56a7307d08a0ec4c244819b631f4d9e5b08d8d6365ca6",
+    "safemeal/agent/workflow/nodes/prepare_context.py": "5218e5698b5185d3ff3315b2ebead75162a15715b0efbbd0fc06578a41536932",
+    "safemeal/agent/workflow/nodes/safety.py": "779274ca6d2130a45b038c3d846e081f5be7eaf5bb2d5ccf71cf7331394e3f58",
+    "safemeal/agent/understanding/request_understanding.py": "33434d603bf0fc942cf21e574c64a664b31d00ecb3da8766e916aef365129cbd",
+    "safemeal/modules/dietary/application/constraints.py": "abc2d27b39f86dbf2ef8f1ea24a5061d28cab8266aa1486eecab02b70d4281ec",
+    "docs/optimization/05_agent_evaluation_baselines.md": "79a2544a123c088acd6f0161a3e932c41990be1e67c8a2ac606deb6053b770d4"
+  }
+}

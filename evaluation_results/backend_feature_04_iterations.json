@@ -1,0 +1,83 @@
+{
+  "feature": "04_popular_recipe_rankings",
+  "date": "2026-10-08",
+  "baseline": {
+    "passed": 318,
+    "skipped": 1,
+    "source": "feature_03 delivery"
+  },
+  "iterations": [
+    {
+      "check": "initial ranking integration tests",
+      "passed": 21,
+      "failed": 0
+    },
+    {
+      "check": "initial mypy",
+      "errors": 19,
+      "fix": "Use registered Redis Script keys/args API instead of incorrectly annotated eval; explicitly type RankingMode tuple"
+    },
+    {
+      "check": "ruff and mypy after typing fix",
+      "result": "pass",
+      "source_files": 291
+    },
+    {
+      "check": "first full regression",
+      "passed": 339,
+      "skipped": 1,
+      "failed": 0
+    },
+    {
+      "check": "post-test architecture review",
+      "changes": [
+        "Namespace snapshots by timezone/cap profile",
+        "Validate Hash cardinality against ZSet",
+        "Stop tenant refresh after rejected publication",
+        "Constrain HTTP ranking surface to GET",
+        "Use genuine binary Redis connection in test",
+        "Verify real lifecycle asynchronous cancellation refresh"
+      ],
+      "added_tests": 4
+    },
+    {
+      "check": "ranking + architecture + HTTP surface after review",
+      "passed": 39
+    },
+    {
+      "check": "final full regression",
+      "passed": 343,
+      "skipped": 1,
+      "failed": 0
+    }
+  ],
+  "checks": {
+    "ruff": "pass: safemeal/tests",
+    "mypy": "pass: 291 source files",
+    "new_python_format": "pass: 9 files",
+    "git_diff_check": "pass",
+    "redis": "real disposable server, private Unix socket, persistence disabled",
+    "sql_fallback_query_budget": 1,
+    "sqlite_day_index_plan": "ix_recipe_history_ranking_day used",
+    "mysql_live": "not executed: Docker daemon unavailable on read-only docker info",
+    "production_scale_benchmark": "not executed",
+    "user_database_migration": "not executed"
+  },
+  "behavior": {
+    "metrics": {
+      "today": "distinct viewers during configured natural day from latest-view facts",
+      "popular": "current likes + current favorites"
+    },
+    "scope": "authenticated tenant only",
+    "default_timezone": "Asia/Shanghai",
+    "redis": "absolute capped ZSet snapshots with names and metadata",
+    "refresh": "lifespan worker, bounded tenant batches, fenced per-tenant lease",
+    "recovery": "SQL fallback then automatic rebuild",
+    "inactive_tenant": "all facts removed => old snapshot expires by TTL",
+    "default_refresh_seconds": 30,
+    "default_ttl_seconds": 300,
+    "default_cap": 1000,
+    "frontend": "backend APIs only"
+  },
+  "next_feature": "05_identity_and_behavior requires user confirmation"
+}

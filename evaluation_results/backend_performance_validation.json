@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-09",
+  "scope": "backend optimization 3 / document 4 of 9",
+  "performance": {
+    "cases": 20,
+    "requests": 79234,
+    "errors": 0,
+    "passed": 1
+  },
+  "regression": {
+    "passed": 452,
+    "skipped": 2,
+    "failures": 0,
+    "errors": 0
+  },
+  "checks": {
+    "ruff": "pass",
+    "format_files": 7,
+    "mypy_source_files": 302,
+    "git_diff_check": "pass"
+  },
+  "migration_head": "20261009_0014",
+  "cleanup": {
+    "sm-mysql-it-9095b4e9e1cb": true,
+    "sm-redis-it-9095b4e9e1cb": true
+  },
+  "architecture_review": {
+    "interfaces_unchanged": true,
+    "application_ports_unchanged": true,
+    "agent_dependencies_added": false,
+    "production_changes": "persistence SQL and incremental catalog index only",
+    "measurement_code": "opt-in tests only"
+  },
+  "source_sha256": {
+    "safemeal/infrastructure/persistence/recipe_repository.py": "e50b6c2501925c0d230f9aed3b11c396dfe8eabe88b005ccd5236bface5bc1a3",
+    "safemeal/infrastructure/persistence/ranking_repository.py": "6090dee7349dd30ba2b0061db64f8496871ecf256297df140009b6392ac82293",
+    "safemeal/infrastructure/persistence/migrations/versions/20261009_0014_recipe_difficulty_time_index.py": "710090d112d253068998600a62579688bac27fe411311a463fdb44fb13f1b99d",
+    "tests/backend/test_recipe_browsing.py": "ef5632a5f6cd3d05c06f5a75eaa8d6b6adc612666158b0f1c754f9fc6de9e28d",
+    "tests/backend/test_recipe_rankings.py": "5f61ef853571edb8f7a475b020700fc19abdf89e5793231c3a948a4f94d9e01b",
+    "tests/integration/test_backend_performance.py": "debcd50e04021a839ff5f75daa52d93733b0a81090586c923b4a31e3136c8e5d",
+    "tests/integration/test_mysql_backend.py": "fae9aeaea7d62f9317f54883ce6f035604cbaa3c29a3ac0cbbbff700adcfc010",
+    "Makefile": "f0b84fb9d2838f0e359432e2227fb767c0909642fc9c20b9871522771f6bb9be"
+  },
+  "limits": [
+    "single API worker, load generator shares process",
+    "1s serial warm-up + 5s closed-loop windows; no soak or capacity assertion",
+    "auth overridden and middleware/background workers excluded",
+    "cold first wave 8 samples; no distributed cache mutual exclusion",
+    "resource snapshots, not continuous peak telemetry"
+  ]
+}

@@ -1,0 +1,576 @@
+[
+  {
+    "file": "safemeal/main.py",
+    "line": 103,
+    "symbol": "root_redirect",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/main.py",
+    "line": 107,
+    "symbol": "favicon",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/main.py",
+    "line": 121,
+    "symbol": "health_check",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/main.py",
+    "line": 129,
+    "symbol": "liveness",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/main.py",
+    "line": 134,
+    "symbol": "readiness",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/main.py",
+    "line": 157,
+    "symbol": "application_exception_handler",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/main.py",
+    "line": 203,
+    "symbol": "global_exception_handler",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/config/settings.py",
+    "line": 198,
+    "symbol": "inherit_dashscope_credentials",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/request_middleware.py",
+    "line": 21,
+    "symbol": "dispatch",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/request_middleware.py",
+    "line": 48,
+    "symbol": "dispatch",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/request_middleware.py",
+    "line": 69,
+    "symbol": "dispatch",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/auth.py",
+    "line": 68,
+    "symbol": "me",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 65,
+    "symbol": "create_chat_turn",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 95,
+    "symbol": "stream_chat_turn",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 134,
+    "symbol": "get_chat_history",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 165,
+    "symbol": "clear_chat_session",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 200,
+    "symbol": "list_chat_sessions",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 222,
+    "symbol": "get_chat_session",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 236,
+    "symbol": "update_chat_session",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 259,
+    "symbol": "delete_chat_session",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 272,
+    "symbol": "list_user_memories",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 291,
+    "symbol": "update_user_memory",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 315,
+    "symbol": "archive_user_memory",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/chat.py",
+    "line": 335,
+    "symbol": "resume_chat",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/knowledge.py",
+    "line": 69,
+    "symbol": "upload_and_ingest_file",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/knowledge.py",
+    "line": 95,
+    "symbol": "enqueue_uploaded_document",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/knowledge.py",
+    "line": 120,
+    "symbol": "get_ingestion_job",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/knowledge.py",
+    "line": 134,
+    "symbol": "list_files",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/knowledge.py",
+    "line": 142,
+    "symbol": "get_file",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/knowledge.py",
+    "line": 154,
+    "symbol": "download_file",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/routers/knowledge.py",
+    "line": 169,
+    "symbol": "delete_file",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/models/chat_message.py",
+    "line": 34,
+    "symbol": "normalize_utc",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/models/chat_session.py",
+    "line": 19,
+    "symbol": "require_change",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/interfaces/http/models/chat_session.py",
+    "line": 42,
+    "symbol": "normalize_utc",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/conversation/application/chat_session_service.py",
+    "line": 41,
+    "symbol": "create_session",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/conversation/application/chat_session_service.py",
+    "line": 81,
+    "symbol": "count_sessions",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/conversation/application/chat_session_service.py",
+    "line": 102,
+    "symbol": "get_message",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/conversation/application/chat_session_service.py",
+    "line": 111,
+    "symbol": "get_question_before_message",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/conversation/contracts/chat/messages.py",
+    "line": 36,
+    "symbol": "require_change",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/knowledge/ports/ingestion/upload_storage.py",
+    "line": 16,
+    "symbol": "find_by_prefix",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/knowledge/application/knowledge/document_knowledge_service.py",
+    "line": 158,
+    "symbol": "ingest_document",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/recipe/contracts/catalog.py",
+    "line": 66,
+    "symbol": "normalize_terms",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/recipe/contracts/generated.py",
+    "line": 32,
+    "symbol": "validate_quantity_unit",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/recipe/contracts/generated.py",
+    "line": 70,
+    "symbol": "validate_recipe_shape",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/recipe/contracts/generation.py",
+    "line": 22,
+    "symbol": "normalize_ingredient_terms",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/recipe/contracts/models.py",
+    "line": 103,
+    "symbol": "validate_plausible_boundaries",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/recipe/contracts/models.py",
+    "line": 136,
+    "symbol": "populate_normalized_quantity",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/recipe/contracts/models.py",
+    "line": 175,
+    "symbol": "validate_aggregate_invariants",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/dietary/contracts/requirements.py",
+    "line": 25,
+    "symbol": "validate_value",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/identity/contracts/models.py",
+    "line": 31,
+    "symbol": "validate_email",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/identity/contracts/models.py",
+    "line": 36,
+    "symbol": "validate_password",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/modules/identity/contracts/models.py",
+    "line": 50,
+    "symbol": "validate_email",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/ingestion/local_upload_storage.py",
+    "line": 36,
+    "symbol": "find_by_prefix",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/llm/openai_language_model_gateway.py",
+    "line": 51,
+    "symbol": "_is_placeholder_secret",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/threaded_checkpoint.py",
+    "line": 40,
+    "symbol": "aget_tuple",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/threaded_checkpoint.py",
+    "line": 43,
+    "symbol": "alist",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/threaded_checkpoint.py",
+    "line": 50,
+    "symbol": "aput",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/threaded_checkpoint.py",
+    "line": 55,
+    "symbol": "aput_writes",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/langgraph_checkpoint.py",
+    "line": 244,
+    "symbol": "aget_tuple",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/langgraph_checkpoint.py",
+    "line": 247,
+    "symbol": "alist",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/langgraph_checkpoint.py",
+    "line": 261,
+    "symbol": "aput",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/langgraph_checkpoint.py",
+    "line": 272,
+    "symbol": "aput_writes",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260716_0004_legacy_revision_marker.py",
+    "line": 16,
+    "symbol": "upgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260716_0004_legacy_revision_marker.py",
+    "line": 20,
+    "symbol": "downgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260710_0002_harden_chat_turns.py",
+    "line": 20,
+    "symbol": "upgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260710_0002_harden_chat_turns.py",
+    "line": 144,
+    "symbol": "downgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260713_0003_remove_chat_snapshots.py",
+    "line": 20,
+    "symbol": "upgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260713_0003_remove_chat_snapshots.py",
+    "line": 34,
+    "symbol": "downgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260802_0005_remove_legacy_feedback_table.py",
+    "line": 19,
+    "symbol": "upgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260802_0005_remove_legacy_feedback_table.py",
+    "line": 24,
+    "symbol": "downgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20261001_0006_add_identity_system.py",
+    "line": 17,
+    "symbol": "upgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20261001_0006_add_identity_system.py",
+    "line": 53,
+    "symbol": "downgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260705_0001_initial_application_schema.py",
+    "line": 385,
+    "symbol": "upgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/persistence/migrations/versions/20260705_0001_initial_application_schema.py",
+    "line": 391,
+    "symbol": "downgrade",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/retrieval/neo4j/recipe_graph.py",
+    "line": 97,
+    "symbol": "fetch_graph",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/infrastructure/retrieval/neo4j/importers/recipe_importer.py",
+    "line": 47,
+    "symbol": "bootstrap_from_json",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/agent/contracts/menu_planning.py",
+    "line": 54,
+    "symbol": "validate_non_negative_counts",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/agent/contracts/decisions.py",
+    "line": 51,
+    "symbol": "validate_decision_shape",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/agent/contracts/decisions.py",
+    "line": 89,
+    "symbol": "validate_decision_shape",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/agent/contracts/context.py",
+    "line": 36,
+    "symbol": "validate_conversation_history",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/agent/runtime/tools/contracts/payloads.py",
+    "line": 78,
+    "symbol": "validate_unique_recipe_ids",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  },
+  {
+    "file": "safemeal/agent/runtime/tools/contracts/base.py",
+    "line": 57,
+    "symbol": "validate_status",
+    "decision": "UNCERTAIN",
+    "reason": "No direct lexical consumer; decorators, Protocol implementation and external calls need manual evidence"
+  }
+]

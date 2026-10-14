@@ -1,0 +1,14 @@
+{
+  "feature": 6,
+  "name": "behavior event processing",
+  "date": "2026-10-08",
+  "iterations": [
+    {"stage": "implementation", "changes": ["transactional SQL outbox", "Redis Streams relay and consumer", "SQL lease fencing and durable deduplication", "exponential retry and SQL dead letters", "single tenant absolute ranking rebuild", "composition and lifecycle wiring", "migration 20261008_0012"]},
+    {"stage": "static fixes", "changes": ["restore future import position", "adapt redis synchronous API type annotations using cast", "freeze migration schema instead of importing runtime model"]},
+    {"stage": "initial verification", "new_tests_passed": 21, "full_passed": 398, "skipped": 1},
+    {"stage": "failure window review", "changes": ["refresh success followed by SQL completion failure test", "duplicate retry delay test", "distinct viewer statistics test", "bounded batch test"]},
+    {"stage": "final verification", "new_tests_passed": 25, "full_passed": 402, "skipped": 1, "ruff": "passed", "mypy_source_files": 295, "mypy": "passed"},
+    {"stage": "post-test architecture review", "result": "no blocking architecture findings", "checks": ["infrastructure dependencies remain in infrastructure/bootstrap", "business ranking uses ports", "same SQL connection captures behavior and event", "worker closes before DB/Redis", "HTTP and Agent contracts preserved"]}
+  ],
+  "limitations": ["Docker daemon unavailable; real MySQL integration not performed", "user database not migrated", "not deployed", "SQL event retention requires operator policy"]
+}

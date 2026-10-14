@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="7" time="28.943" timestamp="2026-10-09T14:29:04.491238" hostname="aqapplepiedeMacBook-Air.local"><testcase classname="tests.backend.test_operations_metrics" name="test_threaded_counters_and_histogram" time="0.001" /><testcase classname="tests.backend.test_operations_metrics" name="test_http_status_templates_and_metrics_protection" time="0.043" /><testcase classname="tests.backend.test_operations_metrics" name="test_metrics_disabled_and_production_validation" time="0.002" /><testcase classname="tests.backend.test_operations_metrics" name="test_cache_counts_logical_requests_by_source" time="0.050" /><testcase classname="tests.backend.test_operations_metrics" name="test_durable_outbox_gauges_and_requeue" time="0.011" /><testcase classname="tests.backend.test_operations_metrics" name="test_collector_failure_omits_stale_gauges_and_singleflight" time="0.073" /><testcase classname="tests.integration.test_backend_operations" name="test_real_redis_outage_durable_events_and_automatic_recovery" time="28.035"><failure message="AssertionError: Workers did not automatically recover&#10;assert 10535.501086708 &lt; 10535.468956291&#10; +  where 10535.501086708 = &lt;built-in function monotonic&gt;()&#10; +    where &lt;built-in function monotonic&gt; = time.monotonic">services = namespace(engine=Engine(mysql+pymysql://root:***@127.0.0.1:58368/recipe_db), redis=Redis&lt;ConnectionPool&lt;Connection&lt;hos...TABLE-READ', 'lock_wait_seconds': 1, 'migration_head': '20261009_0014', 'recipe_count': 70, 'redis_version': '7.4.11'})
+
+    def test_real_redis_outage_durable_events_and_automatic_recovery(services):  # noqa: F811
+        token = uuid4().hex
+        redis_url = f"redis://127.0.0.1:{services.redis.connection_pool.connection_kwargs['port']}/0"
+        config = PlatformSettings(
+            DATABASE_URL=services.url.render_as_string(hide_password=False),
+            METRICS_ENABLED=True,
+            METRICS_TOKEN=token,
+            METRICS_OUTBOX_SCRAPE_SECONDS=1,
+            RECIPE_CACHE_URL=redis_url,
+            RECIPE_RANKING_REDIS_URL=redis_url,
+            BEHAVIOR_EVENT_REDIS_URL=redis_url,
+            DEFAULT_TENANT_ID="operations-test",
+            RECIPE_RANKING_REFRESH_SECONDS=1,
+        )
+        app = create_platform_application(config)
+        stages = []
+        redis_name = services.evidence["container_names"][1]
+        stopped = False
+    
+        def sql_counts():
+            with services.engine.connect() as conn:
+                return {
+                    "facts": conn.execute(
+                        select(func.count()).select_from(reactions)
+                    ).scalar_one(),
+                    "pending": conn.execute(
+                        select(func.count())
+                        .select_from(outbox)
+                        .where(outbox.c.completed_at.is_(None), outbox.c.dead_at.is_(None))
+                    ).scalar_one(),
+                    "completed": conn.execute(
+                        select(func.count())
+                        .select_from(outbox)
+                        .where(outbox.c.completed_at.is_not(None))
+                    ).scalar_one(),
+                }
+    
+        try:
+            with TestClient(app) as client:
+                credentials = {
+                    "email": f"ops-{uuid4().hex}@example.test",
+                    "password": "OperationsDemo12345",
+                }
+                registered = client.post("/api/v1/auth/register", json=credentials)
+                assert registered.status_code == 201
+                headers = {"Authorization": "Bearer " + registered.json()["access_token"]}
+                metrics_headers = {"Authorization": "Bearer " + token}
+                assert client.get("/readyz").status_code == 200
+                assert client.get("/api/v1/recipes/1").status_code == 200
+                assert client.get("/metrics").status_code == 401
+                assert client.get("/metrics", headers=headers).status_code == 401
+                stages.append({"stage": "healthy", "sql": sql_counts()})
+                docker("stop", "--time", "1", redis_name)
+                stopped = True
+                tick = time.monotonic()
+                assert client.get("/livez").status_code == 200
+                assert client.get("/readyz").status_code == 503
+                time.sleep(
+                    1.05
+                )  # Let bounded L1 expire; real SQL fallback, not warm local payload.
+                assert client.get("/api/v1/recipes/1").status_code == 200
+                for action in ("like", "favorite", "view"):
+                    response = client.put(f"/api/v1/recipes/1/{action}", headers=headers)
+                    assert response.status_code == 200
+                time.sleep(1.05)
+                metrics = client.get("/metrics", headers=metrics_headers)
+                assert metrics.status_code == 200
+                assert "safemeal_outbox_pending 3" in metrics.text
+                assert "safemeal_outbox_collector_up 1" in metrics.text
+                assert 'outcome="cycle_failed"' in metrics.text
+                assert 'operation="redis_read_error"' in metrics.text
+                assert sql_counts() == {"facts": 2, "pending": 3, "completed": 0}
+                stages.append(
+                    {
+                        "stage": "redis_down",
+                        "elapsed_seconds": time.monotonic() - tick,
+                        "sql": sql_counts(),
+                        "metrics": metrics.text,
+                    }
+                )
+                docker("start", redis_name)
+                stopped = False
+                deadline = time.monotonic() + 20
+                while True:
+                    try:
+                        services.redis.ping()
+                        if sql_counts()["completed"] == 3:
+                            break
+                    except RedisError:
+                        pass
+&gt;                   assert time.monotonic() &lt; deadline, (
+                        "Workers did not automatically recover"
+                    )
+E                   AssertionError: Workers did not automatically recover
+E                   assert 10535.501086708 &lt; 10535.468956291
+E                    +  where 10535.501086708 = &lt;built-in function monotonic&gt;()
+E                    +    where &lt;built-in function monotonic&gt; = time.monotonic
+
+tests/integration/test_backend_operations.py:116: AssertionError</failure></testcase></testsuite></testsuites>

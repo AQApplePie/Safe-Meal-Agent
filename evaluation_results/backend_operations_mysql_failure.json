@@ -1,0 +1,19 @@
+{
+  "healthy": {
+    "enabled": 1.0,
+    "collector_up": 1.0,
+    "pending": 0.0,
+    "dead": 0.0,
+    "completed": 0.0,
+    "leased": 0.0,
+    "failed_attempts": 0.0,
+    "oldest_pending_age_seconds": 0.0,
+    "collected_unixtime": 1791705576.611692
+  },
+  "database_down": {
+    "enabled": 1.0,
+    "collector_up": 0.0,
+    "collected_unixtime": 1791705578.929897
+  },
+  "method": "stop fixture-owned MySQL"
+}

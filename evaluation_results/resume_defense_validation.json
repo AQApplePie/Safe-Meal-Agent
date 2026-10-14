@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-11",
+  "scope": "source/evidence review and simulated interviewer/candidate answers; not a human interview",
+  "resume_sha256": "ff25dc63b6480b668b4dd0b284ea169df99abadd03c7101efe41a8f2d37aab12",
+  "resume_modified": false,
+  "report": "docs/career/resume_defense_validation.md",
+  "interview_questions": 26,
+  "current_targeted_tests": {
+    "total": 51,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "prior_verified_files_compared": 19,
+  "changed_files": [],
+  "missing_report_links": [],
+  "not_rerun_today": [
+    "million-row HTTP/SQL performance experiment",
+    "Docker MySQL/Redis fault drills",
+    "paid real-model evaluation"
+  ],
+  "skills_without_evidence_in_these_projects": [
+    "RabbitMQ",
+    "MCP implementation",
+    "Multi-Agent implementation",
+    "Maven"
+  ],
+  "overall": "project claims supported with explicit test boundaries; candidate mastery remains unassessed"
+}

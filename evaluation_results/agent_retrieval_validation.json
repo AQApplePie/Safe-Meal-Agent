@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-10",
+  "targeted_tests": {
+    "passed": 24,
+    "failed": 0
+  },
+  "full_regression": {
+    "passed": 510,
+    "skipped": 25,
+    "failed": 0,
+    "duration_seconds": 11.84
+  },
+  "ruff": "passed",
+  "mypy": {
+    "passed": true,
+    "source_files": 307
+  },
+  "git_diff_check": "passed",
+  "frontend_tests": {
+    "passed": 10,
+    "failed": 0
+  },
+  "frontend_build": "passed",
+  "architecture_review": "passed for implemented changes; source review and existing architecture regression",
+  "reference_ablation_only": true,
+  "production_embedding_rerank_quality_verified": false,
+  "provider_blocker": "initial text-embedding-v4 request used inherited DeepSeek base URL and returned HTTP 404; independent provider configuration needed",
+  "histamine_review": {
+    "complete_http_agent_core_fact_pass": 3,
+    "supplied_chunk_answer_core_fact_and_attribution_pass": 6,
+    "not_general_factual_guarantee": true
+  },
+  "source_sha256": {
+    "safemeal/modules/knowledge/application/knowledge/document_knowledge_service.py": "9195879033ff9ac3bac4bff6a7ff65063f347271125e476e8aa8d73bda3f88c8",
+    "safemeal/modules/knowledge/application/knowledge/hybrid.py": "7fb29cd05a0bf5af73eaa34ce5ccaeb291992d090791db5693d7d5e85f20dbe3",
+    "safemeal/infrastructure/retrieval/sqlite_bm25.py": "dbfdf91592c34e3ae6d2fbba4a2eed54032e22d7cf0e9bc3f9377e0c68518765",
+    "safemeal/infrastructure/retrieval/milvus/document_embedder.py": "c5509fb0287d3b7bd5f9f44db41fbe9317f4f1a35884beb2bcb1a6d5ef93324a",
+    "safemeal/infrastructure/retrieval/milvus/document_reranker.py": "513d78f4c156fbcf6182458bf6e02271b4b4bbe898972587268f522e2c6c26d2",
+    "safemeal/config/settings.py": "209333933bb2ee347c1923a80cd6b23aec21516624f9cb386c195363cb41ba8f",
+    "safemeal/agent/runtime/tools/knowledge_scope.py": "4a5ceb7b240d736278eca5bad519c18fa5005c4cff2333f7fd7801c138b74139",
+    "safemeal/agent/runtime/tools/adapters/knowledge_search.py": "87008be6f23263e38b999103c03b9df28f540d3cbf6c76ee21902c86fbd484af",
+    "safemeal/agent/runtime/tools/contracts/payloads.py": "c48b783292edd4c1780aa15b3b2e173d3230e158a0e458a2bd9884ed436fdc22",
+    "safemeal/agent/runtime/aggregation/sources.py": "b9ab8a2ef654f21256c897d3a3ed3e996420a3e44a75db0ead2220f6c318b21b",
+    "safemeal/agent/runtime/orchestration/__init__.py": "bdbf1e927f5631d0a32e3ec6fe2c19a576b0dc379b595d727fb283801905920c",
+    "safemeal/interfaces/http/routers/chat.py": "24711fb54b3fa34c1ac22a21951a086d0e3f7fdc8b026749796157e032c3107f",
+    "safemeal/modules/conversation/contracts/conversation/models.py": "8313256c381c6351fba4061aea6cc826764f95b806396d1d6e43a3421b5225d6",
+    "safemeal/infrastructure/llm/openai_language_model_gateway.py": "6c88d4b4b254e53811860dd739247ae5fa35cd19fcbfbd3ce0a1d66408acf2d8",
+    "tests/refactor/test_retrieval_quality.py": "60ffc1ed253274b2f28c0e393f6c14724406d5a771f81a1333d7dd7ca776e64c",
+    "tests/refactor/test_approval_flow.py": "1f1973d1477d300a3a34171a4a1d52d00afa9c48d000f480282b2a8a99aa9d43",
+    "scripts/evaluate_agent_retrieval.py": "499ea6384664d6a3ad071858fa84e77760730d7cc504fb14a45d725bc2257091",
+    "scripts/evaluate_agent_retrieval_answer.py": "f6977ed526460f48c8518d1f9afe86ef2cb75e53b056063e98917f24b6f3a110",
+    "tests/evaluation/datasets/retrieval_v1.json": "b175ce1d2506ada3e6fc8219af420af3a660da7469886534414eeebc99fb75bb"
+  },
+  "optimization_document_count": 9
+}

@@ -1,0 +1,16 @@
+# Standalone Recipe Platform runtime. Keep shared pins aligned with requirements.txt.
+fastapi==0.109.0
+starlette==0.35.1
+uvicorn[standard]==0.27.0
+pydantic==2.10.4
+pydantic-settings==2.4.0
+sqlalchemy==2.0.25
+alembic==1.13.1
+pymysql==1.1.0
+cryptography>=42,<46
+redis==5.0.1
+httpx==0.26.0
+python-dotenv==1.0.1
+PyJWT[crypto]>=2.8.0,<3
+argon2-cffi>=23.1.0,<26
+loguru==0.7.2

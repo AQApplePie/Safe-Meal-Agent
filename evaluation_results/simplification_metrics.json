@@ -1,0 +1,21 @@
+{
+  "before": {
+    "python_source_lines": 23496,
+    "initializer_lines": 147,
+    "planner_lines": 661,
+    "planner_if_branches": 29,
+    "AgentState_fields": 29,
+    "AgentContext_fields": 10,
+    "WorkflowState_fields": 7
+  },
+  "after": {
+    "python_source_lines": 23420,
+    "initializer_lines": 140,
+    "planner_lines": 658,
+    "planner_if_branches": 30,
+    "AgentState_fields": 29,
+    "AgentContext_fields": 10,
+    "WorkflowState_fields": 7
+  },
+  "method": "AST annotated class fields / ast.If count; source splitlines; scope safemeal/**/*.py, planner/*.py"
+}

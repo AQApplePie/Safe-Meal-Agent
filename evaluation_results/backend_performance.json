@@ -1,0 +1,1289 @@
+{
+  "method": "direct loopback TCP HTTP, trust_env=False; closed-loop, one uvicorn worker; auth dependency replaced by fixed/per-client actor; workers disabled; MySQL/Redis real",
+  "machine": {
+    "system": "Darwin",
+    "architecture": "arm64",
+    "python": "3.12.13",
+    "cpu_count": 10
+  },
+  "workloads": [
+    {
+      "workload": "list",
+      "cache_mode": "disabled",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "24.78%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "17.67%",
+            "MemUsage": "1.352GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "1.77MB / 6.27MB",
+            "PIDs": "46"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.30%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.12%",
+            "MemUsage": "9.469MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "2.16kB / 1.36kB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 684,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.00293958399925,
+      "requests_per_second": 136.71962023839274,
+      "p50_ms": 7.074729499436216,
+      "p95_ms": 10.096870448796837,
+      "p99_ms": 11.587129109957454,
+      "sql_statements": 2736,
+      "repository_loads": 684,
+      "recipe_cache_hit_ratio": 0.0
+    },
+    {
+      "workload": "list",
+      "cache_mode": "disabled",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "54.54%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "17.67%",
+            "MemUsage": "1.352GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "5.95MB / 20.3MB",
+            "PIDs": "46"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.20%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.12%",
+            "MemUsage": "9.473MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "2.16kB / 1.36kB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 1957,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.009592915999747,
+      "requests_per_second": 390.65050450500496,
+      "p50_ms": 19.830207998893457,
+      "p95_ms": 26.64500859937106,
+      "p99_ms": 43.34299147893036,
+      "sql_statements": 7828,
+      "repository_loads": 1957,
+      "recipe_cache_hit_ratio": 0.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "disabled",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "10.74%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "17.67%",
+            "MemUsage": "1.352GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "9.31MB / 27.9MB",
+            "PIDs": "46"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.38%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.12%",
+            "MemUsage": "9.469MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "2.22kB / 1.42kB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 1331,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.002707791998546,
+      "requests_per_second": 266.0559151843396,
+      "p50_ms": 3.4894590007752413,
+      "p95_ms": 5.998437500238651,
+      "p99_ms": 7.739450000372023,
+      "sql_statements": 3993,
+      "repository_loads": 1331,
+      "recipe_cache_hit_ratio": 0.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "disabled",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "16.96%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "17.67%",
+            "MemUsage": "1.353GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "14.3MB / 37.3MB",
+            "PIDs": "46"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.21%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.12%",
+            "MemUsage": "9.469MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "2.22kB / 1.42kB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 3843,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.005850333000126,
+      "requests_per_second": 767.7017378377748,
+      "p50_ms": 10.044500000731205,
+      "p95_ms": 14.702428799319021,
+      "p99_ms": 18.762034359351667,
+      "sql_statements": 11529,
+      "repository_loads": 3843,
+      "recipe_cache_hit_ratio": 0.0
+    },
+    {
+      "workload": "ranking",
+      "cache_mode": "disabled",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "92.74%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "18.85%",
+            "MemUsage": "1.442GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "16.9MB / 43.3MB",
+            "PIDs": "46"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.17%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.12%",
+            "MemUsage": "9.473MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "2.22kB / 1.42kB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 35,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.119296415999997,
+      "requests_per_second": 6.836877015093322,
+      "p50_ms": 138.437999999951,
+      "p95_ms": 196.00866690088878,
+      "p99_ms": 202.18851272009485,
+      "sql_statements": 35,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "ranking",
+      "cache_mode": "disabled",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "744.83%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "18.85%",
+            "MemUsage": "1.443GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "17MB / 46MB",
+            "PIDs": "46"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.29%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.12%",
+            "MemUsage": "9.719MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "2.29kB / 1.49kB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 132,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.180679875000351,
+      "requests_per_second": 25.479281326949593,
+      "p50_ms": 308.7143334996654,
+      "p95_ms": 400.3042440500394,
+      "p99_ms": 413.270438229938,
+      "sql_statements": 132,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "write",
+      "cache_mode": "disabled",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "16.75%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "18.88%",
+            "MemUsage": "1.445GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "18.8MB / 48.7MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.40%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.12%",
+            "MemUsage": "9.477MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "2.29kB / 1.49kB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 1007,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.004482917000132,
+      "requests_per_second": 201.21958985597502,
+      "p50_ms": 4.604125000696513,
+      "p95_ms": 8.090920398899469,
+      "p99_ms": 10.421654459823912,
+      "sql_statements": 4028,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "write",
+      "cache_mode": "disabled",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "25.38%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.02%",
+            "MemUsage": "1.455GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "22.2MB / 50.3MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.21%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.12%",
+            "MemUsage": "9.473MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "2.35kB / 1.55kB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 2466,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.011099167000793,
+      "requests_per_second": 492.1076031061529,
+      "p50_ms": 14.670332999230595,
+      "p95_ms": 25.28822899921579,
+      "p99_ms": 40.35172094972949,
+      "sql_statements": 9864,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "list",
+      "cache_mode": "redis_only",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.55%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.02%",
+            "MemUsage": "1.455GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "3.37%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.13%",
+            "MemUsage": "10.23MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "530kB / 32.4MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 2120,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.001901083000121,
+      "requests_per_second": 423.83884943371015,
+      "p50_ms": 2.404312499493244,
+      "p95_ms": 3.0348610504915996,
+      "p99_ms": 3.892171749630505,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "list",
+      "cache_mode": "redis_only",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.35%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.02%",
+            "MemUsage": "1.455GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "2.28%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.14%",
+            "MemUsage": "10.83MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "1.04MB / 75.6MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 3343,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.007282040998689,
+      "requests_per_second": 667.627661599275,
+      "p50_ms": 10.229084000457078,
+      "p95_ms": 21.363399699839643,
+      "p99_ms": 43.339394059912536,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "redis_only",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.63%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "4.00%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.13%",
+            "MemUsage": "10.22MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "1.7MB / 100MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 3512,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.000585957999647,
+      "requests_per_second": 702.3176942657503,
+      "p50_ms": 1.344188000075519,
+      "p95_ms": 2.0853840002018837,
+      "p99_ms": 2.8350323787162752,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "redis_only",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.22%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "5.28%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.14%",
+            "MemUsage": "10.98MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "2.83MB / 108MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 9449,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.00262258300063,
+      "requests_per_second": 1888.8092881738808,
+      "p50_ms": 3.775209001105395,
+      "p95_ms": 7.237008600350237,
+      "p99_ms": 10.055757839072628,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "ranking",
+      "cache_mode": "redis_only",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.69%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "8.20%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.13%",
+            "MemUsage": "10.57MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "4.77MB / 113MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 3064,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.001064499998392,
+      "requests_per_second": 612.6695626503088,
+      "p50_ms": 1.5377709987660637,
+      "p95_ms": 2.556448250197718,
+      "p99_ms": 3.4366102498279356,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "ranking",
+      "cache_mode": "redis_only",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.28%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "8.90%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.13%",
+            "MemUsage": "10.36MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "9.29MB / 120MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 7737,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.002386124999248,
+      "requests_per_second": 1546.6618942777359,
+      "p50_ms": 4.59637499989185,
+      "p95_ms": 8.918458800326334,
+      "p99_ms": 11.825343760501719,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "list",
+      "cache_mode": "redis_and_l1",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.52%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51.1MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.59%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.14%",
+            "MemUsage": "10.76MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "11.6MB / 124MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 3544,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.001003082999887,
+      "requests_per_second": 708.6578314753021,
+      "p50_ms": 1.2911249996250262,
+      "p95_ms": 1.6055911503826792,
+      "p99_ms": 4.802010999628697,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "list",
+      "cache_mode": "redis_and_l1",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.40%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51.1MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.45%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.13%",
+            "MemUsage": "10.3MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "11.6MB / 124MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 3830,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.00591841700043,
+      "requests_per_second": 765.0943704941468,
+      "p50_ms": 7.641312499799824,
+      "p95_ms": 10.09004840043417,
+      "p99_ms": 32.23355192960299,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "redis_and_l1",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.40%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51.1MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.70%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.14%",
+            "MemUsage": "10.59MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "11.6MB / 124MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 9690,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.00039999999899,
+      "requests_per_second": 1937.8449724025993,
+      "p50_ms": 0.5168749994481914,
+      "p95_ms": 0.6131060998995963,
+      "p99_ms": 0.9402253806365511,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "redis_and_l1",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.57%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51.1MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "0.89%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.14%",
+            "MemUsage": "10.59MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "11.6MB / 124MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 10466,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.002296541999385,
+      "requests_per_second": 2092.2390170449207,
+      "p50_ms": 2.8340625012788223,
+      "p95_ms": 3.063416750592296,
+      "p99_ms": 5.561620499884163,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": 1.0
+    },
+    {
+      "workload": "ranking",
+      "cache_mode": "redis_and_l1",
+      "concurrency": 1,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.33%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51.1MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "4.62%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.13%",
+            "MemUsage": "10.34MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "13.3MB / 127MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 3185,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.000410167000155,
+      "requests_per_second": 636.9477490105066,
+      "p50_ms": 1.467832998969243,
+      "p95_ms": 2.5827662004303416,
+      "p99_ms": 3.333493839236319,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    },
+    {
+      "workload": "ranking",
+      "cache_mode": "redis_and_l1",
+      "concurrency": 8,
+      "resources": {
+        "docker_stats_at_2s": [
+          {
+            "BlockIO": "0B / 53.2kB",
+            "CPUPerc": "0.40%",
+            "Container": "sm-mysql-it-9095b4e9e1cb",
+            "ID": "f4dbeaeebceb",
+            "MemPerc": "19.04%",
+            "MemUsage": "1.457GiB / 7.653GiB",
+            "Name": "sm-mysql-it-9095b4e9e1cb",
+            "NetIO": "23.4MB / 51.1MB",
+            "PIDs": "45"
+          },
+          {
+            "BlockIO": "0B / 0B",
+            "CPUPerc": "15.97%",
+            "Container": "sm-redis-it-9095b4e9e1cb",
+            "ID": "f0660b0f9852",
+            "MemPerc": "0.14%",
+            "MemUsage": "10.86MiB / 7.653GiB",
+            "Name": "sm-redis-it-9095b4e9e1cb",
+            "NetIO": "18.9MB / 137MB",
+            "PIDs": "6"
+          }
+        ]
+      },
+      "requests": 7839,
+      "errors": 0,
+      "error_examples": [],
+      "error_rate": 0.0,
+      "elapsed_seconds": 5.0029044580005575,
+      "requests_per_second": 1566.8898068728872,
+      "p50_ms": 4.271874999176362,
+      "p95_ms": 8.530074400005104,
+      "p99_ms": 18.461977580700477,
+      "sql_statements": 0,
+      "repository_loads": 0,
+      "recipe_cache_hit_ratio": null
+    }
+  ],
+  "seed": {
+    "generated_recipes": 100000,
+    "original_recipes": 70,
+    "reaction_facts": 500000,
+    "view_facts": 500000,
+    "ingredients_per_generated_recipe": 1,
+    "steps_per_generated_recipe": 1
+  },
+  "warmup_seconds": 1,
+  "measurement_seconds": 5,
+  "concurrency": [
+    1,
+    8
+  ],
+  "cache_ttl_seconds": 60,
+  "local_cache_ttl_seconds": 1,
+  "seed_seconds": 9.41182787499929,
+  "exact_row_counts": {
+    "recipes": 100070,
+    "recipe_reactions": 500000,
+    "recipe_view_history": 500000
+  },
+  "list_count_sql": {
+    "before": {
+      "sql": "SELECT COUNT(r.id) FROM recipes r IGNORE INDEX (ix_recipe_browse_difficulty_time_id) LEFT JOIN cuisines c ON c.id=r.cuisine_id WHERE r.difficulty='easy' AND r.total_time<=30",
+      "explain_analyze": "-> Aggregate: count(r.id)  (cost=13371 rows=1) (actual time=10.8..10.8 rows=1 loops=1)\n    -> Nested loop left join  (cost=11040 rows=23306) (actual time=0.0121..10.7 rows=7515 loops=1)\n        -> Filter: (r.total_time <= 30)  (cost=2883 rows=23306) (actual time=0.0108..9.92 rows=7515 loops=1)\n            -> Index lookup on r using ix_recipe_browse_difficulty_name_id (difficulty='easy')  (cost=2883 rows=49835) (actual time=0.0103..9.13 rows=33376 loops=1)\n        -> Single-row covering index lookup on c using PRIMARY (id=r.cuisine_id)  (cost=0.25 rows=1) (actual time=36.2e-6..36.2e-6 rows=0.00546 loops=7515)\n",
+      "samples_ms": [
+        9.686834000603994,
+        9.55295899984776,
+        9.88879100077611,
+        9.729708001032122,
+        9.547582998493453,
+        9.49620900064474,
+        9.488166000664933,
+        9.552916999382433,
+        9.277292001570459,
+        9.554124999340274
+      ],
+      "median_ms": 9.552937999615096
+    },
+    "after": {
+      "sql": "SELECT COUNT(r.id) FROM recipes r IGNORE INDEX (ix_recipe_browse_difficulty_time_id) WHERE r.difficulty='easy' AND r.total_time<=30",
+      "explain_analyze": "-> Aggregate: count(r.id)  (cost=5214 rows=1) (actual time=9.86..9.86 rows=1 loops=1)\n    -> Filter: (r.total_time <= 30)  (cost=2883 rows=23306) (actual time=0.0138..9.72 rows=7515 loops=1)\n        -> Index lookup on r using ix_recipe_browse_difficulty_name_id (difficulty='easy')  (cost=2883 rows=49835) (actual time=0.0133..8.91 rows=33376 loops=1)\n",
+      "samples_ms": [
+        9.164457998849684,
+        9.082250000574277,
+        9.260625000024447,
+        9.429959000044619,
+        9.0371669994056,
+        9.108791000471683,
+        8.965375000116182,
+        9.166750000076718,
+        8.862374999807798,
+        9.029208000356448
+      ],
+      "median_ms": 9.09552050052298
+    }
+  },
+  "difficulty_time_index_count_sql": {
+    "before": {
+      "sql": "SELECT COUNT(id) FROM recipes IGNORE INDEX (ix_recipe_browse_difficulty_time_id) WHERE difficulty='easy' AND total_time<=30",
+      "explain_analyze": "-> Aggregate: count(recipes.id)  (cost=5214 rows=1) (actual time=9.56..9.56 rows=1 loops=1)\n    -> Filter: (recipes.total_time <= 30)  (cost=2883 rows=23306) (actual time=0.00896..9.42 rows=7515 loops=1)\n        -> Index lookup on recipes using ix_recipe_browse_difficulty_name_id (difficulty='easy')  (cost=2883 rows=49835) (actual time=0.00875..8.63 rows=33376 loops=1)\n",
+      "samples_ms": [
+        8.92379200013238,
+        8.814917000563582,
+        8.964874999946915,
+        9.081792000870337,
+        9.777541999937966,
+        9.127917001023889,
+        9.039749998919433,
+        9.01874999908614,
+        8.887915999366669,
+        9.237415999450604
+      ],
+      "median_ms": 9.029249999002786
+    },
+    "after": {
+      "sql": "SELECT COUNT(id) FROM recipes WHERE difficulty='easy' AND total_time<=30",
+      "explain_analyze": "-> Aggregate: count(recipes.id)  (cost=4134 rows=1) (actual time=1.19..1.19 rows=1 loops=1)\n    -> Filter: ((recipes.difficulty = 'easy') and (recipes.total_time <= 30))  (cost=2764 rows=13702) (actual time=0.00513..1.05 rows=7515 loops=1)\n        -> Covering index range scan on recipes using ix_recipe_browse_difficulty_time_id over (difficulty = 'easy' AND NULL < total_time <= 30)  (cost=2764 rows=13702) (actual time=0.00421..0.622 rows=7515 loops=1)\n",
+      "samples_ms": [
+        1.258417001736234,
+        1.1908340002264595,
+        1.2148329988121986,
+        1.215959000546718,
+        1.1327500014886027,
+        1.1278749989287462,
+        1.1640000011539087,
+        1.1919169992324896,
+        1.336833000095794,
+        1.5910000001895241
+      ],
+      "median_ms": 1.2033749990223441
+    }
+  },
+  "difficulty_time_index_page_sql": {
+    "before": {
+      "sql": "SELECT id,name,total_time FROM recipes IGNORE INDEX (ix_recipe_browse_difficulty_time_id) WHERE difficulty='easy' AND total_time<=30 ORDER BY total_time,id LIMIT 20",
+      "explain_analyze": "-> Limit: 20 row(s)  (cost=2883 rows=20) (actual time=0.0133..0.0352 rows=20 loops=1)\n    -> Filter: (recipes.difficulty = 'easy')  (cost=2883 rows=23306) (actual time=0.013..0.0341 rows=20 loops=1)\n        -> Index range scan on recipes using ix_recipe_browse_time_id over (NULL < total_time <= 30), with index condition: (recipes.total_time <= 30)  (cost=2883 rows=46612) (actual time=0.0127..0.0315 rows=58 loops=1)\n",
+      "samples_ms": [
+        0.682084000800387,
+        0.5611249998764833,
+        0.5476669994095573,
+        0.5446670002129395,
+        0.5324579997250112,
+        1.1839999988296768,
+        0.4632919990399387,
+        0.5924159995629452,
+        0.41437499930907506,
+        0.46262499927252065
+      ],
+      "median_ms": 0.5461669998112484
+    },
+    "after": {
+      "sql": "SELECT id,name,total_time FROM recipes WHERE difficulty='easy' AND total_time<=30 ORDER BY total_time,id LIMIT 20",
+      "explain_analyze": "-> Limit: 20 row(s)  (cost=1131 rows=20) (actual time=0.0123..0.0138 rows=20 loops=1)\n    -> Index range scan on recipes using ix_recipe_browse_difficulty_time_id over (difficulty = 'easy' AND NULL < total_time <= 30), with index condition: ((recipes.difficulty = 'easy') and (recipes.total_time <= 30))  (cost=1131 rows=13702) (actual time=0.0123..0.0131 rows=20 loops=1)\n",
+      "samples_ms": [
+        0.6841670001449529,
+        0.6850410009064944,
+        0.4906670001219027,
+        0.5000410001230193,
+        0.4996250008844072,
+        0.48866699944483116,
+        0.4086250010004733,
+        0.34920799953397363,
+        0.5060839994257549,
+        0.4329170005803462
+      ],
+      "median_ms": 0.49514600050315494
+    }
+  },
+  "ranking_sql": {
+    "before": {
+      "sql": "SELECT r.id,r.name,COUNT(*) AS score FROM recipes r JOIN recipe_reactions f ON f.recipe_id=r.id WHERE f.tenant_id=:tenant GROUP BY r.id,r.name ORDER BY score DESC,r.id DESC LIMIT 1001",
+      "explain_analyze": "-> Limit: 1001 row(s)  (actual time=842..842 rows=1001 loops=1)\n    -> Sort: score DESC, r.id DESC, limit input to 1001 row(s) per chunk  (actual time=842..842 rows=1001 loops=1)\n        -> Table scan on <temporary>  (actual time=828..837 rows=100000 loops=1)\n            -> Aggregate using temporary table  (actual time=828..828 rows=99999 loops=1)\n                -> Nested loop inner join  (cost=158887 rows=283492) (actual time=0.0242..276 rows=500000 loops=1)\n                    -> Covering index lookup on f using PRIMARY (tenant_id='benchmark')  (cost=59665 rows=283492) (actual time=0.0195..66.9 rows=500000 loops=1)\n                    -> Single-row index lookup on r using PRIMARY (id=f.recipe_id)  (cost=0.25 rows=1) (actual time=322e-6..338e-6 rows=1 loops=500000)\n",
+      "samples_ms": [
+        731.8634579987702,
+        730.1515829985874,
+        785.0305419997312,
+        720.3028330004599,
+        725.0120829994557,
+        732.0134170004167,
+        724.392624999382,
+        732.2681249988818,
+        731.1515829987911,
+        735.692291000305
+      ],
+      "median_ms": 731.5075204987807
+    },
+    "after": {
+      "sql": "SELECT r.id,r.name,f.score FROM recipes r JOIN (SELECT recipe_id,COUNT(*) AS score FROM recipe_reactions WHERE tenant_id=:tenant GROUP BY recipe_id) f ON f.recipe_id=r.id ORDER BY f.score DESC,r.id DESC LIMIT 1001",
+      "explain_analyze": "-> Limit: 1001 row(s)  (actual time=180..180 rows=1001 loops=1)\n    -> Sort: f.score DESC, r.id DESC, limit input to 1001 row(s) per chunk  (actual time=180..180 rows=1001 loops=1)\n        -> Stream results  (cost=72096 rows=0) (actual time=118..175 rows=100000 loops=1)\n            -> Nested loop inner join  (cost=72096 rows=0) (actual time=118..164 rows=100000 loops=1)\n                -> Table scan on f  (cost=2.5..2.5 rows=0) (actual time=118..123 rows=100000 loops=1)\n                    -> Materialize  (cost=0..0 rows=0) (actual time=118..118 rows=100000 loops=1)\n                        -> Table scan on <temporary>  (actual time=110..114 rows=100000 loops=1)\n                            -> Aggregate using temporary table  (actual time=110..110 rows=100000 loops=1)\n                                -> Covering index lookup on recipe_reactions using PRIMARY (tenant_id='benchmark')  (cost=53508 rows=283492) (actual time=0.0127..59.1 rows=500000 loops=1)\n                -> Single-row index lookup on r using PRIMARY (id=f.recipe_id)  (cost=0.254 rows=1) (actual time=310e-6..326e-6 rows=1 loops=100000)\n",
+      "samples_ms": [
+        126.66012499903445,
+        127.95966699923156,
+        129.02808399849164,
+        132.8789590006636,
+        124.98641699858126,
+        125.51491700105544,
+        127.23129200094263,
+        132.92250000085915,
+        128.60237499990035,
+        127.6319999997213
+      ],
+      "median_ms": 127.79583349947643
+    }
+  },
+  "list_sql": {
+    "filter_and_sort": "-> Limit: 20 row(s)  (cost=1131 rows=20) (actual time=0.024..0.0257 rows=20 loops=1)\n    -> Index range scan on recipes using ix_recipe_browse_difficulty_time_id over (difficulty = 'easy' AND NULL < total_time <= 30), with index condition: ((recipes.difficulty = 'easy') and (recipes.total_time <= 30))  (cost=1131 rows=13702) (actual time=0.0237..0.0246 rows=20 loops=1)\n",
+    "deep_offset": "-> Limit/Offset: 20/90000 row(s)  (cost=8297 rows=20) (actual time=7.05..7.05 rows=20 loops=1)\n    -> Covering index scan on recipes using idx_recipe_name  (cost=8297 rows=90020) (actual time=0.0148..5.56 rows=90020 loops=1)\n",
+    "count": "-> Aggregate: count(r.id)  (cost=129757 rows=1) (actual time=18.2..18.2 rows=1 loops=1)\n    -> Nested loop left join  (cost=119789 rows=99671) (actual time=0.0113..16.4 rows=100070 loops=1)\n        -> Covering index scan on r using idx_recipe_cuisine  (cost=10151 rows=99671) (actual time=0.01..6.5 rows=100070 loops=1)\n        -> Single-row covering index lookup on c using PRIMARY (id=r.cuisine_id)  (cost=1 rows=1) (actual time=34.6e-6..34.6e-6 rows=700e-6 loops=100070)\n"
+  },
+  "storage": [
+    {
+      "TABLE_NAME": "alembic_version",
+      "TABLE_ROWS": 1,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 0
+    },
+    {
+      "TABLE_NAME": "behavior_outbox",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "benchmark_digits",
+      "TABLE_ROWS": 10,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 0
+    },
+    {
+      "TABLE_NAME": "benchmark_numbers",
+      "TABLE_ROWS": 781357,
+      "DATA_LENGTH": 81379328,
+      "INDEX_LENGTH": 0
+    },
+    {
+      "TABLE_NAME": "chat_messages",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 98304
+    },
+    {
+      "TABLE_NAME": "chat_sessions",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 32768
+    },
+    {
+      "TABLE_NAME": "cooking_tools",
+      "TABLE_ROWS": 10,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "cuisines",
+      "TABLE_ROWS": 4,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "ingredients",
+      "TABLE_ROWS": 46,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 32768
+    },
+    {
+      "TABLE_NAME": "recipe_ingredients",
+      "TABLE_ROWS": 100616,
+      "DATA_LENGTH": 81920,
+      "INDEX_LENGTH": 65536
+    },
+    {
+      "TABLE_NAME": "recipe_reactions",
+      "TABLE_ROWS": 566985,
+      "DATA_LENGTH": 66830336,
+      "INDEX_LENGTH": 114262016
+    },
+    {
+      "TABLE_NAME": "recipe_steps",
+      "TABLE_ROWS": 100210,
+      "DATA_LENGTH": 81920,
+      "INDEX_LENGTH": 32768
+    },
+    {
+      "TABLE_NAME": "recipe_view_history",
+      "TABLE_ROWS": 536810,
+      "DATA_LENGTH": 64700416,
+      "INDEX_LENGTH": 109985792
+    },
+    {
+      "TABLE_NAME": "recipes",
+      "TABLE_ROWS": 99671,
+      "DATA_LENGTH": 12075008,
+      "INDEX_LENGTH": 16875520
+    },
+    {
+      "TABLE_NAME": "refresh_tokens",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "step_tools",
+      "TABLE_ROWS": 416,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 49152
+    },
+    {
+      "TABLE_NAME": "user_memories",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    },
+    {
+      "TABLE_NAME": "users",
+      "TABLE_ROWS": 0,
+      "DATA_LENGTH": 16384,
+      "INDEX_LENGTH": 16384
+    }
+  ],
+  "cold_first_wave": [
+    {
+      "workload": "list",
+      "cache_mode": "disabled",
+      "requests": 8,
+      "concurrency": 8,
+      "latencies_ms": [
+        28.265957998883096,
+        28.4510000001319,
+        26.865457999520004,
+        16.94804199905775,
+        27.98287500081642,
+        25.158041999020497,
+        28.180417000839952,
+        29.24916700067115
+      ],
+      "repository_loads": 8,
+      "sql_statements": 32
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "disabled",
+      "requests": 8,
+      "concurrency": 8,
+      "latencies_ms": [
+        8.75333300064085,
+        11.586083001020597,
+        11.420999999245396,
+        11.542958000063663,
+        10.252374999254243,
+        11.417458999858354,
+        11.155125001096167,
+        7.280457999513601
+      ],
+      "repository_loads": 8,
+      "sql_statements": 24
+    },
+    {
+      "workload": "list",
+      "cache_mode": "redis_only",
+      "requests": 8,
+      "concurrency": 8,
+      "latencies_ms": [
+        15.658708000046317,
+        23.655125000004773,
+        18.422832999931416,
+        18.709125000896165,
+        21.93345799969393,
+        23.13300000059826,
+        18.610167000588262,
+        14.398584000446135
+      ],
+      "repository_loads": 1,
+      "sql_statements": 4
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "redis_only",
+      "requests": 8,
+      "concurrency": 8,
+      "latencies_ms": [
+        5.7399590004934,
+        7.402582999930019,
+        7.9461250006716,
+        6.084250000640168,
+        6.433334001485491,
+        8.36275000074238,
+        6.877125000755768,
+        5.341874999430729
+      ],
+      "repository_loads": 1,
+      "sql_statements": 3
+    },
+    {
+      "workload": "list",
+      "cache_mode": "redis_and_l1",
+      "requests": 8,
+      "concurrency": 8,
+      "latencies_ms": [
+        21.638207999785664,
+        16.248457999608945,
+        21.26670899997407,
+        21.013708001191844,
+        21.27637499870616,
+        20.999874999688473,
+        20.918250000249827,
+        21.70566699896881
+      ],
+      "repository_loads": 1,
+      "sql_statements": 4
+    },
+    {
+      "workload": "detail",
+      "cache_mode": "redis_and_l1",
+      "requests": 8,
+      "concurrency": 8,
+      "latencies_ms": [
+        6.739915999787627,
+        6.0740839999198215,
+        7.079040999087738,
+        6.828542000221205,
+        6.74520900065545,
+        6.580708000910818,
+        7.033542000499438,
+        7.064666000587749
+      ],
+      "repository_loads": 1,
+      "sql_statements": 3
+    }
+  ],
+  "docker_resources_end_snapshot": [
+    {
+      "BlockIO": "0B / 53.2kB",
+      "CPUPerc": "0.64%",
+      "Container": "sm-mysql-it-9095b4e9e1cb",
+      "ID": "f4dbeaeebceb",
+      "MemPerc": "19.04%",
+      "MemUsage": "1.457GiB / 7.653GiB",
+      "Name": "sm-mysql-it-9095b4e9e1cb",
+      "NetIO": "23.4MB / 51.1MB",
+      "PIDs": "45"
+    },
+    {
+      "BlockIO": "0B / 0B",
+      "CPUPerc": "0.84%",
+      "Container": "sm-redis-it-9095b4e9e1cb",
+      "ID": "f0660b0f9852",
+      "MemPerc": "0.14%",
+      "MemUsage": "10.59MiB / 7.653GiB",
+      "Name": "sm-redis-it-9095b4e9e1cb",
+      "NetIO": "20.1MB / 138MB",
+      "PIDs": "6"
+    }
+  ],
+  "redis_memory": 2048672,
+  "api_and_load_generator_shared_process_end_rss_bytes": 175964160,
+  "http_server_stopped": true
+}

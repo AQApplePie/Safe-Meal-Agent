@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="148.448" timestamp="2026-10-09T14:01:44.993120" hostname="aqapplepiedeMacBook-Air.local"><testcase classname="tests.integration.test_backend_performance" name="test_http_and_sql_performance" time="147.958" /></testsuite></testsuites>

@@ -1,0 +1,2223 @@
+{
+  "dataset_sha256": "b175ce1d2506ada3e6fc8219af420af3a660da7469886534414eeebc99fb75bb",
+  "cache_sha256": "809041bedc433a6c4a21990acb9d639aaf621e9b6daa566b379954cd653d4684",
+  "embedding_model": "local-char-tfidf-reference",
+  "reranker_model": "local-token-coverage-reference",
+  "vector_storage": "local exact cosine, NOT Milvus ANN",
+  "reference_only": true,
+  "baseline_service_from_git_head": false,
+  "baseline_source_sha256": null,
+  "threshold": 0.0,
+  "provider_requests_this_run": 0,
+  "summaries": {
+    "dev/bm25": {
+      "recall@1": 1.0,
+      "recall@3": 1.0,
+      "mrr@1": 1.0,
+      "mrr@3": 1.0
+    },
+    "dev/vector": {
+      "recall@1": 1.0,
+      "recall@3": 1.0,
+      "mrr@1": 1.0,
+      "mrr@3": 1.0
+    },
+    "dev/hybrid": {
+      "recall@1": 1.0,
+      "recall@3": 1.0,
+      "mrr@1": 1.0,
+      "mrr@3": 1.0
+    },
+    "dev/hybrid_rerank": {
+      "recall@1": 1.0,
+      "recall@3": 1.0,
+      "mrr@1": 1.0,
+      "mrr@3": 1.0
+    },
+    "test/bm25": {
+      "recall@1": 0.9,
+      "recall@3": 1.0,
+      "mrr@1": 0.9,
+      "mrr@3": 0.9333333333333333
+    },
+    "test/vector": {
+      "recall@1": 1.0,
+      "recall@3": 1.0,
+      "mrr@1": 1.0,
+      "mrr@3": 1.0
+    },
+    "test/hybrid": {
+      "recall@1": 0.9,
+      "recall@3": 1.0,
+      "mrr@1": 0.9,
+      "mrr@3": 0.95
+    },
+    "test/hybrid_rerank": {
+      "recall@1": 0.9,
+      "recall@3": 1.0,
+      "mrr@1": 0.9,
+      "mrr@3": 0.9333333333333333
+    }
+  },
+  "rows": [
+    {
+      "case_id": "Q01",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "鱼煮熟了能消除已经产生的组胺吗？",
+      "relevant": [
+        "D01"
+      ],
+      "retrieved": [
+        "D01",
+        "D04",
+        "D03"
+      ],
+      "chunk_ids": [
+        "D01_0",
+        "D04_0",
+        "D03_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q01",
+      "split": "dev",
+      "mode": "vector",
+      "query": "鱼煮熟了能消除已经产生的组胺吗？",
+      "relevant": [
+        "D01"
+      ],
+      "retrieved": [
+        "D01",
+        "D04",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D01_0",
+        "D04_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q01",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "鱼煮熟了能消除已经产生的组胺吗？",
+      "relevant": [
+        "D01"
+      ],
+      "retrieved": [
+        "D01",
+        "D04",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D01_0",
+        "D04_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q01",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "鱼煮熟了能消除已经产生的组胺吗？",
+      "relevant": [
+        "D01"
+      ],
+      "retrieved": [
+        "D01",
+        "D04",
+        "D03"
+      ],
+      "chunk_ids": [
+        "D01_0",
+        "D04_0",
+        "D03_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q02",
+      "split": "test",
+      "mode": "bm25",
+      "query": "组胺可以靠冷冻清洗去除吗？",
+      "relevant": [
+        "D01"
+      ],
+      "retrieved": [
+        "D01",
+        "D02",
+        "D07"
+      ],
+      "chunk_ids": [
+        "D01_0",
+        "D02_0",
+        "D07_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q02",
+      "split": "test",
+      "mode": "vector",
+      "query": "组胺可以靠冷冻清洗去除吗？",
+      "relevant": [
+        "D01"
+      ],
+      "retrieved": [
+        "D01",
+        "D07",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D01_0",
+        "D07_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q02",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "组胺可以靠冷冻清洗去除吗？",
+      "relevant": [
+        "D01"
+      ],
+      "retrieved": [
+        "D01",
+        "D07",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D01_0",
+        "D07_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q02",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "组胺可以靠冷冻清洗去除吗？",
+      "relevant": [
+        "D01"
+      ],
+      "retrieved": [
+        "D01",
+        "D07",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D01_0",
+        "D07_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q03",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "清蒸鲈鱼用什么配料？",
+      "relevant": [
+        "D02"
+      ],
+      "retrieved": [
+        "D02",
+        "D01",
+        "D03"
+      ],
+      "chunk_ids": [
+        "D02_0",
+        "D01_0",
+        "D03_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q03",
+      "split": "dev",
+      "mode": "vector",
+      "query": "清蒸鲈鱼用什么配料？",
+      "relevant": [
+        "D02"
+      ],
+      "retrieved": [
+        "D02",
+        "D03",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D02_0",
+        "D03_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q03",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "清蒸鲈鱼用什么配料？",
+      "relevant": [
+        "D02"
+      ],
+      "retrieved": [
+        "D02",
+        "D03",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D02_0",
+        "D03_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q03",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "清蒸鲈鱼用什么配料？",
+      "relevant": [
+        "D02"
+      ],
+      "retrieved": [
+        "D02",
+        "D03",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D02_0",
+        "D03_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q04",
+      "split": "test",
+      "mode": "bm25",
+      "query": "想做蒸鱼，有什么姜葱搭配？",
+      "relevant": [
+        "D02"
+      ],
+      "retrieved": [
+        "D02",
+        "D03",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D02_0",
+        "D03_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q04",
+      "split": "test",
+      "mode": "vector",
+      "query": "想做蒸鱼，有什么姜葱搭配？",
+      "relevant": [
+        "D02"
+      ],
+      "retrieved": [
+        "D02",
+        "D01",
+        "D03"
+      ],
+      "chunk_ids": [
+        "D02_0",
+        "D01_0",
+        "D03_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q04",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "想做蒸鱼，有什么姜葱搭配？",
+      "relevant": [
+        "D02"
+      ],
+      "retrieved": [
+        "D02",
+        "D01",
+        "D03"
+      ],
+      "chunk_ids": [
+        "D02_0",
+        "D01_0",
+        "D03_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q04",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "想做蒸鱼，有什么姜葱搭配？",
+      "relevant": [
+        "D02"
+      ],
+      "retrieved": [
+        "D02",
+        "D01",
+        "D03"
+      ],
+      "chunk_ids": [
+        "D02_0",
+        "D01_0",
+        "D03_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q05",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "番茄豆腐汤有花生吗？",
+      "relevant": [
+        "D03"
+      ],
+      "retrieved": [
+        "D03",
+        "D04",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D03_0",
+        "D04_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q05",
+      "split": "dev",
+      "mode": "vector",
+      "query": "番茄豆腐汤有花生吗？",
+      "relevant": [
+        "D03"
+      ],
+      "retrieved": [
+        "D03",
+        "D04",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D03_0",
+        "D04_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q05",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "番茄豆腐汤有花生吗？",
+      "relevant": [
+        "D03"
+      ],
+      "retrieved": [
+        "D03",
+        "D04",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D03_0",
+        "D04_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q05",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "番茄豆腐汤有花生吗？",
+      "relevant": [
+        "D03"
+      ],
+      "retrieved": [
+        "D03",
+        "D04",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D03_0",
+        "D04_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q06",
+      "split": "test",
+      "mode": "bm25",
+      "query": "番茄配豆腐可以做什么汤？",
+      "relevant": [
+        "D03"
+      ],
+      "retrieved": [
+        "D03",
+        "D07",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D03_0",
+        "D07_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q06",
+      "split": "test",
+      "mode": "vector",
+      "query": "番茄配豆腐可以做什么汤？",
+      "relevant": [
+        "D03"
+      ],
+      "retrieved": [
+        "D03",
+        "D07",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D03_0",
+        "D07_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q06",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "番茄配豆腐可以做什么汤？",
+      "relevant": [
+        "D03"
+      ],
+      "retrieved": [
+        "D03",
+        "D07",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D03_0",
+        "D07_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q06",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "番茄配豆腐可以做什么汤？",
+      "relevant": [
+        "D03"
+      ],
+      "retrieved": [
+        "D03",
+        "D07",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D03_0",
+        "D07_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q07",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "花生酱拌面有哪些原料？",
+      "relevant": [
+        "D04"
+      ],
+      "retrieved": [
+        "D04",
+        "D03",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D04_0",
+        "D03_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q07",
+      "split": "dev",
+      "mode": "vector",
+      "query": "花生酱拌面有哪些原料？",
+      "relevant": [
+        "D04"
+      ],
+      "retrieved": [
+        "D04",
+        "D03",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D04_0",
+        "D03_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q07",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "花生酱拌面有哪些原料？",
+      "relevant": [
+        "D04"
+      ],
+      "retrieved": [
+        "D04",
+        "D03",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D04_0",
+        "D03_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q07",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "花生酱拌面有哪些原料？",
+      "relevant": [
+        "D04"
+      ],
+      "retrieved": [
+        "D04",
+        "D03",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D04_0",
+        "D03_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q08",
+      "split": "test",
+      "mode": "bm25",
+      "query": "花生过敏能吃花生酱拌面吗？",
+      "relevant": [
+        "D04"
+      ],
+      "retrieved": [
+        "D04",
+        "D03",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D04_0",
+        "D03_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q08",
+      "split": "test",
+      "mode": "vector",
+      "query": "花生过敏能吃花生酱拌面吗？",
+      "relevant": [
+        "D04"
+      ],
+      "retrieved": [
+        "D04",
+        "D03",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D04_0",
+        "D03_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q08",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "花生过敏能吃花生酱拌面吗？",
+      "relevant": [
+        "D04"
+      ],
+      "retrieved": [
+        "D04",
+        "D03",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D04_0",
+        "D03_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q08",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "花生过敏能吃花生酱拌面吗？",
+      "relevant": [
+        "D04"
+      ],
+      "retrieved": [
+        "D04",
+        "D03",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D04_0",
+        "D03_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q09",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "测试厨房库存采用什么顺序？",
+      "relevant": [
+        "D05"
+      ],
+      "retrieved": [
+        "D05",
+        "D10",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D05_0",
+        "D10_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q09",
+      "split": "dev",
+      "mode": "vector",
+      "query": "测试厨房库存采用什么顺序？",
+      "relevant": [
+        "D05"
+      ],
+      "retrieved": [
+        "D05",
+        "D10",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D05_0",
+        "D10_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q09",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "测试厨房库存采用什么顺序？",
+      "relevant": [
+        "D05"
+      ],
+      "retrieved": [
+        "D05",
+        "D10",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D05_0",
+        "D10_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q09",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "测试厨房库存采用什么顺序？",
+      "relevant": [
+        "D05"
+      ],
+      "retrieved": [
+        "D05",
+        "D10",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D05_0",
+        "D10_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q10",
+      "split": "test",
+      "mode": "bm25",
+      "query": "仓库进来的材料应怎么标记？",
+      "relevant": [
+        "D05"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 0.0,
+        "mrr": 0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 0.3333333333333333
+      }
+    },
+    {
+      "case_id": "Q10",
+      "split": "test",
+      "mode": "vector",
+      "query": "仓库进来的材料应怎么标记？",
+      "relevant": [
+        "D05"
+      ],
+      "retrieved": [
+        "D05",
+        "D08",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D05_0",
+        "D08_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q10",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "仓库进来的材料应怎么标记？",
+      "relevant": [
+        "D05"
+      ],
+      "retrieved": [
+        "D08",
+        "D05",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D05_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 0.0,
+        "mrr": 0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 0.5
+      }
+    },
+    {
+      "case_id": "Q10",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "仓库进来的材料应怎么标记？",
+      "relevant": [
+        "D05"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 0.0,
+        "mrr": 0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 0.3333333333333333
+      }
+    },
+    {
+      "case_id": "Q11",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "测试厨房哪天采购豆制品？",
+      "relevant": [
+        "D06"
+      ],
+      "retrieved": [
+        "D06",
+        "D08",
+        "D03"
+      ],
+      "chunk_ids": [
+        "D06_0",
+        "D08_0",
+        "D03_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q11",
+      "split": "dev",
+      "mode": "vector",
+      "query": "测试厨房哪天采购豆制品？",
+      "relevant": [
+        "D06"
+      ],
+      "retrieved": [
+        "D06",
+        "D08",
+        "D10"
+      ],
+      "chunk_ids": [
+        "D06_0",
+        "D08_0",
+        "D10_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q11",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "测试厨房哪天采购豆制品？",
+      "relevant": [
+        "D06"
+      ],
+      "retrieved": [
+        "D06",
+        "D08",
+        "D10"
+      ],
+      "chunk_ids": [
+        "D06_0",
+        "D08_0",
+        "D10_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q11",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "测试厨房哪天采购豆制品？",
+      "relevant": [
+        "D06"
+      ],
+      "retrieved": [
+        "D06",
+        "D10",
+        "D09"
+      ],
+      "chunk_ids": [
+        "D06_0",
+        "D10_0",
+        "D09_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q12",
+      "split": "test",
+      "mode": "bm25",
+      "query": "采购台账需要写供应商还是批次？",
+      "relevant": [
+        "D06"
+      ],
+      "retrieved": [
+        "D06",
+        "D08"
+      ],
+      "chunk_ids": [
+        "D06_0",
+        "D08_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q12",
+      "split": "test",
+      "mode": "vector",
+      "query": "采购台账需要写供应商还是批次？",
+      "relevant": [
+        "D06"
+      ],
+      "retrieved": [
+        "D06",
+        "D08",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D06_0",
+        "D08_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q12",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "采购台账需要写供应商还是批次？",
+      "relevant": [
+        "D06"
+      ],
+      "retrieved": [
+        "D06",
+        "D08",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D06_0",
+        "D08_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q12",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "采购台账需要写供应商还是批次？",
+      "relevant": [
+        "D06"
+      ],
+      "retrieved": [
+        "D06",
+        "D08",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D06_0",
+        "D08_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q13",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "测试会员积分可以换现金吗？",
+      "relevant": [
+        "D07"
+      ],
+      "retrieved": [
+        "D07",
+        "D01",
+        "D04"
+      ],
+      "chunk_ids": [
+        "D07_0",
+        "D01_0",
+        "D04_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q13",
+      "split": "dev",
+      "mode": "vector",
+      "query": "测试会员积分可以换现金吗？",
+      "relevant": [
+        "D07"
+      ],
+      "retrieved": [
+        "D07",
+        "D01",
+        "D04"
+      ],
+      "chunk_ids": [
+        "D07_0",
+        "D01_0",
+        "D04_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q13",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "测试会员积分可以换现金吗？",
+      "relevant": [
+        "D07"
+      ],
+      "retrieved": [
+        "D07",
+        "D01",
+        "D04"
+      ],
+      "chunk_ids": [
+        "D07_0",
+        "D01_0",
+        "D04_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q13",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "测试会员积分可以换现金吗？",
+      "relevant": [
+        "D07"
+      ],
+      "retrieved": [
+        "D07",
+        "D04",
+        "D02"
+      ],
+      "chunk_ids": [
+        "D07_0",
+        "D04_0",
+        "D02_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q14",
+      "split": "test",
+      "mode": "bm25",
+      "query": "会员积分能换什么？",
+      "relevant": [
+        "D07"
+      ],
+      "retrieved": [
+        "D07",
+        "D01",
+        "D04"
+      ],
+      "chunk_ids": [
+        "D07_0",
+        "D01_0",
+        "D04_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q14",
+      "split": "test",
+      "mode": "vector",
+      "query": "会员积分能换什么？",
+      "relevant": [
+        "D07"
+      ],
+      "retrieved": [
+        "D07",
+        "D01",
+        "D04"
+      ],
+      "chunk_ids": [
+        "D07_0",
+        "D01_0",
+        "D04_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q14",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "会员积分能换什么？",
+      "relevant": [
+        "D07"
+      ],
+      "retrieved": [
+        "D07",
+        "D01",
+        "D04"
+      ],
+      "chunk_ids": [
+        "D07_0",
+        "D01_0",
+        "D04_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q14",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "会员积分能换什么？",
+      "relevant": [
+        "D07"
+      ],
+      "retrieved": [
+        "D07",
+        "D01",
+        "D04"
+      ],
+      "chunk_ids": [
+        "D07_0",
+        "D01_0",
+        "D04_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q15",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "测试采购遇到包装破损怎么办？",
+      "relevant": [
+        "D08"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q15",
+      "split": "dev",
+      "mode": "vector",
+      "query": "测试采购遇到包装破损怎么办？",
+      "relevant": [
+        "D08"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q15",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "测试采购遇到包装破损怎么办？",
+      "relevant": [
+        "D08"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q15",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "测试采购遇到包装破损怎么办？",
+      "relevant": [
+        "D08"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q16",
+      "split": "test",
+      "mode": "bm25",
+      "query": "退货时应该保留什么批次证据？",
+      "relevant": [
+        "D08"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q16",
+      "split": "test",
+      "mode": "vector",
+      "query": "退货时应该保留什么批次证据？",
+      "relevant": [
+        "D08"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q16",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "退货时应该保留什么批次证据？",
+      "relevant": [
+        "D08"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q16",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "退货时应该保留什么批次证据？",
+      "relevant": [
+        "D08"
+      ],
+      "retrieved": [
+        "D08",
+        "D06",
+        "D01"
+      ],
+      "chunk_ids": [
+        "D08_0",
+        "D06_0",
+        "D01_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q17",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "测试厨房勺子放什么颜色的筐？",
+      "relevant": [
+        "D09"
+      ],
+      "retrieved": [
+        "D09",
+        "D10",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D09_0",
+        "D10_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q17",
+      "split": "dev",
+      "mode": "vector",
+      "query": "测试厨房勺子放什么颜色的筐？",
+      "relevant": [
+        "D09"
+      ],
+      "retrieved": [
+        "D09",
+        "D10",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D09_0",
+        "D10_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q17",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "测试厨房勺子放什么颜色的筐？",
+      "relevant": [
+        "D09"
+      ],
+      "retrieved": [
+        "D09",
+        "D10",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D09_0",
+        "D10_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q17",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "测试厨房勺子放什么颜色的筐？",
+      "relevant": [
+        "D09"
+      ],
+      "retrieved": [
+        "D09",
+        "D10",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D09_0",
+        "D10_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q18",
+      "split": "test",
+      "mode": "bm25",
+      "query": "蓝色筐用于存放什么餐具？",
+      "relevant": [
+        "D09"
+      ],
+      "retrieved": [
+        "D09",
+        "D10",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D09_0",
+        "D10_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q18",
+      "split": "test",
+      "mode": "vector",
+      "query": "蓝色筐用于存放什么餐具？",
+      "relevant": [
+        "D09"
+      ],
+      "retrieved": [
+        "D09",
+        "D04",
+        "D10"
+      ],
+      "chunk_ids": [
+        "D09_0",
+        "D04_0",
+        "D10_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q18",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "蓝色筐用于存放什么餐具？",
+      "relevant": [
+        "D09"
+      ],
+      "retrieved": [
+        "D09",
+        "D10",
+        "D04"
+      ],
+      "chunk_ids": [
+        "D09_0",
+        "D10_0",
+        "D04_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q18",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "蓝色筐用于存放什么餐具？",
+      "relevant": [
+        "D09"
+      ],
+      "retrieved": [
+        "D09",
+        "D10",
+        "D04"
+      ],
+      "chunk_ids": [
+        "D09_0",
+        "D10_0",
+        "D04_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q19",
+      "split": "dev",
+      "mode": "bm25",
+      "query": "测试厨房晚班需要检查什么？",
+      "relevant": [
+        "D10"
+      ],
+      "retrieved": [
+        "D10",
+        "D09",
+        "D05"
+      ],
+      "chunk_ids": [
+        "D10_0",
+        "D09_0",
+        "D05_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q19",
+      "split": "dev",
+      "mode": "vector",
+      "query": "测试厨房晚班需要检查什么？",
+      "relevant": [
+        "D10"
+      ],
+      "retrieved": [
+        "D10",
+        "D05",
+        "D06"
+      ],
+      "chunk_ids": [
+        "D10_0",
+        "D05_0",
+        "D06_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q19",
+      "split": "dev",
+      "mode": "hybrid",
+      "query": "测试厨房晚班需要检查什么？",
+      "relevant": [
+        "D10"
+      ],
+      "retrieved": [
+        "D10",
+        "D05",
+        "D09"
+      ],
+      "chunk_ids": [
+        "D10_0",
+        "D05_0",
+        "D09_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q19",
+      "split": "dev",
+      "mode": "hybrid_rerank",
+      "query": "测试厨房晚班需要检查什么？",
+      "relevant": [
+        "D10"
+      ],
+      "retrieved": [
+        "D10",
+        "D05",
+        "D09"
+      ],
+      "chunk_ids": [
+        "D10_0",
+        "D05_0",
+        "D09_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q20",
+      "split": "test",
+      "mode": "bm25",
+      "query": "早班负责库存还是照明？",
+      "relevant": [
+        "D10"
+      ],
+      "retrieved": [
+        "D10",
+        "D05",
+        "D08"
+      ],
+      "chunk_ids": [
+        "D10_0",
+        "D05_0",
+        "D08_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q20",
+      "split": "test",
+      "mode": "vector",
+      "query": "早班负责库存还是照明？",
+      "relevant": [
+        "D10"
+      ],
+      "retrieved": [
+        "D10",
+        "D05",
+        "D08"
+      ],
+      "chunk_ids": [
+        "D10_0",
+        "D05_0",
+        "D08_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q20",
+      "split": "test",
+      "mode": "hybrid",
+      "query": "早班负责库存还是照明？",
+      "relevant": [
+        "D10"
+      ],
+      "retrieved": [
+        "D10",
+        "D05",
+        "D08"
+      ],
+      "chunk_ids": [
+        "D10_0",
+        "D05_0",
+        "D08_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    },
+    {
+      "case_id": "Q20",
+      "split": "test",
+      "mode": "hybrid_rerank",
+      "query": "早班负责库存还是照明？",
+      "relevant": [
+        "D10"
+      ],
+      "retrieved": [
+        "D10",
+        "D05",
+        "D08"
+      ],
+      "chunk_ids": [
+        "D10_0",
+        "D05_0",
+        "D08_0"
+      ],
+      "metrics_at_1": {
+        "recall": 1.0,
+        "mrr": 1.0
+      },
+      "metrics_at_3": {
+        "recall": 1.0,
+        "mrr": 1.0
+      }
+    }
+  ],
+  "failures": []
+}

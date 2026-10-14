@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="5.467" timestamp="2026-10-09T12:59:34.736857" hostname="aqapplepiedeMacBook-Air.local"><testcase classname="tests.integration.test_mysql_backend" name="test_outbox_subsecond_deadline_is_not_rounded_into_future" time="4.967"><failure message="assert datetime.datetime(2026, 10, 9, 12, 0, 1) == datetime.datetime(2026, 10, 9, 12, 0, 0, 900000)">tests/integration/test_mysql_backend.py:669: in test_outbox_subsecond_deadline_is_not_rounded_into_future
+    assert stored == fixed_now
+E   assert datetime.datetime(2026, 10, 9, 12, 0, 1) == datetime.datetime(2026, 10, 9, 12, 0, 0, 900000)</failure></testcase></testsuite></testsuites>

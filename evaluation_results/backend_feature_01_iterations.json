@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-10-08T13:50:18.552845+08:00",
+  "git_head": "74ae66b4f6e23f5c99855c639bd735a304599333",
+  "baseline": "task-start working tree; pre-existing changes preserved",
+  "iterations": [
+    {
+      "phase": "baseline",
+      "result": "PASS",
+      "tests_passed": 253,
+      "tests_skipped": 1,
+      "tests_failed": 0,
+      "command": "agent_env/bin/python -m pytest -q"
+    },
+    {
+      "phase": "initial_implementation_static_checks",
+      "result": "FAIL",
+      "ruff_errors": 1,
+      "mypy_errors": 3,
+      "cause": "未使用 import；redis 5.0.1 from_url 错误返回注解为 None；同步 get 类型标为 Awaitable/Any",
+      "resolution": "删除 import；采用 ConnectionPool 和 Redis 构造；运行时收窄返回数据类型；同时注册客户端与连接池资源关闭"
+    },
+    {
+      "phase": "initial_http_regression",
+      "result": "FAIL",
+      "tests_passed": 252,
+      "tests_failed": 1,
+      "cause": "旧 HTTP 测试明确禁止任何 recipes 路径",
+      "resolution": "扩展白名单，并对两个新路径明确断言仅 GET；保留所有 auth/chat/knowledge 断言"
+    },
+    {
+      "phase": "sandbox_redis_integration",
+      "result": "ENVIRONMENT_UNAVAILABLE",
+      "tests_passed": 16,
+      "setup_errors": 5,
+      "cause": "沙箱禁止 Redis Unix socket bind",
+      "resolution": "经工具权限审核允许运行隔离临时 Redis；没有连接既有 Redis"
+    },
+    {
+      "phase": "first_real_redis_run",
+      "result": "FAIL",
+      "tests_passed": 20,
+      "tests_failed": 1,
+      "cause": "模块级 Redis 中前一测试缓存造成计数污染",
+      "resolution": "服务仍为模块级，连接 fixture 按函数清空测试自建 Redis，实现测试隔离"
+    },
+    {
+      "phase": "feature_and_existing_refactor_tests",
+      "result": "PASS",
+      "tests_passed": 200,
+      "tests_failed": 0
+    },
+    {
+      "phase": "additional_application_and_migration_tests",
+      "result": "PASS",
+      "tests_passed": 24,
+      "tests_failed": 0
+    },
+    {
+      "phase": "architecture_review",
+      "result": "PASS",
+      "review_findings": [
+        "列表不可静默丢弃非规范对象",
+        "缓存单值大小限制",
+        "热点读取不可延长 L1 新鲜度",
+        "两条服务装配必须共用同一仓储并关闭 Redis 连接池"
+      ],
+      "resolution": "增加标准数据校验及256KiB缓存上限；补充无滑动过期及超大数据测试；核查公共浏览不初始化LLM"
+    },
+    {
+      "phase": "final_full_regression",
+      "result": "PASS",
+      "tests_passed": 280,
+      "tests_skipped": 1,
+      "tests_failed": 0,
+      "new_feature_cases": 27,
+      "junit": "evaluation_results/backend_feature_01_pytest.xml"
+    },
+    {
+      "phase": "post_test_architecture_checks",
+      "result": "PASS",
+      "architecture_tests_passed": 11,
+      "ruff": "PASS",
+      "mypy": "PASS:270 source files",
+      "new_file_formatting": "PASS:5 files",
+      "diff_whitespace": "PASS"
+    },
+    {
+      "phase": "mysql_environment_check",
+      "result": "ENVIRONMENT_UNAVAILABLE",
+      "cause": "Docker daemon 未启动；授权检查后仍无法连接",
+      "resolution": "SQLite 真实查询/迁移/执行计划通过；明确未执行 MySQL 实机 EXPLAIN，未修改用户数据库"
+    }
+  ]
+}

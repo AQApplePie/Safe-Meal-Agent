@@ -1,0 +1,21 @@
+{
+  "scope": "offline request contracts only",
+  "full_suite": {
+    "passed": 445,
+    "skipped": 25,
+    "failed": 0
+  },
+  "evaluation_suite": {
+    "passed": 78
+  },
+  "ruff": "passed",
+  "mypy": "305 source files passed",
+  "live_model_executed": false,
+  "source_sha256": {
+    "scripts/evaluate_agent_contracts.py": "a3067cbfa82e4fffd3ad0e5b61b0f4a2cd779c839b2715fe8ec4724b93d67d82",
+    "tests/evaluation/test_frozen_benchmark.py": "233f5b7624c2dbaf59271ce84f6d0c21856c508efb1c6ae92c62760f0a5c3c8c",
+    "tests/evaluation/datasets/request_contract_v1.json": "3b2ea45f2d2fb1fd3618030bae3c5ac7e72edadfaf28f23d9d609e34daa8ebc4",
+    "tests/evaluation/datasets/request_contract_v1.sha256": "f7935cd0887e1a5128bde02c7af86d55e26ff7052ca6ee902714c78f38ff3a00",
+    "docs/optimization/05_agent_evaluation_baselines.md": "5b1f8ed4eb8948ca33052027e803ce5ddc012026867f0e7bb2facf98ffb92d9e"
+  }
+}

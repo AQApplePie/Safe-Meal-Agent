@@ -1,0 +1,23 @@
+{
+  "container_names": [
+    "sm-mysql-it-f38ee07b42c2",
+    "sm-redis-it-f38ee07b42c2"
+  ],
+  "cases": {
+    "timestamp_precision": {
+      "written": "2026-10-09T12:00:00.900000",
+      "stored": "2026-10-09T12:00:01"
+    }
+  },
+  "mysql_version": "8.0.46",
+  "isolation": "REPEATABLE-READ",
+  "lock_wait_seconds": 1,
+  "migration_head": "20261008_0012",
+  "recipe_count": 70,
+  "redis_version": "7.4.11",
+  "cleanup_removed": {
+    "sm-mysql-it-f38ee07b42c2": true,
+    "sm-redis-it-f38ee07b42c2": true
+  },
+  "cleanup_attempted": true
+}

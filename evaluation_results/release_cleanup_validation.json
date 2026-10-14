@@ -1,0 +1,543 @@
+{
+  "date": "2026-10-11",
+  "cleanup": {
+    "archived_before_delete": [
+      {
+        "path": "tmp",
+        "files": 19,
+        "bytes": 3246302
+      },
+      {
+        "path": "print_project_tree.py",
+        "files": 1,
+        "bytes": 5857
+      },
+      {
+        "path": "safemeal/print_project_tree.py",
+        "files": 1,
+        "bytes": 5665
+      },
+      {
+        "path": "Agent-变更清单.md",
+        "files": 1,
+        "bytes": 4534
+      },
+      {
+        "path": "Agent-整理版.md",
+        "files": 1,
+        "bytes": 20402
+      },
+      {
+        "path": "evaluation_results/exploratory_failure_runner.py",
+        "files": 1,
+        "bytes": 8475
+      },
+      {
+        "path": "evaluation_results/platform_initial_pytest.xml",
+        "files": 1,
+        "bytes": 21286
+      },
+      {
+        "path": "evaluation_results/agent_live_evaluation_pytest.xml",
+        "files": 1,
+        "bytes": 15272
+      },
+      {
+        "path": "evaluation_results/agent_live_final_regression.xml",
+        "files": 1,
+        "bytes": 77806
+      },
+      {
+        "path": "evaluation_results/agent_retrieval_cases.xml",
+        "files": 1,
+        "bytes": 3546
+      },
+      {
+        "path": "evaluation_results/simplification_formatcheck_final.txt",
+        "files": 1,
+        "bytes": 8162
+      },
+      {
+        "path": "evaluation_results/simplification_formatcheck_initial.txt",
+        "files": 1,
+        "bytes": 8227
+      },
+      {
+        "path": "evaluation_results/simplification_pytest.xml",
+        "files": 1,
+        "bytes": 40370
+      },
+      {
+        "path": "evaluation_results/simplification_ruff_final.txt",
+        "files": 1,
+        "bytes": 19
+      },
+      {
+        "path": "evaluation_results/simplification_typecheck.txt",
+        "files": 1,
+        "bytes": 7443
+      },
+      {
+        "path": "evaluation_results/simplification_typecheck_baseline.txt",
+        "files": 1,
+        "bytes": 8838
+      },
+      {
+        "path": "evaluation_results/simplification_typecheck_final.txt",
+        "files": 1,
+        "bytes": 45
+      },
+      {
+        "path": "artifacts/nlu-qwen3-1.7b-lora-final",
+        "files": 4,
+        "bytes": 29921181
+      },
+      {
+        "path": "artifacts/nlu-qwen3-1.7b-lora-final-v2",
+        "files": 5,
+        "bytes": 39894581
+      },
+      {
+        "path": "artifacts/nlu-qwen3-1.7b-lora-v2",
+        "files": 6,
+        "bytes": 49867967
+      },
+      {
+        "path": "artifacts/nlu-smoke",
+        "files": 3,
+        "bytes": 19947765
+      },
+      {
+        "path": ".idea",
+        "files": 6,
+        "bytes": 25806
+      }
+    ],
+    "development_files_removed": 59,
+    "generated_files_removed": 19674,
+    "generated_paths": [
+      {
+        "path": ".pytest_cache",
+        "files": 6
+      },
+      {
+        "path": ".mypy_cache",
+        "files": 19282
+      },
+      {
+        "path": ".ruff_cache",
+        "files": 13
+      },
+      {
+        "path": "web/dist",
+        "files": 3
+      },
+      {
+        "path": "safemeal/shared/contracts/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/shared/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/modules/recipe/ports/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/modules/recipe/contracts/__pycache__",
+        "files": 7
+      },
+      {
+        "path": "safemeal/modules/recipe/application/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/modules/recipe/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/modules/knowledge/ports/retrieval/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/modules/knowledge/ports/ingestion/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/modules/knowledge/ports/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/modules/knowledge/contracts/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/modules/knowledge/application/upload/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/modules/knowledge/application/knowledge/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/modules/knowledge/application/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/modules/knowledge/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/modules/interaction/ports/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/modules/interaction/contracts/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/modules/interaction/application/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/modules/interaction/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/modules/identity/ports/security/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/modules/identity/ports/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/modules/identity/contracts/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/modules/identity/application/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/modules/identity/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/modules/dietary/contracts/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/modules/dietary/application/__pycache__",
+        "files": 10
+      },
+      {
+        "path": "safemeal/modules/dietary/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/modules/conversation/ports/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/modules/conversation/contracts/memory/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/modules/conversation/contracts/conversation/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/modules/conversation/contracts/chat/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/modules/conversation/contracts/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/modules/conversation/application/memory/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/modules/conversation/application/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/modules/conversation/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/modules/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/interfaces/http/routers/__pycache__",
+        "files": 9
+      },
+      {
+        "path": "safemeal/interfaces/http/models/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/interfaces/http/__pycache__",
+        "files": 8
+      },
+      {
+        "path": "safemeal/interfaces/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/infrastructure/security/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/infrastructure/retrieval/neo4j/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/infrastructure/retrieval/milvus/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/infrastructure/retrieval/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/infrastructure/persistence/migrations/versions/__pycache__",
+        "files": 14
+      },
+      {
+        "path": "safemeal/infrastructure/persistence/migrations/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/infrastructure/persistence/db/models/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/infrastructure/persistence/db/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/infrastructure/persistence/__pycache__",
+        "files": 14
+      },
+      {
+        "path": "safemeal/infrastructure/operations/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/infrastructure/nlu/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/infrastructure/messaging/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/infrastructure/llm/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/infrastructure/ingestion/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/infrastructure/cache/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/infrastructure/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/config/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/bootstrap/composition/__pycache__",
+        "files": 8
+      },
+      {
+        "path": "safemeal/bootstrap/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/agent/workflow/nodes/__pycache__",
+        "files": 8
+      },
+      {
+        "path": "safemeal/agent/workflow/context/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/agent/workflow/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/agent/understanding/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/agent/safety/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/agent/runtime/tools/ports/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/agent/runtime/tools/contracts/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/agent/runtime/tools/adapters/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/agent/runtime/tools/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/agent/runtime/orchestration/nodes/reflector/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/agent/runtime/orchestration/nodes/planner/__pycache__",
+        "files": 6
+      },
+      {
+        "path": "safemeal/agent/runtime/orchestration/nodes/observer/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/agent/runtime/orchestration/nodes/initializer/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/agent/runtime/orchestration/nodes/executor/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/agent/runtime/orchestration/nodes/__pycache__",
+        "files": 2
+      },
+      {
+        "path": "safemeal/agent/runtime/orchestration/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/agent/runtime/model/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "safemeal/agent/runtime/memory/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/agent/runtime/aggregation/__pycache__",
+        "files": 6
+      },
+      {
+        "path": "safemeal/agent/runtime/__pycache__",
+        "files": 5
+      },
+      {
+        "path": "safemeal/agent/gateway/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/agent/contracts/workflow/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "safemeal/agent/contracts/__pycache__",
+        "files": 10
+      },
+      {
+        "path": "safemeal/agent/context/__pycache__",
+        "files": 6
+      },
+      {
+        "path": "safemeal/agent/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "safemeal/__pycache__",
+        "files": 3
+      },
+      {
+        "path": "tests/refactor/__pycache__",
+        "files": 22
+      },
+      {
+        "path": "tests/integration/__pycache__",
+        "files": 4
+      },
+      {
+        "path": "tests/evaluation/__pycache__",
+        "files": 14
+      },
+      {
+        "path": "tests/e2e/__pycache__",
+        "files": 1
+      },
+      {
+        "path": "tests/backend/__pycache__",
+        "files": 8
+      },
+      {
+        "path": "scripts/__pycache__",
+        "files": 4
+      },
+      {
+        "path": ".DS_Store",
+        "files": 1
+      },
+      {
+        "path": "docs/.DS_Store",
+        "files": 1
+      }
+    ]
+  },
+  "comments": {
+    "files": 321,
+    "classes": 315,
+    "methods_and_functions": 975,
+    "sql_classes": 20,
+    "issues": []
+  },
+  "ast_check": {
+    "files_checked": 321,
+    "executable_ast_changes": [],
+    "docstring_only_changes": [
+      "safemeal/infrastructure/persistence/db/models/chat_message.py",
+      "safemeal/infrastructure/persistence/db/models/chat_session.py"
+    ]
+  },
+  "verification": {
+    "backend_core_passed": 510,
+    "mysql_redis_integration_passed": 23,
+    "combined_backend_passed": 533,
+    "skipped": {
+      "live_model_e2e": 1,
+      "million_row_performance_experiment": 1
+    },
+    "frontend_passed": 10,
+    "frontend_build": "passed",
+    "ruff": "passed",
+    "format_check": "passed",
+    "mypy_source_files": 306,
+    "mypy": "passed",
+    "git_diff_check": "passed",
+    "backend_batches": 2
+  },
+  "publication": {
+    "working_tree_secret_pattern_findings": [],
+    "example_api_key_replaced": true,
+    "api_key_present_in_git_history": true,
+    "provider_key_revocation_required_before_upload": true
+  }
+}

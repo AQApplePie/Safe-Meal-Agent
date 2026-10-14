@@ -1,0 +1,15 @@
+{
+  "pytest": {
+    "passed": 471,
+    "skipped": 25,
+    "errors": 0
+  },
+  "ruff": "passed",
+  "mypy_source_files": 306,
+  "diff_check": "passed",
+  "live_tasks": 18,
+  "production_model_calls": 9,
+  "production_usage_complete": true,
+  "production_knowledge_cost_complete": false,
+  "architecture_review": "Request context in agent runtime; adapter measures model IO; workflow publishes metadata; platform runtime unchanged"
+}

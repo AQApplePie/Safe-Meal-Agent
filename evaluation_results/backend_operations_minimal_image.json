@@ -1,0 +1,11 @@
+{
+  "image": "safemeal-platform:ops-verify",
+  "image_id": "sha256:580f4ed258275718f71ebd7b9a114bee2ea96538c599e7c289d7b3fadc3acddc",
+  "metrics_present": true,
+  "no_agent_imports": true,
+  "uid": 10001,
+  "cli_in_image": true,
+  "invalid_uuid_rejected_before_database_access": true,
+  "timestamp_precision_verified": true,
+  "temporary_containers_auto_removed": true
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="5.579" timestamp="2026-10-09T13:05:06.008621" hostname="aqapplepiedeMacBook-Air.local"><testcase classname="tests.integration.test_mysql_backend" name="test_history_current_read_after_noop_upsert_in_old_rr_snapshot" time="5.073"><failure message="safemeal.shared.exceptions.DatabaseOperationError: Database operation failed">safemeal/infrastructure/persistence/history_repository.py:156: in record
+    return run_transaction(
+safemeal/infrastructure/persistence/transaction_retry.py:23: in run_transaction
+    return operation(connection)
+safemeal/infrastructure/persistence/history_repository.py:146: in operation
+    ).scalar_one()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/result.py:1474: in scalar_one
+    return self._only_one_row(
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/site-packages/sqlalchemy/engine/result.py:757: in _only_one_row
+    raise exc.NoResultFound(
+E   sqlalchemy.exc.NoResultFound: No row was found when one was required
+
+The above exception was the direct cause of the following exception:
+tests/integration/test_mysql_backend.py:842: in test_history_current_read_after_noop_upsert_in_old_rr_snapshot
+    result = future.result(timeout=5)
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+/opt/homebrew/Caskroom/miniconda/base/envs/agent_env/lib/python3.12/concurrent/futures/thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+safemeal/infrastructure/persistence/history_repository.py:162: in record
+    raise DatabaseOperationError() from exc
+E   safemeal.shared.exceptions.DatabaseOperationError: Database operation failed</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,1776 @@
+{
+  "version": "1.0",
+  "scope": "request understanding only; not end-to-end agent quality",
+  "cases": [
+    {
+      "id": "A001",
+      "group": "count_category",
+      "message": "推荐一道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 1
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A002",
+      "group": "count_category",
+      "message": "推荐一道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 1
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A003",
+      "group": "count_category",
+      "message": "推荐一道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 1
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A004",
+      "group": "count_category",
+      "message": "推荐两道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 2
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A005",
+      "group": "count_category",
+      "message": "推荐两道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 2
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A006",
+      "group": "count_category",
+      "message": "推荐两道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 2
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A007",
+      "group": "count_category",
+      "message": "推荐三道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 3
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A008",
+      "group": "count_category",
+      "message": "推荐三道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 3
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A009",
+      "group": "count_category",
+      "message": "推荐三道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 3
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A010",
+      "group": "count_category",
+      "message": "推荐四道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 4
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A011",
+      "group": "count_category",
+      "message": "推荐四道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 4
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A012",
+      "group": "count_category",
+      "message": "推荐四道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 4
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A013",
+      "group": "count_category",
+      "message": "推荐五道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A014",
+      "group": "count_category",
+      "message": "推荐五道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A015",
+      "group": "count_category",
+      "message": "推荐五道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A016",
+      "group": "count_category",
+      "message": "推荐六道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 6
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A017",
+      "group": "count_category",
+      "message": "推荐六道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 6
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A018",
+      "group": "count_category",
+      "message": "推荐六道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 6
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A019",
+      "group": "count_category",
+      "message": "推荐七道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 7
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A020",
+      "group": "count_category",
+      "message": "推荐七道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 7
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A021",
+      "group": "count_category",
+      "message": "推荐七道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 7
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A022",
+      "group": "count_category",
+      "message": "推荐八道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 8
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A023",
+      "group": "count_category",
+      "message": "推荐八道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 8
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A024",
+      "group": "count_category",
+      "message": "推荐八道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 8
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A025",
+      "group": "count_category",
+      "message": "推荐九道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 9
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A026",
+      "group": "count_category",
+      "message": "推荐九道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 9
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A027",
+      "group": "count_category",
+      "message": "推荐九道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 9
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A028",
+      "group": "count_category",
+      "message": "推荐十道鱼",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 10
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A029",
+      "group": "count_category",
+      "message": "推荐十道素菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 10
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A030",
+      "group": "count_category",
+      "message": "推荐十道海鲜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 10
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A031",
+      "group": "detail",
+      "message": "清蒸鲈鱼怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "清蒸鲈鱼"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A032",
+      "group": "detail",
+      "message": "清蒸鲈鱼有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "清蒸鲈鱼"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A033",
+      "group": "detail",
+      "message": "清蒸鲈鱼多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "清蒸鲈鱼"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A034",
+      "group": "detail",
+      "message": "柠檬蒸三文鱼怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "柠檬蒸三文鱼"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A035",
+      "group": "detail",
+      "message": "柠檬蒸三文鱼有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "柠檬蒸三文鱼"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A036",
+      "group": "detail",
+      "message": "柠檬蒸三文鱼多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "柠檬蒸三文鱼"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A037",
+      "group": "detail",
+      "message": "番茄炒蛋怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "番茄炒蛋"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A038",
+      "group": "detail",
+      "message": "番茄炒蛋有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "番茄炒蛋"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A039",
+      "group": "detail",
+      "message": "番茄炒蛋多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "番茄炒蛋"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A040",
+      "group": "detail",
+      "message": "红烧肉怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "红烧肉"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A041",
+      "group": "detail",
+      "message": "红烧肉有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "红烧肉"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A042",
+      "group": "detail",
+      "message": "红烧肉多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "红烧肉"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A043",
+      "group": "detail",
+      "message": "蒜蓉西兰花怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "蒜蓉西兰花"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A044",
+      "group": "detail",
+      "message": "蒜蓉西兰花有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "蒜蓉西兰花"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A045",
+      "group": "detail",
+      "message": "蒜蓉西兰花多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "蒜蓉西兰花"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A046",
+      "group": "detail",
+      "message": "冬瓜汤怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "冬瓜汤"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A047",
+      "group": "detail",
+      "message": "冬瓜汤有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "冬瓜汤"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A048",
+      "group": "detail",
+      "message": "冬瓜汤多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "冬瓜汤"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A049",
+      "group": "detail",
+      "message": "麻婆豆腐怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "麻婆豆腐"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A050",
+      "group": "detail",
+      "message": "麻婆豆腐有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "麻婆豆腐"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A051",
+      "group": "detail",
+      "message": "麻婆豆腐多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "麻婆豆腐"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A052",
+      "group": "detail",
+      "message": "香菇青菜怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "香菇青菜"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A053",
+      "group": "detail",
+      "message": "香菇青菜有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "香菇青菜"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A054",
+      "group": "detail",
+      "message": "香菇青菜多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "香菇青菜"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A055",
+      "group": "detail",
+      "message": "土豆炖牛肉怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "土豆炖牛肉"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A056",
+      "group": "detail",
+      "message": "土豆炖牛肉有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "土豆炖牛肉"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A057",
+      "group": "detail",
+      "message": "土豆炖牛肉多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "土豆炖牛肉"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A058",
+      "group": "detail",
+      "message": "豆豉蒸鲈鱼怎么做",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "steps"
+        ],
+        "recipe_name": "豆豉蒸鲈鱼"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A059",
+      "group": "detail",
+      "message": "豆豉蒸鲈鱼有什么材料",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "ingredients"
+        ],
+        "recipe_name": "豆豉蒸鲈鱼"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A060",
+      "group": "detail",
+      "message": "豆豉蒸鲈鱼多久能做好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "requested_fields": [
+          "time"
+        ],
+        "recipe_name": "豆豉蒸鲈鱼"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A061",
+      "group": "menu",
+      "message": "给1个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 1,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A062",
+      "group": "menu",
+      "message": "为1个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 1,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A063",
+      "group": "menu",
+      "message": "给2个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 2,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A064",
+      "group": "menu",
+      "message": "为2个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 2,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A065",
+      "group": "menu",
+      "message": "给3个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 3,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A066",
+      "group": "menu",
+      "message": "为3个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 3,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A067",
+      "group": "menu",
+      "message": "给4个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 4,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A068",
+      "group": "menu",
+      "message": "为4个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 4,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A069",
+      "group": "menu",
+      "message": "给5个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 5,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A070",
+      "group": "menu",
+      "message": "为5个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 5,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A071",
+      "group": "menu",
+      "message": "给6个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 6,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A072",
+      "group": "menu",
+      "message": "为6个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 6,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A073",
+      "group": "menu",
+      "message": "给7个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 7,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A074",
+      "group": "menu",
+      "message": "为7个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 7,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A075",
+      "group": "menu",
+      "message": "给8个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 8,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A076",
+      "group": "menu",
+      "message": "为8个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 8,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A077",
+      "group": "menu",
+      "message": "给9个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 9,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A078",
+      "group": "menu",
+      "message": "为9个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 9,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A079",
+      "group": "menu",
+      "message": "给10个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 10,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A080",
+      "group": "menu",
+      "message": "为10个人安排两荤两素一汤",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "menu_planning",
+        "servings": 10,
+        "recommendation_count": 5
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A081",
+      "group": "reference",
+      "message": "这个怎么做？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「清蒸鲈鱼」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "清蒸鲈鱼",
+        "requested_fields": [
+          "steps"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A082",
+      "group": "reference",
+      "message": "这个有什么材料？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「清蒸鲈鱼」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "清蒸鲈鱼",
+        "requested_fields": [
+          "ingredients"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A083",
+      "group": "reference",
+      "message": "这个怎么做？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「柠檬蒸三文鱼」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "柠檬蒸三文鱼",
+        "requested_fields": [
+          "steps"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A084",
+      "group": "reference",
+      "message": "这个有什么材料？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「柠檬蒸三文鱼」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "柠檬蒸三文鱼",
+        "requested_fields": [
+          "ingredients"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A085",
+      "group": "reference",
+      "message": "这个怎么做？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「番茄炒蛋」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "番茄炒蛋",
+        "requested_fields": [
+          "steps"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A086",
+      "group": "reference",
+      "message": "这个有什么材料？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「番茄炒蛋」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "番茄炒蛋",
+        "requested_fields": [
+          "ingredients"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A087",
+      "group": "reference",
+      "message": "这个怎么做？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「红烧肉」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "红烧肉",
+        "requested_fields": [
+          "steps"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A088",
+      "group": "reference",
+      "message": "这个有什么材料？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「红烧肉」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "红烧肉",
+        "requested_fields": [
+          "ingredients"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A089",
+      "group": "reference",
+      "message": "这个怎么做？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「冬瓜汤」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "冬瓜汤",
+        "requested_fields": [
+          "steps"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A090",
+      "group": "reference",
+      "message": "这个有什么材料？",
+      "recent_context": [
+        {
+          "role": "assistant",
+          "content": "推荐你试试「冬瓜汤」。"
+        }
+      ],
+      "expected": {
+        "primary_task": "recipe_detail",
+        "recipe_name": "冬瓜汤",
+        "requested_fields": [
+          "ingredients"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A091",
+      "group": "allergy",
+      "message": "我花生过敏，推荐1道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 1,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A092",
+      "group": "allergy",
+      "message": "我花生过敏，推荐2道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 2,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A093",
+      "group": "allergy",
+      "message": "我花生过敏，推荐3道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 3,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A094",
+      "group": "allergy",
+      "message": "我花生过敏，推荐4道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 4,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A095",
+      "group": "allergy",
+      "message": "我花生过敏，推荐5道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 5,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A096",
+      "group": "allergy",
+      "message": "我花生过敏，推荐6道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 6,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A097",
+      "group": "allergy",
+      "message": "我花生过敏，推荐7道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 7,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A098",
+      "group": "allergy",
+      "message": "我花生过敏，推荐8道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 8,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A099",
+      "group": "allergy",
+      "message": "我花生过敏，推荐9道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 9,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A100",
+      "group": "allergy",
+      "message": "我花生过敏，推荐10道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 10,
+        "required_constraints": [
+          [
+            "allergy",
+            "花生"
+          ]
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A101",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐1道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 1,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A102",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐2道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 2,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A103",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐3道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 3,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A104",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐4道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 4,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A105",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐5道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 5,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A106",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐6道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 6,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A107",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐7道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 7,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A108",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐8道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 8,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A109",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐9道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 9,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A110",
+      "group": "temporary_scope",
+      "message": "今天不想吃鱼，推荐10道菜",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "recipe_recommendation",
+        "recommendation_count": 10,
+        "required_constraints": [
+          [
+            "avoid_food_category",
+            "fish"
+          ]
+        ],
+        "forbidden_memory_values": [
+          "鱼"
+        ]
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A111",
+      "group": "knowledge",
+      "message": "烹饪为什么要焯水",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "knowledge"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A112",
+      "group": "knowledge",
+      "message": "营养搭配是什么",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "knowledge"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A113",
+      "group": "knowledge",
+      "message": "如何保存食材",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "knowledge"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A114",
+      "group": "knowledge",
+      "message": "食谱有哪些分类",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "knowledge"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A115",
+      "group": "knowledge",
+      "message": "炒菜用什么锅",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "knowledge"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A116",
+      "group": "out_of_scope",
+      "message": "你好",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "out_of_scope"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A117",
+      "group": "out_of_scope",
+      "message": "今天天气怎么样",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "out_of_scope"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A118",
+      "group": "out_of_scope",
+      "message": "帮我写代码",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "out_of_scope"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    },
+    {
+      "id": "A119",
+      "group": "out_of_scope",
+      "message": "播放音乐",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "out_of_scope"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "test"
+    },
+    {
+      "id": "A120",
+      "group": "out_of_scope",
+      "message": "查询航班",
+      "recent_context": [],
+      "expected": {
+        "primary_task": "out_of_scope"
+      },
+      "source": "maintainer-authored synthetic contract case; not user traffic",
+      "split": "dev"
+    }
+  ]
+}

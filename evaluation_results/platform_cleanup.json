@@ -1,0 +1,946 @@
+{
+  "removed": [
+    {
+      "path": ".mypy_cache",
+      "bytes": 370614642,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": ".pytest_cache",
+      "bytes": 49020,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": ".ruff_cache",
+      "bytes": 42532,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "web/dist",
+      "bytes": 259091,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "Safe-Meal-Agent.txt",
+      "bytes": 36676,
+      "reason": "stale directory tree; only historical status records refer to it",
+      "sha256": "ec703f13563990cf689b360ae680cd26028a693f8e98932bd477c09abc1db8b7"
+    },
+    {
+      "path": "safemeal/safemeal.txt",
+      "bytes": 14338,
+      "reason": "stale directory tree; only historical status records refer to it",
+      "sha256": "c1e24ae5dcaa5d842845baba11b20caf630b2e4711be08d24ed0db2d59385389"
+    },
+    {
+      "path": "safemeal/__pycache__",
+      "bytes": 55496,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/bootstrap/__pycache__",
+      "bytes": 421,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/config/__pycache__",
+      "bytes": 61411,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/__pycache__",
+      "bytes": 54263,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/shared/__pycache__",
+      "bytes": 29728,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/__pycache__",
+      "bytes": 623,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/__pycache__",
+      "bytes": 477,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/interfaces/__pycache__",
+      "bytes": 9669,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/bootstrap/composition/__pycache__",
+      "bytes": 100030,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/context/__pycache__",
+      "bytes": 49759,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/contracts/__pycache__",
+      "bytes": 74608,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/__pycache__",
+      "bytes": 87838,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/understanding/__pycache__",
+      "bytes": 56394,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/safety/__pycache__",
+      "bytes": 28058,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/workflow/__pycache__",
+      "bytes": 47407,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/gateway/__pycache__",
+      "bytes": 79242,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/contracts/workflow/__pycache__",
+      "bytes": 36056,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/aggregation/__pycache__",
+      "bytes": 80488,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/tools/__pycache__",
+      "bytes": 44562,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/memory/__pycache__",
+      "bytes": 19414,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/model/__pycache__",
+      "bytes": 33751,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/__pycache__",
+      "bytes": 31470,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/tools/contracts/__pycache__",
+      "bytes": 27706,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/tools/adapters/__pycache__",
+      "bytes": 53075,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/tools/ports/__pycache__",
+      "bytes": 27243,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/__pycache__",
+      "bytes": 6721,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/initializer/__pycache__",
+      "bytes": 33404,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/reflector/__pycache__",
+      "bytes": 37947,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/planner/__pycache__",
+      "bytes": 90384,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/observer/__pycache__",
+      "bytes": 77968,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/executor/__pycache__",
+      "bytes": 14749,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/workflow/context/__pycache__",
+      "bytes": 60374,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/agent/workflow/nodes/__pycache__",
+      "bytes": 113743,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/shared/contracts/__pycache__",
+      "bytes": 17333,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/ingestion/__pycache__",
+      "bytes": 59493,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/llm/__pycache__",
+      "bytes": 80927,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/cache/__pycache__",
+      "bytes": 20393,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/nlu/__pycache__",
+      "bytes": 74256,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/security/__pycache__",
+      "bytes": 17168,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/operations/__pycache__",
+      "bytes": 45960,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/retrieval/__pycache__",
+      "bytes": 73875,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/__pycache__",
+      "bytes": 310075,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/messaging/__pycache__",
+      "bytes": 7120,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/retrieval/neo4j/__pycache__",
+      "bytes": 66901,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/retrieval/milvus/__pycache__",
+      "bytes": 128490,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/retrieval/neo4j/importers/__pycache__",
+      "bytes": 82525,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/migrations/__pycache__",
+      "bytes": 8938,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/db/__pycache__",
+      "bytes": 605,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/migrations/versions/__pycache__",
+      "bytes": 108150,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/db/models/__pycache__",
+      "bytes": 39987,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/identity/__pycache__",
+      "bytes": 411,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/dietary/__pycache__",
+      "bytes": 427,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/recipe/__pycache__",
+      "bytes": 395,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/knowledge/__pycache__",
+      "bytes": 449,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/interaction/__pycache__",
+      "bytes": 495,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/conversation/__pycache__",
+      "bytes": 461,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/identity/contracts/__pycache__",
+      "bytes": 18291,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/identity/application/__pycache__",
+      "bytes": 37741,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/identity/ports/__pycache__",
+      "bytes": 17929,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/identity/ports/security/__pycache__",
+      "bytes": 7278,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/dietary/contracts/__pycache__",
+      "bytes": 41155,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/dietary/application/__pycache__",
+      "bytes": 213897,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/recipe/contracts/__pycache__",
+      "bytes": 79852,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/recipe/application/__pycache__",
+      "bytes": 82006,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/recipe/ports/__pycache__",
+      "bytes": 9148,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/knowledge/contracts/__pycache__",
+      "bytes": 15275,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/knowledge/application/__pycache__",
+      "bytes": 443,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/knowledge/ports/__pycache__",
+      "bytes": 461,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/knowledge/application/knowledge/__pycache__",
+      "bytes": 102024,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/knowledge/application/upload/__pycache__",
+      "bytes": 37954,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/knowledge/ports/ingestion/__pycache__",
+      "bytes": 15677,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/knowledge/ports/retrieval/__pycache__",
+      "bytes": 21038,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/interaction/contracts/__pycache__",
+      "bytes": 6985,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/interaction/application/__pycache__",
+      "bytes": 14825,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/interaction/ports/__pycache__",
+      "bytes": 5320,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/conversation/contracts/__pycache__",
+      "bytes": 457,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/conversation/application/__pycache__",
+      "bytes": 60616,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/conversation/ports/__pycache__",
+      "bytes": 40500,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/conversation/contracts/memory/__pycache__",
+      "bytes": 17117,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/conversation/contracts/chat/__pycache__",
+      "bytes": 21841,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/conversation/contracts/conversation/__pycache__",
+      "bytes": 6491,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/modules/conversation/application/memory/__pycache__",
+      "bytes": 66602,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/interfaces/http/__pycache__",
+      "bytes": 62844,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/interfaces/http/routers/__pycache__",
+      "bytes": 130883,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "safemeal/interfaces/http/models/__pycache__",
+      "bytes": 23577,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "tests/backend/__pycache__",
+      "bytes": 463159,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "tests/evaluation/__pycache__",
+      "bytes": 274408,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "tests/e2e/__pycache__",
+      "bytes": 3961,
+      "reason": "reproducible cache/build"
+    },
+    {
+      "path": "tests/refactor/__pycache__",
+      "bytes": 964854,
+      "reason": "reproducible cache/build"
+    }
+  ],
+  "removed_bytes": 376550221,
+  "preserved": [
+    "all valid tests",
+    "evaluation evidence",
+    "training datasets and model artifacts",
+    "runtime databases and uploads"
+  ],
+  "final_cleanup": [
+    {
+      "path": ".mypy_cache",
+      "bytes": 361756638,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": ".pytest_cache",
+      "bytes": 47166,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": ".ruff_cache",
+      "bytes": 21223,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/__pycache__",
+      "bytes": 7554,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/bootstrap/__pycache__",
+      "bytes": 237,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/config/__pycache__",
+      "bytes": 22088,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/__pycache__",
+      "bytes": 254,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/shared/__pycache__",
+      "bytes": 9392,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/__pycache__",
+      "bytes": 260,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/__pycache__",
+      "bytes": 265,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/interfaces/__pycache__",
+      "bytes": 1763,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/bootstrap/composition/__pycache__",
+      "bytes": 45559,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/context/__pycache__",
+      "bytes": 24414,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/contracts/__pycache__",
+      "bytes": 23520,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/__pycache__",
+      "bytes": 13538,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/understanding/__pycache__",
+      "bytes": 27959,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/safety/__pycache__",
+      "bytes": 14165,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/workflow/__pycache__",
+      "bytes": 13381,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/gateway/__pycache__",
+      "bytes": 26866,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/contracts/workflow/__pycache__",
+      "bytes": 3176,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/aggregation/__pycache__",
+      "bytes": 24920,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/tools/__pycache__",
+      "bytes": 14333,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/memory/__pycache__",
+      "bytes": 6291,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/model/__pycache__",
+      "bytes": 10909,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/__pycache__",
+      "bytes": 11371,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/tools/contracts/__pycache__",
+      "bytes": 8538,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/tools/adapters/__pycache__",
+      "bytes": 16909,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/tools/ports/__pycache__",
+      "bytes": 8578,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/__pycache__",
+      "bytes": 2114,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/initializer/__pycache__",
+      "bytes": 6664,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/reflector/__pycache__",
+      "bytes": 11473,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/planner/__pycache__",
+      "bytes": 28570,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/observer/__pycache__",
+      "bytes": 24897,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/runtime/orchestration/nodes/executor/__pycache__",
+      "bytes": 4757,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/workflow/context/__pycache__",
+      "bytes": 17239,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/agent/workflow/nodes/__pycache__",
+      "bytes": 31631,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/shared/contracts/__pycache__",
+      "bytes": 8659,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/ingestion/__pycache__",
+      "bytes": 15412,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/llm/__pycache__",
+      "bytes": 25199,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/cache/__pycache__",
+      "bytes": 20393,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/nlu/__pycache__",
+      "bytes": 24235,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/security/__pycache__",
+      "bytes": 5284,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/operations/__pycache__",
+      "bytes": 5013,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/retrieval/__pycache__",
+      "bytes": 16022,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/__pycache__",
+      "bytes": 125156,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/messaging/__pycache__",
+      "bytes": 7120,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/retrieval/neo4j/__pycache__",
+      "bytes": 13207,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/migrations/__pycache__",
+      "bytes": 3005,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/db/__pycache__",
+      "bytes": 254,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/migrations/versions/__pycache__",
+      "bytes": 44672,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/infrastructure/persistence/db/models/__pycache__",
+      "bytes": 13555,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/identity/__pycache__",
+      "bytes": 232,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/dietary/__pycache__",
+      "bytes": 240,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/recipe/__pycache__",
+      "bytes": 224,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/knowledge/__pycache__",
+      "bytes": 251,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/interaction/__pycache__",
+      "bytes": 274,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/conversation/__pycache__",
+      "bytes": 257,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/identity/contracts/__pycache__",
+      "bytes": 5841,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/identity/application/__pycache__",
+      "bytes": 11864,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/identity/ports/__pycache__",
+      "bytes": 4968,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/identity/ports/security/__pycache__",
+      "bytes": 2166,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/dietary/contracts/__pycache__",
+      "bytes": 13128,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/dietary/application/__pycache__",
+      "bytes": 62696,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/recipe/contracts/__pycache__",
+      "bytes": 26775,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/recipe/application/__pycache__",
+      "bytes": 26093,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/recipe/ports/__pycache__",
+      "bytes": 3331,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/knowledge/contracts/__pycache__",
+      "bytes": 5031,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/knowledge/application/__pycache__",
+      "bytes": 248,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/knowledge/ports/__pycache__",
+      "bytes": 257,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/knowledge/application/knowledge/__pycache__",
+      "bytes": 29693,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/knowledge/application/upload/__pycache__",
+      "bytes": 11646,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/knowledge/ports/ingestion/__pycache__",
+      "bytes": 4567,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/knowledge/ports/retrieval/__pycache__",
+      "bytes": 6388,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/interaction/contracts/__pycache__",
+      "bytes": 6985,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/interaction/application/__pycache__",
+      "bytes": 14825,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/interaction/ports/__pycache__",
+      "bytes": 5320,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/conversation/contracts/__pycache__",
+      "bytes": 255,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/conversation/application/__pycache__",
+      "bytes": 17364,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/conversation/ports/__pycache__",
+      "bytes": 12031,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/conversation/contracts/memory/__pycache__",
+      "bytes": 5716,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/conversation/contracts/chat/__pycache__",
+      "bytes": 6846,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/conversation/contracts/conversation/__pycache__",
+      "bytes": 2184,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/modules/conversation/application/memory/__pycache__",
+      "bytes": 20805,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/interfaces/http/__pycache__",
+      "bytes": 27822,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/interfaces/http/routers/__pycache__",
+      "bytes": 41460,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "safemeal/interfaces/http/models/__pycache__",
+      "bytes": 6651,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "tests/backend/__pycache__",
+      "bytes": 478879,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "tests/evaluation/__pycache__",
+      "bytes": 134554,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "tests/e2e/__pycache__",
+      "bytes": 1976,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "tests/refactor/__pycache__",
+      "bytes": 422157,
+      "reason": "regenerated verification cache; final cleanup"
+    },
+    {
+      "path": "scripts/__pycache__",
+      "bytes": 61367,
+      "reason": "regenerated verification cache; final cleanup"
+    }
+  ],
+  "final_cleanup_bytes": 364099165
+}

@@ -1,0 +1,6 @@
+{
+  "baseline_errors": 31,
+  "after_errors": 31,
+  "new_error_messages": [],
+  "method": "Temporary copy of current source; task-start-clean changed files restored from HEAD; outer call restored to old signature. Compare error messages ignoring line changes. Not a Git HEAD-only baseline."
+}

@@ -1,0 +1,13 @@
+FROM python:3.12-slim
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+COPY requirements-platform.txt ./
+RUN pip install --no-cache-dir -r requirements-platform.txt
+COPY safemeal ./safemeal
+COPY alembic.ini ./
+COPY scripts/outbox_admin.py ./scripts/outbox_admin.py
+RUN useradd --create-home --uid 10001 safemeal
+USER safemeal
+EXPOSE 8000
+HEALTHCHECK --interval=15s --timeout=5s --start-period=20s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/livez', timeout=4)"
+CMD ["uvicorn", "safemeal.platform_main:app", "--host", "0.0.0.0", "--port", "8000"]

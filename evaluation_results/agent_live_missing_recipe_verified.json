@@ -1,0 +1,1157 @@
+{
+  "dataset_sha256": "524a963a608fbabce39c8d1b9b941ea7680267255b0c0b7de2b257861759518e",
+  "model": "deepseek-chat",
+  "baseline_temperature": 0,
+  "agent_answer_temperature": 0,
+  "production_temperature_override": "evaluation-only; deployed default unchanged",
+  "revision": "74ae66b4f6e23f5c99855c639bd735a304599333",
+  "source_sha256": {
+    "scripts/evaluate_agent_live.py": "2873ec2718b65dd6c099607a3c79a2716c2c9337b9ec7a2b50a2617d8ed44631",
+    "safemeal/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/agent/__init__.py": "ff39c3f8bb54f9f42a93f97d59b53f87faed497efb30d0d8bbaa4381478561b7",
+    "safemeal/agent/context/__init__.py": "ce6890a1714814ecf3f87cd26b9d4035eaf2489b2afe6a68f1d2abc6d41f5447",
+    "safemeal/agent/context/active_menu.py": "6e4c1f8e345cf8509ea56a7307d08a0ec4c244819b631f4d9e5b08d8d6365ca6",
+    "safemeal/agent/context/history.py": "51f80a6151d034489251909e91b8dc78b27c6038cb93c4ef5fdc77271ead6824",
+    "safemeal/agent/context/menu_planning.py": "e11439517d95e86087e3a8c20de34c4e0cdfcfea71f73e5ead6b5d62ffd29d0e",
+    "safemeal/agent/context/relevance.py": "5ee342ec948e1291f95cf481d239258c989ce75d5092a32b72320b8726789e95",
+    "safemeal/agent/context/short_term_reference.py": "d5c7e209002fa1b0db1410c294daba2f652767f516ea943f5da2a0bca7af7638",
+    "safemeal/agent/contracts/__init__.py": "83902d49340e05021ed23a5fc846e1c4c822a86abfcc120b69c1e19a58563fd3",
+    "safemeal/agent/contracts/api.py": "48edb771971e74404edd9db986bca322f80130939be2a7d725be359db6ae67d1",
+    "safemeal/agent/contracts/budget.py": "77f563915c198a23d654be825382c95fe30efd25646539678e6e8c60a59f500d",
+    "safemeal/agent/contracts/context.py": "dcf1d295993cf6d46fc6a1844447ee5fe9678f3e7bd95c6cd8d3a75e930bf406",
+    "safemeal/agent/contracts/decisions.py": "1b4b26b04c1d84694b59b5a9ba29d68715d62eb6f930ef986da62c76d608e121",
+    "safemeal/agent/contracts/intent.py": "58926178cf1303e79dfb2ea27a24a117b0392f1ac93ba742c309e171b9007cdb",
+    "safemeal/agent/contracts/menu_planning.py": "768ecaebc57b9b20958c6cf20c508173d399bfb2f55e9c0d9b613cac9f72d948",
+    "safemeal/agent/contracts/ports.py": "8a753b54f54e7037ae5653d7b1ec23247b5d1bccb4ec6f217c1a99c952a4c80a",
+    "safemeal/agent/contracts/prompts.py": "c12dbada50f0651b1200319816bb81d76a0a4911a387f6d4f3bda82bbcc95185",
+    "safemeal/agent/contracts/state.py": "f9857f0ea764a76342e67319db82ba1d4d443bfab94ccba0312fa000b62c7531",
+    "safemeal/agent/contracts/workflow/__init__.py": "8b60792ed04543e8a981ce60eec06659a93fe59e8c3b2302706163a3b9b2241b",
+    "safemeal/agent/contracts/workflow/models.py": "b9e7f5c39daa4de3b1fe1ffb81a99a378fc5df1af146f9fbeb91547fd48fcbe2",
+    "safemeal/agent/contracts/workflow/stream.py": "ed3379353d0e2923fa8a097b5226f7d18db7285d521e4f5bed6ec9df8df0497e",
+    "safemeal/agent/gateway/__init__.py": "b40fbcd318d15a6daec81ecf1d4409de7e69b2b107b9f7fe5c22c22e720cdb53",
+    "safemeal/agent/gateway/chat_turn_service.py": "f2e219bf0ff83bb8e7a871c6bb379e859026361f56275e84a7aff685e6e78bb4",
+    "safemeal/agent/gateway/service.py": "8838479ec8d82e8ec8daf74f56c074a950f38cdb8356ea200ba93de5b69bdc11",
+    "safemeal/agent/runtime/__init__.py": "22b5930d4bf0daf3fb6669c630cfeacdd79ebf7df948a6ce3e8b5d2c133a2c3b",
+    "safemeal/agent/runtime/aggregation/__init__.py": "cc98440494b35943392355efe2de25316074373a2cde31ab6bff08c0fb2ed284",
+    "safemeal/agent/runtime/aggregation/recipe_detail.py": "196cfb394322f83a59fdfd68f6f20ddb8ac6b60f9a06f75b491f7cb7a71c22e5",
+    "safemeal/agent/runtime/aggregation/recommendation.py": "02f4cfc9403d313141f24dd5e2b1640b12b5de262eafc07f5dfe4bb062a375ab",
+    "safemeal/agent/runtime/aggregation/responder.py": "91d312f74a63d2dee651ffc844aecf9567305621e5570c1766dbe6753bec502e",
+    "safemeal/agent/runtime/aggregation/retrieval_routing.py": "e75b41236e2730c5bc10945f2ca2ddc061a352116407f8d8b26be8529a2693ec",
+    "safemeal/agent/runtime/aggregation/sources.py": "ed82eae59fbf68ca80e28b5ca5e22ca3f7bc984287ce9372a35fb8281dba6ee3",
+    "safemeal/agent/runtime/budget.py": "b471cfe8bb26647e9dcdf9394c4d3fc69d26153640600e88a8548ccbde434ec0",
+    "safemeal/agent/runtime/memory/__init__.py": "b8927c6b001750c42ae352144306e665237469b9cffea5f7d172d9037a206e6b",
+    "safemeal/agent/runtime/memory/context.py": "6ae6d175b0fb3beeb9f5e8db454b925d3828a8ba6b3b3991cff6c3431e8459ee",
+    "safemeal/agent/runtime/memory/observations.py": "dc66be9e5dd26102624e657618030e994943aa6b9eeec28bdfc2cbc9a0741968",
+    "safemeal/agent/runtime/menu_coverage.py": "7ef3cbd89fd499799f4ed36fe9f94aa0093798540f8cf1217dc4d5a82ba7f63f",
+    "safemeal/agent/runtime/menu_output.py": "1e4a2a5066977522967e6ec8909782d74e1e414230edac409aeb4ca1d507a883",
+    "safemeal/agent/runtime/model/__init__.py": "593aa464ad3dea47442d70b78dbe4f89a56f74a17cb9158282cc7ee617bb8d1d",
+    "safemeal/agent/runtime/model/intent_classifier.py": "2e78b0612920814e4157ff855782ec51f150687e220c11dcfc838544481657e6",
+    "safemeal/agent/runtime/model/prompts.py": "a1cdd46643b6597a6a6c84ae559066a4b45c5466abe0ca6d9ef113a03b9ff91d",
+    "safemeal/agent/runtime/model/protocol.py": "08db32f2a9a84c2723658e7f0bf04d21d1b906dc5f0859f66c323e6ad99ec8b5",
+    "safemeal/agent/runtime/orchestration/__init__.py": "e301dea8cf6c95fc2dc781244533adec351f395a68e772f207eb38969e9ce8bd",
+    "safemeal/agent/runtime/orchestration/action_policy.py": "9ea89d6f4dbeaae8e574f78363e76ec5232ad721ff220962ecfe956f0295a070",
+    "safemeal/agent/runtime/orchestration/graph.py": "f662d95080e5b56762c4b25d4fe8d4dc577be5f8215097bf2412db08928e9515",
+    "safemeal/agent/runtime/orchestration/loop_control.py": "55ffa4a0e0090ef3cdd17c7eb4c78f4bdda492bb2bfde0969b4fb7e61ae910af",
+    "safemeal/agent/runtime/orchestration/nodes/__init__.py": "bbabb1be95549ff7b8dbcc7306782af7825c229cd6d8c3119879fa147e52b4d0",
+    "safemeal/agent/runtime/orchestration/nodes/approval.py": "f82ba9304055f52dae63069409d625c5f70a309cf06ffc5d4cbfc9583f075678",
+    "safemeal/agent/runtime/orchestration/nodes/executor/__init__.py": "0b92eb7f73ec5923c08f1000f95844bbbf699e1a73a8cb4f8229cfaf5623720f",
+    "safemeal/agent/runtime/orchestration/nodes/executor/node.py": "2efaf6b0fba64bad52d01276b64e649c35a452482ea291b9fe6162b3d0ff428a",
+    "safemeal/agent/runtime/orchestration/nodes/initializer/__init__.py": "16ebc48552399184752d04c530ddcdf27269613e7aebdda0e92ec4940705f739",
+    "safemeal/agent/runtime/orchestration/nodes/initializer/node.py": "7fb4bdfb96d9ae76acc409a538cf89cf8eb59cc04956659ed4292667d54f4e5c",
+    "safemeal/agent/runtime/orchestration/nodes/observer/__init__.py": "c608d404765574e8ab3913cc4192410e1eec49701f8c21c2b211346cec74c020",
+    "safemeal/agent/runtime/orchestration/nodes/observer/dietary_safety.py": "f1003018c443aec68f1316c7f40a135818422300e2c1167ee9abeb1cefe49a8e",
+    "safemeal/agent/runtime/orchestration/nodes/observer/fusion.py": "b04e8c30da0d4747275d7216e0ae666f6ab64ac566a6a80ed9607f4ad8414971",
+    "safemeal/agent/runtime/orchestration/nodes/observer/menu_progress.py": "e2a42a3a87ac861f8dec842874352fa5c397cbed788356a8f2dd1edf5a2ac052",
+    "safemeal/agent/runtime/orchestration/nodes/observer/node.py": "e8ebda5f3bbc9054328a94261a4aa2e3021f44e13d0c6876cb2bebd3b5233579",
+    "safemeal/agent/runtime/orchestration/nodes/planner/__init__.py": "29e021d3b17757cbcf2275dcfadc59519b49631402366a2155011224d9217675",
+    "safemeal/agent/runtime/orchestration/nodes/planner/constraints.py": "be1a4b94f45725ae9fe40dff5bfa66fef10988abf025ab6369b1432051ffd175",
+    "safemeal/agent/runtime/orchestration/nodes/planner/intent.py": "0878964df377d7564ceb4f8cf7a10ce18548d859174a1fc18c005c7a3d840523",
+    "safemeal/agent/runtime/orchestration/nodes/planner/menu_planning.py": "f9c7e17dce2302ec55cf94f9b37b02c2b05fd7ce0aed0181051b2963c44aa83f",
+    "safemeal/agent/runtime/orchestration/nodes/planner/node.py": "8dfe42479bcc8cd4cd79e701f31b3286fd3d0861db78d485bf8a3919ddad0728",
+    "safemeal/agent/runtime/orchestration/nodes/planner/strategy.py": "35570c5d135e8ce6994958bfb314fede3c4d2acf8e5b7096d243fe2272512825",
+    "safemeal/agent/runtime/orchestration/nodes/reflector/__init__.py": "c1ce84735e3bfe13f61487752bd78e1526409f9c15e54bb1cce47d74ed74710f",
+    "safemeal/agent/runtime/orchestration/nodes/reflector/assessment.py": "76de0b279c06dddab60b852c17f231dd9900a5ee2d9d6e4e2a78847bfc809568",
+    "safemeal/agent/runtime/orchestration/nodes/reflector/node.py": "ad6196961379b7ff3ce1a176f33fd2992c2bbbb5fb11c3c648dfae15d11aa4c3",
+    "safemeal/agent/runtime/orchestration/routing.py": "2ae3273c0543b85e6d49d2a90b8fa4dfc354f49ebdbfab2396f5ee13c63484f4",
+    "safemeal/agent/runtime/tools/__init__.py": "a66457266ffd6fb2ed1876ea6707a36d932b00e250483e4c556b964ae2b78904",
+    "safemeal/agent/runtime/tools/adapters/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/agent/runtime/tools/adapters/constraint_verification.py": "1db8465b5ce81e1dacedcb75db722bd15a1e1b3386b291444c22d875b75a136b",
+    "safemeal/agent/runtime/tools/adapters/dietary_search.py": "26b3f9b78a6f345aa2fc50017dadfc15acd75d5798b7ab7c48404da7f4e52ead",
+    "safemeal/agent/runtime/tools/adapters/knowledge_search.py": "d1d27c37c892be5a8110421878031eb67371fc373724f5ce1cd4ca7afbad0a24",
+    "safemeal/agent/runtime/tools/adapters/recipe_tools.py": "c0e9375b3aaa00c46be4c38a78a1089df95098ccd536898c97650a654739a339",
+    "safemeal/agent/runtime/tools/contracts/__init__.py": "cab8eee1e9b4fb23139a8163cddd43dd921ddf6fe89e9fc6a3998cd2b00ef237",
+    "safemeal/agent/runtime/tools/contracts/base.py": "a375d5c1f8316b702338afc676691efeca26e1d19932f75c74e21c651f1b34f9",
+    "safemeal/agent/runtime/tools/contracts/payloads.py": "ddefdd120225074fd5182c1572dae0abd15330e28293a6eaf85dce9fbe387942",
+    "safemeal/agent/runtime/tools/policy.py": "ef746fa9db798ffa680fb661fa7f1b4fd33325b664c95a622e35317d7af90288",
+    "safemeal/agent/runtime/tools/ports/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/agent/runtime/tools/ports/backends.py": "670031c14035dd99da9657e8d871e8ed96a4ae6917f19252ce318adc3f3b634d",
+    "safemeal/agent/runtime/tools/ports/handler.py": "b97b902eceec0aef09a6414bb0148146bfe3cc3f614a0022b721bc1d7ce3d3cd",
+    "safemeal/agent/runtime/tools/ports/tool_executor.py": "b2ade008db056aa3def15db3b368f5dbfb3517b63fc81fbe061e1fbd3fa443ba",
+    "safemeal/agent/runtime/tools/registry.py": "9481aab475a6ea3bdccb278ca10d4e3a8ee43be5cec867367cc9ebab4b9f4682",
+    "safemeal/agent/runtime/tools/runtime.py": "843050443abb47e668b647a84d249af761cd7de857c6e4cd1ed853b845ed3aad",
+    "safemeal/agent/safety/__init__.py": "f81db0e314b083178cb1c2e31e450c06632eff0a9be9b5d1f6f765fd18cd1502",
+    "safemeal/agent/safety/answer.py": "3b92284f685df6c0513595de6685a8f77079f602fc8c012f5131b604b694b735",
+    "safemeal/agent/safety/dietary_safety_service.py": "63bfa25aa522f57d4db5e50d9b68dc9506bfe305f7d6f45093d075b8781256ce",
+    "safemeal/agent/understanding/__init__.py": "681e29699702dda1c00d96e5c1d93737eedb0a4fa2f8c21a59c7af1e92782b3c",
+    "safemeal/agent/understanding/frame_semantics.py": "e3b3f6edaae7c826e4a8754a11f49dc771ce639bb4302bcb3f6e47d04fa77e55",
+    "safemeal/agent/understanding/negation_scope.py": "0a6abcb1f5ee806001d0baef5d8631e8671d1ea68d80ee8f85c28852485d34b8",
+    "safemeal/agent/understanding/port.py": "c3770b403b7f36aa01fc1d7a8e8c83a9de0555886520dcf55ec16bafce849748",
+    "safemeal/agent/understanding/request_understanding.py": "33434d603bf0fc942cf21e574c64a664b31d00ecb3da8766e916aef365129cbd",
+    "safemeal/agent/workflow/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/agent/workflow/context/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/agent/workflow/context/builder.py": "2f84bd6d34c928e611d1151fba2f2a528e94350f2ef08a9b9dd5766ff2da6bda",
+    "safemeal/agent/workflow/context/conversation_context.py": "bcce355287f5a8652fd2f819b1a7d7150671992dee84c041d7a8ce1ac32037fe",
+    "safemeal/agent/workflow/graph.py": "14c018cef0cb42e9e2f6d0687d62da9390966c938a1bcb2a676495fb4d140f4c",
+    "safemeal/agent/workflow/nodes/__init__.py": "ccb3d71ee5f0985e80a8f5d5a4bb17655b24986898600cb8e8bda346787ae74d",
+    "safemeal/agent/workflow/nodes/constraints.py": "0b029dd3c1a5cd0fa0e07e979834695f165e1d45bf9b6f3c0d601b0f95523cb0",
+    "safemeal/agent/workflow/nodes/invoke_agent.py": "bef03da69c74e9fa0af0e56151a9796b0e9a80b8315eec4e792ca4a3d517f38e",
+    "safemeal/agent/workflow/nodes/prepare_context.py": "5218e5698b5185d3ff3315b2ebead75162a15715b0efbbd0fc06578a41536932",
+    "safemeal/agent/workflow/nodes/resume_agent.py": "6d284ba0df7862de54591dd0776ea2209e77bcc533c377fd5ebc385a5f2a5718",
+    "safemeal/agent/workflow/nodes/safety.py": "779274ca6d2130a45b038c3d846e081f5be7eaf5bb2d5ccf71cf7331394e3f58",
+    "safemeal/agent/workflow/nodes/save_memory.py": "e871d3d3a4d8026404c528ff996de3a278c432f312a6c9dc2da8a013f8c9a26e",
+    "safemeal/agent/workflow/nodes/understand_request.py": "1ebb2fe12ad3d7894e1ab9e3bfdb4b08da22f65f3e125a24522e752e0bc65655",
+    "safemeal/agent/workflow/review_reply.py": "7a29a14a0e510827a616f6010a6188849e84c57a0839b90ec1536355880757c3",
+    "safemeal/agent/workflow/runner.py": "a32f4938c920ff97614a31cb1ca3cb24cdde5117ec6421c5379c20400f5a0005",
+    "safemeal/agent/workflow/streaming.py": "b22d768070fe8c1610accbf8232cf9f33d0c12435500cacdaf7a5150539c73a8",
+    "safemeal/bootstrap/__init__.py": "0698e6af0db3751b033a339a9c7ca94967fea56aa79b387f4c413ecb129bd6ec",
+    "safemeal/bootstrap/composition/__init__.py": "957ac25a379c5d0568c7a361fd9ca3b61411fd021cd8b5983b64657fe9a04705",
+    "safemeal/bootstrap/composition/application_container.py": "426a0893cd9bb50a36170a2da661de1eb3ba8c1244dbb6270e96cec776ce8cb2",
+    "safemeal/bootstrap/composition/dietary_search_factory.py": "bcb8a826e00c49f306efd71ed933babcc1376d4836bf2f7f91a71412398a5a2c",
+    "safemeal/bootstrap/composition/document_knowledge_factory.py": "3407ab6cf892a30191c679bccaad655e9e1f3565fa1b3a8585839b9934dab7c1",
+    "safemeal/bootstrap/composition/model_factory.py": "5643465f256b7f40258819262d9399af1e37f6904ec8e573cb99b69ccd874cc3",
+    "safemeal/bootstrap/composition/operations.py": "95a17698d99f80c8d6f751192ab42aa2e98971d56fcbc759ddb2495a8b1d74d1",
+    "safemeal/bootstrap/composition/platform_application.py": "8778a94c55f702b99b575d1361e7e349cc0c94896c7639e88fc6f5460c6bb296",
+    "safemeal/bootstrap/composition/platform_container.py": "a9a06b3860c64101bc0ea0254bb4604bed54a3757a9a89afde7da81a7beae919",
+    "safemeal/config/__init__.py": "108546eee73bc5275328af3d3c34f05c95e5ffdfdb77285cc1dcaaeb7999f41a",
+    "safemeal/config/platform.py": "7d50f1b2ff33839267c1e21eb8b488cdb18db9900f9d44b95abd7ec76896288d",
+    "safemeal/config/settings.py": "1f03432ef610578317f11aec203ebe5be3d66d51d7c056f796594bb7e63e4c49",
+    "safemeal/infrastructure/__init__.py": "4761a314ad506af2fefa72fb72e970943432ae2d2b0409936a155505ed3bca1d",
+    "safemeal/infrastructure/cache/ranking_store.py": "4e92054cfc78456ceceb60827c79448b9cc0c48091630ba1796b977ac65e2a92",
+    "safemeal/infrastructure/cache/ranking_worker.py": "af7c6cacbe8fe97c84ab4890fdd1fb212c7d6d289081a9b01ea7037e5cef5c45",
+    "safemeal/infrastructure/cache/recipe_repository.py": "8a4af1ff0bb503852105b3766fcecd4ecaf6825c2f1bb8c917b7f36d9c7475d2",
+    "safemeal/infrastructure/ingestion/__init__.py": "03b80d073ea5d5a12466677378f90ca9b549ab199ff71d9b6b357fef829e7716",
+    "safemeal/infrastructure/ingestion/document_parser.py": "c1a9e6ba04ad524fd46cb3e48c4fbaf7b54389f696183f03b5317dbde3d7f7fa",
+    "safemeal/infrastructure/ingestion/local_upload_storage.py": "63194efb103bf5c7a29fd316ef7f78eb8fc5f5e6e6e71aa7582c5c082af70b71",
+    "safemeal/infrastructure/ingestion/redis_queue.py": "3ca221272c709224bd4b9563df1609e30215f77ae33138a0df65d62e9ae726b4",
+    "safemeal/infrastructure/ingestion/worker.py": "4e2df9bc27ef0ff13e6cc253bcbe92bee5635569f3a3081c635f09d048bde673",
+    "safemeal/infrastructure/llm/__init__.py": "7a32a5e723ca5cde5a24b018ad4095cd8d1a5be3fb03d4627cfa5db27cae1a2f",
+    "safemeal/infrastructure/llm/openai_language_model_gateway.py": "2211dee1864202ceb5131d488ab8a2c01d325944add4356ee37fe26bb9f59b35",
+    "safemeal/infrastructure/llm/provider_router.py": "665c5ef851f024814d1f10a617b5bb452fe9e54c6d6c97695d10183e99ee51b0",
+    "safemeal/infrastructure/messaging/behavior_worker.py": "ad5172fee0a4342f30f3f593a4659b75b6da282c3bd0298a69ce5dc075e67b85",
+    "safemeal/infrastructure/nlu/__init__.py": "82b44f726d447e106f352b8a3ca323c519d365aeb3fc6b1faf439e79bf40249d",
+    "safemeal/infrastructure/nlu/local_request_understanding.py": "3f6a5d05e5cc9a3bdd05e46baebb041fb4eef1d625e5c31eae5186a7eb27ca16",
+    "safemeal/infrastructure/operations/__init__.py": "b8d0196d041ea6a4903ff94b81b8717567bdc566f79bb53045b6d17abc8d9a99",
+    "safemeal/infrastructure/operations/health.py": "f38fcd1f16634fa75a3bc1b95d193e1459d1b8204f64cac67a9bbaac156fc738",
+    "safemeal/infrastructure/operations/logging.py": "19de51337a35a7eea8953de1774bb98db2dab6e269f302a4f63f7da8f076a4ae",
+    "safemeal/infrastructure/operations/metrics.py": "36c6e06188e65f47a56d55b4f974d8376140d9f5c1a8bc95b05169d6c772ad17",
+    "safemeal/infrastructure/operations/rate_limit.py": "2b35e18531d5909564cad5cfcdf9dd0058a541853e4aa2b87f41c70a5c810e90",
+    "safemeal/infrastructure/persistence/__init__.py": "2cae6b878c42dc50a5185e6f4172d90c3e0d6d3367751ab367010c8d1b6e1d9d",
+    "safemeal/infrastructure/persistence/auth_repository.py": "85cce26e55f6a621c2018c58bddc239dc8fd80188c8cbc9cf057856056666b7c",
+    "safemeal/infrastructure/persistence/behavior_outbox.py": "b5ec46449a4bc36885e1a38dcdc4a0790a7c86ac915a6bf8a990b09f71ae719e",
+    "safemeal/infrastructure/persistence/chat_repository.py": "69a03ae50eacf6b9c58e685e1fbf09a464a9d08ec6153ed531a6c4c71a44c47b",
+    "safemeal/infrastructure/persistence/checkpoint_serializer.py": "8cc49ff6e279b2b2189c1863cc6d0e34c4b5d6e9f7413d6b4b4137a8318cf81f",
+    "safemeal/infrastructure/persistence/database.py": "4dc151fc7966b0db625e1df68699cefbd2d3eda926325afba0906a294f4685bc",
+    "safemeal/infrastructure/persistence/db/__init__.py": "3b3c5bcc55441cd458bbb95d062dd328c3a5504e19ce1301cc251e44414fc0a8",
+    "safemeal/infrastructure/persistence/db/models/__init__.py": "1d4461572c69a5d63de02b67cc3253ea8cf30f084bb75974e2ce24111a290d5d",
+    "safemeal/infrastructure/persistence/db/models/chat_message.py": "199fbfb96c2a2cb8e67e6e430a4cce9c08af86b944b52a32d8e394809fda79d1",
+    "safemeal/infrastructure/persistence/db/models/chat_session.py": "902b179ff7ee96a7010a5b2c411af5a46f361fd28e757dd323f8cee0b433ec86",
+    "safemeal/infrastructure/persistence/db/models/user.py": "ecf5c74b227b5c3a5e2e62f2ef1323ab015ab1d11e2348c90ee16fce46bc9057",
+    "safemeal/infrastructure/persistence/db/models/user_memory.py": "c4a30ea44543fac6ae28219724d5b3a3428926aca9de7aea854ddbb677501d25",
+    "safemeal/infrastructure/persistence/history_repository.py": "ef8d9aa5d2e9b7cf4f9333911e0358d841ec22ad2806824e82fed2cd9d7fd2f6",
+    "safemeal/infrastructure/persistence/langgraph_checkpoint.py": "32cf327d93e3037350341850e3e81bfabefc478ade499c54041b1628a2d2a76c",
+    "safemeal/infrastructure/persistence/migrations/env.py": "59a4e2f40949e7f730eef291540ca14a882d423823e49401ace4ab2e207c6111",
+    "safemeal/infrastructure/persistence/migrations/versions/20260705_0001_initial_application_schema.py": "a6ac02e637d17f6045f651969de9608aaaddba74de9fd8f16184aadf4e94cfd2",
+    "safemeal/infrastructure/persistence/migrations/versions/20260710_0002_harden_chat_turns.py": "1340421c1ad59d99a3a368799b0fbab5b49914f91a6e24dfb53c7cb19f8b09b0",
+    "safemeal/infrastructure/persistence/migrations/versions/20260713_0003_remove_chat_snapshots.py": "360229f6241eadff590ecf261968c6224aff176e7f4ac0e8c8b7466ddecd231f",
+    "safemeal/infrastructure/persistence/migrations/versions/20260716_0004_legacy_revision_marker.py": "c98359cbe8b22baa22b3002a0d423f6a4b70c11c0b899eef243cc5c4b36d0c7e",
+    "safemeal/infrastructure/persistence/migrations/versions/20260802_0005_remove_legacy_feedback_table.py": "42eb0cc9a0c16ac15ae7ef16b1ab87fe1184d6287ed1ef805e85456c58801fce",
+    "safemeal/infrastructure/persistence/migrations/versions/20261001_0006_add_identity_system.py": "ec10d21362d7d25fdfbafaef08500a86e2771566049adc17e57b56de9a329418",
+    "safemeal/infrastructure/persistence/migrations/versions/20261008_0007_recipe_browse_indexes.py": "19396e506535de8fb0f5ca281a21b40740ce5a687e8be4db8ec7cd0ea98dde19",
+    "safemeal/infrastructure/persistence/migrations/versions/20261008_0008_recipe_reactions.py": "d612d15b3bac8a82e889bc73fcd344331218f52d51b18b297bedf6d6cbecba5f",
+    "safemeal/infrastructure/persistence/migrations/versions/20261008_0009_recipe_view_history.py": "be71b2c663b0cc30a9c1c90f3ce8944705ba0736b71a5d3c1146223b2e479639",
+    "safemeal/infrastructure/persistence/migrations/versions/20261008_0010_recipe_ranking_index.py": "40ee3f7784aa8b7a238e1fcda6921e42bf9ae9f4b5a42204d9d532d7d555b98d",
+    "safemeal/infrastructure/persistence/migrations/versions/20261008_0011_personal_favorites_index.py": "021c1519ea1bed60b94aefb08536ffc4db385936723b407819b0ce407e53d527",
+    "safemeal/infrastructure/persistence/migrations/versions/20261008_0012_behavior_outbox.py": "a1cc073cb9cf46cf027804f03331f407bbedeeaa1446e7c603405a9b748549e7",
+    "safemeal/infrastructure/persistence/migrations/versions/20261009_0013_outbox_timestamp_precision.py": "8d6dcb8d6f979fdb4c2d95302bcb84fe6c3f5f9965d8e97e3b0b203dc950646c",
+    "safemeal/infrastructure/persistence/migrations/versions/20261009_0014_recipe_difficulty_time_index.py": "710090d112d253068998600a62579688bac27fe411311a463fdb44fb13f1b99d",
+    "safemeal/infrastructure/persistence/ranking_repository.py": "6090dee7349dd30ba2b0061db64f8496871ecf256297df140009b6392ac82293",
+    "safemeal/infrastructure/persistence/reaction_repository.py": "3be64e57279a9e1ce8b5d6fd24fab09ee026ad818f33cbbe9efd203ad66765e0",
+    "safemeal/infrastructure/persistence/recipe_repository.py": "e50b6c2501925c0d230f9aed3b11c396dfe8eabe88b005ccd5236bface5bc1a3",
+    "safemeal/infrastructure/persistence/threaded_checkpoint.py": "70c28738c9a6a7866f88e110a3e436b52eb796d0f1e50c1bdb6a9b0294830218",
+    "safemeal/infrastructure/persistence/transaction_retry.py": "e4a09815532ee5d79497dee3e4faadb7535e0286c2b1f48afd16c864ba0d5ab3",
+    "safemeal/infrastructure/persistence/user_memory_repository.py": "b53ed76cfc27fa1c4b7023e97d5eb0fd017c84de336e620195d9799faddab030",
+    "safemeal/infrastructure/retrieval/__init__.py": "84234e05ce64e83cdfa1a678994deb02cc4069d2c67a5afb97f5a5910ce6df6b",
+    "safemeal/infrastructure/retrieval/local_recipe_catalog.py": "828150e9fd0b140bf76d93628f193f56a36aaf37274a0aa2b5e27b7dca0c42bb",
+    "safemeal/infrastructure/retrieval/milvus/__init__.py": "84234e05ce64e83cdfa1a678994deb02cc4069d2c67a5afb97f5a5910ce6df6b",
+    "safemeal/infrastructure/retrieval/milvus/document_embedder.py": "d431fba0e494c7399200c488cb4b9e9f84db24909e7244ef833a89ee54e2d532",
+    "safemeal/infrastructure/retrieval/milvus/document_reranker.py": "243cec2092e49e8df2ae59d83f7fbc1c76865aa9540a0928f391a7a767d2bae6",
+    "safemeal/infrastructure/retrieval/milvus/vector_document_repository.py": "2d197fb0769c82333692fdf4519f8ff369e7b99c284d4776f700cda8d66ff2b1",
+    "safemeal/infrastructure/retrieval/neo4j/__init__.py": "84234e05ce64e83cdfa1a678994deb02cc4069d2c67a5afb97f5a5910ce6df6b",
+    "safemeal/infrastructure/retrieval/neo4j/dietary_migration.py": "75f88186274cca90cdb5841e2e0684126f460ce9440d9ed7d6c29aa117395bc1",
+    "safemeal/infrastructure/retrieval/neo4j/importers/__init__.py": "0ce340ec9a55fa2e4ec1aff222ac0f94aaff1546301301b0792c3994f4f7c9be",
+    "safemeal/infrastructure/retrieval/neo4j/importers/recipe_importer.py": "f9aca1dd380011b77a6e97102ef83c568b07fa7f5f7a8e733f2930a1675a94f5",
+    "safemeal/infrastructure/retrieval/neo4j/importers/recipe_json_parser.py": "baadea592732d0063ab05e537af29f7a8d07d062536cf7ed3a42b3d1026adacb",
+    "safemeal/infrastructure/retrieval/neo4j/recipe_graph.py": "57448594f12075ef74b9f15ff62122c55b6cfc0c90b490d1aef1bac7ab57169e",
+    "safemeal/infrastructure/retrieval/neo4j/safe_recipe_search.py": "5a2adb1fb5a87d1f01ace282be2135dcaaff4d370e1c6bc4b541e8ecc6c18146",
+    "safemeal/infrastructure/retrieval/sqlite_bm25.py": "1389b63c91c98b9f587a44717b64a4716cdcabc1dd84b6a9a5d65635ee712379",
+    "safemeal/infrastructure/retrieval/wikibooks_recipe_provider.py": "e56bf72d9bb664f4c5676daa5deeb563bf7518607ca164d5e244d2b748e4de1a",
+    "safemeal/infrastructure/security/__init__.py": "477d255944cf173f598ff1debdd9d860731ab69a8c77c4d8954e6305c00a763a",
+    "safemeal/infrastructure/security/identity.py": "2e92e1006fd33e72ceb94d92f41d7e4a29f1456494bb1a78e8ebf40e7cbb1897",
+    "safemeal/interfaces/__init__.py": "9186d9efde33c65748770deaa5d08899be8ed0fe935b4d551a9d2ed763b75088",
+    "safemeal/interfaces/http/__init__.py": "2fa7e20647df3516e00e1b1bb177f39d3d8c44ba71c5aead8b64848c044ebf2c",
+    "safemeal/interfaces/http/answer_stream.py": "7fba6d7e7321d3e0f6eaa11835f4ba781de33b8c2232c7f621bee09c1abfe2ed",
+    "safemeal/interfaces/http/application.py": "1ecbe8565225b6a2ce3ebd6a6f3dffce2c1c383046ad8f501ead059133c6c9e4",
+    "safemeal/interfaces/http/authentication.py": "ac9bbd357d0c9ac58f9e503c2ef7e006dc2801f9de59ee27ee9fe38acb9846f6",
+    "safemeal/interfaces/http/dependencies.py": "561316f983588839d09a327329e71998395f0a67b83ec87645f3278ebd03d38f",
+    "safemeal/interfaces/http/metrics.py": "bae2e09fec5e77cd700de8e40e3f7ff1f1371a94916dc8017f6028f029711ade",
+    "safemeal/interfaces/http/models/__init__.py": "68a4bb68d87436815c247a8137520ef5e2e91e457fb8128d18a769ed48d5cdcf",
+    "safemeal/interfaces/http/models/chat_message.py": "d17881aa954b4af70f3684b27cdb0b23e7929fc297d43220c4cba73f17d3c918",
+    "safemeal/interfaces/http/models/chat_session.py": "01cce12c99042d7d152b3ec0e807421faef5d42b3c446c9ebb211ce7f7398c56",
+    "safemeal/interfaces/http/models/memory.py": "2b50b9ed1cafbb9916db103538b13b40ace115e03b562c07b660a4b024a5645e",
+    "safemeal/interfaces/http/platform_dependencies.py": "e27ad81c7c98f61ec20512ceec6a2c4fd90069640c8c6996ae9daab8b28e2d16",
+    "safemeal/interfaces/http/request_middleware.py": "e90f942a6156602626033908c1ef372fe97538ee79e788803041b034a57097e2",
+    "safemeal/interfaces/http/routers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/interfaces/http/routers/auth.py": "ea10d440ccc8b0a0a4ee9b9b66ee0591af93e0e84b59cc9562ae1ae01dbde53b",
+    "safemeal/interfaces/http/routers/behavior.py": "f73cadad60ede91bb6e2e59e4f5c49f2b301949cd1a4989132b95ce49955efe3",
+    "safemeal/interfaces/http/routers/chat.py": "bee39cca3a76249920ca0e9eb7c170705e7420509474edb3d312f29d7a03f9cf",
+    "safemeal/interfaces/http/routers/history.py": "506ea4688c943e82b00072e4f4e8d022cd6cfbe773267840f5ef7390b3f78ec0",
+    "safemeal/interfaces/http/routers/interactions.py": "360bc56a560247f629783ef3276aa89cf795ba462dfa8c629916c8f69e728117",
+    "safemeal/interfaces/http/routers/knowledge.py": "26b58faafdc7dad1772fe8e5e80501d4eda3bfeaeaa01f92e60dfe7dd9e78d8c",
+    "safemeal/interfaces/http/routers/rankings.py": "eea52b4ad9d7da35a505374cdc4215a44f51525ebd8f044d04bb6f995eae4006",
+    "safemeal/interfaces/http/routers/recipes.py": "ec73299ab7e9272154934f9cbeeded970ee3878806131ded1279081f6c942c41",
+    "safemeal/main.py": "239c086119f344dc5786bc37a794b35e661864106465a8a418164e82e6c224be",
+    "safemeal/modules/__init__.py": "b9d09b4918cf9d14e34a5c0b1324e214b0c08fae2f38faed18eb7a0f4a6dfd1e",
+    "safemeal/modules/conversation/__init__.py": "b15585a5b5fe4e80d3463b8625b51523c2dbfde6ce3cad042f1fc4291a2f5c4e",
+    "safemeal/modules/conversation/application/__init__.py": "b2c4fcedf18ac55e8c6921fd9bf732f9f543511a952ec30122a486cc24296f01",
+    "safemeal/modules/conversation/application/chat_exceptions.py": "cbb8cc672f01dcb2135b811e0285b6650beca4322f856f0e17f16bbaf3510dd8",
+    "safemeal/modules/conversation/application/chat_session_service.py": "7f0d084828b09915875e4d6495418991b98e0ad23efe41e2f5cb8b4a864f5e4a",
+    "safemeal/modules/conversation/application/memory/__init__.py": "c0373ad4271ee8c2944e6a843368fd722ec9734522bceb070c389167cadf7bae",
+    "safemeal/modules/conversation/application/memory/memory_extraction.py": "3848d5258866fdae4b0ff3270ace59ae5936d1b107636c895c298d726fbe6fab",
+    "safemeal/modules/conversation/application/memory/user_memory_service.py": "42bdbbef3808f7dd56359ba1cf0c1a266f2a4aebb890a4a7567d40d95f86e3e5",
+    "safemeal/modules/conversation/application/turn_persistence.py": "abb3f250864b6c31f5c032337e62a2a8e3be642161623bf3b000a440497f433b",
+    "safemeal/modules/conversation/contracts/__init__.py": "7906a2cc197689d7ac6c720006e6db163755783965a1e35eba982b60d1efeebd",
+    "safemeal/modules/conversation/contracts/chat/__init__.py": "cf72e2fcc979ab57d370df2ecb781ee8ebc517873d65dd660c65ff05cc92f63c",
+    "safemeal/modules/conversation/contracts/chat/messages.py": "ab7dd1950b49d2d4176854dd1d29a4d0b54a05d468276235f10d6546a76dbccc",
+    "safemeal/modules/conversation/contracts/chat/turn.py": "61534c4617274ba51671d7beed9f7959963922a580204b99e2afa3ffdfc741bb",
+    "safemeal/modules/conversation/contracts/conversation/__init__.py": "6e023ce8ba549a22961b35eb42ca045f7f37fe999e31bda1c07ad278da6d8b00",
+    "safemeal/modules/conversation/contracts/conversation/models.py": "7ca3fb37f297d26a824c3c62bcc1e65bdb6c78b5eaedd2e9130fb03916bd83e5",
+    "safemeal/modules/conversation/contracts/memory/__init__.py": "befaeb797e90b59cfe30d9a1e8e63d882eeadb24c4bb9a9da7bd362efd6d974b",
+    "safemeal/modules/conversation/contracts/memory/extraction.py": "d12ed2e93e51dce595f496d37339d4823bc58715e2f5902b0e69d40ac3962c7a",
+    "safemeal/modules/conversation/contracts/memory/models.py": "eff8ea02bbe9f4a43a8e96bac7c1847520eecd5771a120d30f866b74ef335d11",
+    "safemeal/modules/conversation/ports/__init__.py": "bf3a095381a0d9773bed8c1aa48c0b5e2d83214159a51460b8308f0db85d330b",
+    "safemeal/modules/conversation/ports/chat_repository.py": "7dcd873fae90e5771e7b52045c8ae28af2387205652cb682211e867e48171811",
+    "safemeal/modules/conversation/ports/user_memory_repository.py": "b2c15334ef0fe146cf8d66369d6abc58c294ed1ed650e6ba591ba14f97fa1d5d",
+    "safemeal/modules/dietary/__init__.py": "c79d96bc2247e646f2415d29077c3826faa381bba0bfd8e872286022ace817fc",
+    "safemeal/modules/dietary/application/__init__.py": "f179b3c744ca621ab2801d0a0a5611a27c93341598b02eb928cb745f93d00186",
+    "safemeal/modules/dietary/application/constraint_evaluator.py": "3c3c19fbaaab6ecc948afdd9ddec5d8e3bcebf208973c3dd3e5ad0a99255a6eb",
+    "safemeal/modules/dietary/application/constraint_resolver.py": "7666d5bf7ca2455aaad3f2e313d67a7a810f210ed4a4a0baa0c4d6d77a72c14c",
+    "safemeal/modules/dietary/application/constraints.py": "abc2d27b39f86dbf2ef8f1ea24a5061d28cab8266aa1486eecab02b70d4281ec",
+    "safemeal/modules/dietary/application/dietary_filter.py": "c717b4f9e0522638f9c63648992c77de4b36ef37199e5163d633587289380b01",
+    "safemeal/modules/dietary/application/food_taxonomy.py": "b00812378e5fe3ac190b94cb88b72b45ad5b26a584d8d5aa2127b74b0ec62ad0",
+    "safemeal/modules/dietary/application/generated_safety.py": "2892912da53ac469ec9b3fb36229a2b27344bf3b9ac496dd11a3381fe966fc22",
+    "safemeal/modules/dietary/application/ingredient_terms.py": "f825552b2610773bb6ee80c9ab9df407b5857a1ae7390eb59f2cb945f9711fd2",
+    "safemeal/modules/dietary/application/preference_rules.py": "a4c824bc68331b12c4e79ce84a6cac1625901aeefefd00726e76158a176f0a25",
+    "safemeal/modules/dietary/application/recipe_safety.py": "6cbea43364392bdfcd4e0f83cef6abf40e71e88680f53c5fc1eb5b85a98ba694",
+    "safemeal/modules/dietary/contracts/__init__.py": "3f58625a977e6b8b8d30c664b9b7445bf95bc6481d50ce01e74b6f058480285a",
+    "safemeal/modules/dietary/contracts/constraints.py": "210cf39860d21cec51d4f0bd86bd806d86f536a8cd2ebb6fb2669a5fc92fd0a9",
+    "safemeal/modules/dietary/contracts/control_plane.py": "9986ef2aed8efb367ab3b95945998ca02c847fa139281721ee6d921de2f68881",
+    "safemeal/modules/dietary/contracts/models.py": "e94420878d3ab88ffcf2a47fe5dcf6c516b480e302c9405fec28bdc6d916075c",
+    "safemeal/modules/dietary/contracts/requirements.py": "513d9c4ad67c194bba1245b8f7dded7c9fd6053b52e633c4a04fc69dea7e1699",
+    "safemeal/modules/identity/__init__.py": "5d2d1a861980358276d6fe639daddce532689f5f52313966cb8dcdb6a1bde7a3",
+    "safemeal/modules/identity/application/__init__.py": "cf366e63f3b5d43f794dcf308e71a56cc93d8538a7b2f8bead8c429f4df75c61",
+    "safemeal/modules/identity/application/auth_service.py": "d41dd266e1e8b1f937c3fe0b6708968cf430d6c11154ccc56b852ecaaff13e31",
+    "safemeal/modules/identity/contracts/__init__.py": "46e6f4b62702c5425bbe4384e55b8d8d3cc2cf3261529e53b92f3f725c5874e4",
+    "safemeal/modules/identity/contracts/models.py": "800e875336498ce61e2ba0f8f94d93dbf1c6a0403d8ea8afbb6c81c4b0eca5d9",
+    "safemeal/modules/identity/ports/__init__.py": "792cf377bbd9a77d3e18b8021d08d5ec04deae276fe1439d68908e690a055a86",
+    "safemeal/modules/identity/ports/auth_repository.py": "d90855733c70298feda585c354f9d70804bfe3e04bacbb084b83b3e651531289",
+    "safemeal/modules/identity/ports/security/__init__.py": "5b86280fdff1bad48e3a39a58a7e95d96b2862bc2bc7b4ac8e017f4bb878f2d3",
+    "safemeal/modules/identity/ports/security/identity.py": "f8f022f1d19b8f27bd2d73f2e645349a7eab3e37011839db49453ba59a96f6e9",
+    "safemeal/modules/interaction/__init__.py": "59b2ecca3815fbf39cae70c922efde457216ff949355c4f49583347b882955a1",
+    "safemeal/modules/interaction/application/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/modules/interaction/application/history_service.py": "c8aa9f0d0d594b014ed69773ffd0b3e0363bad81ccee2014a9dfff25eb8c34e6",
+    "safemeal/modules/interaction/application/interaction_service.py": "b67bb9bacafdebe8eb019060b4a4deed51c08905544a8d478ef79b8eae0e4abe",
+    "safemeal/modules/interaction/application/ranking_service.py": "55c0cc1490db4d06a0d042e069a90b6c49dbf52740254e95a7e4f4598159b01f",
+    "safemeal/modules/interaction/contracts/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/modules/interaction/contracts/behavior.py": "cfaae804fd3cd70076bb02e692353f92a8b3dc58eda7dd14fbfee83947a75c91",
+    "safemeal/modules/interaction/contracts/history.py": "1a7a3cfd232c1b541c3737dddc6d48068bca5a01e9a00618d788282452fa3adc",
+    "safemeal/modules/interaction/contracts/models.py": "1a4a1a480237a7ddfcfb63079bd67f2a939e9e4b474a0c1fb02da6142bf82029",
+    "safemeal/modules/interaction/contracts/ranking.py": "a6735c6fec889675cbd22b79b9f69f5b6af8eb90c4d89a535788d4289fdac19e",
+    "safemeal/modules/interaction/ports/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/modules/interaction/ports/history_repository.py": "7c893fb845f8dc46cb467394f1e3b5b0c6e21a6733f192835fa364ac0351dd85",
+    "safemeal/modules/interaction/ports/ranking.py": "41db41248efdef606da4147ba90663815e5ced38946038e6d313f91f4ffddf3f",
+    "safemeal/modules/interaction/ports/reaction_repository.py": "6fa88dc9d378d340fef00c1a991d1ab91cf12d9aab98ad44ce2e54150f27ed6f",
+    "safemeal/modules/knowledge/__init__.py": "f597ea776cc5e0ca7c88403e2f5ad96a4cf953c2351af0d1cd664060ef5935c4",
+    "safemeal/modules/knowledge/application/__init__.py": "236ca3705b97793eaae4ecef0beb19fee7c3745b9a7ce6d1248157e0167acfb1",
+    "safemeal/modules/knowledge/application/knowledge/__init__.py": "e9687418741bafb0bbecb32d73beed29db72f50ee8f645c8eff5760881201b78",
+    "safemeal/modules/knowledge/application/knowledge/chunking.py": "e21e727729ed116904c8df09af2fc81afd1c68569fa758e2dd4a4246faf4297a",
+    "safemeal/modules/knowledge/application/knowledge/document_knowledge_service.py": "45bbc78c3c842ede0c47771d09a5524a85a0e0ed8636cb3781cf40c03a09609c",
+    "safemeal/modules/knowledge/application/knowledge/hybrid.py": "fea1e8c201a9d64e18a2d2f557db79bbb97459bc0be045d32e6073d43b6f49b9",
+    "safemeal/modules/knowledge/application/upload/__init__.py": "1ce4cbfae52a858551908ded2002690d75391ab358642dacc3802cffcd8db012",
+    "safemeal/modules/knowledge/application/upload/file_upload_service.py": "448db9fbfdffdf7af88694987f25ac363623a30bd2eb2513211173a2d45c0ac1",
+    "safemeal/modules/knowledge/application/upload/uploaded_document_ingestion_service.py": "3486598a3359464148d478a28005534ef354bd47b0d0364e5184468e891c22ea",
+    "safemeal/modules/knowledge/contracts/__init__.py": "fedff269b013291eccab2140ad59af81ac826f6c1e36b6a4f5be57c8aec20b3c",
+    "safemeal/modules/knowledge/contracts/ingestion.py": "e3b01ad6d2723d72ed93d9a8db422bd7745f7e77cec7926d8f48e9eddbbe4379",
+    "safemeal/modules/knowledge/contracts/models.py": "6800c7469c552c0ffa6eee20d1022dcfe2900c5b93d905341764c1954263e9d9",
+    "safemeal/modules/knowledge/ports/__init__.py": "2f9e0b21183f0225bd1311d3d04df6a10ae3dadd963270525952ad4aa28cfbfa",
+    "safemeal/modules/knowledge/ports/ingestion/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "safemeal/modules/knowledge/ports/ingestion/document_parser.py": "0f412abbbc59a04b8e2f9dedfa41605219b898033d46e82111f96dcc1fc6dc9d",
+    "safemeal/modules/knowledge/ports/ingestion/ingestion_queue.py": "efc40654e35e9806c16cec6519140cd8f3b5521d0c6702a1160e3087c2f82f7f",
+    "safemeal/modules/knowledge/ports/ingestion/upload_storage.py": "3b97d132d15b00878d6be926067181f78e303c9a4c1017d3e168936dc9ca4fc7",
+    "safemeal/modules/knowledge/ports/retrieval/__init__.py": "6390044fbc2397a1f1bde93ca6a71e20d56b5d98983684d49a5ea54e31a22268",
+    "safemeal/modules/knowledge/ports/retrieval/document_embedder.py": "1337b366f3e28bcbe896d1124952282017eac77bc4c8135709bba447e7efe5fc",
+    "safemeal/modules/knowledge/ports/retrieval/document_reranker.py": "17c004d58c4ec4b83915932c599c3de6489c63b18354b2444f65fb5b18e69182",
+    "safemeal/modules/knowledge/ports/retrieval/lexical_document_repository.py": "5d3f50764339b25499ea4953b259c2de3486f4904eb3558f6834d3d46745fa4c",
+    "safemeal/modules/knowledge/ports/retrieval/vector_document_repository.py": "7b9365681e226301f3b4c6fce41b84bc68f1ebba4e40bcfb9d8ed90e5c3239bf",
+    "safemeal/modules/recipe/__init__.py": "cbb7d3e507637594ae131a2c3cc8ecd93ce709b62a3abf7898b46af0daeec758",
+    "safemeal/modules/recipe/application/__init__.py": "fe65b2c734f51ea770fbfb97a21ef2ac482fb26352732588212508a1784e356d",
+    "safemeal/modules/recipe/application/classification.py": "ab24e2d167b5dc4663d09460338ad3ddf17dd0f5b4d68a586ee5526488cd136f",
+    "safemeal/modules/recipe/application/food_category.py": "a9b149ab548a82a6fbd8308017d68408ac19725b30984004f1e990a054ff9b2b",
+    "safemeal/modules/recipe/application/recipe_service.py": "b14bbfa468f6a602eedc4a12d2bdbf6b186ef6aa5898f8e657648d4dee421ced",
+    "safemeal/modules/recipe/contracts/__init__.py": "ab0fe5ac2c48f568d853a42a203a62bb12d93cd377393a2f9814281575836751",
+    "safemeal/modules/recipe/contracts/browsing.py": "d1be04c7151e910f8c65caccebd0cc3c871560c8f67692af0a874c1612cae657",
+    "safemeal/modules/recipe/contracts/catalog.py": "1eac099ff07574844a795a356845bf5c28d7c20526a43168d0b8d8a39a9f157b",
+    "safemeal/modules/recipe/contracts/generated.py": "1c6df08f89aded7bcd3c46e88c25650acbd3003ff25951787ba771d42ff2d950",
+    "safemeal/modules/recipe/contracts/generation.py": "d8d56dccd8cd198ce9d60c861d53c7cf04b3cd86970717c8a8492b439ab85529",
+    "safemeal/modules/recipe/contracts/lookup.py": "4a2188214b1fe9dda5bc019aeefdf9a092143d36d1a0ca3d209b8c38ceab7461",
+    "safemeal/modules/recipe/contracts/models.py": "e061278c2bf5d8e139751de023be1a1704b1e36aa54bef5b48e8da513e788d49",
+    "safemeal/modules/recipe/ports/__init__.py": "97d08c72f0f13be08b07a5aeffe1f947b715a48e80bc5bdf280067791580485f",
+    "safemeal/modules/recipe/ports/recipe_generator.py": "13cba4cd7f025afea2b23674ccaa21264084e0c915f340d431892bbe41b41e81",
+    "safemeal/modules/recipe/ports/recipe_provider.py": "43f5a032eac27c8c4c0814671af9a5672baf39e9347fdd1e5e25430f46a1313d",
+    "safemeal/modules/recipe/ports/recipe_repository.py": "873b1161931765b6daaa228c7ee41327df9aa4f3604272669b0d8954ea0e1935",
+    "safemeal/platform_main.py": "ae676737c976977f5ba40ed4ed66c4a905099a83e692c07a638b279838e6191a",
+    "safemeal/print_project_tree.py": "deb624cddeb7615e218aa3248dfcd483817d4d6fc14b9e45f85a3aeadcef6083",
+    "safemeal/shared/__init__.py": "26dcd0a51f25b841b354e90648b38540a8c2990ac7bd4e4d5d8bd2a4d0bb045a",
+    "safemeal/shared/contracts/__init__.py": "7a4c46bbb8bb7aeaa19ad649cad8fc691264afd80a320b2bf83eb609c0d46eaf",
+    "safemeal/shared/contracts/observability.py": "b7cc147cae580e50a0a9ddf75632dbd92fad2430eb6a3b6643fcefc382c2e846",
+    "safemeal/shared/contracts/request_frame.py": "5fb6d71fd1f7a8768ae205b452720e80b7a9cb850c9c62c7c9dc2de4fec24027",
+    "safemeal/shared/contracts/semantic.py": "3082b3619006888182629883e93710c415d1b9c6f7c3b2e5e5a4604c377f8b5f",
+    "safemeal/shared/exceptions.py": "7cf8bbad9ed5970e09908d2ce166ae9f72536ccd94a318ee084338075ddf06b3",
+    "safemeal/shared/types.py": "89243e091e6d2e813fb5193336b1ab702e287af1eee620ab016231ca5724954b"
+  },
+  "catalog_sha256": "1ba908978db0ffa533b59de2f695b08c529182bd594541e537003276bcf9320a",
+  "isolated_sqlite": true,
+  "transport": "ASGI TestClient, real provider network",
+  "retrieval": "owned nine-recipe SQL fixture; external retrieval disabled",
+  "prompt_sha256": "edef6d3bb309c55e48b637afcff6631517236fba9a63990fd4038b10bebf6fe9",
+  "rows": [
+    {
+      "case_id": "L12",
+      "group": "missing",
+      "repeat": 0,
+      "system": "single_prompt",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "answer": "来源中没有“银河炖龙”这道菜，无法提供其材料。",
+          "recipes": [],
+          "usage": {
+            "input_tokens": 482,
+            "output_tokens": 23,
+            "total_tokens": 505,
+            "input_token_details": {
+              "cache_read": 256
+            },
+            "output_token_details": {}
+          },
+          "seconds": 0.7800607499998478
+        }
+      ],
+      "model_events": [
+        {
+          "event": "start",
+          "run_id": "bfa04067-439d-4156-8766-440769740d1b",
+          "input_sha256": "52dcaa5c53e94c322d0a9dbea1dafed76238612bb3bf02567da8cbb5331a47a2"
+        },
+        {
+          "event": "end",
+          "run_id": "bfa04067-439d-4156-8766-440769740d1b",
+          "usage": {
+            "completion_tokens": 23,
+            "prompt_tokens": 482,
+            "total_tokens": 505,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 226
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "L12",
+      "group": "missing",
+      "repeat": 0,
+      "system": "retrieval_once",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "answer": "抱歉，我无法回答这个问题。我的食谱信息只能来自已提供的来源，而当前没有关于“银河炖龙”的任何来源，因此不能编造它的材料。",
+          "recipes": [],
+          "usage": {
+            "input_tokens": 110,
+            "output_tokens": 43,
+            "total_tokens": 153,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "seconds": 0.9459614590000456
+        }
+      ],
+      "model_events": [
+        {
+          "event": "start",
+          "run_id": "9884f6bc-a4d0-45cb-851a-fe0e3f6769d3",
+          "input_sha256": "bb5b55382ea59185e228197dbba3156b75f71d109a82e6f36b96efc74e5be43b"
+        },
+        {
+          "event": "end",
+          "run_id": "9884f6bc-a4d0-45cb-851a-fe0e3f6769d3",
+          "usage": {
+            "completion_tokens": 43,
+            "prompt_tokens": 110,
+            "total_tokens": 153,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 110
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "L12",
+      "group": "missing",
+      "repeat": 0,
+      "system": "production_agent",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "message": "未在可用食谱来源中找到“不存在的银河炖龙”，因此不能用其他菜替代回答。",
+          "session_id": "7ed3026c-4a96-4876-9475-220a80cbdaeb",
+          "message_id": "2",
+          "route": "agent-tools-loop",
+          "route_logic": "agent-tools-loop",
+          "sources": [
+            {
+              "source": "mysql:recipes",
+              "tool": "search_recipes",
+              "call_id": "exact-recipe-search",
+              "query": null,
+              "evidence_call_ids": []
+            }
+          ],
+          "metadata": {
+            "session_id": "7ed3026c-4a96-4876-9475-220a80cbdaeb",
+            "iteration": 1,
+            "tool_call_count": 1,
+            "budget_exhausted": false,
+            "loop_stop_reason": "",
+            "evidence_sufficient": true,
+            "missing_information": [],
+            "user_memory_count": 0,
+            "episodic_memory_count": 0,
+            "has_user_profile": false,
+            "observations": [
+              {
+                "tools": "task_context",
+                "ok": true,
+                "status": "ok",
+                "error_code": null,
+                "has_data": true
+              },
+              {
+                "tools": "search_recipes",
+                "ok": true,
+                "status": "ok",
+                "error_code": null,
+                "has_data": false
+              }
+            ],
+            "agent_status": "ok",
+            "tool_trace": [
+              {
+                "tool": "search_recipes",
+                "args": {
+                  "name_contains": "不存在的银河炖龙",
+                  "exact_name": true,
+                  "required_fields": [
+                    "ingredients"
+                  ],
+                  "limit": 1
+                },
+                "effective_args": {
+                  "name_contains": "不存在的银河炖龙",
+                  "exact_name": true,
+                  "required_fields": [
+                    "ingredients"
+                  ],
+                  "limit": 1
+                },
+                "status": "NOT_FOUND",
+                "result_count": 0,
+                "result_names": [],
+                "result_categories": []
+              }
+            ],
+            "request_frame": {
+              "tasks": [
+                {
+                  "kind": "recipe_detail"
+                }
+              ],
+              "memory_updates": [],
+              "current_constraints": [],
+              "turn_preferences": [],
+              "statements": [],
+              "participants": [],
+              "context_relation": "new_task",
+              "operation": null,
+              "canonical": true,
+              "target": {
+                "recipe_name": "不存在的银河炖龙",
+                "ingredient": null,
+                "menu_category": null
+              },
+              "requested_fields": [
+                "ingredients"
+              ],
+              "exact_match_required": true,
+              "recommendation_count": null,
+              "servings": null,
+              "meal_type": null,
+              "scenario": null,
+              "menu_planning": null,
+              "context_needs": [
+                "recent_conversation"
+              ],
+              "confidence": 0.9,
+              "understanding_status": "accepted",
+              "backend": "rules",
+              "fallback_used": false,
+              "clarification_question": null,
+              "validation_errors": []
+            },
+            "resolved_constraints": {
+              "allergies": {
+                "active": false,
+                "trigger_terms": [],
+                "raw_ingredients": [],
+                "excluded_ingredients": [],
+                "strictness": "hard_exclusion_contextual"
+              },
+              "restrictions": {
+                "active": false,
+                "trigger_terms": [],
+                "raw_ingredients": [],
+                "excluded_ingredients": [],
+                "strictness": "hard_exclusion_contextual"
+              },
+              "preferences": [],
+              "resolved": {
+                "hard_safety": [],
+                "strong_requirements": [],
+                "soft_preferences": [],
+                "menu_goals": []
+              }
+            },
+            "reflect": {
+              "rationale": "确定性工具已返回满足成功标准的可用证据，无需继续补查。",
+              "evidence_sufficient": true,
+              "missing_information": []
+            },
+            "understanding_status": "accepted",
+            "context_needs": [
+              "recent_conversation"
+            ],
+            "request_understanding_backend": "rules",
+            "loaded_context_types": [],
+            "request_understanding_confidence": 0.9,
+            "request_tasks": [
+              "recipe_detail"
+            ],
+            "fallback_used": false,
+            "menu_execution_plan": {},
+            "menu_task_progress": {},
+            "recipe_reviews": [],
+            "safety_review": "passed"
+          },
+          "recipe": null,
+          "timestamp": "2026-10-10T06:43:11.624094Z",
+          "http_status": 200,
+          "seconds": 0.024403582999866558,
+          "cross_user_status": 404
+        }
+      ],
+      "model_events": []
+    },
+    {
+      "case_id": "L12",
+      "group": "missing",
+      "repeat": 1,
+      "system": "single_prompt",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "answer": "抱歉，给定的来源中没有“银河炖龙”这道菜，因此无法提供其材料。",
+          "recipes": [],
+          "usage": {
+            "input_tokens": 482,
+            "output_tokens": 27,
+            "total_tokens": 509,
+            "input_token_details": {
+              "cache_read": 256
+            },
+            "output_token_details": {}
+          },
+          "seconds": 1.157854167000096
+        }
+      ],
+      "model_events": [
+        {
+          "event": "start",
+          "run_id": "6b920fc6-88b8-40fa-9d72-7eae8b3241e7",
+          "input_sha256": "52dcaa5c53e94c322d0a9dbea1dafed76238612bb3bf02567da8cbb5331a47a2"
+        },
+        {
+          "event": "end",
+          "run_id": "6b920fc6-88b8-40fa-9d72-7eae8b3241e7",
+          "usage": {
+            "completion_tokens": 27,
+            "prompt_tokens": 482,
+            "total_tokens": 509,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 226
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "L12",
+      "group": "missing",
+      "repeat": 1,
+      "system": "retrieval_once",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "answer": "抱歉，我没有关于“银河炖龙”这道菜的来源资料，无法提供材料信息。",
+          "recipes": [],
+          "usage": {
+            "input_tokens": 110,
+            "output_tokens": 27,
+            "total_tokens": 137,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "seconds": 0.9213680420000401
+        }
+      ],
+      "model_events": [
+        {
+          "event": "start",
+          "run_id": "1a5f85d9-5db9-48a6-be22-f82dbc19b808",
+          "input_sha256": "bb5b55382ea59185e228197dbba3156b75f71d109a82e6f36b96efc74e5be43b"
+        },
+        {
+          "event": "end",
+          "run_id": "1a5f85d9-5db9-48a6-be22-f82dbc19b808",
+          "usage": {
+            "completion_tokens": 27,
+            "prompt_tokens": 110,
+            "total_tokens": 137,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 110
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "L12",
+      "group": "missing",
+      "repeat": 1,
+      "system": "production_agent",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "message": "未在可用食谱来源中找到“不存在的银河炖龙”，因此不能用其他菜替代回答。",
+          "session_id": "c1c73c28-dd0d-4433-a04f-e4ed68c300bf",
+          "message_id": "4",
+          "route": "agent-tools-loop",
+          "route_logic": "agent-tools-loop",
+          "sources": [
+            {
+              "source": "mysql:recipes",
+              "tool": "search_recipes",
+              "call_id": "exact-recipe-search",
+              "query": null,
+              "evidence_call_ids": []
+            }
+          ],
+          "metadata": {
+            "session_id": "c1c73c28-dd0d-4433-a04f-e4ed68c300bf",
+            "iteration": 1,
+            "tool_call_count": 1,
+            "budget_exhausted": false,
+            "loop_stop_reason": "",
+            "evidence_sufficient": true,
+            "missing_information": [],
+            "user_memory_count": 0,
+            "episodic_memory_count": 0,
+            "has_user_profile": false,
+            "observations": [
+              {
+                "tools": "task_context",
+                "ok": true,
+                "status": "ok",
+                "error_code": null,
+                "has_data": true
+              },
+              {
+                "tools": "search_recipes",
+                "ok": true,
+                "status": "ok",
+                "error_code": null,
+                "has_data": false
+              }
+            ],
+            "agent_status": "ok",
+            "tool_trace": [
+              {
+                "tool": "search_recipes",
+                "args": {
+                  "name_contains": "不存在的银河炖龙",
+                  "exact_name": true,
+                  "required_fields": [
+                    "ingredients"
+                  ],
+                  "limit": 1
+                },
+                "effective_args": {
+                  "name_contains": "不存在的银河炖龙",
+                  "exact_name": true,
+                  "required_fields": [
+                    "ingredients"
+                  ],
+                  "limit": 1
+                },
+                "status": "NOT_FOUND",
+                "result_count": 0,
+                "result_names": [],
+                "result_categories": []
+              }
+            ],
+            "request_frame": {
+              "tasks": [
+                {
+                  "kind": "recipe_detail"
+                }
+              ],
+              "memory_updates": [],
+              "current_constraints": [],
+              "turn_preferences": [],
+              "statements": [],
+              "participants": [],
+              "context_relation": "new_task",
+              "operation": null,
+              "canonical": true,
+              "target": {
+                "recipe_name": "不存在的银河炖龙",
+                "ingredient": null,
+                "menu_category": null
+              },
+              "requested_fields": [
+                "ingredients"
+              ],
+              "exact_match_required": true,
+              "recommendation_count": null,
+              "servings": null,
+              "meal_type": null,
+              "scenario": null,
+              "menu_planning": null,
+              "context_needs": [
+                "recent_conversation"
+              ],
+              "confidence": 0.9,
+              "understanding_status": "accepted",
+              "backend": "rules",
+              "fallback_used": false,
+              "clarification_question": null,
+              "validation_errors": []
+            },
+            "resolved_constraints": {
+              "allergies": {
+                "active": false,
+                "trigger_terms": [],
+                "raw_ingredients": [],
+                "excluded_ingredients": [],
+                "strictness": "hard_exclusion_contextual"
+              },
+              "restrictions": {
+                "active": false,
+                "trigger_terms": [],
+                "raw_ingredients": [],
+                "excluded_ingredients": [],
+                "strictness": "hard_exclusion_contextual"
+              },
+              "preferences": [],
+              "resolved": {
+                "hard_safety": [],
+                "strong_requirements": [],
+                "soft_preferences": [],
+                "menu_goals": []
+              }
+            },
+            "reflect": {
+              "rationale": "确定性工具已返回满足成功标准的可用证据，无需继续补查。",
+              "evidence_sufficient": true,
+              "missing_information": []
+            },
+            "understanding_status": "accepted",
+            "context_needs": [
+              "recent_conversation"
+            ],
+            "request_understanding_backend": "rules",
+            "loaded_context_types": [],
+            "request_understanding_confidence": 0.9,
+            "request_tasks": [
+              "recipe_detail"
+            ],
+            "fallback_used": false,
+            "menu_execution_plan": {},
+            "menu_task_progress": {},
+            "recipe_reviews": [],
+            "safety_review": "passed"
+          },
+          "recipe": null,
+          "timestamp": "2026-10-10T06:43:13.871585Z",
+          "http_status": 200,
+          "seconds": 0.019194459000118513,
+          "cross_user_status": 404
+        }
+      ],
+      "model_events": []
+    },
+    {
+      "case_id": "L12",
+      "group": "missing",
+      "repeat": 2,
+      "system": "single_prompt",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "answer": "来源中没有“银河炖龙”这道菜，无法提供其材料。",
+          "recipes": [],
+          "usage": {
+            "input_tokens": 482,
+            "output_tokens": 23,
+            "total_tokens": 505,
+            "input_token_details": {
+              "cache_read": 256
+            },
+            "output_token_details": {}
+          },
+          "seconds": 0.6641409999999723
+        }
+      ],
+      "model_events": [
+        {
+          "event": "start",
+          "run_id": "fe552bd2-7937-4fbd-98c0-8e0f16ebb8cd",
+          "input_sha256": "52dcaa5c53e94c322d0a9dbea1dafed76238612bb3bf02567da8cbb5331a47a2"
+        },
+        {
+          "event": "end",
+          "run_id": "fe552bd2-7937-4fbd-98c0-8e0f16ebb8cd",
+          "usage": {
+            "completion_tokens": 23,
+            "prompt_tokens": 482,
+            "total_tokens": 505,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 256
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 226
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "L12",
+      "group": "missing",
+      "repeat": 2,
+      "system": "retrieval_once",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "answer": "抱歉，我没有关于“银河炖龙”这道菜的来源资料，无法提供材料信息。",
+          "recipes": [],
+          "usage": {
+            "input_tokens": 110,
+            "output_tokens": 27,
+            "total_tokens": 137,
+            "input_token_details": {
+              "cache_read": 0
+            },
+            "output_token_details": {}
+          },
+          "seconds": 0.8094273750000411
+        }
+      ],
+      "model_events": [
+        {
+          "event": "start",
+          "run_id": "94ee8cdc-bb04-45ff-8809-d58592257525",
+          "input_sha256": "bb5b55382ea59185e228197dbba3156b75f71d109a82e6f36b96efc74e5be43b"
+        },
+        {
+          "event": "end",
+          "run_id": "94ee8cdc-bb04-45ff-8809-d58592257525",
+          "usage": {
+            "completion_tokens": 27,
+            "prompt_tokens": 110,
+            "total_tokens": 137,
+            "completion_tokens_details": null,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 110
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "L12",
+      "group": "missing",
+      "repeat": 2,
+      "system": "production_agent",
+      "passed": true,
+      "failures": [],
+      "outputs": [
+        {
+          "message": "未在可用食谱来源中找到“不存在的银河炖龙”，因此不能用其他菜替代回答。",
+          "session_id": "5bc1a9de-5475-4d0f-963a-12e74b2f3031",
+          "message_id": "6",
+          "route": "agent-tools-loop",
+          "route_logic": "agent-tools-loop",
+          "sources": [
+            {
+              "source": "mysql:recipes",
+              "tool": "search_recipes",
+              "call_id": "exact-recipe-search",
+              "query": null,
+              "evidence_call_ids": []
+            }
+          ],
+          "metadata": {
+            "session_id": "5bc1a9de-5475-4d0f-963a-12e74b2f3031",
+            "iteration": 1,
+            "tool_call_count": 1,
+            "budget_exhausted": false,
+            "loop_stop_reason": "",
+            "evidence_sufficient": true,
+            "missing_information": [],
+            "user_memory_count": 0,
+            "episodic_memory_count": 0,
+            "has_user_profile": false,
+            "observations": [
+              {
+                "tools": "task_context",
+                "ok": true,
+                "status": "ok",
+                "error_code": null,
+                "has_data": true
+              },
+              {
+                "tools": "search_recipes",
+                "ok": true,
+                "status": "ok",
+                "error_code": null,
+                "has_data": false
+              }
+            ],
+            "agent_status": "ok",
+            "tool_trace": [
+              {
+                "tool": "search_recipes",
+                "args": {
+                  "name_contains": "不存在的银河炖龙",
+                  "exact_name": true,
+                  "required_fields": [
+                    "ingredients"
+                  ],
+                  "limit": 1
+                },
+                "effective_args": {
+                  "name_contains": "不存在的银河炖龙",
+                  "exact_name": true,
+                  "required_fields": [
+                    "ingredients"
+                  ],
+                  "limit": 1
+                },
+                "status": "NOT_FOUND",
+                "result_count": 0,
+                "result_names": [],
+                "result_categories": []
+              }
+            ],
+            "request_frame": {
+              "tasks": [
+                {
+                  "kind": "recipe_detail"
+                }
+              ],
+              "memory_updates": [],
+              "current_constraints": [],
+              "turn_preferences": [],
+              "statements": [],
+              "participants": [],
+              "context_relation": "new_task",
+              "operation": null,
+              "canonical": true,
+              "target": {
+                "recipe_name": "不存在的银河炖龙",
+                "ingredient": null,
+                "menu_category": null
+              },
+              "requested_fields": [
+                "ingredients"
+              ],
+              "exact_match_required": true,
+              "recommendation_count": null,
+              "servings": null,
+              "meal_type": null,
+              "scenario": null,
+              "menu_planning": null,
+              "context_needs": [
+                "recent_conversation"
+              ],
+              "confidence": 0.9,
+              "understanding_status": "accepted",
+              "backend": "rules",
+              "fallback_used": false,
+              "clarification_question": null,
+              "validation_errors": []
+            },
+            "resolved_constraints": {
+              "allergies": {
+                "active": false,
+                "trigger_terms": [],
+                "raw_ingredients": [],
+                "excluded_ingredients": [],
+                "strictness": "hard_exclusion_contextual"
+              },
+              "restrictions": {
+                "active": false,
+                "trigger_terms": [],
+                "raw_ingredients": [],
+                "excluded_ingredients": [],
+                "strictness": "hard_exclusion_contextual"
+              },
+              "preferences": [],
+              "resolved": {
+                "hard_safety": [],
+                "strong_requirements": [],
+                "soft_preferences": [],
+                "menu_goals": []
+              }
+            },
+            "reflect": {
+              "rationale": "确定性工具已返回满足成功标准的可用证据，无需继续补查。",
+              "evidence_sufficient": true,
+              "missing_information": []
+            },
+            "understanding_status": "accepted",
+            "context_needs": [
+              "recent_conversation"
+            ],
+            "request_understanding_backend": "rules",
+            "loaded_context_types": [],
+            "request_understanding_confidence": 0.9,
+            "request_tasks": [
+              "recipe_detail"
+            ],
+            "fallback_used": false,
+            "menu_execution_plan": {},
+            "menu_task_progress": {},
+            "recipe_reviews": [],
+            "safety_review": "passed"
+          },
+          "recipe": null,
+          "timestamp": "2026-10-10T06:43:15.480563Z",
+          "http_status": 200,
+          "seconds": 0.01787583299983453,
+          "cross_user_status": 404
+        }
+      ],
+      "model_events": []
+    }
+  ],
+  "summary": {
+    "single_prompt": {
+      "total": 3,
+      "passed": 3,
+      "failure_fields": {},
+      "by_group": {
+        "missing": {
+          "total": 3,
+          "passed": 3
+        }
+      }
+    },
+    "retrieval_once": {
+      "total": 3,
+      "passed": 3,
+      "failure_fields": {},
+      "by_group": {
+        "missing": {
+          "total": 3,
+          "passed": 3
+        }
+      }
+    },
+    "production_agent": {
+      "total": 3,
+      "passed": 3,
+      "failure_fields": {},
+      "by_group": {
+        "missing": {
+          "total": 3,
+          "passed": 3
+        }
+      }
+    }
+  },
+  "complete": true
+}

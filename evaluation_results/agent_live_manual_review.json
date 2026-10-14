@@ -1,0 +1,34 @@
+{
+  "reviewer": "Codex primary agent; not a food-safety expert panel",
+  "review_date": "2026-10-10",
+  "scope": "targeted factual review of L08 production answers plus spot checks of L04/L07/L09/L12; not exhaustive independent human labeling",
+  "reference": "https://www.fda.gov/food/hfp-constituent-updates/fda-issues-final-compliance-policy-guide-scombrotoxin-histamine-forming-fish-and-fishery-products",
+  "reference_finding": "Once formed, histamine cannot be removed by heating.",
+  "issues": [
+    {
+      "case_id": "L08",
+      "repeat": 0,
+      "system": "production_agent",
+      "decision": "needs_correction",
+      "reason": "Heating cannot remove existing histamine; wording about reducing histamine and not completely eliminating it is misleading."
+    },
+    {
+      "case_id": "L08",
+      "repeat": 1,
+      "system": "production_agent",
+      "decision": "needs_correction",
+      "reason": "Heating cannot remove existing histamine; wording about reducing histamine and not completely eliminating it is misleading."
+    },
+    {
+      "case_id": "L08",
+      "repeat": 2,
+      "system": "production_agent",
+      "decision": "needs_correction",
+      "reason": "Heating cannot remove existing histamine; wording about reducing histamine and not completely eliminating it is misleading."
+    }
+  ],
+  "automated_agent_passed": 36,
+  "agent_after_this_factual_audit": 33,
+  "total_agent_runs": 36,
+  "no_claim_of_comprehensive_factual_accuracy": true
+}

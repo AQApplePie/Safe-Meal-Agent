@@ -1,0 +1,17 @@
+{
+  "project": "safemeal-platform-verify-20261009",
+  "uid": 10001,
+  "agent_imports": [],
+  "checkpoint_initialized": false,
+  "missing_sdks": [
+    "langgraph",
+    "langchain",
+    "openai",
+    "pymilvus",
+    "neo4j"
+  ],
+  "mysql_version": "8.0.46",
+  "migration_head": "20261008_0012",
+  "recipe_count": 70,
+  "redis_version": "7.4.11"
+}

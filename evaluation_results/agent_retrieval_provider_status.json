@@ -1,0 +1,24 @@
+{
+  "embedding_model": "text-embedding-v4",
+  "embedding_host": "api.deepseek.com",
+  "embedding_credential_present": true,
+  "embedding_attempt": "HTTP 404; no successful vectors received",
+  "reranker_model": "qwen3-rerank",
+  "reranker_host": "dashscope.aliyuncs.com",
+  "reranker_credential_present": true,
+  "reranker_attempt": "not called because embedding failed",
+  "provider_quality_verified": false,
+  "daily_environment_modified": false,
+  "approval_review": {
+    "first_request": "rejected for synthetic secret-like/private-looking corpus; no execution",
+    "safer_request": "approved for frozen public-only corpus; returned 404"
+  },
+  "configuration_after_fix": {
+    "embedding_host": "dashscope.aliyuncs.com",
+    "embedding_credential_present": false,
+    "reranker_host": "dashscope.aliyuncs.com",
+    "reranker_credential_present": false,
+    "llm_configuration_modified": false,
+    "need": "configure valid independent embedding/rerank credentials locally before provider evaluation"
+  }
+}
